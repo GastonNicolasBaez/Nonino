@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getStorageItem, setStorageItem, generateOrderId } from '../lib/utils';
+import { PROMO_CODES, STORAGE_KEYS } from '../constants';
 import { toast } from 'sonner';
 
 const CartContext = createContext();
@@ -21,7 +22,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     // Cargar carrito guardado
-    const savedCart = getStorageItem('cart', {});
+    const savedCart = getStorageItem(STORAGE_KEYS.CART, {});
     if (savedCart.items) setItems(savedCart.items);
     if (savedCart.selectedStore) setSelectedStore(savedCart.selectedStore);
     if (savedCart.deliveryInfo) setDeliveryInfo(savedCart.deliveryInfo);
@@ -30,7 +31,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     // Guardar carrito en localStorage
-    setStorageItem('cart', {
+    setStorageItem(STORAGE_KEYS.CART, {
       items,
       selectedStore,
       deliveryInfo,
@@ -103,15 +104,8 @@ export const CartProvider = ({ children }) => {
   };
 
   const applyPromoCode = (code) => {
-    // Códigos promocionales simulados
-    const promoCodes = {
-      'BIENVENIDO10': { discount: 10, type: 'percentage', description: '10% de descuento' },
-      'ENVIOGRATIS': { discount: 0, type: 'free_shipping', description: 'Envío gratuito' },
-      'EMPANADAS20': { discount: 20, type: 'percentage', description: '20% de descuento' },
-      'NUEVOCLIENTE': { discount: 15, type: 'percentage', description: '15% de descuento para nuevos clientes' },
-    };
-
-    const promo = promoCodes[code.toUpperCase()];
+    // Usar constantes centralizadas para códigos promocionales
+    const promo = PROMO_CODES[code.toUpperCase()];
     if (promo) {
       setPromoCode({ code: code.toUpperCase(), ...promo });
       toast.success(`Código promocional aplicado: ${promo.description}`);

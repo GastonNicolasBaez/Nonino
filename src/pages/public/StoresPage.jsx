@@ -23,7 +23,7 @@ export function StoresPage() {
           setSelectedStore(response.data[0]);
         }
       } catch (error) {
-        console.error("Error fetching stores:", error);
+        // Error silencioso en desarrollo - en producción usar sistema de logging
       } finally {
         setLoading(false);
       }
@@ -32,6 +32,11 @@ export function StoresPage() {
     fetchStores();
   }, []);
 
+  /**
+   * Formatea los horarios de un local
+   * @param {Object} hours - Objeto con horarios por día
+   * @returns {JSX.Element[]} - Array de elementos JSX con horarios
+   */
   const formatHours = (hours) => {
     return Object.entries(hours).map(([day, schedule]) => (
       <div key={day} className="flex justify-between text-sm">

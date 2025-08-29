@@ -120,7 +120,9 @@ export function AdminLogin() {
             {/* Demo credentials */}
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <p className="text-xs text-gray-600 mb-2">Credenciales de prueba:</p>
-              <p className="text-xs">Email: admin@nonino.com</p>
+              <p className="text-xs">Email: 
+                
+              </p>
               <p className="text-xs">Contraseña: admin123</p>
             </div>
 

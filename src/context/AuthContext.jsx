@@ -3,6 +3,11 @@ import { getStorageItem, setStorageItem, removeStorageItem } from '../lib/utils'
 
 const AuthContext = createContext();
 
+/**
+ * Hook para usar el contexto de autenticación
+ * @returns {Object} - Objeto con funciones y estado de autenticación
+ * @throws {Error} - Si se usa fuera del AuthProvider
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -11,6 +16,12 @@ export const useAuth = () => {
   return context;
 };
 
+/**
+ * Proveedor del contexto de autenticación
+ * Maneja el estado de autenticación y persistencia en localStorage
+ * @param {Object} props - Props del componente
+ * @param {React.ReactNode} props.children - Componentes hijos
+ */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +39,13 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  /**
+   * Inicia sesión de usuario
+   * @param {string} email - Email del usuario
+   * @param {string} password - Contraseña del usuario
+   * @param {boolean} isAdmin - Si es usuario administrador
+   * @returns {Object} - Resultado de la operación
+   */
   const login = async (email, password, isAdmin = false) => {
     setLoading(true);
     try {
@@ -51,11 +69,11 @@ export const AuthProvider = ({ children }) => {
       setStorageItem('user', mockUser);
       setStorageItem('authToken', mockToken);
 
-      setLoading(false);
       return { success: true, user: mockUser };
     } catch (error) {
-      setLoading(false);
       return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
     }
   };
 

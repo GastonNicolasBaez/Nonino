@@ -48,7 +48,11 @@ api.interceptors.response.use(
   }
 );
 
-// Simular delay de red
+/**
+ * Simula delay de red para testing
+ * @param {number} ms - Milisegundos de delay
+ * @returns {Promise} - Promise que se resuelve después del delay
+ */
 const simulateNetworkDelay = (ms = 500) => 
   new Promise(resolve => setTimeout(resolve, ms));
 
@@ -58,7 +62,7 @@ export const authService = {
     await simulateNetworkDelay();
     // En producción: return api.post('/auth/login', { email, password });
     
-    // Mock response
+    // Respuesta simulada para desarrollo
     if (email === 'admin@nonino.com' && password === 'admin123') {
       return {
         data: {

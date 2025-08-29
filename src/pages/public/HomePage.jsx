@@ -26,7 +26,7 @@ export function HomePage() {
         setPopularProducts(productsRes.data);
         setPromotions(promotionsRes.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // Error silencioso en desarrollo - en producción usar sistema de logging
       } finally {
         setLoading(false);
       }

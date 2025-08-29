@@ -3,6 +3,11 @@ import { getStorageItem, setStorageItem } from '../lib/utils';
 
 const ThemeContext = createContext();
 
+/**
+ * Hook para usar el contexto de tema
+ * @returns {Object} - Objeto con funciones y estado del tema
+ * @throws {Error} - Si se usa fuera del ThemeProvider
+ */
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -11,6 +16,11 @@ export const useTheme = () => {
   return context;
 };
 
+/**
+ * Proveedor del contexto de tema
+ * @param {Object} props - Props del componente
+ * @param {React.ReactNode} props.children - Componentes hijos
+ */
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = getStorageItem('theme');

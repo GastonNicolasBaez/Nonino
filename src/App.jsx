@@ -5,7 +5,7 @@ import { CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { router } from "./routes";
 
-// Create a client
+// Crear cliente de React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

@@ -13,11 +13,17 @@ export function ProductCard({ product, className }) {
   const [isHovered, setIsHovered] = useState(false);
   const { addItem } = useCart();
 
+  /**
+   * Maneja la adición de productos al carrito
+   */
   const handleAddToCart = () => {
     addItem(product);
-    toast.success(`${product.name} agregado al carrito`);
+    // El toast se maneja en el contexto CartContext
   };
 
+  /**
+   * Maneja el toggle de favoritos
+   */
   const handleLike = () => {
     setIsLiked(!isLiked);
     toast.success(isLiked ? "Removido de favoritos" : "Agregado a favoritos");

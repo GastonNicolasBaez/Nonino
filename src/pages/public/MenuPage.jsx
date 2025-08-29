@@ -9,7 +9,7 @@ import { TextAnimate } from "../../components/ui/text-animate";
 import { ProductCard } from "../../components/common/ProductCard";
 import { LoadingSpinner } from "../../components/common/LoadingSpinner";
 import { productService } from "../../services/api";
-import { cn } from "../../lib/utils";
+// import { cn } from "../../lib/utils"; // No utilizado actualmente
 
 export function MenuPage() {
   const [products, setProducts] = useState([]);

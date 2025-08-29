@@ -1,0 +1,245 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { useCart } from "../../context/CartContext";
+import { formatPrice } from "../../lib/utils";
+import { Link } from "react-router-dom";
+
+export function CartSidebar() {
+  const {
+    isOpen,
+    setIsOpen,
+    items,
+    updateQuantity,
+    removeItem,
+    subtotal,
+    discount,
+    deliveryFee,
+    total,
+    itemCount,
+    promoCode,
+    removePromoCode,
+  } = useCart();
+
+  const sidebarVariants = {
+    closed: { x: "100%" },
+    open: { x: 0 },
+  };
+
+  const overlayVariants = {
+    closed: { opacity: 0 },
+    open: { opacity: 1 },
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            variants={overlayVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+          />
+
+          {/* Sidebar */}
+          <motion.div
+            variants={sidebarVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            transition={{ type: "tween", duration: 0.3 }}
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5" />
+                Tu Carrito
+                {itemCount > 0 && (
+                  <Badge variant="empanada" className="ml-2">
+                    {itemCount}
+                  </Badge>
+                )}
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto">
+              {items.length === 0 ? (
+                <div className="p-6 text-center">
+                  <div className="text-6xl mb-4">🥟</div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Tu carrito está vacío
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    ¡Agrega algunas deliciosas empanadas!
+                  </p>
+                  <Button
+                    onClick={() => setIsOpen(false)}
+                    variant="empanada"
+                    className="w-full"
+                  >
+                    Explorar Menú
+                  </Button>
+                </div>
+              ) : (
+                <div className="p-6 space-y-4">
+                  {/* Items */}
+                  {items.map((item, index) => (
+                    <motion.div
+                      key={`${item.id}-${index}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="flex items-center gap-4 p-4 border rounded-lg"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">{item.name}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {formatPrice(item.price)}
+                        </p>
+                        {item.customizations &&
+                          Object.keys(item.customizations).length > 0 && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {Object.entries(item.customizations)
+                                .map(([key, value]) => `${key}: ${value}`)
+                                .join(", ")}
+                            </div>
+                          )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            updateQuantity(
+                              item.id,
+                              item.customizations,
+                              item.quantity - 1
+                            )
+                          }
+                        >
+                          <Minus className="w-3 h-3" />
+                        </Button>
+                        <span className="text-sm w-8 text-center">
+                          {item.quantity}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            updateQuantity(
+                              item.id,
+                              item.customizations,
+                              item.quantity + 1
+                            )
+                          }
+                        >
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-red-500 hover:text-red-700"
+                          onClick={() => removeItem(item.id, item.customizations)}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            {items.length > 0 && (
+              <div className="border-t p-6 space-y-4">
+                {/* Promo Code */}
+                {promoCode && (
+                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div>
+                      <span className="text-sm font-medium text-green-800">
+                        Código: {promoCode.code}
+                      </span>
+                      <p className="text-xs text-green-600">
+                        {promoCode.description}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={removePromoCode}
+                      className="text-green-600 hover:text-green-800"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+
+                {/* Summary */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(subtotal)}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Descuento</span>
+                      <span>-{formatPrice(discount)}</span>
+                    </div>
+                  )}
+                  {deliveryFee > 0 && (
+                    <div className="flex justify-between">
+                      <span>Envío</span>
+                      <span>{formatPrice(deliveryFee)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-semibold text-lg border-t pt-2">
+                    <span>Total</span>
+                    <span className="text-empanada-golden">
+                      {formatPrice(total)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="space-y-2">
+                  <Link to="/carrito" onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" className="w-full">
+                      Ver Carrito Completo
+                    </Button>
+                  </Link>
+                  <Link to="/checkout" onClick={() => setIsOpen(false)}>
+                    <Button variant="empanada" className="w-full">
+                      Proceder al Pago
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}

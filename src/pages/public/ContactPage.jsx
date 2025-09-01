@@ -65,12 +65,12 @@ export function ContactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-20">
-        <div className="container mx-auto px-4 text-center">
+      <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-12 sm:py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <TextAnimate
             animation="slideUp"
             by="word"
-            className="text-4xl md:text-5xl font-bold mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2"
           >
             Contáctanos
           </TextAnimate>
@@ -78,7 +78,7 @@ export function ContactPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-xl text-white/90 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-2"
           >
             Estamos aquí para ayudarte. Contáctanos por cualquier consulta o sugerencia
           </motion.p>
@@ -86,9 +86,9 @@ export function ContactPage() {
       </section>
 
       {/* Contact Info */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">
             {contactInfo.map((info, index) => (
               <motion.div
                 key={info.title}
@@ -98,18 +98,18 @@ export function ContactPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="text-center hover:shadow-lg transition-shadow h-full">
-                  <CardContent className="p-6">
-                    <div className="mb-4 inline-flex items-center justify-center w-16 h-16 bg-empanada-golden/10 rounded-full">
-                      <info.icon className="w-8 h-8 text-empanada-golden" />
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="mb-3 sm:mb-4 inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-empanada-golden/10 rounded-full">
+                      <info.icon className="w-6 h-6 sm:w-8 sm:h-8 text-empanada-golden" />
                     </div>
-                    <h3 className="text-lg font-semibold mb-3">{info.title}</h3>
+                    <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">{info.title}</h3>
                     <div className="space-y-1">
                       {info.details.map((detail, idx) => (
-                        <p key={idx} className="text-gray-600 text-sm">
+                        <p key={idx} className="text-gray-600 text-xs sm:text-sm">
                           {info.action ? (
                             <a
                               href={info.action}
-                              className="hover:text-empanada-golden transition-colors"
+                              className="hover:text-empanada-golden transition-colors block"
                               target={info.action.startsWith('http') ? '_blank' : undefined}
                               rel={info.action.startsWith('http') ? 'noopener noreferrer' : undefined}
                             >
@@ -128,24 +128,24 @@ export function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageCircle className="w-6 h-6 text-empanada-golden" />
+              <Card className="shadow-lg">
+                <CardHeader className="pb-4 sm:pb-6">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-empanada-golden" />
                     Envíanos un Mensaje
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CardContent className="px-4 sm:px-6">
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">
+                        <label className="block text-sm font-medium mb-2 text-gray-700">
                           Nombre *
                         </label>
                         <Input
@@ -154,10 +154,11 @@ export function ContactPage() {
                           onChange={handleChange}
                           required
                           placeholder="Tu nombre completo"
+                          className="py-3 text-base border-2 focus:border-empanada-golden"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">
+                        <label className="block text-sm font-medium mb-2 text-gray-700">
                           Teléfono
                         </label>
                         <Input
@@ -166,12 +167,13 @@ export function ContactPage() {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="+54 11 1234-5678"
+                          className="py-3 text-base border-2 focus:border-empanada-golden"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2">
+                      <label className="block text-sm font-medium mb-2 text-gray-700">
                         Email *
                       </label>
                       <Input
@@ -181,11 +183,12 @@ export function ContactPage() {
                         onChange={handleChange}
                         required
                         placeholder="tu@email.com"
+                        className="py-3 text-base border-2 focus:border-empanada-golden"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2">
+                      <label className="block text-sm font-medium mb-2 text-gray-700">
                         Asunto *
                       </label>
                       <select
@@ -193,7 +196,7 @@ export function ContactPage() {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                        className="w-full px-3 py-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-base bg-white"
                       >
                         <option value="">Selecciona un asunto</option>
                         <option value="pedido">Consulta sobre pedidos</option>
@@ -206,7 +209,7 @@ export function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2">
+                      <label className="block text-sm font-medium mb-2 text-gray-700">
                         Mensaje *
                       </label>
                       <textarea
@@ -214,13 +217,13 @@ export function ContactPage() {
                         value={formData.message}
                         onChange={handleChange}
                         required
-                        rows={5}
+                        rows={4}
                         placeholder="Escribe tu mensaje aquí..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-vertical"
+                        className="w-full px-3 py-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden resize-vertical text-base"
                       />
                     </div>
 
-                    <Button type="submit" variant="empanada" className="w-full">
+                    <Button type="submit" variant="empanada" className="w-full py-3 text-base font-semibold">
                       <Send className="w-4 h-4 mr-2" />
                       Enviar Mensaje
                     </Button>
@@ -233,56 +236,58 @@ export function ContactPage() {
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="space-y-8"
+              className="space-y-4 sm:space-y-6 lg:space-y-8"
             >
               {/* FAQ */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preguntas Frecuentes</CardTitle>
+              <Card className="shadow-lg">
+                <CardHeader className="pb-4 sm:pb-6">
+                  <CardTitle className="text-lg sm:text-xl">Preguntas Frecuentes</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">¿Cuál es el tiempo de entrega?</h4>
-                    <p className="text-gray-600 text-sm">
-                      Nuestro tiempo de entrega varía entre 30-60 minutos dependiendo de la zona y el horario.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">¿Hacen delivery los domingos?</h4>
-                    <p className="text-gray-600 text-sm">
-                      Sí, hacemos delivery todos los días de la semana, incluidos domingos y feriados.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">¿Cuál es el pedido mínimo?</h4>
-                    <p className="text-gray-600 text-sm">
-                      El pedido mínimo varía según la zona: Centro $2000, otras zonas $2500.
-                    </p>
+                <CardContent className="px-4 sm:px-6">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div>
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-gray-800">¿Cuál es el tiempo de entrega?</h4>
+                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                        Nuestro tiempo de entrega varía entre 30-60 minutos dependiendo de la zona y el horario.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-gray-800">¿Hacen delivery los domingos?</h4>
+                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                        Sí, hacemos delivery todos los días de la semana, incluidos domingos y feriados.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-gray-800">¿Cuál es el pedido mínimo?</h4>
+                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                        El pedido mínimo varía según la zona: Centro $2000, otras zonas $2500.
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Social Media */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Síguenos en Redes</CardTitle>
+              <Card className="shadow-lg">
+                <CardHeader className="pb-4 sm:pb-6">
+                  <CardTitle className="text-lg sm:text-xl">Síguenos en Redes</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4">
-                    <Button variant="outline" size="icon">
+                <CardContent className="px-4 sm:px-6">
+                  <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
+                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
                       📘
                     </Button>
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
                       📷
                     </Button>
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
                       🐦
                     </Button>
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
                       📺
                     </Button>
                   </div>
-                  <p className="text-sm text-gray-600 mt-4">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-3 sm:mt-4 text-center sm:text-left">
                     Mantente al día con nuestras promociones y novedades
                   </p>
                 </CardContent>

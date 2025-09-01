@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -53,16 +53,16 @@ export function CartSidebar() {
             animate="open"
             exit="closed"
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5" />
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-golden/10 to-empanada-crust/10">
+              <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-empanada-golden" />
                 Tu Carrito
                 {itemCount > 0 && (
-                  <Badge variant="empanada" className="ml-2">
-                    {itemCount}
+                  <Badge variant="empanada" className="ml-2 text-xs sm:text-sm">
+                    {itemCount > 99 ? '99+' : itemCount}
                   </Badge>
                 )}
               </h2>
@@ -70,32 +70,33 @@ export function CartSidebar() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsOpen(false)}
+                className="hover:bg-empanada-golden/20"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto">
               {items.length === 0 ? (
-                <div className="p-6 text-center">
-                  <div className="text-6xl mb-4">🥟</div>
-                  <h3 className="text-lg font-semibold mb-2">
+                <div className="p-4 sm:p-6 text-center">
+                  <div className="text-5xl sm:text-6xl mb-4">🥟</div>
+                  <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
                     Tu carrito está vacío
                   </h3>
-                  <p className="text-muted-foreground mb-4">
+                  <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                     ¡Agrega algunas deliciosas empanadas!
                   </p>
                   <Button
                     onClick={() => setIsOpen(false)}
                     variant="empanada"
-                    className="w-full"
+                    className="w-full py-3 sm:py-4 text-sm sm:text-base"
                   >
                     Explorar Menú
                   </Button>
                 </div>
               ) : (
-                <div className="p-6 space-y-4">
+                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   {/* Items */}
                   {items.map((item, index) => (
                     <motion.div
@@ -103,32 +104,32 @@ export function CartSidebar() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      className="flex items-center gap-4 p-4 border rounded-lg"
+                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg hover:shadow-md transition-shadow"
                     >
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded flex-shrink-0"
                       />
-                      <div className="flex-1">
-                        <h4 className="font-medium text-sm">{item.name}</h4>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm sm:text-base truncate">{item.name}</h4>
                         <p className="text-sm text-muted-foreground">
                           {formatPrice(item.price)}
                         </p>
                         {item.customizations &&
                           Object.keys(item.customizations).length > 0 && (
-                            <div className="text-xs text-muted-foreground mt-1">
+                            <div className="text-xs text-muted-foreground mt-1 truncate">
                               {Object.entries(item.customizations)
                                 .map(([key, value]) => `${key}: ${value}`)
                                 .join(", ")}
                             </div>
                           )}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-7 w-7 sm:h-8 sm:w-8"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -137,15 +138,15 @@ export function CartSidebar() {
                             )
                           }
                         >
-                          <Minus className="w-3 h-3" />
+                          <Minus className="w-2 h-2 sm:w-3 sm:h-3" />
                         </Button>
-                        <span className="text-sm w-8 text-center">
+                        <span className="text-xs sm:text-sm w-6 sm:w-8 text-center font-medium">
                           {item.quantity}
                         </span>
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-7 w-7 sm:h-8 sm:w-8"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -154,15 +155,15 @@ export function CartSidebar() {
                             )
                           }
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="w-2 h-2 sm:w-3 sm:h-3" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-red-500 hover:text-red-700"
+                          className="h-7 w-7 sm:h-8 sm:w-8 text-red-500 hover:text-red-700"
                           onClick={() => removeItem(item.id, item.customizations)}
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="w-2 h-2 sm:w-3 sm:h-3" />
                         </Button>
                       </div>
                     </motion.div>
@@ -173,15 +174,15 @@ export function CartSidebar() {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t p-6 space-y-4">
+              <div className="border-t p-4 sm:p-6 space-y-4 sm:space-y-6 bg-gray-50">
                 {/* Promo Code */}
                 {promoCode && (
                   <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <div>
-                      <span className="text-sm font-medium text-green-800">
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-green-800 block truncate">
                         Código: {promoCode.code}
                       </span>
-                      <p className="text-xs text-green-600">
+                      <p className="text-xs text-green-600 truncate">
                         {promoCode.description}
                       </p>
                     </div>
@@ -189,7 +190,7 @@ export function CartSidebar() {
                       variant="ghost"
                       size="sm"
                       onClick={removePromoCode}
-                      className="text-green-600 hover:text-green-800"
+                      className="text-green-600 hover:text-green-800 ml-2 flex-shrink-0"
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -197,7 +198,7 @@ export function CartSidebar() {
                 )}
 
                 {/* Summary */}
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-sm sm:text-base">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
                     <span>{formatPrice(subtotal)}</span>
@@ -214,7 +215,7 @@ export function CartSidebar() {
                       <span>{formatPrice(deliveryFee)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between font-semibold text-lg border-t pt-2">
+                  <div className="flex justify-between font-semibold text-lg sm:text-xl border-t pt-2">
                     <span>Total</span>
                     <span className="text-empanada-golden">
                       {formatPrice(total)}
@@ -223,17 +224,29 @@ export function CartSidebar() {
                 </div>
 
                 {/* Actions */}
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Link to="/carrito" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full py-3 sm:py-4 text-sm sm:text-base">
                       Ver Carrito Completo
                     </Button>
                   </Link>
                   <Link to="/checkout" onClick={() => setIsOpen(false)}>
-                    <Button variant="empanada" className="w-full">
+                    <Button variant="empanada" className="w-full py-3 sm:py-4 text-sm sm:text-base font-semibold">
                       Proceder al Pago
                     </Button>
                   </Link>
+                </div>
+
+                {/* Quick Info */}
+                <div className="text-xs text-gray-500 space-y-1 pt-2 border-t">
+                  <p className="flex items-center gap-1">
+                    <span className="text-green-500">✓</span>
+                    Envío gratis en pedidos &gt; $3000
+                  </p>
+                  <p className="flex items-center gap-1">
+                    <span className="text-green-500">✓</span>
+                    Tiempo estimado: 30-45 min
+                  </p>
                 </div>
               </div>
             )}

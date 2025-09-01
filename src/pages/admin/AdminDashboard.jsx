@@ -16,19 +16,27 @@ import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { NumberTicker } from "../../components/ui/number-ticker";
 import { adminService } from "../../services/api";
+import { mockDashboardData } from "../../lib/mockData";
 import { formatPrice } from "../../lib/utils";
 
 export function AdminDashboard() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [usingMockData, setUsingMockData] = useState(false);
 
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
         const response = await adminService.getDashboardMetrics();
         setMetrics(response.data);
+        setUsingMockData(false);
       } catch (error) {
         console.error("Error fetching metrics:", error);
+        // Si hay error de red, usar datos mock
+        if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
+          setMetrics(mockDashboardData.metrics);
+          setUsingMockData(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -55,8 +63,8 @@ export function AdminDashboard() {
       changeType: "positive"
     },
     {
-      title: "Clientes Totales",
-      value: metrics?.totalCustomers || 0,
+              title: "Clientes Totales",
+        value: metrics?.customerCount || 0,
       icon: Users,
       format: "number",
       change: "+15.3%",
@@ -83,18 +91,70 @@ export function AdminDashboard() {
     );
   }
 
+  // Validar que los datos estén disponibles
+  if (!metrics) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <p>No se pudieron cargar los datos del dashboard</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Verifica tu conexión o contacta al administrador
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Welcome Section */}
+      {/* Alerts Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white p-6 rounded-lg"
+        className="space-y-4"
       >
-        <h1 className="text-3xl font-bold mb-2">¡Bienvenido al Dashboard!</h1>
-        <p className="text-white/90">
-          Aquí tienes un resumen de tu negocio de empanadas
-        </p>
+        <div className="flex items-center space-x-2 mb-2">
+          <AlertCircle className="w-5 h-5 text-gray-600" />
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+            Alertas y Recordatorios
+          </h2>
+        </div>
+        {/* Recordatorio Principal */}
+        <Card className="border-yellow-200 bg-yellow-50 dark:bg-yellow-950 dark:border-yellow-800">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="w-5 h-5 text-yellow-600" />
+              <div>
+                <h4 className="font-medium text-yellow-800 dark:text-yellow-200">
+                  Recordatorio Importante
+                </h4>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  Stock bajo en: Empanada de Carne (5 unidades restantes)
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Aviso de Datos Mock */}
+        {usingMockData && (
+          <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950 dark:border-blue-800">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="w-5 h-5 text-blue-600" />
+                <div>
+                  <h4 className="font-medium text-blue-800 dark:text-blue-200">
+                    Modo Demostración
+                  </h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    Usando datos de demostración. El backend no está disponible.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </motion.div>
 
       {/* Stats Grid */}
@@ -153,20 +213,27 @@ export function AdminDashboard() {
                   <div>
                     <p className="font-medium">#{order.id}</p>
                     <p className="text-sm text-muted-foreground">
-                      {order.items.length} productos
+                      {order.items} productos
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-medium">{formatPrice(order.total)}</p>
                     <Badge 
-                      variant={order.status === "delivered" ? "success" : "empanada"}
+                      variant={order.status === "completed" ? "success" : "empanada"}
                       className="text-xs"
                     >
-                      {order.status}
+                      {order.status === "completed" ? "Completado" : 
+                       order.status === "preparing" ? "Preparando" : 
+                       order.status === "pending" ? "Pendiente" : order.status}
                     </Badge>
                   </div>
                 </div>
               ))}
+              {(!metrics?.recentOrders || metrics.recentOrders.length === 0) && (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No hay pedidos recientes</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -179,10 +246,10 @@ export function AdminDashboard() {
           <CardContent>
             <div className="space-y-4">
               {metrics?.topProducts?.map((item, index) => (
-                <div key={item.product.id} className="flex items-center space-x-4">
+                <div key={item.name || index} className="flex items-center space-x-4">
                   <div className="text-2xl">🥟</div>
                   <div className="flex-1">
-                    <p className="font-medium">{item.product.name}</p>
+                    <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {item.sales} vendidas
                     </p>
@@ -190,6 +257,11 @@ export function AdminDashboard() {
                   <Badge variant="outline">#{index + 1}</Badge>
                 </div>
               ))}
+              {(!metrics?.topProducts || metrics.topProducts.length === 0) && (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No hay productos para mostrar</p>
+                </div>
+                )}
             </div>
           </CardContent>
         </Card>
@@ -257,22 +329,7 @@ export function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Alerts */}
-      <Card className="border-yellow-200 bg-yellow-50 dark:bg-yellow-950 dark:border-yellow-800">
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-2">
-            <AlertCircle className="w-5 h-5 text-yellow-600" />
-            <div>
-              <h4 className="font-medium text-yellow-800 dark:text-yellow-200">
-                Recordatorio
-              </h4>
-              <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                Stock bajo en: Empanada de Carne (5 unidades restantes)
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
     </div>
   );
 }

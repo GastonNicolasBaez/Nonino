@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ShoppingCart, 
-  User, 
-  Menu, 
-  X, 
-  MapPin, 
+import {
+  ShoppingCart,
+  User,
+  Menu,
+  X,
+  MapPin,
   Phone,
   Heart,
-  Search
+  Search,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -52,7 +53,7 @@ export function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           scrolled
-            ? "bg-white/20 backdrop-blur-sm"
+            ? "bg-white/20 backdrop-blur-sm shadow-lg"
             : "bg-white/95 backdrop-blur-md shadow-lg border-b"
         )}
         initial={{ y: -100 }}
@@ -60,32 +61,34 @@ export function Header() {
         transition={{ duration: 0.5 }}
       >
 
-
         {/* Main Header */}
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
               <motion.div
-                className="text-2xl"
+                className="text-2xl sm:text-3xl"
                 whileHover={{ rotate: 15, scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 🥟
               </motion.div>
-              <AnimatedGradientText className="text-xl font-bold tracking-tight">
+              <AnimatedGradientText className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight hidden xs:block">
                 NONINO EMPANADAS
               </AnimatedGradientText>
+              <span className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight xs:hidden text-empanada-golden">
+                NONINO
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-empanada-golden relative",
+                    "text-sm xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-2 py-1",
                     isActive(item.href)
                       ? "text-empanada-golden"
                       : "text-gray-900"
@@ -104,30 +107,32 @@ export function Header() {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4">
               {/* Search */}
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={cn(
-                  "relative",
-                  "text-gray-900 hover:text-empanada-golden"
+                  "relative h-10 w-10 sm:h-11 sm:w-11",
+                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
                 )}
+                aria-label="Buscar productos"
+                aria-expanded={isSearchOpen}
               >
-                <Search className="w-5 h-5" />
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
 
-              {/* Favorites */}
+              {/* Favorites - Hidden on very small screens */}
               <Button
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "relative",
-                  "text-gray-900 hover:text-empanada-golden"
+                  "relative h-10 w-10 sm:h-11 sm:w-11 hidden sm:flex",
+                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
                 )}
               >
-                <Heart className="w-5 h-5" />
+                <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
 
               {/* Cart */}
@@ -136,26 +141,27 @@ export function Header() {
                 size="icon"
                 onClick={() => setCartOpen(true)}
                 className={cn(
-                  "relative",
-                  "text-gray-900 hover:text-empanada-golden"
+                  "relative h-10 w-10 sm:h-11 sm:w-11",
+                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
                 )}
+                aria-label={`Carrito de compras${itemCount > 0 ? ` (${itemCount} productos)` : ''}`}
               >
-                <ShoppingCart className="w-5 h-5" />
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                 {itemCount > 0 && (
                   <Badge
                     variant="empanada"
-                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    className="absolute -top-2 -right-2 h-5 w-5 sm:h-6 sm:w-6 flex items-center justify-center p-0 text-xs"
                   >
-                    {itemCount}
+                    {itemCount > 99 ? '99+' : itemCount}
                   </Badge>
                 )}
               </Button>
 
               {/* User */}
               {isAuthenticated ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <span className={cn(
-                    "text-sm hidden md:block",
+                    "text-xs sm:text-sm hidden md:block font-medium",
                     "text-gray-900"
                   )}>
                     Hola, {user.name.split(' ')[0]}
@@ -165,10 +171,11 @@ export function Header() {
                     size="icon"
                     onClick={logout}
                     className={cn(
-                      "text-gray-900 hover:text-empanada-golden"
+                      "h-10 w-10 sm:h-11 sm:w-11",
+                      "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
                     )}
                   >
-                    <User className="w-5 h-5" />
+                    <User className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
                 </div>
               ) : (
@@ -177,13 +184,14 @@ export function Header() {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "text-gray-900 hover:text-empanada-golden"
+                      "h-10 w-10 sm:h-11 sm:w-11",
+                      "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
                     )}
                   >
-                    <User className="w-5 h-5" />
+                    <User className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
-                  {/* Tooltip hacia abajo */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                  {/* Tooltip hacia abajo - Hidden on mobile */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block">
                     Próximamente
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
                   </div>
@@ -196,11 +204,13 @@ export function Header() {
                 size="icon"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
-                  "lg:hidden",
-                  "text-gray-900 hover:text-empanada-golden"
+                  "lg:hidden h-10 w-10 sm:h-11 sm:w-11",
+                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
                 )}
+                aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+                aria-expanded={isMenuOpen}
               >
-                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {isMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
               </Button>
             </div>
           </div>
@@ -213,14 +223,17 @@ export function Header() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="border-t bg-white/95 backdrop-blur-md"
+              className="border-t bg-white/95 backdrop-blur-md shadow-lg"
             >
-              <div className="container mx-auto px-4 py-4">
-                <Input
-                  placeholder="Buscar empanadas..."
-                  className="max-w-md mx-auto"
-                  autoFocus
-                />
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div className="relative max-w-md mx-auto">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Buscar empanadas..."
+                    className="pl-10 pr-4 py-3 text-base sm:text-lg border-2 focus:border-empanada-golden"
+                    autoFocus
+                  />
+                </div>
               </div>
             </motion.div>
           )}
@@ -245,34 +258,105 @@ export function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl"
+              className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl"
             >
-              <div className="p-6 border-b">
+              {/* Header */}
+              <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-golden/10 to-empanada-crust/10">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Menú</h2>
+                  <div className="flex items-center space-x-3">
+                    <motion.div
+                      className="text-2xl"
+                      whileHover={{ rotate: 15, scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      🥟
+                    </motion.div>
+                    <div>
+                      <h2 className="text-lg sm:text-xl font-bold text-empanada-golden">NONINO</h2>
+                      <p className="text-xs text-gray-600">Menú de navegación</p>
+                    </div>
+                  </div>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsMenuOpen(false)}
+                    className="hover:bg-empanada-golden/20"
                   >
                     <X className="w-5 h-5" />
                   </Button>
                 </div>
               </div>
-              <nav className="p-6 space-y-4">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={cn(
-                      "block text-lg font-medium transition-colors hover:text-empanada-golden",
-                      isActive(item.href) ? "text-empanada-golden" : "text-gray-900"
-                    )}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+
+              {/* Navigation */}
+              <nav className="flex-1 p-4 sm:p-6">
+                <div className="space-y-2">
+                  {navigation.map((item, index) => (
+                    <motion.div
+                      key={item.name}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Link
+                        to={item.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={cn(
+                          "flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all duration-200 hover:bg-empanada-golden/10 group",
+                          isActive(item.href)
+                            ? "bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30"
+                            : "text-gray-900 hover:text-empanada-golden"
+                        )}
+                      >
+                        <span className="text-base sm:text-lg font-medium">
+                          {item.name}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-empanada-golden transition-colors" />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Quick Actions */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+                    Acciones rápidas
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Link
+                      to="/menu"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="text-2xl mb-2">🥟</div>
+                      <span className="text-xs font-medium text-gray-700">Menú</span>
+                    </Link>
+                    <Link
+                      to="/locales"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <MapPin className="w-6 h-6 mb-2 text-gray-600" />
+                      <span className="text-xs font-medium text-gray-700">Locales</span>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* User Section */}
+                {isAuthenticated && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          Hola, {user.name.split(' ')[0]}
+                        </p>
+                        <p className="text-xs text-gray-500">Usuario registrado</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </nav>
             </motion.div>
           </motion.div>
@@ -280,7 +364,7 @@ export function Header() {
       </AnimatePresence>
 
       {/* Spacer */}
-      <div className="h-16" />
+      <div className="h-16 lg:h-20" />
     </>
   );
 }

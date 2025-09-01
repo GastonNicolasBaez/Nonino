@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getStorageItem, setStorageItem, generateOrderId } from '../lib/utils';
+import { getStorageItem, setStorageItem } from '../lib/utils';
 import { STORAGE_KEYS } from '../constants';
 import { toast } from 'sonner';
 import { orderService } from '../services/api';

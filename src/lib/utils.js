@@ -91,23 +91,96 @@ export function generateOrderId() {
 }
 
 /**
- * Valida formato de email
+ * Valida formato de email con expresiones regulares más robustas
  * @param {string} email - Email a validar
  * @returns {boolean} - True si es válido
+ * @example
+ * validateEmail('usuario@dominio.com') // true
+ * validateEmail('usuario') // false
  */
 export function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+  if (!email || typeof email !== 'string') return false;
+
+  // Expresión regular más robusta para emails
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  return emailRegex.test(email.trim()) && email.length <= 254;
 }
 
 /**
- * Valida formato de teléfono
- * @param {string} phone - Teléfono a validar
+ * Valida formato de teléfono internacional
+ * @param {string} phone - Teléfono a validar (con o sin código de país)
  * @returns {boolean} - True si es válido
+ * @example
+ * validatePhone('+5491123456789') // true
+ * validatePhone('91123456789') // true
+ * validatePhone('abc') // false
  */
 export function validatePhone(phone) {
-  const re = /^[+]?[1-9][\d]{0,15}$/;
-  return re.test(phone.replace(/\s/g, ''));
+  if (!phone || typeof phone !== 'string') return false;
+
+  // Limpiar el teléfono de espacios, guiones y paréntesis
+  const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
+
+  // Validar formato internacional o local argentino
+      const phoneRegex = /^(\\+54|54|0)?[1-9]\d{9,11}$/;
+
+  return phoneRegex.test(cleanPhone) && cleanPhone.length >= 10 && cleanPhone.length <= 15;
+}
+
+/**
+ * Valida contraseña según criterios de seguridad
+ * @param {string} password - Contraseña a validar
+ * @param {Object} options - Opciones de validación
+ * @param {number} options.minLength - Longitud mínima (default: 8)
+ * @param {boolean} options.requireUppercase - Requiere mayúsculas (default: true)
+ * @param {boolean} options.requireLowercase - Requiere minúsculas (default: true)
+ * @param {boolean} options.requireNumbers - Requiere números (default: true)
+ * @param {boolean} options.requireSpecialChars - Requiere caracteres especiales (default: false)
+ * @returns {Object} - Resultado con isValid y errors
+ * @example
+ * validatePassword('MiPass123!') // { isValid: true, errors: [] }
+ * validatePassword('123') // { isValid: false, errors: ['Mínimo 8 caracteres', ...] }
+ */
+export function validatePassword(password, options = {}) {
+  const {
+    minLength = 8,
+    requireUppercase = true,
+    requireLowercase = true,
+    requireNumbers = true,
+    requireSpecialChars = false
+  } = options;
+
+  const errors = [];
+
+  if (!password || typeof password !== 'string') {
+    return { isValid: false, errors: ['Contraseña requerida'] };
+  }
+
+  if (password.length < minLength) {
+    errors.push(`Mínimo ${minLength} caracteres`);
+  }
+
+  if (requireUppercase && !/[A-Z]/.test(password)) {
+    errors.push('Al menos una letra mayúscula');
+  }
+
+  if (requireLowercase && !/[a-z]/.test(password)) {
+    errors.push('Al menos una letra minúscula');
+  }
+
+  if (requireNumbers && !/\d/.test(password)) {
+    errors.push('Al menos un número');
+  }
+
+  if (requireSpecialChars && !/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>?/]/.test(password)) {
+    errors.push('Al menos un carácter especial');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 }
 
 /**
@@ -144,17 +217,40 @@ export function debounce(func, wait) {
 }
 
 /**
- * Obtiene un item del localStorage con manejo de errores
+ * Obtiene un item del localStorage con manejo de errores robusto
  * @param {string} key - Clave del item
  * @param {*} defaultValue - Valor por defecto si no existe
  * @returns {*} - Valor obtenido o valor por defecto
+ * @throws {Error} - Si hay un error crítico (solo en desarrollo)
+ * @example
+ * const user = getStorageItem('user', {});
+ * const theme = getStorageItem('theme', 'light');
  */
 export function getStorageItem(key, defaultValue = null) {
+  if (!key || typeof key !== 'string') {
+    console.warn('getStorageItem: La clave debe ser un string no vacío');
+    return defaultValue;
+  }
+
   try {
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
+    if (item === null) return defaultValue;
+
+    // Intentar parsear JSON
+    return JSON.parse(item);
   } catch (error) {
-    console.error(`Error leyendo clave "${key}" de localStorage:`, error);
+    // Si hay error de parseo, intentar devolver el valor raw
+    try {
+      const rawItem = localStorage.getItem(key);
+      if (rawItem !== null) {
+        console.warn(`getStorageItem: Error parseando JSON para "${key}", devolviendo valor raw`);
+        return rawItem;
+      }
+    } catch {
+      // Si tampoco se puede obtener el valor raw, devolver default
+    }
+
+    console.error(`getStorageItem: Error obteniendo "${key}" de localStorage:`, error);
     return defaultValue;
   }
 }

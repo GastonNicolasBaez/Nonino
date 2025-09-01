@@ -68,7 +68,17 @@ export function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-empanada-golden via-empanada-crust to-empanada-dark">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image with Parallax Effect */}
+        <div 
+          className="absolute inset-0 parallax-bg"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"
+          }}
+        />
+        
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/50" />
         {/* Background Elements */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-float" />
@@ -123,16 +133,7 @@ export function HomePage() {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white rounded-full mt-2" />
-          </div>
-        </motion.div>
+
       </section>
 
       {/* Features Section */}
@@ -161,14 +162,15 @@ export function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                className="h-full"
               >
-                <Card className="text-center hover:shadow-lg transition-all duration-300 group">
-                  <CardContent className="p-6">
+                <Card className="text-center hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
+                  <CardContent className="p-6 flex flex-col flex-1">
                     <div className="mb-4 inline-flex items-center justify-center w-16 h-16 bg-empanada-golden/10 rounded-full group-hover:bg-empanada-golden/20 transition-colors">
                       <feature.icon className="w-8 h-8 text-empanada-golden" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
+                    <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                    <p className="text-muted-foreground flex-1">{feature.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -349,7 +351,11 @@ export function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/menu">
-                <Button size="lg" variant="shimmer" className="text-lg px-8 py-4">
+                <Button 
+                  size="lg" 
+                  variant="shimmer" 
+                  className="text-lg px-8 py-4 bg-white text-empanada-golden hover:bg-gray-100 border-2 border-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
                   Hacer Pedido Ahora
                 </Button>
               </Link>

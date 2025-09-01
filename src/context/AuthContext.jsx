@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getStorageItem, setStorageItem, removeStorageItem } from '../lib/utils';
+import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -43,35 +44,22 @@ export const AuthProvider = ({ children }) => {
    * Inicia sesión de usuario
    * @param {string} email - Email del usuario
    * @param {string} password - Contraseña del usuario
-   * @param {boolean} isAdmin - Si es usuario administrador
    * @returns {Object} - Resultado de la operación
    */
-  const login = async (email, password, isAdmin = false) => {
+  const login = async (email, password) => {
     setLoading(true);
     try {
-      // Simulación de login - En producción sería una llamada real a la API
-      const mockUser = {
-        id: isAdmin ? 'admin-1' : 'user-1',
-        email,
-        name: isAdmin ? 'Administrador' : 'Usuario Cliente',
-        role: isAdmin ? 'admin' : 'customer',
-        avatar: null,
-        preferences: {
-          notifications: true,
-          theme: 'light'
-        }
-      };
+      const response = await authService.login(email, password);
+      const { user: userData, token: authToken } = response.data;
 
-      const mockToken = `jwt-token-${Date.now()}`;
+      setUser(userData);
+      setToken(authToken);
+      setStorageItem('user', userData);
+      setStorageItem('authToken', authToken);
 
-      setUser(mockUser);
-      setToken(mockToken);
-      setStorageItem('user', mockUser);
-      setStorageItem('authToken', mockToken);
-
-      return { success: true, user: mockUser };
+      return { success: true, user: userData };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error.response?.data?.message || error.message };
     } finally {
       setLoading(false);
     }
@@ -80,42 +68,34 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setLoading(true);
     try {
-      // Simulación de registro
-      const newUser = {
-        id: `user-${Date.now()}`,
-        email: userData.email,
-        name: userData.name,
-        phone: userData.phone,
-        role: 'customer',
-        avatar: null,
-        addresses: [],
-        preferences: {
-          notifications: true,
-          theme: 'light'
-        }
-      };
-
-      const mockToken = `jwt-token-${Date.now()}`;
+      const response = await authService.register(userData);
+      const { user: newUser, token: authToken } = response.data;
 
       setUser(newUser);
-      setToken(mockToken);
+      setToken(authToken);
       setStorageItem('user', newUser);
-      setStorageItem('authToken', mockToken);
+      setStorageItem('authToken', authToken);
 
       setLoading(false);
       return { success: true, user: newUser };
     } catch (error) {
       setLoading(false);
-      return { success: false, error: error.message };
+      return { success: false, error: error.response?.data?.message || error.message };
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    removeStorageItem('user');
-    removeStorageItem('authToken');
-    removeStorageItem('cart');
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Error en logout:', error);
+    } finally {
+      setUser(null);
+      setToken(null);
+      removeStorageItem('user');
+      removeStorageItem('authToken');
+      removeStorageItem('cart');
+    }
   };
 
   const updateUser = (userData) => {

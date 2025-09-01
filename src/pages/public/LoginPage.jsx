@@ -142,13 +142,6 @@ export function LoginPage() {
                 </Link>
               </p>
             </div>
-
-            {/* Demo credentials */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-2">Credenciales de prueba:</p>
-              <p className="text-xs">Email: cliente@test.com</p>
-              <p className="text-xs">Contraseña: cualquier texto</p>
-            </div>
           </CardContent>
         </Card>
       </motion.div>

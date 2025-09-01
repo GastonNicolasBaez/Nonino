@@ -24,7 +24,7 @@ export function AdminLogin() {
     setLoading(true);
 
     try {
-      const result = await login(formData.email, formData.password, true);
+      const result = await login(formData.email, formData.password);
       if (result.success && result.user.role === 'admin') {
         toast.success("¡Bienvenido al panel de administración!");
         navigate("/admin");
@@ -116,15 +116,6 @@ export function AdminLogin() {
                 {loading ? "Iniciando sesión..." : "Acceder al Panel"}
               </Button>
             </form>
-
-            {/* Demo credentials */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-2">Credenciales de prueba:</p>
-              <p className="text-xs">Email: 
-                
-              </p>
-              <p className="text-xs">Contraseña: admin123</p>
-            </div>
 
             {/* Back to site */}
             <div className="mt-6 text-center">

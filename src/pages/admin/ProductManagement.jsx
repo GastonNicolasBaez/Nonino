@@ -47,7 +47,7 @@ export function ProductManagement() {
       preparationTime: 15,
       isAvailable: true,
       isPopular: true,
-      image: "/api/placeholder/100/100",
+      icon: "🥟",
       rating: 4.8,
       reviews: 156,
       sales: 890,
@@ -72,7 +72,7 @@ export function ProductManagement() {
       preparationTime: 15,
       isAvailable: true,
       isPopular: true,
-      image: "/api/placeholder/100/100",
+      icon: "🥟",
       rating: 4.7,
       reviews: 123,
       sales: 756,
@@ -97,7 +97,7 @@ export function ProductManagement() {
       preparationTime: 12,
       isAvailable: true,
       isPopular: false,
-      image: "/api/placeholder/100/100",
+      icon: "🥟",
       rating: 4.6,
       reviews: 89,
       sales: 445,
@@ -122,7 +122,7 @@ export function ProductManagement() {
       preparationTime: 18,
       isAvailable: true,
       isPopular: true,
-      image: "/api/placeholder/100/100",
+      icon: "🥟",
       rating: 4.9,
       reviews: 67,
       sales: 234,
@@ -147,7 +147,7 @@ export function ProductManagement() {
       preparationTime: 14,
       isAvailable: false,
       isPopular: false,
-      image: "/api/placeholder/100/100",
+      icon: "🥟",
       rating: 4.5,
       reviews: 78,
       sales: 156,
@@ -172,7 +172,7 @@ export function ProductManagement() {
       preparationTime: 10,
       isAvailable: true,
       isPopular: true,
-      image: "/api/placeholder/100/100",
+      icon: "🥟",
       rating: 4.9,
       reviews: 134,
       sales: 567,
@@ -279,7 +279,7 @@ export function ProductManagement() {
         const newProduct = {
           ...formData,
           id: `emp-${Date.now()}`,
-          image: "/api/placeholder/100/100",
+          icon: "🥟",
           rating: 0,
           reviews: 0,
           sales: 0,
@@ -563,11 +563,9 @@ export function ProductManagement() {
             >
               <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300">
                 <div className="aspect-square relative">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
+                    <span className="text-6xl">{product.icon || "🥟"}</span>
+                  </div>
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     {product.isPopular && (
                       <Badge variant="empanada" className="text-xs">

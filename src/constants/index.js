@@ -3,12 +3,6 @@
  * Centraliza valores hardcodeados para mejor mantenimiento
  */
 
-// Credenciales de administrador (para desarrollo)
-export const ADMIN_CREDENTIALS = {
-  EMAIL: 'admin@nonino.com',
-  PASSWORD: 'admin123'
-};
-
 // Roles de usuario
 export const USER_ROLES = {
   ADMIN: 'admin',
@@ -54,12 +48,4 @@ export const ZONE_MULTIPLIERS = {
   sur: 1.3,
   este: 1.4,
   oeste: 1.1
-};
-
-// Códigos promocionales válidos
-export const PROMO_CODES = {
-  'BIENVENIDO10': { discount: 10, type: 'percentage', description: '10% de descuento' },
-  'ENVIOGRATIS': { discount: 0, type: 'free_shipping', description: 'Envío gratuito' },
-  'EMPANADAS20': { discount: 20, type: 'percentage', description: '20% de descuento' },
-  'NUEVOCLIENTE': { discount: 15, type: 'percentage', description: '15% de descuento para nuevos clientes' }
 };

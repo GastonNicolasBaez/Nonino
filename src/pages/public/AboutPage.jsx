@@ -104,26 +104,18 @@ export function AboutPage() {
               viewport={{ once: true }}
               className="grid grid-cols-2 gap-4"
             >
-              <img
-                src="/api/placeholder/300/400"
-                alt="Don Carlos en la cocina"
-                className="rounded-lg shadow-lg"
-              />
-              <img
-                src="/api/placeholder/300/200"
-                alt="Primer local"
-                className="rounded-lg shadow-lg"
-              />
-              <img
-                src="/api/placeholder/300/200"
-                alt="Familia Nonino"
-                className="rounded-lg shadow-lg"
-              />
-              <img
-                src="/api/placeholder/300/400"
-                alt="Empanadas artesanales"
-                className="rounded-lg shadow-lg"
-              />
+              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
+                <span className="text-4xl">👨‍🍳</span>
+              </div>
+              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
+                <span className="text-4xl">🏪</span>
+              </div>
+              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
+                <span className="text-4xl">👨‍👩‍👧‍👦</span>
+              </div>
+              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
+                <span className="text-4xl">🥟</span>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -289,9 +281,9 @@ export function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: "Carlos Nonino", role: "Fundador y Chef Principal", image: "/api/placeholder/300/300" },
-              { name: "María Nonino", role: "Gerente General", image: "/api/placeholder/300/300" },
-              { name: "José Martínez", role: "Chef de Producción", image: "/api/placeholder/300/300" },
+              { name: "Carlos Nonino", role: "Fundador y Chef Principal", icon: "👨‍🍳" },
+              { name: "María Nonino", role: "Gerente General", icon: "👩‍💼" },
+              { name: "José Martínez", role: "Chef de Producción", icon: "👨‍🍳" },
             ].map((member, index) => (
               <motion.div
                 key={member.name}
@@ -302,11 +294,9 @@ export function AboutPage() {
               >
                 <Card className="text-center hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-                    />
+                    <div className="w-32 h-32 rounded-full mx-auto mb-4 bg-empanada-golden/10 flex items-center justify-center">
+                      <span className="text-6xl">{member.icon}</span>
+                    </div>
                     <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
                     <p className="text-empanada-golden font-medium">{member.role}</p>
                   </CardContent>

@@ -43,8 +43,8 @@ export function ProfilePage() {
   ];
 
   const mockFavorites = [
-    { id: 1, name: "Empanada de Carne", price: 450, image: "/api/placeholder/100/100" },
-    { id: 2, name: "Empanada de Pollo", price: 420, image: "/api/placeholder/100/100" },
+    { id: 1, name: "Empanada de Carne", price: 450, icon: "🥟" },
+    { id: 2, name: "Empanada de Pollo", price: 420, icon: "🥟" },
   ];
 
   const tabs = [
@@ -220,11 +220,9 @@ export function ProfilePage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {mockFavorites.map((item) => (
                         <div key={item.id} className="border rounded-lg p-4 flex items-center gap-4">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-16 h-16 object-cover rounded"
-                          />
+                          <div className="w-16 h-16 bg-empanada-golden/10 rounded flex items-center justify-center">
+                            <span className="text-2xl">{item.icon}</span>
+                          </div>
                           <div className="flex-1">
                             <h4 className="font-medium">{item.name}</h4>
                             <p className="text-empanada-golden font-bold">

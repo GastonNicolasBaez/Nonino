@@ -53,6 +53,19 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    /* Ocultar scrollbar del mouse */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+
+  /* Ocultar scrollbar en WebKit browsers (Chrome, Safari, Edge) */
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Ocultar scrollbar en todos los elementos */
+  *::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -108,6 +121,15 @@
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
 .shimmer {
   background: linear-gradient(
     90deg,
@@ -137,6 +159,14 @@
   animation: shiny-text 2s ease-in-out infinite;
 }
 
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce 2s infinite;
+}
+
 /* Glassmorphism utilities */
 .glass {
   backdrop-filter: blur(12px);
@@ -150,7 +180,15 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Scrollbar personalizado */
+/* Parallax effect utilities */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Custom scrollbar personalizado */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }

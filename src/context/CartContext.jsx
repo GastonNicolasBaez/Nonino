@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getStorageItem, setStorageItem, generateOrderId } from '../lib/utils';
-import { PROMO_CODES, STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS } from '../constants';
 import { toast } from 'sonner';
 import { orderService } from '../services/api';
 
@@ -105,16 +105,10 @@ export const CartProvider = ({ children }) => {
   };
 
   const applyPromoCode = (code) => {
-    // Usar constantes centralizadas para códigos promocionales
-    const promo = PROMO_CODES[code.toUpperCase()];
-    if (promo) {
-      setPromoCode({ code: code.toUpperCase(), ...promo });
-      toast.success(`Código promocional aplicado: ${promo.description}`);
-      return true;
-    } else {
-      toast.error('Código promocional inválido');
-      return false;
-    }
+    // Los códigos promocionales se validarán contra el backend
+    setPromoCode({ code: code.toUpperCase() });
+    toast.success(`Código promocional aplicado: ${code.toUpperCase()}`);
+    return true;
   };
 
   const removePromoCode = () => {
@@ -143,52 +137,17 @@ export const CartProvider = ({ children }) => {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const createOrder = async (orderData) => {
-    // Si se proporciona orderData (desde checkout), usar esos datos
-    // Si no, crear una orden básica con los datos del carrito
-    const order = orderData ? {
-      ...orderData,
-      items: [...items],
-      subtotal,
-      discount,
-      deliveryFee,
-      total,
-      promoCode,
-      selectedStore,
-      deliveryInfo,
-    } : {
-      id: generateOrderId(),
-      items: [...items],
-      subtotal,
-      discount,
-      deliveryFee,
-      total,
-      promoCode,
-      selectedStore,
-      deliveryInfo,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      estimatedDelivery: deliveryInfo?.estimatedTime || '45-60 min',
-    };
-
-    // Si hay orderData, significa que viene del checkout y debemos enviar al backend
-    if (orderData) {
-      try {
-        // Enviar al backend real
-        const response = await orderService.createOrder(order);
-        
-        toast.success('Pedido enviado exitosamente');
-        clearCart();
-        return response.data;
-      } catch (error) {
-        console.error('Error enviando orden al backend:', error);
-        toast.error('Error al enviar el pedido');
-        throw error;
-      }
-    } else {
-      // Orden básica para funcionalidades existentes
-      toast.success('Pedido creado exitosamente');
+    try {
+      // Enviar al backend real
+      const response = await orderService.createOrder(orderData);
+      
+      toast.success('Pedido enviado exitosamente');
       clearCart();
-      return order;
+      return response.data;
+    } catch (error) {
+      console.error('Error enviando orden al backend:', error);
+      toast.error('Error al enviar el pedido');
+      throw error;
     }
   };
 

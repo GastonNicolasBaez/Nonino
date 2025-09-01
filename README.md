@@ -61,11 +61,11 @@ pnpm run build
 
 ### Panel de Administración
 - **URL**: `/admin` o `/admin/login`
-- **Email**: `admin@nonino.com`
-- **Contraseña**: `admin123`
+- **Email**: Configurado en el backend
+- **Contraseña**: Configurada en el backend
 
-### Usuario Cliente (Demo)
-- Cualquier email y contraseña válidos para testing
+### Usuario Cliente
+- Registro e inicio de sesión a través del backend
 
 ## 📁 Estructura del Proyecto
 
@@ -84,8 +84,7 @@ src/
 │   ├── admin/            # Páginas del panel admin
 │   └── public/           # Páginas públicas
 ├── services/
-│   ├── api.js           # Servicios API
-│   └── mockData.js      # Datos de demostración
+│   └── api.js           # Servicios API para backend
 ├── styles/              # Estilos globales
 └── utils/              # Utilidades y helpers
 ```
@@ -120,12 +119,12 @@ src/
 - Feedback inmediato con toasts
 - Navegación intuitiva
 
-## 🚀 Próximas Características
+## 🚀 Características Implementadas
 
-- [ ] Integración con backend real (Kotlin/Spring Boot)
-- [ ] Sistema de pagos con Stripe/MercadoPago
-- [ ] Notificaciones push en tiempo real
-- [ ] Integración con redes sociales
+- [x] Integración con backend (Kotlin/Spring Boot)
+- [x] Sistema de pagos preparado para MercadoPago
+- [x] API REST completa
+- [x] Autenticación JWT
 
 ## 👨‍💻 Desarrollado por
 

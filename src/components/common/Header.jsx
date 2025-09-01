@@ -52,31 +52,14 @@ export function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           scrolled
-            ? "bg-white/95 backdrop-blur-md shadow-lg border-b"
-            : "bg-transparent"
+            ? "bg-white/20 backdrop-blur-sm"
+            : "bg-white/95 backdrop-blur-md shadow-lg border-b"
         )}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Top Bar */}
-        <div className="bg-empanada-golden text-white py-2 px-4 text-sm">
-          <div className="container mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                <span>Delivery en toda la ciudad</span>
-              </div>
-              <div className="hidden md:flex items-center gap-1">
-                <Phone className="w-4 h-4" />
-                <span>+54 11 1234-5678</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm">🚚 Envío gratis en pedidos +$3000</span>
-            </div>
-          </div>
-        </div>
+
 
         {/* Main Header */}
         <div className="container mx-auto px-4">
@@ -105,9 +88,7 @@ export function Header() {
                     "text-sm font-medium transition-colors hover:text-empanada-golden relative",
                     isActive(item.href)
                       ? "text-empanada-golden"
-                      : scrolled
-                        ? "text-gray-900"
-                        : "text-white"
+                      : "text-gray-900"
                   )}
                 >
                   {item.name}
@@ -131,7 +112,7 @@ export function Header() {
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={cn(
                   "relative",
-                  scrolled ? "text-gray-900 hover:text-empanada-golden" : "text-white hover:text-empanada-golden"
+                  "text-gray-900 hover:text-empanada-golden"
                 )}
               >
                 <Search className="w-5 h-5" />
@@ -143,7 +124,7 @@ export function Header() {
                 size="icon"
                 className={cn(
                   "relative",
-                  scrolled ? "text-gray-900 hover:text-empanada-golden" : "text-white hover:text-empanada-golden"
+                  "text-gray-900 hover:text-empanada-golden"
                 )}
               >
                 <Heart className="w-5 h-5" />
@@ -156,7 +137,7 @@ export function Header() {
                 onClick={() => setCartOpen(true)}
                 className={cn(
                   "relative",
-                  scrolled ? "text-gray-900 hover:text-empanada-golden" : "text-white hover:text-empanada-golden"
+                  "text-gray-900 hover:text-empanada-golden"
                 )}
               >
                 <ShoppingCart className="w-5 h-5" />
@@ -175,7 +156,7 @@ export function Header() {
                 <div className="flex items-center gap-2">
                   <span className={cn(
                     "text-sm hidden md:block",
-                    scrolled ? "text-gray-900" : "text-white"
+                    "text-gray-900"
                   )}>
                     Hola, {user.name.split(' ')[0]}
                   </span>
@@ -184,22 +165,29 @@ export function Header() {
                     size="icon"
                     onClick={logout}
                     className={cn(
-                      scrolled ? "text-gray-900 hover:text-empanada-golden" : "text-white hover:text-empanada-golden"
+                      "text-gray-900 hover:text-empanada-golden"
                     )}
                   >
                     <User className="w-5 h-5" />
                   </Button>
                 </div>
               ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    scrolled ? "text-gray-900 hover:text-empanada-golden" : "text-white hover:text-empanada-golden"
-                  )}
-                >
-                  <User className="w-5 h-5" />
-                </Button>
+                <div className="relative group">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "text-gray-900 hover:text-empanada-golden"
+                    )}
+                  >
+                    <User className="w-5 h-5" />
+                  </Button>
+                  {/* Tooltip hacia abajo */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                    Próximamente
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                  </div>
+                </div>
               )}
 
               {/* Mobile Menu Button */}
@@ -209,7 +197,7 @@ export function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   "lg:hidden",
-                  scrolled ? "text-gray-900 hover:text-empanada-golden" : "text-white hover:text-empanada-golden"
+                  "text-gray-900 hover:text-empanada-golden"
                 )}
               >
                 {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -292,7 +280,7 @@ export function Header() {
       </AnimatePresence>
 
       {/* Spacer */}
-      <div className="h-20" />
+      <div className="h-16" />
     </>
   );
 }

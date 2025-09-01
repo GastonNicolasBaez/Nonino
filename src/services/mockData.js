@@ -80,6 +80,7 @@ export const products = [
   // Tradicionales
   {
     id: 'emp-001',
+    sku: 'EMP-CARNE-001',
     name: 'Empanada de Carne',
     description: 'Carne picada, cebolla, huevo duro, aceitunas y condimentos',
     price: 450,
@@ -101,6 +102,7 @@ export const products = [
   },
   {
     id: 'emp-002',
+    sku: 'EMP-POLLO-002',
     name: 'Empanada de Pollo',
     description: 'Pollo desmenuzado, verduras y especias',
     price: 420,
@@ -122,6 +124,7 @@ export const products = [
   },
   {
     id: 'emp-003',
+    sku: 'EMP-JYQUE-003',
     name: 'Empanada de Jamón y Queso',
     description: 'Jamón cocido y queso mozzarella',
     price: 380,

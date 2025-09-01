@@ -204,14 +204,38 @@ export const storeService = {
 export const orderService = {
   async createOrder(orderData) {
     await simulateNetworkDelay(1000);
-    // En producción: return api.post('/orders', orderData);
     
+    // Formatear los datos para el backend según las especificaciones:
+    // - items: array con precio por unidad, sku y cantidad
+    // - currency: tipo de moneda
+    const backendOrderData = {
+      items: orderData.items.map(item => ({
+        sku: item.sku || item.id, // Usar sku si existe, sino el id del producto
+        quantity: item.quantity,
+        unitPrice: item.price,
+        name: item.name // Información adicional para el frontend
+      })),
+      currency: 'ARS', // Pesos argentinos
+      customerInfo: orderData.customerInfo,
+      deliveryType: orderData.deliveryType,
+      address: orderData.deliveryType === 'delivery' ? orderData.address : null,
+      paymentMethod: orderData.paymentMethod,
+      notes: orderData.notes,
+      subtotal: orderData.subtotal,
+      discount: orderData.discount,
+      deliveryFee: orderData.deliveryFee,
+      total: orderData.total
+    };
+    
+    // En producción: return api.post('/orders', backendOrderData);
+    
+    // Simulación para desarrollo
     const newOrder = {
       id: `EMP-${Date.now()}`,
-      ...orderData,
-      status: 'confirmed',
+      ...backendOrderData,
+      status: 'pending', // El backend manejará MercadoPago y cambiará el estado
       createdAt: new Date().toISOString(),
-      estimatedDelivery: '45-60 min',
+      estimatedDelivery: orderData.deliveryType === 'delivery' ? '45-60 min' : '15-20 min',
     };
     
     return { data: newOrder };

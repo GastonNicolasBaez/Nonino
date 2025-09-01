@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getStorageItem, setStorageItem, generateOrderId } from '../lib/utils';
 import { PROMO_CODES, STORAGE_KEYS } from '../constants';
 import { toast } from 'sonner';
+import { orderService } from '../services/api';
 
 const CartContext = createContext();
 
@@ -141,8 +142,20 @@ export const CartProvider = ({ children }) => {
   const total = subtotal - discount + deliveryFee;
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  const createOrder = async () => {
-    const order = {
+  const createOrder = async (orderData) => {
+    // Si se proporciona orderData (desde checkout), usar esos datos
+    // Si no, crear una orden básica con los datos del carrito
+    const order = orderData ? {
+      ...orderData,
+      items: [...items],
+      subtotal,
+      discount,
+      deliveryFee,
+      total,
+      promoCode,
+      selectedStore,
+      deliveryInfo,
+    } : {
       id: generateOrderId(),
       items: [...items],
       subtotal,
@@ -157,11 +170,26 @@ export const CartProvider = ({ children }) => {
       estimatedDelivery: deliveryInfo?.estimatedTime || '45-60 min',
     };
 
-    // Simular procesamiento del pedido
-    toast.success('Pedido creado exitosamente');
-    clearCart();
-    
-    return order;
+    // Si hay orderData, significa que viene del checkout y debemos enviar al backend
+    if (orderData) {
+      try {
+        // Enviar al backend real
+        const response = await orderService.createOrder(order);
+        
+        toast.success('Pedido enviado exitosamente');
+        clearCart();
+        return response.data;
+      } catch (error) {
+        console.error('Error enviando orden al backend:', error);
+        toast.error('Error al enviar el pedido');
+        throw error;
+      }
+    } else {
+      // Orden básica para funcionalidades existentes
+      toast.success('Pedido creado exitosamente');
+      clearCart();
+      return order;
+    }
   };
 
   const value = {

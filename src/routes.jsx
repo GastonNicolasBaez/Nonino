@@ -74,11 +74,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "checkout",
-        element: (
-          <ProtectedRoute>
-            <CheckoutPage />
-          </ProtectedRoute>
-        ),
+        element: <CheckoutPage />,
       },
       {
         path: "tracking/:orderId",

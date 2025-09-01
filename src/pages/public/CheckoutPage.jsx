@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 export function CheckoutPage() {
   const { items, total, subtotal, discount, deliveryFee, createOrder } = useCart();
-  const { user } = useAuth();
+  const { user } = useAuth(); // Opcional - si hay usuario, pre-llenar datos
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -40,15 +40,44 @@ export function CheckoutPage() {
     setLoading(true);
 
     try {
-      // Simular proceso de pago
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Validar datos requeridos
+      if (!orderData.customerInfo.name || !orderData.customerInfo.phone) {
+        toast.error("Por favor completa tu nombre y teléfono");
+        setLoading(false);
+        return;
+      }
+
+      if (orderData.deliveryType === "delivery") {
+        if (!orderData.address.street || !orderData.address.number) {
+          toast.error("Por favor completa la dirección de entrega");
+          setLoading(false);
+          return;
+        }
+      }
+
+      if (items.length === 0) {
+        toast.error("Tu carrito está vacío");
+        setLoading(false);
+        return;
+      }
+
+      // Crear la orden con toda la información
+      const order = await createOrder(orderData);
       
-      const order = await createOrder();
+      // Si el método de pago es MercadoPago, aquí el backend se encargará
+      // de generar el link de pago y redirigir al usuario
+      if (orderData.paymentMethod === "mercadopago") {
+        toast.success("¡Pedido creado! Serás redirigido al pago...");
+        // En producción, el backend retornará el link de MercadoPago
+        // window.location.href = order.paymentUrl;
+      } else {
+        toast.success("¡Pedido realizado exitosamente!");
+      }
       
-      toast.success("¡Pedido realizado exitosamente!");
       navigate(`/tracking/${order.id}`);
     } catch (error) {
-      toast.error("Error al procesar el pedido");
+      console.error("Error al procesar el pedido:", error);
+      toast.error("Error al procesar el pedido. Intenta nuevamente.");
     } finally {
       setLoading(false);
     }

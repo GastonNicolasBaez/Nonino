@@ -28,11 +28,19 @@ export function formatPrice(price) {
  * @returns {string} - Fecha formateada
  */
 export function formatDate(date) {
+  if (!date) return 'Fecha no disponible';
+  
+  const dateObj = new Date(date);
+  if (isNaN(dateObj.getTime())) {
+    console.warn('formatDate: Fecha inválida recibida:', date);
+    return 'Fecha inválida';
+  }
+  
   return new Intl.DateTimeFormat('es-AR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(new Date(date))
+  }).format(dateObj);
 }
 
 /**
@@ -41,13 +49,21 @@ export function formatDate(date) {
  * @returns {string} - Fecha y hora formateadas
  */
 export function formatDateTime(date) {
+  if (!date) return 'Fecha no disponible';
+  
+  const dateObj = new Date(date);
+  if (isNaN(dateObj.getTime())) {
+    console.warn('formatDateTime: Fecha inválida recibida:', date);
+    return 'Fecha inválida';
+  }
+  
   return new Intl.DateTimeFormat('es-AR', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(new Date(date))
+  }).format(dateObj);
 }
 
 /**

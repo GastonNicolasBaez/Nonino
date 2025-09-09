@@ -217,3 +217,8 @@
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: theme('colors.gray.500');
 }
+
+/* Color específico para admin en modo oscuro */
+.dark .bg-admin-dark {
+  background-color: #283038 !important;
+}

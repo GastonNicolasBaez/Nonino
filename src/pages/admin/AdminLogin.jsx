@@ -149,7 +149,7 @@ export function AdminLogin() {
         email: DEV_CREDENTIALS.admin.email,
         password: DEV_CREDENTIALS.admin.password
       });
-      toast.info("Credenciales de desarrollo cargadas");
+      // Credenciales de desarrollo cargadas automáticamente
     } else {
       toast.error("Esta función solo está disponible en desarrollo");
     }

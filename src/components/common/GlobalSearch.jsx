@@ -151,7 +151,7 @@ export function GlobalSearch() {
       <Button
         variant="ghost"
         onClick={openSearch}
-        className="flex items-center space-x-2 px-3 py-2 h-10 bg-[#363C47] dark:bg-[#363C47] hover:bg-[#2a2f3a] dark:hover:bg-[#2a2f3a] rounded-lg border-0 text-gray-300 dark:text-gray-300 min-w-[300px] justify-start"
+        className="flex items-center space-x-2 px-3 py-2 h-10 bg-input hover:bg-muted rounded-lg border-0 text-gray-300 dark:text-gray-300 min-w-[300px] justify-start"
       >
         <Search className="w-4 h-4" />
         <span className="text-sm">Buscar en el panel...</span>

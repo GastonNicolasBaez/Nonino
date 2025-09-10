@@ -154,7 +154,7 @@ export function AdminLayout() {
               <Avatar name={user?.name} size="md" />
             </div>
           ) : (
-            <Card className="p-4 bg-[#1a1f2e] dark:bg-[#1a1f2e]">
+            <Card className="p-4 ">
               <div className="flex items-center space-x-3 mb-3">
                 <Avatar name={user?.name} size="md" />
                 <div className="flex-1 min-w-0">
@@ -257,7 +257,7 @@ export function AdminLayout() {
 
         {/* User Info */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
-          <Card className="p-4 bg-[#1a1f2e] dark:bg-[#1a1f2e]">
+          <Card className="p-4 ">
             <div className="flex items-center space-x-3 mb-3">
               <Avatar name={user?.name} size="md" />
               <div className="flex-1 min-w-0">

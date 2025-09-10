@@ -113,7 +113,7 @@ export function SettingsPage() {
 
   const GeneralSettings = () => (
     <div className="space-y-6">
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Store className="w-5 h-5" />
@@ -149,7 +149,7 @@ export function SettingsPage() {
               <select
                 value={settings.general.currency}
                 onChange={(e) => updateSetting("general", "currency", e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
               >
                 <option value="ARS">Peso Argentino (ARS)</option>
                 <option value="USD">Dólar (USD)</option>
@@ -173,7 +173,7 @@ export function SettingsPage() {
               <select
                 value={settings.general.timezone}
                 onChange={(e) => updateSetting("general", "timezone", e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
               >
                 <option value="America/Argentina/Buenos_Aires">Buenos Aires (UTC-3)</option>
                 <option value="America/Argentina/Cordoba">Córdoba (UTC-3)</option>
@@ -198,7 +198,7 @@ export function SettingsPage() {
 
   const StoreSettings = () => (
     <div className="space-y-6">
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Store className="w-5 h-5" />
@@ -299,7 +299,7 @@ export function SettingsPage() {
 
   const NotificationSettings = () => (
     <div className="space-y-6">
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="w-5 h-5" />
@@ -404,7 +404,7 @@ export function SettingsPage() {
 
   const PaymentSettings = () => (
     <div className="space-y-6">
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CreditCard className="w-5 h-5" />
@@ -514,7 +514,7 @@ export function SettingsPage() {
 
   const SecuritySettings = () => (
     <div className="space-y-6">
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
@@ -597,7 +597,7 @@ export function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-red-500">
             <AlertTriangle className="w-5 h-5" />
@@ -652,7 +652,7 @@ export function SettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar de navegación */}
         <div className="lg:col-span-1">
-          <Card className="bg-[#28303D] dark:bg-[#28303D]">
+          <Card className="">
             <CardContent className="p-4">
               <nav className="space-y-2">
                 {tabs.map((tab) => (

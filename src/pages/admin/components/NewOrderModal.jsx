@@ -223,7 +223,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                       placeholder="Notas adicionales del pedido..."
-                      className="w-full h-32 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                      className="w-full h-32 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                     />
                   </CardContent>
                 </Card>
@@ -256,7 +256,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                      className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
                     >
                       <option value="">Todas las categorías</option>
                       {categories.map((category) => (

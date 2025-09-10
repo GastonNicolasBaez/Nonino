@@ -197,7 +197,7 @@ export function CustomerManagement() {
       </div>
 
       {/* Filtros */}
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardContent className="p-6">
           <div className="flex gap-4 items-center">
             <div className="flex-1 relative">
@@ -212,7 +212,7 @@ export function CustomerManagement() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               <option value="all">Todos los estados</option>
               <option value="active">Activos</option>
@@ -224,7 +224,7 @@ export function CustomerManagement() {
 
       {/* Resumen de Clientes */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -235,7 +235,7 @@ export function CustomerManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -248,7 +248,7 @@ export function CustomerManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -261,7 +261,7 @@ export function CustomerManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -277,7 +277,7 @@ export function CustomerManagement() {
       </div>
 
       {/* Tabla de Clientes */}
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="w-5 h-5" />
@@ -442,7 +442,7 @@ function CustomerDetailModal({ customer, onClose }) {
           exit={{ opacity: 0, scale: 0.9 }}
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
-          <Card className="shadow-2xl h-full flex flex-col bg-[#28303D] dark:bg-[#28303D]">
+          <Card className="shadow-2xl h-full flex flex-col ">
             {/* Header */}
             <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
@@ -463,7 +463,7 @@ function CustomerDetailModal({ customer, onClose }) {
             {/* Content */}
             <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
               {/* Información Personal */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <User className="w-5 h-5" />
@@ -505,7 +505,7 @@ function CustomerDetailModal({ customer, onClose }) {
               </Card>
 
               {/* Estadísticas de Pedidos */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <ShoppingBag className="w-5 h-5" />
@@ -539,7 +539,7 @@ function CustomerDetailModal({ customer, onClose }) {
               </Card>
 
               {/* Preferencias */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <Bell className="w-5 h-5" />
@@ -572,7 +572,7 @@ function CustomerDetailModal({ customer, onClose }) {
 
               {/* Notas */}
               {customer.notes && (
-                <Card className="bg-[#28303D] dark:bg-[#28303D]">
+                <Card className="">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white">Notas</CardTitle>
                   </CardHeader>
@@ -637,7 +637,7 @@ function NewCustomerModal({ onClose, onSave }) {
           exit={{ opacity: 0, scale: 0.9 }}
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
-          <Card className="shadow-2xl h-full flex flex-col bg-[#28303D] dark:bg-[#28303D]">
+          <Card className="shadow-2xl h-full flex flex-col ">
             {/* Header */}
             <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
@@ -658,7 +658,7 @@ function NewCustomerModal({ onClose, onSave }) {
             {/* Content */}
             <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
               {/* Información Básica */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <User className="w-5 h-5" />
@@ -714,7 +714,7 @@ function NewCustomerModal({ onClose, onSave }) {
               </Card>
 
               {/* Preferencias */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <Bell className="w-5 h-5" />
@@ -764,7 +764,7 @@ function NewCustomerModal({ onClose, onSave }) {
               </Card>
 
               {/* Notas */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="text-gray-900 dark:text-white">Notas Adicionales</CardTitle>
                 </CardHeader>
@@ -773,7 +773,7 @@ function NewCustomerModal({ onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el cliente..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card>
@@ -833,7 +833,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
           exit={{ opacity: 0, scale: 0.9 }}
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
-          <Card className="shadow-2xl h-full flex flex-col bg-[#28303D] dark:bg-[#28303D]">
+          <Card className="shadow-2xl h-full flex flex-col ">
             {/* Header */}
             <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
@@ -854,7 +854,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
             {/* Content */}
             <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
               {/* Información Básica */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <User className="w-5 h-5" />
@@ -921,7 +921,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
               </Card>
 
               {/* Preferencias */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <Bell className="w-5 h-5" />
@@ -971,7 +971,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
               </Card>
 
               {/* Notas */}
-              <Card className="bg-[#28303D] dark:bg-[#28303D]">
+              <Card className="">
                 <CardHeader>
                   <CardTitle className="text-gray-900 dark:text-white">Notas Adicionales</CardTitle>
                 </CardHeader>
@@ -980,7 +980,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el cliente..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card>

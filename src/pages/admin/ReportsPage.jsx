@@ -144,7 +144,7 @@ export function ReportsPage() {
     <div className="space-y-6">
       {/* Métricas principales */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -162,7 +162,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -177,7 +177,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -194,7 +194,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -211,7 +211,7 @@ export function ReportsPage() {
       </div>
 
       {/* Gráfico de ventas diarias */}
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <LineChart className="w-5 h-5" />
@@ -225,7 +225,7 @@ export function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top productos */}
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Star className="w-5 h-5" />
@@ -238,7 +238,7 @@ export function ReportsPage() {
         </Card>
 
         {/* Ventas por categoría */}
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <PieChart className="w-5 h-5" />
@@ -252,7 +252,7 @@ export function ReportsPage() {
       </div>
 
       {/* Ventas por horario */}
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5" />
@@ -270,7 +270,7 @@ export function ReportsPage() {
     <div className="space-y-6">
       {/* Métricas de clientes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -282,7 +282,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -295,7 +295,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -308,7 +308,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -324,7 +324,7 @@ export function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top clientes */}
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Star className="w-5 h-5" />
@@ -334,7 +334,7 @@ export function ReportsPage() {
           <CardContent>
             <div className="space-y-4">
               {customerData.topCustomers.map((customer, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-[#28303D] dark:bg-[#28303D] rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3  rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center text-white font-bold text-sm">
                       {customer.name.charAt(0)}
@@ -355,7 +355,7 @@ export function ReportsPage() {
         </Card>
 
         {/* Clientes por nivel */}
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <PieChart className="w-5 h-5" />
@@ -384,7 +384,7 @@ export function ReportsPage() {
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+            className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
           >
             <option value="today">Hoy</option>
             <option value="last7days">Últimos 7 días</option>
@@ -413,7 +413,7 @@ export function ReportsPage() {
       </div>
 
       {/* Tabs de reportes */}
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardContent className="p-6">
           <div className="flex flex-wrap gap-2">
             <Button
@@ -448,8 +448,8 @@ export function ReportsPage() {
       {loading ? (
         <div className="space-y-6">
           {[1, 2, 3, 4].map(i => (
-            <Card key={i} className="animate-pulse bg-[#28303D] dark:bg-[#28303D]">
-              <div className="bg-[#363C47] h-64 rounded-lg" />
+            <Card key={i} className="animate-pulse ">
+              <div className="bg-input h-64 rounded-lg" />
             </Card>
           ))}
         </div>

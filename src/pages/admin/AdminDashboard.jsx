@@ -196,7 +196,7 @@ export function AdminDashboard() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Stock bajo */}
-          <Card className="border-amber-200 bg-[#28303D] dark:bg-[#28303D] dark:border-amber-800">
+          <Card className="border-amber-200  dark:border-amber-800">
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center flex-shrink-0">
@@ -223,7 +223,7 @@ export function AdminDashboard() {
           </Card>
 
           {/* Pedidos pendientes */}
-          <Card className="border-blue-200 bg-[#28303D] dark:bg-[#28303D] dark:border-blue-800">
+          <Card className="border-blue-200  dark:border-blue-800">
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
@@ -263,7 +263,7 @@ export function AdminDashboard() {
             className="group"
           >
             <Card 
-              className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#28303D] dark:bg-[#28303D] cursor-pointer"
+              className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300  cursor-pointer"
               onClick={() => {
                 switch(stat.title) {
                   case 'Ventas Totales':
@@ -333,7 +333,7 @@ export function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <Card className="h-full bg-[#28303D] dark:bg-[#28303D]">
+            <Card className="h-full ">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
@@ -416,7 +416,7 @@ export function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
           >
-            <Card className="h-full bg-[#28303D] dark:bg-[#28303D]">
+            <Card className="h-full ">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
@@ -485,7 +485,7 @@ export function AdminDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0 }}
       >
-        <Card className="bg-[#28303D] dark:bg-[#28303D]">
+        <Card className="">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">

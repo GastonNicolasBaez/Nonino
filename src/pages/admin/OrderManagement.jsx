@@ -101,7 +101,7 @@ function OrderViewModal({ order, onClose }) {
           exit={{ scale: 0.95, opacity: 0 }}
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
-          <Card className="shadow-2xl h-full flex flex-col bg-[#28303D] dark:bg-[#28303D]">
+          <Card className="shadow-2xl h-full flex flex-col ">
             <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -348,7 +348,7 @@ export function OrderManagement() {
       </div>
 
       {/* Filtros */}
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardContent className="p-6">
           <div className="flex gap-4 items-center">
             <div className="flex-1 relative">
@@ -363,7 +363,7 @@ export function OrderManagement() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-[#363C47] dark:bg-[#363C47] text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               <option value="all">Todos los estados</option>
               <option value="pending">Pendiente</option>
@@ -387,7 +387,7 @@ export function OrderManagement() {
       </Card>
 
       {/* Lista de pedidos */}
-      <Card className="bg-[#28303D] dark:bg-[#28303D]">
+      <Card className="">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">

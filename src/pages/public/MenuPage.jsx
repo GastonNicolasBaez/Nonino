@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Filter, SlidersHorizontal, X } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { Card, CardContent } from "../../components/ui/card";
-import { TextAnimate } from "../../components/ui/text-animate";
-import { ProductCard } from "../../components/common/ProductCard";
-import { LoadingSpinner } from "../../components/common/LoadingSpinner";
-import { productService } from "../../services/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { TextAnimate } from "@/components/ui/text-animate";
+import { ProductCard } from "@/components/common/ProductCard";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { productService } from "@/services/api";
+import { catalogFetchAll } from "@/services/api2";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 // import { cn } from "../../lib/utils"; // No utilizado actualmente
 
 export function MenuPage() {
@@ -20,24 +22,17 @@ export function MenuPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [productsRes, categoriesRes] = await Promise.all([
-          productService.getAllProducts({ onlyAvailable: true }),
-          productService.getCategories(),
-        ]);
-        setProducts(productsRes.data);
-        setCategories(categoriesRes.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const queryClient = useQueryClient();
 
-    fetchData();
-  }, []);
+  const {data: catalog, isLoading, isError, error } = useQuery({
+    queryKey: ['catalog'],
+    queryFn: catalogFetchAll,
+  });
+
+  useEffect(() => {
+    setProducts(catalog);
+    setCategories(catalog.categories);
+  }, [catalog]);
 
   const filteredProducts = products
     .filter((product) => {

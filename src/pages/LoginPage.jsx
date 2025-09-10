@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { useAuth } from "../../context/AuthContext";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { toast } from "sonner";
+
+import { useSession } from "@/context/SessionProvider";
 
 export function LoginPage() {
   const [formData, setFormData] = useState({
@@ -15,10 +16,11 @@ export function LoginPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  
-  const { login } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
+
+  const session = useSession();
   
   const from = location.state?.from?.pathname || "/";
 
@@ -27,7 +29,7 @@ export function LoginPage() {
     setLoading(true);
 
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await session.login(formData.email, formData.password);
       if (result.success) {
         toast.success("¡Bienvenido!");
         navigate(from, { replace: true });

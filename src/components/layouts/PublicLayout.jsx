@@ -1,10 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import { Toaster } from "sonner";
-import { Header } from "../common/Header";
-import { Footer } from "../common/Footer";
-import { CartSidebar } from "../common/CartSidebar";
+import { Header } from "@/components/common/Header";
+import { Footer } from "@/components/common/Footer";
+import { CartSidebar } from "@/components/common/CartSidebar";
 
-export function Layout() {
+const PublicLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -21,5 +21,7 @@ export function Layout() {
         }}
       />
     </div>
-  );
+  )
 }
+
+export default PublicLayout

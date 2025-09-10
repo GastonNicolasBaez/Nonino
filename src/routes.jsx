@@ -1,5 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
-import { Layout } from "./components/layouts/Layout";
+import { PublicLayout } from "./components/layouts/PublicLayout";
 import { AdminLayout } from "./components/layouts/AdminLayout";
 
 // Páginas públicas
@@ -9,7 +8,7 @@ import { PromotionsPage } from "./pages/public/PromotionsPage";
 import { StoresPage } from "./pages/public/StoresPage";
 import { AboutPage } from "./pages/public/AboutPage";
 import { ContactPage } from "./pages/public/ContactPage";
-import { LoginPage } from "./pages/public/LoginPage";
+import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/public/RegisterPage";
 import { CartPage } from "./pages/public/CartPage";
 import { CheckoutPage } from "./pages/public/CheckoutPage";
@@ -34,7 +33,7 @@ export const router = createBrowserRouter([
   // Rutas públicas
   {
     path: "/",
-    element: <Layout />,
+    element: <PublicLayout />,
     children: [
       {
         index: true,

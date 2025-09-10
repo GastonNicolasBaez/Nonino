@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
@@ -17,7 +17,7 @@ import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
 import { useCart } from "../../context/CartContext";
-import { useAuth } from "../../context/AuthContext";
+import { useSession } from "@/context/SessionProvider";
 import { cn } from "../../lib/utils";
 
 export function Header() {
@@ -26,7 +26,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { itemCount, setIsOpen: setCartOpen } = useCart();
-  const { user, isAuthenticated, logout } = useAuth();
+  const session = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -158,18 +158,18 @@ export function Header() {
               </Button>
 
               {/* User */}
-              {isAuthenticated ? (
+              {session.isAuthenticated ? (
                 <div className="flex items-center gap-1 sm:gap-2">
                   <span className={cn(
                     "text-xs sm:text-sm hidden md:block font-medium",
                     "text-gray-900"
                   )}>
-                    Hola, {user.name.split(' ')[0]}
+                    Hola, {session.username.split(' ')[0]}
                   </span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={logout}
+                    onClick={session.logout}
                     className={cn(
                       "h-10 w-10 sm:h-11 sm:w-11",
                       "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
@@ -342,7 +342,7 @@ export function Header() {
                 </div>
 
                 {/* User Section */}
-                {isAuthenticated && (
+                {session.isAuthenticated && (
                   <div className="mt-6 pt-6 border-t border-gray-200">
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                       <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
@@ -350,7 +350,7 @@ export function Header() {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-900">
-                          Hola, {user.name.split(' ')[0]}
+                          Hola, {session.username.split(' ')[0]}
                         </p>
                         <p className="text-xs text-gray-500">Usuario registrado</p>
                       </div>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { motion } from "framer-motion";
 import { Plus, Minus, Trash2, ShoppingBag, ArrowLeft, Tag } from "lucide-react";
 import { Button } from "../../components/ui/button";

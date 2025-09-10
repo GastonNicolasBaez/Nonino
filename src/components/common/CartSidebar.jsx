@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useCart } from "../../context/CartContext";
 import { formatPrice } from "../../lib/utils";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export function CartSidebar() {
   const {

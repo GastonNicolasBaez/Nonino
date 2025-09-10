@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { 
   LineChart, 
   Line, 
@@ -15,10 +16,55 @@ import {
   Area
 } from 'recharts';
 
+// Hook reactivo para obtener el color del texto según el tema
+const useChartTextColor = () => {
+  const [textColor, setTextColor] = useState('#6b7280');
+
+  useEffect(() => {
+    const updateTextColor = () => {
+      // Obtener el color computado de la propiedad CSS
+      const computedColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--muted-foreground')
+        .trim();
+      
+      if (computedColor.startsWith('hsl(')) {
+        // Convertir HSL a hex para Recharts
+        const isDark = document.documentElement.classList.contains('dark');
+        setTextColor(isDark ? '#9ca3af' : '#6b7280');
+      } else {
+        setTextColor('#6b7280');
+      }
+    };
+
+    // Actualizar inmediatamente
+    updateTextColor();
+
+    // Observar cambios en la clase dark del documento
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          updateTextColor();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return textColor;
+};
+
 /**
  * Componente de gráfico de ventas semanales
  */
 export function SalesChart({ data }) {
+  const textColor = useChartTextColor();
+  
   const chartData = data || [
     { day: 'Lun', sales: 18500, orders: 67 },
     { day: 'Mar', sales: 22000, orders: 78 },
@@ -37,11 +83,11 @@ export function SalesChart({ data }) {
           <XAxis 
             dataKey="day" 
             className="text-xs"
-            tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 12, fill: textColor }}
           />
           <YAxis 
             className="text-xs"
-            tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 12, fill: textColor }}
             tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
           />
           <Tooltip 
@@ -75,6 +121,8 @@ export function SalesChart({ data }) {
  * Componente de gráfico de productos más vendidos
  */
 export function TopProductsChart({ data }) {
+  const textColor = useChartTextColor();
+  
   const chartData = data || [
     { name: 'Empanada de Carne', sales: 890, color: '#f59e0b' },
     { name: 'Empanada de Pollo', sales: 756, color: '#10b981' },
@@ -95,7 +143,7 @@ export function TopProductsChart({ data }) {
           <XAxis 
             type="number" 
             domain={[0, 'dataMax']}
-            tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 11, fill: textColor }}
             axisLine={false}
             tickLine={false}
           />
@@ -103,7 +151,7 @@ export function TopProductsChart({ data }) {
             dataKey="name" 
             type="category" 
             width={160}
-            tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 11, fill: textColor }}
             interval={0}
             axisLine={false}
             tickLine={false}
@@ -171,6 +219,8 @@ export function OrdersStatusChart({ data }) {
  * Componente de gráfico de tendencias de clientes
  */
 export function CustomerTrendsChart({ data }) {
+  const textColor = useChartTextColor();
+  
   const chartData = data || [
     { month: 'Ene', newCustomers: 12, totalCustomers: 120 },
     { month: 'Feb', newCustomers: 18, totalCustomers: 138 },
@@ -188,11 +238,11 @@ export function CustomerTrendsChart({ data }) {
           <XAxis 
             dataKey="month" 
             className="text-xs"
-            tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 12, fill: textColor }}
           />
           <YAxis 
             className="text-xs"
-            tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 12, fill: textColor }}
           />
           <Tooltip 
             contentStyle={{
@@ -233,6 +283,8 @@ export function CustomerTrendsChart({ data }) {
  * Componente de gráfico de ventas por horario
  */
 export function HourlySalesChart({ data }) {
+  const textColor = useChartTextColor();
+  
   const chartData = data || [
     { hour: '11:00', sales: 8500, orders: 30 },
     { hour: '12:00', sales: 15200, orders: 54 },
@@ -253,11 +305,11 @@ export function HourlySalesChart({ data }) {
           <XAxis 
             dataKey="hour" 
             className="text-xs"
-            tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 11, fill: textColor }}
           />
           <YAxis 
             className="text-xs"
-            tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
+            tick={{ fontSize: 11, fill: textColor }}
             tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
           />
           <Tooltip 

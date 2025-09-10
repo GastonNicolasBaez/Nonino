@@ -20,7 +20,7 @@ export function SimpleTopProductsChart({ data }) {
       {chartData.map((item, index) => (
         <div key={index} className="flex items-center gap-3">
           <div className="w-36 text-right">
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-sm font-medium text-foreground">
               {item.name}
             </span>
           </div>
@@ -101,7 +101,7 @@ export function SimpleCategorySalesChart({ data }) {
             }}
           />
           <div className="absolute inset-6 bg-background rounded-full flex items-center justify-center">
-            <span className="text-lg font-bold">100%</span>
+            <span className="text-lg font-bold text-foreground">100%</span>
           </div>
         </div>
         
@@ -169,7 +169,7 @@ export function SimpleCategorySalesChart({ data }) {
               className="w-3 h-3 rounded"
               style={{ backgroundColor: item.color }}
             />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-foreground">
               {item.name} ({item.value}%)
             </span>
           </div>
@@ -209,7 +209,7 @@ export function SimpleHourlySalesChart({ data }) {
                 </div>
               </div>
             </div>
-            <div className="mt-2 text-xs text-muted-foreground font-medium">
+            <div className="mt-2 text-xs text-foreground font-medium">
               {item.hour}
             </div>
           </div>
@@ -276,7 +276,7 @@ export function SimpleCustomerLevelChart({ data }) {
             }}
           />
           <div className="absolute inset-6 bg-background rounded-full flex items-center justify-center">
-            <span className="text-lg font-bold">Niveles</span>
+            <span className="text-lg font-bold text-foreground">Niveles</span>
           </div>
         </div>
         
@@ -344,7 +344,7 @@ export function SimpleCustomerLevelChart({ data }) {
               className="w-3 h-3 rounded"
               style={{ backgroundColor: item.color }}
             />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-foreground">
               {item.name} ({item.value}%)
             </span>
           </div>

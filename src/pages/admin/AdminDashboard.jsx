@@ -359,7 +359,7 @@ export function AdminDashboard() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.7 + index * 0.1 }}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg admin-table-row"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
@@ -381,19 +381,16 @@ export function AdminDashboard() {
                       <p className="font-semibold text-gray-900 dark:text-white">
                         {formatPrice(order.total)}
                       </p>
-                      <Badge 
-                        variant={order.status === "completed" ? "default" : 
-                               order.status === "preparing" ? "secondary" : "outline"}
-                        className={`text-xs ${
-                          order.status === "completed" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400" :
-                          order.status === "preparing" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" :
-                          "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400"
-                        }`}
-                      >
+                      <div className={`status-badge text-xs ${
+                        order.status === "completed" ? "status-badge-success" :
+                        order.status === "preparing" ? "status-badge-info" :
+                        order.status === "pending" ? "status-badge-warning" :
+                        "status-badge-info"
+                      }`}>
                         {order.status === "completed" ? "Completado" : 
                          order.status === "preparing" ? "Preparando" : 
                          order.status === "pending" ? "Pendiente" : order.status}
-                      </Badge>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
@@ -442,7 +439,7 @@ export function AdminDashboard() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.9 + index * 0.1 }}
-                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    className="flex items-center space-x-3 p-3 rounded-lg admin-table-row"
                   >
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-gradient-to-br from-empanada-golden to-empanada-crust rounded-lg flex items-center justify-center">

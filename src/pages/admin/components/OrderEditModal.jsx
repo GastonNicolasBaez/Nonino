@@ -285,7 +285,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       <select
                         value={formData.deliveryType}
                         onChange={(e) => handleInputChange('deliveryType', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
                       >
                         <option value="delivery">Delivery</option>
                         <option value="pickup">Retiro</option>
@@ -296,7 +296,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       <select
                         value={formData.paymentMethod}
                         onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
                       >
                         <option value="cash">Efectivo</option>
                         <option value="card">Tarjeta</option>
@@ -308,7 +308,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       <select
                         value={formData.status}
                         onChange={(e) => handleInputChange('status', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
                       >
                         <option value="pending">Pendiente</option>
                         <option value="preparing">Preparando</option>
@@ -325,7 +325,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       value={formData.notes}
                       onChange={(e) => handleInputChange('notes', e.target.value)}
                       placeholder="Notas adicionales del pedido..."
-                      className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                      className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                     />
                   </div>
                 </CardContent>

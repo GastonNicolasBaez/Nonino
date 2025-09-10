@@ -416,7 +416,7 @@ export function ProductManagement() {
                         value={formData.description}
                         onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                         placeholder="Descripción del producto..."
-                        className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                        className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                       />
                     </div>
                   </CardContent>
@@ -603,7 +603,7 @@ export function ProductManagement() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
@@ -645,20 +645,20 @@ export function ProductManagement() {
                   </div>
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     {product.isPopular && (
-                      <Badge variant="empanada" className="text-xs">
+                      <div className="status-badge status-badge-warning text-xs">
                         <Star className="w-3 h-3 mr-1" />
                         Popular
-                      </Badge>
+                      </div>
                     )}
                     {!product.isAvailable && (
-                      <Badge variant="destructive" className="text-xs">
+                      <div className="status-badge status-badge-danger text-xs">
                         No disponible
-                      </Badge>
+                      </div>
                     )}
                     {product.stock <= product.minStock && product.stock > 0 && (
-                      <Badge variant="warning" className="text-xs bg-yellow-500 text-white">
+                      <div className="status-badge status-badge-warning text-xs">
                         Stock bajo
-                      </Badge>
+                      </div>
                     )}
                   </div>
                   <div className="absolute top-2 right-2">

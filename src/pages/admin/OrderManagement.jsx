@@ -109,9 +109,15 @@ function OrderViewModal({ order, onClose }) {
                     Detalles del Pedido #{order.id}
                   </CardTitle>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge variant={getStatusVariant(order.status)}>
+                    <div className={`status-badge ${
+                      order.status === 'completed' || order.status === 'delivered' ? 'status-badge-success' :
+                      order.status === 'preparing' ? 'status-badge-info' :
+                      order.status === 'ready' ? 'status-badge-warning' :
+                      order.status === 'cancelled' ? 'status-badge-danger' :
+                      'status-badge-warning'
+                    }`}>
                       {getStatusLabel(order.status)}
-                    </Badge>
+                    </div>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
                       {formatDateTime(order.orderDate || order.date)}
                     </span>
@@ -363,7 +369,7 @@ export function OrderManagement() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               <option value="all">Todos los estados</option>
               <option value="pending">Pendiente</option>
@@ -406,7 +412,7 @@ export function OrderManagement() {
                 {filteredOrders.map((order) => (
                   <tr 
                     key={order.id}
-                    className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
+                    className="border-b admin-table-row"
                   >
                     <td className="p-4">
                       <span className="font-mono text-sm">{order.id}</span>

@@ -149,7 +149,7 @@ export function SettingsPage() {
               <select
                 value={settings.general.currency}
                 onChange={(e) => updateSetting("general", "currency", e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
               >
                 <option value="ARS">Peso Argentino (ARS)</option>
                 <option value="USD">Dólar (USD)</option>
@@ -173,7 +173,7 @@ export function SettingsPage() {
               <select
                 value={settings.general.timezone}
                 onChange={(e) => updateSetting("general", "timezone", e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
               >
                 <option value="America/Argentina/Buenos_Aires">Buenos Aires (UTC-3)</option>
                 <option value="America/Argentina/Cordoba">Córdoba (UTC-3)</option>
@@ -415,7 +415,7 @@ export function SettingsPage() {
           <div className="space-y-4">
             <h4 className="font-medium">Métodos Aceptados</h4>
             <div className="grid grid-cols-2 gap-4">
-              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
                 <span className="text-sm">Efectivo</span>
                 <input
                   type="checkbox"
@@ -423,7 +423,7 @@ export function SettingsPage() {
                   onChange={(e) => updateSetting("payment", "acceptCash", e.target.checked)}
                 />
               </label>
-              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
                 <span className="text-sm">Tarjetas</span>
                 <input
                   type="checkbox"
@@ -431,7 +431,7 @@ export function SettingsPage() {
                   onChange={(e) => updateSetting("payment", "acceptCard", e.target.checked)}
                 />
               </label>
-              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
                 <span className="text-sm">Transferencia</span>
                 <input
                   type="checkbox"
@@ -439,7 +439,7 @@ export function SettingsPage() {
                   onChange={(e) => updateSetting("payment", "acceptTransfer", e.target.checked)}
                 />
               </label>
-              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
                 <span className="text-sm">Mercado Pago</span>
                 <input
                   type="checkbox"
@@ -453,7 +453,7 @@ export function SettingsPage() {
           <div className="space-y-4">
             <h4 className="font-medium">Pasarelas de Pago</h4>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center text-white font-bold text-xs">
                     S
@@ -464,16 +464,16 @@ export function SettingsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={settings.payment.stripeEnabled ? "success" : "outline"}>
+                  <div className={`status-badge ${settings.payment.stripeEnabled ? 'status-badge-success' : 'status-badge-info'}`}>
                     {settings.payment.stripeEnabled ? "Activo" : "Inactivo"}
-                  </Badge>
+                  </div>
                   <Button variant="outline" size="sm">
                     Configurar
                   </Button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xs">
                     P
@@ -484,9 +484,9 @@ export function SettingsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={settings.payment.paypalEnabled ? "success" : "outline"}>
+                  <div className={`status-badge ${settings.payment.paypalEnabled ? 'status-badge-success' : 'status-badge-info'}`}>
                     {settings.payment.paypalEnabled ? "Activo" : "Inactivo"}
-                  </Badge>
+                  </div>
                   <Button variant="outline" size="sm">
                     Configurar
                   </Button>

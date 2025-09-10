@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { SalesChart, TopProductsChart, OrdersStatusChart, CustomerTrendsChart, CategorySalesChart, HourlySalesChart, CustomerLevelChart } from "../../components/charts/DashboardCharts";
+import { SimpleTopProductsChart, SimpleCategorySalesChart, SimpleHourlySalesChart, SimpleCustomerLevelChart } from "../../components/charts/SimpleCharts";
 import { formatPrice, formatDate } from "../../lib/utils";
 import { toast } from "sonner";
 
@@ -233,7 +234,7 @@ export function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <TopProductsChart data={salesData.topProducts} />
+            <SimpleTopProductsChart data={salesData.topProducts} />
           </CardContent>
         </Card>
 
@@ -246,7 +247,7 @@ export function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <CategorySalesChart data={salesData.salesByCategory} />
+            <SimpleCategorySalesChart data={salesData.salesByCategory} />
           </CardContent>
         </Card>
       </div>
@@ -260,7 +261,7 @@ export function ReportsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <HourlySalesChart data={salesData.salesByHour} />
+          <SimpleHourlySalesChart data={salesData.salesByHour} />
         </CardContent>
       </Card>
     </div>
@@ -363,7 +364,7 @@ export function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <CustomerLevelChart data={customerData.customersByLevel} />
+            <SimpleCustomerLevelChart data={customerData.customersByLevel} />
           </CardContent>
         </Card>
       </div>
@@ -384,7 +385,7 @@ export function ReportsPage() {
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+            className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
           >
             <option value="today">Hoy</option>
             <option value="last7days">Últimos 7 días</option>

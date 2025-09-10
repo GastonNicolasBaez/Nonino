@@ -212,7 +212,7 @@ export function CustomerManagement() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               <option value="all">Todos los estados</option>
               <option value="active">Activos</option>
@@ -312,7 +312,7 @@ export function CustomerManagement() {
                       key={customer.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
+                      className="border-b admin-table-row"
                     >
                       <td className="p-4">
                           <div>
@@ -346,9 +346,9 @@ export function CustomerManagement() {
                         <span className="font-medium">{formatPrice(customer.totalSpent)}</span>
                       </td>
                       <td className="p-4">
-                        <Badge variant={getStatusVariant(customer.status)}>
+                        <div className={`status-badge ${customer.status === 'active' ? 'status-badge-success' : 'status-badge-danger'}`}>
                           {getStatusText(customer.status)}
-                        </Badge>
+                        </div>
                       </td>
                       <td className="p-4">
                         <div className="flex gap-2">
@@ -496,9 +496,9 @@ function CustomerDetailModal({ customer, onClose }) {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
-                      <Badge variant={customer.status === 'active' ? 'success' : 'destructive'}>
+                      <div className={`status-badge ${customer.status === 'active' ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.status === 'active' ? 'Activo' : 'Inactivo'}
-                      </Badge>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -550,21 +550,21 @@ function CustomerDetailModal({ customer, onClose }) {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
                       <span className="text-gray-700 dark:text-gray-300">Notificaciones</span>
-                      <Badge variant={customer.preferences.notifications ? "success" : "destructive"}>
+                      <div className={`status-badge ${customer.preferences.notifications ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.preferences.notifications ? "Sí" : "No"}
-                      </Badge>
+                      </div>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
                       <span className="text-gray-700 dark:text-gray-300">Promociones</span>
-                      <Badge variant={customer.preferences.promotions ? "success" : "destructive"}>
+                      <div className={`status-badge ${customer.preferences.promotions ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.preferences.promotions ? "Sí" : "No"}
-                      </Badge>
+                      </div>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
                       <span className="text-gray-700 dark:text-gray-300">Newsletter</span>
-                      <Badge variant={customer.preferences.newsletter ? "success" : "destructive"}>
+                      <div className={`status-badge ${customer.preferences.newsletter ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.preferences.newsletter ? "Sí" : "No"}
-                      </Badge>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -773,7 +773,7 @@ function NewCustomerModal({ onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el cliente..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card>
@@ -980,7 +980,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el cliente..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card>

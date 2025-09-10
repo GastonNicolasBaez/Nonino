@@ -167,11 +167,12 @@ export function InventoryManagement() {
     setShowAddModal(true);
   };
 
-  const getStatusVariant = (status) => {
+  const getStatusClasses = (status) => {
     switch (status) {
-      case 'low': return 'destructive';
-      case 'good': return 'default';
-      default: return 'secondary';
+      case 'low': return 'status-badge status-badge-danger';
+      case 'good': return 'status-badge status-badge-success';
+      case 'warning': return 'status-badge status-badge-warning';
+      default: return 'status-badge status-badge-info';
     }
   };
 
@@ -179,7 +180,8 @@ export function InventoryManagement() {
     switch (status) {
       case 'low': return 'Stock Bajo';
       case 'good': return 'Stock Normal';
-      default: return 'Desconocido';
+      case 'warning': return 'Stock Crítico';
+      default: return 'Estado Desconocido';
     }
   };
 
@@ -221,7 +223,7 @@ export function InventoryManagement() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               <option value="all">Todas las categorías</option>
               <option value="Carnes">Carnes</option>
@@ -328,7 +330,7 @@ export function InventoryManagement() {
                       key={item.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
+                      className="border-b admin-table-row"
                     >
                       <td className="p-4">
                         <div>
@@ -356,9 +358,9 @@ export function InventoryManagement() {
                         <span className="text-sm text-muted-foreground">/{item.unit}</span>
                       </td>
                       <td className="p-4">
-                        <Badge variant={getStatusVariant(item.status)}>
+                        <div className={getStatusClasses(item.status)}>
                           {getStatusText(item.status)}
-                        </Badge>
+                        </div>
                       </td>
                       <td className="p-4">
                         <div className="flex gap-2">
@@ -600,7 +602,7 @@ function AddItemModal({ onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el item..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-input text-gray-300 dark:text-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card>

@@ -41,6 +41,7 @@ import { SettingsPage } from "@/pages/admin/SettingsPage";
 //import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 //import { AdminRoute } from "@/components/auth/AdminRoute";
 import { SessionProvider } from "@/context/SessionProvider";
+import { AdminLogin } from "./pages/admin/AdminLogin";
 
 // Crear cliente de React Query
 const queryClient = new QueryClient({
@@ -77,7 +78,7 @@ function App() {
                                 {/* INTRANET */}
                                 <Route path="/intranet" element={<Navigate to="/intranet/login" replace />} />
                                 <Route path="/intranet/*" element={<IntranetPortal />} >
-                                    <Route path="login" element={<LoginPage />} />
+                                    <Route path="login" element={<AdminLogin/>} />
 
                                     {/* ADMIN */}
                                     <Route path="admin"

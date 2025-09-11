@@ -21,8 +21,7 @@ import {
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Card } from "../ui/card";
-import { useTheme } from "../../context/ThemeContext";
-import { useAuth } from "../../context/AuthContext";
+import { useSession } from "@/context/SessionProvider";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
 import { GlobalSearch } from "../common/GlobalSearch";
 import { InlineSearch } from "../common/InlineSearch";
@@ -30,10 +29,11 @@ import { NotificationsDropdown } from "../common/NotificationsDropdown";
 import { Avatar } from "../ui/avatar";
 
 export function AdminLayout() {
+  const session = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { theme, toggleTheme, isDark } = useTheme();
-  const { user, logout } = useAuth();
+  // const { theme, toggleTheme, true } = useTheme();
+  // const { user, logout } = useAuth();
   const location = useLocation();
 
   // Persistir estado del sidebar en localStorage
@@ -151,18 +151,18 @@ export function AdminLayout() {
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           {sidebarCollapsed ? (
             <div className="flex flex-col items-center space-y-2">
-              <Avatar name={user?.name} size="md" />
+              <Avatar name={session.userData?.name} size="md" />
             </div>
           ) : (
             <Card className="p-4 ">
               <div className="flex items-center space-x-3 mb-3">
-                <Avatar name={user?.name} size="md" />
+                <Avatar name={session.userData?.name} size="md" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {user?.name}
+                    {session.userData?.name}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    {user?.email}
+                    {session.userData?.email}
                   </p>
                 </div>
               </div>
@@ -170,16 +170,16 @@ export function AdminLayout() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={toggleTheme}
+                  onClick={null}
                   className="flex-1"
                 >
-                  {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                  {isDark ? "Claro" : "Oscuro"}
+                  {true ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                  {true ? "Claro" : "Oscuro"}
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={logout}
+                  onClick={session.logout}
                   className="flex-1"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
@@ -259,13 +259,13 @@ export function AdminLayout() {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
           <Card className="p-4 ">
             <div className="flex items-center space-x-3 mb-3">
-              <Avatar name={user?.name} size="md" />
+              <Avatar name={session.userData?.name} size="md" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {user?.name}
+                  {session.userData?.name}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {user?.email}
+                  {session.userData?.email}
                 </p>
               </div>
             </div>
@@ -273,16 +273,16 @@ export function AdminLayout() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={toggleTheme}
+                onClick={null}
                 className="flex-1"
               >
-                {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                {isDark ? "Claro" : "Oscuro"}
+                {true ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                {true ? "Claro" : "Oscuro"}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={logout}
+                onClick={session.logout}
                 className="flex-1"
               >
                 <LogOut className="w-4 h-4 mr-2" />
@@ -328,21 +328,21 @@ export function AdminLayout() {
                 <NotificationsDropdown />
 
                 {/* Theme Toggle */}
-                <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                <Button variant="ghost" size="icon" onClick={null}>
+                  {true ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
 
                 {/* User Menu */}
                 <div className="flex items-center space-x-3">
                   <div className="text-right hidden sm:block">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {user?.name}
+                      {session.userData?.name}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Administrador
                     </p>
                   </div>
-                  <Avatar name={user?.name} size="sm" />
+                  <Avatar name={session.userData?.name} size="sm" />
                 </div>
               </div>
             </div>

@@ -25,52 +25,52 @@ export const SessionProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 
-    useEffect(() => {
-        const fetchUserData = async () => {
+    // useEffect(() => {
+    //     const fetchUserData = async () => {
 
-            setLoading(true);
+    //         setLoading(true);
 
-            if (accessToken) {
-                localStorage.setItem("accessToken", accessToken);
+    //         if (accessToken) {
+    //             localStorage.setItem("accessToken", accessToken);
 
-                const llamada = callLoginUserData;
-                const doSuccess = (data) => {
-                    setUserData(data);
-                }
-                const doFailure = (errmsg) => {
-                    //toast.error("Falló la operación: " + errmsg);
-                }
-                const doBadToken = (errmsg) => {
-                    //toast.error("Falla al refrescar token: " + errmsg);
-                    logout();
-                }
+    //             const llamada = callLoginUserData;
+    //             const doSuccess = (data) => {
+    //                 setUserData(data);
+    //             }
+    //             const doFailure = (errmsg) => {
+    //                 //toast.error("Falló la operación: " + errmsg);
+    //             }
+    //             const doBadToken = (errmsg) => {
+    //                 //toast.error("Falla al refrescar token: " + errmsg);
+    //                 logout();
+    //             }
 
-                // DISPARAR PRIMERA LLAMADA
-                const result = await llamada(accessToken);
-                if (result.success) {
-                    // EXITO LLAMADA
-                    doSuccess(result.data);
-                } else if (result.error.status === 401) {
-                    const response = await callRefreshToken();
-                    if (response.success) {
-                        await setAccessToken(response.data.accessToken);
-                    } else {
-                        // MSG ERROR TOKEN
-                        doBadToken(result.error.message);
-                    }
-                } else {
-                    // MSG ERROR GENERAL
-                    doFailure(result.error.message);
-                }
-            } else {
-                localStorage.removeItem("accessToken");
-                setUserData(null);
-            }
-            setLoading(false);
-        };
-        fetchUserData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [accessToken]);
+    //             // DISPARAR PRIMERA LLAMADA
+    //             const result = await llamada(accessToken);
+    //             if (result.success) {
+    //                 // EXITO LLAMADA
+    //                 doSuccess(result.data);
+    //             } else if (result.error.status === 401) {
+    //                 const response = await callRefreshToken();
+    //                 if (response.success) {
+    //                     await setAccessToken(response.data.accessToken);
+    //                 } else {
+    //                     // MSG ERROR TOKEN
+    //                     doBadToken(result.error.message);
+    //                 }
+    //             } else {
+    //                 // MSG ERROR GENERAL
+    //                 doFailure(result.error.message);
+    //             }
+    //         } else {
+    //             localStorage.removeItem("accessToken");
+    //             setUserData(null);
+    //         }
+    //         setLoading(false);
+    //     };
+    //     fetchUserData();
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [accessToken]);
 
     const login = (data) => {
         setAccessToken(data.accessToken);

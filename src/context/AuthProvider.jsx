@@ -1,3 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useSession } from "@/context/SessionProvider";
 import { Navigate } from "react-router";
 import Loading from "@/components/common/Loading";

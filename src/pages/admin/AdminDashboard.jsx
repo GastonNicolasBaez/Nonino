@@ -26,6 +26,8 @@ import { mockDashboardData } from "../../lib/mockData";
 import { formatPrice, formatDateTime } from "../../lib/utils";
 import { SalesChart, TopProductsChart, OrdersStatusChart, CustomerTrendsChart } from "../../components/charts/DashboardCharts";
 
+
+
 export function AdminDashboard() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { Link } from "react-router";
 

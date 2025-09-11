@@ -28,11 +28,13 @@ import { InlineSearch } from "../common/InlineSearch";
 import { NotificationsDropdown } from "../common/NotificationsDropdown";
 import { Avatar } from "../ui/avatar";
 
-export function AdminLayout() {
+import { useTheme } from "@/context/ThemeProvider";
+
+const AdminLayout = () => {
   const session = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  // const { theme, toggleTheme, true } = useTheme();
+  const { theme, toggleTheme, isDark } = useTheme();
   // const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -50,13 +52,13 @@ export function AdminLayout() {
   };
 
   const navigationItems = [
-    { name: "Dashboard", href: "/admin", icon: Home },
-    { name: "Pedidos", href: "/admin/pedidos", icon: ShoppingCart },
-    { name: "Productos", href: "/admin/productos", icon: Package },
-    { name: "Inventario", href: "/admin/inventario", icon: Archive },
-    { name: "Clientes", href: "/admin/clientes", icon: Users },
-    { name: "Reportes", href: "/admin/reportes", icon: BarChart3 },
-    { name: "Configuración", href: "/admin/configuracion", icon: Settings },
+    { name: "Dashboard", href: "/intranet/admin", icon: Home },
+    { name: "Pedidos", href: "pedidos", icon: ShoppingCart },
+    { name: "Productos", href: "productos", icon: Package },
+    { name: "Inventario", href: "inventario", icon: Archive },
+    { name: "Clientes", href: "clientes", icon: Users },
+    { name: "Reportes", href: "reportes", icon: BarChart3 },
+    { name: "Configuración", href: "configuracion", icon: Settings },
   ];
 
   const isActive = (href) => {
@@ -170,11 +172,11 @@ export function AdminLayout() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={null}
+                  onClick={toggleTheme}
                   className="flex-1"
                 >
-                  {true ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                  {true ? "Claro" : "Oscuro"}
+                  {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                  {isDark ? "Claro" : "Oscuro"}
                 </Button>
                 <Button
                   variant="ghost"
@@ -273,11 +275,11 @@ export function AdminLayout() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={null}
+                onClick={toggleTheme}
                 className="flex-1"
               >
-                {true ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                {true ? "Claro" : "Oscuro"}
+                {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                {isDark ? "Claro" : "Oscuro"}
               </Button>
               <Button
                 variant="ghost"
@@ -328,8 +330,8 @@ export function AdminLayout() {
                 <NotificationsDropdown />
 
                 {/* Theme Toggle */}
-                <Button variant="ghost" size="icon" onClick={null}>
-                  {true ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                <Button variant="ghost" size="icon" onClick={toggleTheme}>
+                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
 
                 {/* User Menu */}
@@ -363,3 +365,5 @@ export function AdminLayout() {
     </div>
   );
 }
+
+export default AdminLayout

@@ -1,47 +1,48 @@
 // fucking GIT
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { CartProvider } from "@/context/CartContext";
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
+// PROVIDERS
 import { Provider as ChakraProvider } from "@/components/ui/provider"
-
-import PublicLayout from "@/components/layouts/PublicLayout";
-import { AdminLayout } from "@/components/layouts/AdminLayout";
-import IntranetPortal from "@/context/IntranetPortal";
 import AuthProvider from "@/context/AuthProvider";
+import { ThemeProvider } from "@/context/ThemeProvider";
+import { SessionProvider } from "@/context/SessionProvider";
 
-// Páginas universales
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { CartProvider } from "@/context/CartProvider";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
+
+// LAYOUTS
+import PublicLayout from "@/components/layouts/PublicLayout";
+import AdminLayout from "@/components/layouts/AdminLayout";
+
+// GATES
+import IntranetPortal from "@/context/IntranetPortal";
+
+// UNIVERSALES
 import NotFound from "@/pages/NotFound";
 
-// Páginas públicas
+// PUBLICS
 import { HomePage } from "@/pages/public/HomePage";
 import { MenuPage } from "@/pages/public/MenuPage";
 import { PromotionsPage } from "@/pages/public/PromotionsPage";
 import { StoresPage } from "@/pages/public/StoresPage";
 import { AboutPage } from "@/pages/public/AboutPage";
 import { ContactPage } from "@/pages/public/ContactPage";
-import { LoginPage } from "@/pages/LoginPage";
+//import { LoginPage } from "@/pages/LoginPage";
 //import { RegisterPage } from "@/pages/public/RegisterPage";
 import { CartPage } from "@/pages/public/CartPage";
 import { CheckoutPage } from "@/pages/public/CheckoutPage";
 import { OrderTrackingPage } from "@/pages/public/OrderTrackingPage";
 //import { ProfilePage } from "@/pages/public/ProfilePage";
 
-// Páginas de administración
+// ADMINS
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
-//import { AdminLogin } from "@/pages/admin/AdminLogin";
+import { AdminLogin } from "@/pages/admin/AdminLogin";
 import { OrderManagement } from "@/pages/admin/OrderManagement";
 import { ProductManagement } from "@/pages/admin/ProductManagement";
 import { InventoryManagement } from "@/pages/admin/InventoryManagement";
 import { CustomerManagement } from "@/pages/admin/CustomerManagement";
 import { ReportsPage } from "@/pages/admin/ReportsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
-
-// Componentes de protección
-//import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-//import { AdminRoute } from "@/components/auth/AdminRoute";
-import { SessionProvider } from "@/context/SessionProvider";
-import { AdminLogin } from "./pages/admin/AdminLogin";
 
 // Crear cliente de React Query
 const queryClient = new QueryClient({
@@ -78,13 +79,15 @@ function App() {
                                 {/* INTRANET */}
                                 <Route path="/intranet" element={<Navigate to="/intranet/login" replace />} />
                                 <Route path="/intranet/*" element={<IntranetPortal />} >
-                                    <Route path="login" element={<AdminLogin/>} />
+                                    <Route path="login" element={<AdminLogin />} />
 
                                     {/* ADMIN */}
                                     <Route path="admin"
                                         element={
                                             <AuthProvider allowedRole={'ADMIN'}>
-                                                <AdminLayout />
+                                                <ThemeProvider>
+                                                    <AdminLayout />
+                                                </ThemeProvider>
                                             </AuthProvider>
                                         }
                                     >

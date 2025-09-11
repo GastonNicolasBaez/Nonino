@@ -1,3 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getStorageItem, setStorageItem } from '../lib/utils';
 import { STORAGE_KEYS } from '../constants';

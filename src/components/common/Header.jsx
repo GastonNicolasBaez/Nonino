@@ -16,7 +16,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/CartProvider";
 import { useSession } from "@/context/SessionProvider";
 import { cn } from "../../lib/utils";
 

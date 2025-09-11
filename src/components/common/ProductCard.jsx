@@ -4,7 +4,7 @@ import { Heart, Plus, Star, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
 

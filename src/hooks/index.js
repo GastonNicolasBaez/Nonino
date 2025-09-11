@@ -4,6 +4,6 @@
  */
 
 export { useAuth } from '../context/AuthContext';
-export { useCart } from '../context/CartContext';
-export { useTheme } from '../context/ThemeContext';
+export { useCart } from '../context/CartProvider';
+export { useTheme } from '../context/ThemeProvider';
 export { useLoading } from './useLoading';

@@ -1,4 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { createContext, useState, useContext, useEffect } from "react";
 //import { toast } from "react-toastify";
 

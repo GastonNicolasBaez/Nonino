@@ -1,13 +1,19 @@
+// eslint-disable react-hooks/exhaustive-deps
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff, Mail, Lock, Shield, Info, AlertTriangle } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { validateEmail } from "../../lib/utils";
-import { DEV_CREDENTIALS, DEV_CONFIG, SECURITY_CONFIG, ERROR_MESSAGES } from "../../config/constants";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { validateEmail } from "@/lib/utils";
+import { DEV_CREDENTIALS, DEV_CONFIG, SECURITY_CONFIG, ERROR_MESSAGES } from "@/config/constants";
 import { toast } from "sonner";
 import { useSession } from "@/context/SessionProvider";
+
+import { useQuery } from "@tanstack/react-query";
+import { getLoginQuery } from "@/config/api";
+
 /**
  * Componente de login para administradores
  * Proporciona acceso seguro al panel de administración con validaciones robustas
@@ -20,77 +26,100 @@ import { useSession } from "@/context/SessionProvider";
  */
 export function AdminLogin() {
 
-  const session = useSession();
+    const session = useSession();
 
-  const [formData, setFormData] = useState({
-    email: "admin@noninoempanadas.com",
-    password: "admin123"
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [attempts, setAttempts] = useState(0);
+    const [formData, setFormData] = useState({
+        email: "admin@noninoempanadas.com",
+        password: "admin123"
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [attempts, setAttempts] = useState(0);
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  // Redirigir si ya está autenticado como admin
-  // useEffect(() => {
-  //   if (isAuthenticated && isAdmin) {
-  //     navigate('/admin');
-  //   }
-  // }, [isAuthenticated, isAdmin, navigate]);
+    // Redirigir si ya está autenticado como admin
+    useEffect(() => {
+        if (session.isAuthenticated && session.isAdmin) {
+            navigate('/admin');
+        }
+    }, [session.isAuthenticated, session.isAdmin]);
 
 
-  // Limpiar errores cuando cambian los campos
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      setErrors({});
+    // Limpiar errores cuando cambian los campos
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            setErrors({});
+        }
+    }, [formData, errors]);
+
+    /**
+     * Valida los campos del formulario
+     * @returns {Object} - Objeto con errores de validación
+     */
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.email.trim()) {
+            newErrors.email = 'El email es requerido';
+        } else if (!validateEmail(formData.email)) {
+            newErrors.email = 'Formato de email inválido';
+        }
+
+        if (!formData.password.trim()) {
+            newErrors.password = 'La contraseña es requerida';
+        } else if (formData.password.length < SECURITY_CONFIG.passwordMinLength) {
+            newErrors.password = `La contraseña debe tener al menos ${SECURITY_CONFIG.passwordMinLength} caracteres`;
+        }
+
+        // Bloquear después de múltiples intentos fallidos
+        if (attempts >= SECURITY_CONFIG.maxLoginAttempts) {
+            newErrors.general = ERROR_MESSAGES.unknown; // Usar mensaje genérico para no revelar límite
+        }
+
+        return newErrors;
+    };
+
+    const { data: loginData, isFetching: loading, refetch: callLogin } = useQuery(getLoginQuery(formData.email, formData.password));
+
+    /**
+     * Maneja el envío del formulario de login
+     * @param {Event} e - Evento del formulario
+     */
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Validar formulario
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setErrors({});
+
+        callLogin();
     }
-  }, [formData, errors]);
 
-  /**
-   * Valida los campos del formulario
-   * @returns {Object} - Objeto con errores de validación
-   */
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'El email es requerido';
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Formato de email inválido';
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (formData.password.length < SECURITY_CONFIG.passwordMinLength) {
-      newErrors.password = `La contraseña debe tener al menos ${SECURITY_CONFIG.passwordMinLength} caracteres`;
-    }
-
-    // Bloquear después de múltiples intentos fallidos
-    if (attempts >= SECURITY_CONFIG.maxLoginAttempts) {
-      newErrors.general = ERROR_MESSAGES.unknown; // Usar mensaje genérico para no revelar límite
-    }
-
-    return newErrors;
-  };
-
-  /**
-   * Maneja el envío del formulario de login
-   * @param {Event} e - Evento del formulario
-   */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validar formulario
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setLoading(true);
-    setErrors({});
+    useEffect(() => {
+        console.log(loginData);
+        // if (session.accessToken && session.userData) {
+        //     // You can redirect based on role if needed
+        //     switch (session.userData.role) {
+        //         case 'ADMIN':
+        //             navigate('/intranet/admin', { replace: true });
+        //             break;
+        //         case 'MODERATOR':
+        //             navigate('/intranet/moderator', { replace: true });
+        //             break;
+        //         case 'USER':
+        //             navigate('/intranet/user', { replace: true });
+        //             break;
+        //         default:
+        //             navigate('/intranet', { replace: true });
+        //     }
+        // }
+    }, [loginData]);
 
     const user = {"id":1,"username":"Martin","email":"admin@noninoempanadas.com","role":"ADMIN","accessToken":"fake"};
     session.login(user);
@@ -103,66 +132,53 @@ export function AdminLogin() {
     // try {
     //   const result = await login(formData.email.trim(), formData.password);
 
-    //   if (result.success) {
-    //     if (result.user.role === 'admin') {
-    //       toast.success("¡Bienvenido al panel de administración!");
-    //       navigate("/admin");
-    //       setAttempts(0); // Resetear intentos en login exitoso
-    //     } else {
-    //       toast.error("No tienes permisos de administrador");
-    //       setAttempts(prev => prev + 1);
-    //     }
-    //   } else {
-    //     setErrors({ general: result.error });
-    //     setAttempts(prev => prev + 1);
-    //     toast.error(result.error);
-    //   }
-    // } catch (error) {
-    //   console.error('Error en login de admin:', error);
-    //   const errorMessage = 'Error interno del sistema';
-    //   setErrors({ general: errorMessage });
-    //   toast.error(errorMessage);
-    //   setAttempts(prev => prev + 1);
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
+    //     // try {
+    //     //   const result = await login(formData.email.trim(), formData.password);
 
-  /**
-   * Maneja los cambios en los campos del formulario
-   * @param {Event} e - Evento del input
-   */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    //     //   if (result.success) {
+    //     //     if (result.user.role === 'admin') {
+    //     //       toast.success("¡Bienvenido al panel de administración!");
+    //     //       navigate("/admin");
+    //     //       setAttempts(0); // Resetear intentos en login exitoso
+    //     //     } else {
+    //     //       toast.error("No tienes permisos de administrador");
+    //     //       setAttempts(prev => prev + 1);
+    //     //     }
+    //     //   } else {
+    //     //     setErrors({ general: result.error });
+    //     //     setAttempts(prev => prev + 1);
+    //     //     toast.error(result.error);
+    //     //   }
+    //     // } catch (error) {
+    //     //   console.error('Error en login de admin:', error);
+    //     //   const errorMessage = 'Error interno del sistema';
+    //     //   setErrors({ general: errorMessage });
+    //     //   toast.error(errorMessage);
+    //     //   setAttempts(prev => prev + 1);
+    //     // } finally {
+    //     //   setLoading(false);
+    //     // }
+    //   };
 
-    // Limpiar error específico del campo
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
-  };
+    /**
+     * Maneja los cambios en los campos del formulario
+     * @param {Event} e - Evento del input
+     */
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
 
-  /**
-   * Llena el formulario con credenciales de desarrollo (solo en desarrollo)
-   * @returns {void}
-   */
-  const fillDefaultCredentials = () => {
-    if (import.meta.env.DEV && DEV_CONFIG.enableDevMode) {
-      setFormData({
-        email: DEV_CREDENTIALS.admin.email,
-        password: DEV_CREDENTIALS.admin.password
-      });
-      // Credenciales de desarrollo cargadas automáticamente
-    } else {
-      toast.error("Esta función solo está disponible en desarrollo");
-    }
-  };
+        // Limpiar error específico del campo
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: undefined
+            }));
+        }
+    };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-empanada-dark flex items-center justify-center p-4">
@@ -294,24 +310,46 @@ export function AdminLogin() {
                 )}
               </div>
 
-              <Button
-                type="submit"
-                variant="empanada"
-                className="w-full py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={loading || attempts >= 3}
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Iniciando sesión...
-                  </div>
-                ) : attempts >= 3 ? (
-                  "Bloqueado temporalmente"
-                ) : (
-                  "Acceder al Panel"
-                )}
-              </Button>
-            </form>
+                        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                            <div>
+                                <label
+                                    htmlFor="admin-email"
+                                    className="block text-sm font-medium mb-2 text-gray-700"
+                                >
+                                    Email de Administrador *
+                                </label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <Input
+                                        id="admin-email"
+                                        name="email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="admin@noninoempanadas.com"
+                                        className={`pl-10 pr-4 py-3 border-2 transition-colors ${errors.email
+                                            ? 'border-red-300 focus:border-red-500'
+                                            : 'border-gray-300 focus:border-empanada-golden'
+                                            }`}
+                                        aria-invalid={!!errors.email}
+                                        aria-describedby={errors.email ? "email-error" : undefined}
+                                        autoComplete="email"
+                                    />
+                                </div>
+                                {errors.email && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-600 flex items-center gap-1"
+                                        id="email-error"
+                                        role="alert"
+                                    >
+                                        <AlertTriangle className="w-4 h-4" />
+                                        {errors.email}
+                                    </motion.p>
+                                )}
+                            </div>
 
             {/* Back to site */}
             <div className="mt-6 text-center">

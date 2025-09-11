@@ -12,11 +12,6 @@ const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
 
-    const { callLoginUserData } = useApiLoginUserData();
-    const { callRefreshToken } = useApiRefreshToken();
-
-    const [loading, setLoading] = useState(false);
-
     const [accessToken, setAccessToken] = useState(() => {
         const storedAccessToken = localStorage.getItem("accessToken");
         return storedAccessToken ? storedAccessToken : null;
@@ -33,6 +28,10 @@ export const SessionProvider = ({ children }) => {
         return hasToken ? true : false;
     });
 
+    useEffect(() => {
+        if (userData)
+            setIsAdmin(userData.role === 'ADMIN');
+    }, [userData]);
 
 
     // useEffect(() => {
@@ -110,7 +109,17 @@ export const SessionProvider = ({ children }) => {
 
     
     return (
-        <SessionContext.Provider value={{ accessToken, setAccessToken, userData, setUserData, isAuthenticated, loading, login, logout,  }}>
+        <SessionContext.Provider value={{
+            accessToken,
+            setAccessToken,
+            userData,
+            setUserData,
+            isAuthenticated,
+            isAdmin,
+            login,
+            logout,
+        }}
+        >
             {children}
         </SessionContext.Provider>
     );

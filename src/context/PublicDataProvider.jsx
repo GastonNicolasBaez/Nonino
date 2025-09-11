@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState, useContext, createContext } from 'react'
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { getPublicDataQuery } from '@/config/api';
 
 const PublicDataContext = createContext();
 
@@ -12,10 +12,7 @@ export const PublicDataProvider = ({ children }) => {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
 
-    const { data: publicCatalog, isPending } = useQuery({
-        queryKey: ['publicData'],
-        queryFn: getPublicData
-    })
+    const { data: publicCatalog, isPending } = useQuery(getPublicDataQuery(1));
 
     useEffect(() => {
         if (publicCatalog && !isPending) {
@@ -64,9 +61,4 @@ export const PublicDataProvider = ({ children }) => {
 
 export const usePublicData = () => {
     return useContext(PublicDataContext);
-}
-
-const getPublicData = async () => {
-    const response = await axios.get(`https://nonino-catalog.fly.dev/public/catalog/stores/1/menu`);
-    return await response.data;
 }

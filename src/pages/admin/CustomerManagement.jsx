@@ -2,203 +2,124 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Search, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Eye, 
+  Download,
   Filter,
-  Users, 
-  UserPlus,
+  X,
+  Save,
+  User,
   Mail,
   Phone,
   MapPin,
+  Calendar,
   Star,
   ShoppingBag,
-  Calendar,
-  TrendingUp,
-  UserX,
-  Edit,
-  MoreVertical,
-  Eye,
-  Download,
-  RefreshCcw
+  CreditCard,
+  Bell,
+  BellOff
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
-import { formatPrice, formatDate } from "../../lib/utils";
+import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
+import { useConfirmModal } from "../../components/common/ConfirmModal";
+import { Portal } from "../../components/common/Portal";
 
 export function CustomerManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  // Mock customer data
+  // Hook para modal de confirmación
+  const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
+
+  // Cargar datos mock al inicializar
+  useEffect(() => {
+    setCustomers(mockCustomers);
+    setLoading(false);
+  }, []);
+
+  // Cerrar modales con ESC
+  useEffect(() => {
+    const handleEscKey = (e) => {
+      if (e.key === 'Escape') {
+        if (showAddModal) setShowAddModal(false);
+        if (showEditModal) setShowEditModal(false);
+        if (showDetailModal) setShowDetailModal(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => document.removeEventListener('keydown', handleEscKey);
+  }, [showAddModal, showEditModal, showDetailModal]);
+
+  // Mock data para clientes
   const mockCustomers = [
     {
-      id: "cust-001",
-      name: "Juan Carlos Pérez",
-      email: "juan.perez@email.com",
+      id: "CUST-001",
+      name: "María González",
+      email: "maria.gonzalez@email.com",
       phone: "+54 11 1234-5678",
-      avatar: null,
-      registrationDate: "2023-05-15T10:30:00Z",
-      lastOrder: "2024-01-15T14:30:00Z",
-      totalOrders: 23,
-      totalSpent: 15450,
-      averageOrderValue: 672,
+      address: "Av. Corrientes 1234, CABA",
+      registrationDate: "2024-01-10T10:30:00Z",
       status: "active",
-      favoriteProducts: ["Empanada de Carne", "Empanada de Pollo"],
-      addresses: [
-        {
-          type: "home",
-          address: "Av. Corrientes 1234, CABA",
-          zone: "centro",
-          isDefault: true
-        },
-        {
-          type: "work",
-          address: "Florida 456, CABA",
-          zone: "centro",
-          isDefault: false
-        }
-      ],
+      totalOrders: 15,
+      totalSpent: 45000,
+      lastOrder: "2024-01-15T14:20:00Z",
       preferences: {
         notifications: true,
         promotions: true,
         newsletter: false
       },
-      customerLevel: "gold",
-      notes: "Cliente frecuente, siempre pide extra de aceitunas"
+      notes: "Cliente frecuente, prefiere empanadas de carne"
     },
     {
-      id: "cust-002",
-      name: "María García Rodríguez",
-      email: "maria.garcia@email.com",
-      phone: "+54 11 8765-4321",
-      avatar: null,
-      registrationDate: "2023-08-22T16:45:00Z",
-      lastOrder: "2024-01-14T19:20:00Z",
-      totalOrders: 15,
-      totalSpent: 8750,
-      averageOrderValue: 583,
+      id: "CUST-002",
+      name: "Carlos Rodríguez",
+      email: "carlos.rodriguez@email.com",
+      phone: "+54 11 9876-5432",
+      address: "Av. Santa Fe 5678, CABA",
+      registrationDate: "2024-01-05T16:45:00Z",
       status: "active",
-      favoriteProducts: ["Empanada de Jamón y Queso", "Empanada de Dulce de Leche"],
-      addresses: [
-        {
-          type: "home",
-          address: "Belgrano 789, Zona Norte",
-          zone: "norte",
-          isDefault: true
-        }
-      ],
-      preferences: {
-        notifications: true,
-        promotions: true,
-        newsletter: true
-      },
-      customerLevel: "silver",
-      notes: "Prefiere pedidos vegetarianos"
-    },
-    {
-      id: "cust-003",
-      name: "Carlos Alberto Fernández",
-      email: "carlos.fernandez@email.com",
-      phone: "+54 11 2468-1357",
-      avatar: null,
-      registrationDate: "2023-12-10T09:15:00Z",
-      lastOrder: "2024-01-10T12:30:00Z",
       totalOrders: 8,
-      totalSpent: 3240,
-      averageOrderValue: 405,
-      status: "active",
-      favoriteProducts: ["Empanada de Carne", "Empanada de Cordero"],
-      addresses: [
-        {
-          type: "home",
-          address: "San Martín 321, Zona Sur",
-          zone: "sur",
-          isDefault: true
-        }
-      ],
+      totalSpent: 28000,
+      lastOrder: "2024-01-12T12:15:00Z",
       preferences: {
         notifications: false,
         promotions: true,
-        newsletter: false
+        newsletter: true
       },
-      customerLevel: "bronze",
-      notes: ""
+      notes: "Prefiere pedidos grandes para oficina"
     },
     {
-      id: "cust-004",
-      name: "Ana Patricia López",
-      email: "ana.lopez@email.com",
-      phone: "+54 11 9876-5432",
-      avatar: null,
-      registrationDate: "2023-03-08T11:20:00Z",
-      lastOrder: "2023-12-15T18:45:00Z",
-      totalOrders: 5,
-      totalSpent: 1890,
-      averageOrderValue: 378,
+      id: "CUST-003",
+      name: "Ana Martínez",
+      email: "ana.martinez@email.com",
+      phone: "+54 11 5555-1234",
+      address: "Av. Rivadavia 9012, CABA",
+      registrationDate: "2023-12-20T09:15:00Z",
       status: "inactive",
-      favoriteProducts: ["Empanada de Verduras"],
-      addresses: [
-        {
-          type: "home",
-          address: "Rivadavia 654, Zona Oeste",
-          zone: "oeste",
-          isDefault: true
-        }
-      ],
+      totalOrders: 3,
+      totalSpent: 12000,
+      lastOrder: "2023-12-28T18:30:00Z",
       preferences: {
         notifications: true,
         promotions: false,
         newsletter: false
       },
-      customerLevel: "bronze",
-      notes: "Cliente inactivo desde diciembre"
-    },
-    {
-      id: "cust-005",
-      name: "Roberto Miguel Díaz",
-      email: "roberto.diaz@email.com",
-      phone: "+54 11 3456-7890",
-      avatar: null,
-      registrationDate: "2023-07-03T14:10:00Z",
-      lastOrder: "2024-01-13T20:15:00Z",
-      totalOrders: 31,
-      totalSpent: 22150,
-      averageOrderValue: 714,
-      status: "active",
-      favoriteProducts: ["Empanada de Carne", "Empanada de Pollo", "Empanada de Cordero"],
-      addresses: [
-        {
-          type: "home",
-          address: "9 de Julio 987, Centro",
-          zone: "centro",
-          isDefault: true
-        }
-      ],
-      preferences: {
-        notifications: true,
-        promotions: true,
-        newsletter: true
-      },
-      customerLevel: "platinum",
-      notes: "Cliente VIP, pedidos grandes frecuentes"
+      notes: "Cliente ocasional"
     }
   ];
-
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      setLoading(true);
-      setTimeout(() => {
-        setCustomers(mockCustomers);
-        setLoading(false);
-      }, 800);
-    };
-
-    fetchCustomers();
-  }, []);
 
   const filteredCustomers = customers.filter(customer => {
     const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -208,219 +129,49 @@ export function CustomerManagement() {
     return matchesSearch && matchesStatus;
   });
 
-  const customerStats = {
-    total: customers.length,
-    active: customers.filter(c => c.status === "active").length,
-    inactive: customers.filter(c => c.status === "inactive").length,
-    new: customers.filter(c => {
-      const regDate = new Date(c.registrationDate);
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      return regDate >= thirtyDaysAgo;
-    }).length,
-    totalRevenue: customers.reduce((sum, c) => sum + c.totalSpent, 0),
-    averageOrderValue: customers.reduce((sum, c) => sum + c.averageOrderValue, 0) / customers.length || 0,
-    totalOrders: customers.reduce((sum, c) => sum + c.totalOrders, 0)
+  const handleDeleteCustomer = (customerId) => {
+    openConfirmModal({
+      title: "Eliminar Cliente",
+      message: "¿Estás seguro de que quieres eliminar este cliente? Esta acción no se puede deshacer.",
+      onConfirm: () => {
+        setCustomers(prev => prev.filter(customer => customer.id !== customerId));
+        toast.success("Cliente eliminado correctamente");
+      }
+    });
   };
 
-  const getCustomerLevelBadge = (level) => {
-    const levels = {
-      bronze: { color: "bg-amber-600", label: "Bronce" },
-      silver: { color: "bg-gray-500", label: "Plata" },
-      gold: { color: "bg-yellow-500", label: "Oro" },
-      platinum: { color: "bg-purple-600", label: "Platino" }
-    };
-    
-    const levelInfo = levels[level] || levels.bronze;
-    return (
-      <Badge className={`${levelInfo.color} text-white text-xs`}>
-        {levelInfo.label}
-      </Badge>
-    );
+  const handleViewCustomer = (customer) => {
+    setSelectedCustomer(customer);
+    setShowDetailModal(true);
   };
 
-  const getStatusBadge = (status) => {
-    return status === "active" 
-      ? <Badge variant="success" className="bg-green-500 text-white">Activo</Badge>
-      : <Badge variant="destructive">Inactivo</Badge>;
+  const handleEditCustomer = (customer) => {
+    setSelectedCustomer(customer);
+    setShowEditModal(true);
   };
 
-  const CustomerDetailModal = ({ customer, onClose }) => {
-    if (!customer) return null;
+  const handleAddCustomer = () => {
+    setShowAddModal(true);
+  };
 
-    return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">Detalles del Cliente</h2>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              ×
-            </Button>
-          </div>
+  const handleExportCustomers = () => {
+    toast.info("Función de exportar próximamente");
+  };
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Información Personal */}
-            <div className="lg:col-span-1 space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Información Personal</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-empanada-golden rounded-full flex items-center justify-center text-white font-bold text-lg">
-                      {customer.name.charAt(0)}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{customer.name}</h3>
-                      {getCustomerLevelBadge(customer.customerLevel)}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <span>{customer.email}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      <span>{customer.phone}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span>Cliente desde {formatDate(customer.registrationDate)}</span>
-                    </div>
-                  </div>
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'active': return 'success';
+      case 'inactive': return 'destructive';
+      default: return 'secondary';
+    }
+  };
 
-                  <div className="pt-2">
-                    {getStatusBadge(customer.status)}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Direcciones */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Direcciones</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {customer.addresses.map((address, index) => (
-                    <div key={index} className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex items-center justify-between mb-1">
-                        <Badge variant="outline" className="text-xs">
-                          {address.type === "home" ? "Casa" : "Trabajo"}
-                        </Badge>
-                        {address.isDefault && (
-                          <Badge variant="empanada" className="text-xs">Principal</Badge>
-                        )}
-                      </div>
-                      <div className="flex items-start gap-2 text-sm">
-                        <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <span>{address.address}</span>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Estadísticas y Actividad */}
-            <div className="lg:col-span-2 space-y-4">
-              {/* Estadísticas */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold text-empanada-golden">{customer.totalOrders}</p>
-                    <p className="text-sm text-muted-foreground">Pedidos</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold text-green-500">{formatPrice(customer.totalSpent)}</p>
-                    <p className="text-sm text-muted-foreground">Gastado</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold text-blue-500">{formatPrice(customer.averageOrderValue)}</p>
-                    <p className="text-sm text-muted-foreground">Promedio</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold text-purple-500">
-                      {Math.floor((new Date() - new Date(customer.lastOrder)) / (1000 * 60 * 60 * 24))}
-                    </p>
-                    <p className="text-sm text-muted-foreground">Días desde último pedido</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Productos Favoritos */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Productos Favoritos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {customer.favoriteProducts.map((product, index) => (
-                      <Badge key={index} variant="outline">
-                        {product}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Preferencias */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Preferencias</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span>Notificaciones</span>
-                      <Badge variant={customer.preferences.notifications ? "success" : "destructive"} className="text-xs">
-                        {customer.preferences.notifications ? "Sí" : "No"}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Promociones</span>
-                      <Badge variant={customer.preferences.promotions ? "success" : "destructive"} className="text-xs">
-                        {customer.preferences.promotions ? "Sí" : "No"}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Newsletter</span>
-                      <Badge variant={customer.preferences.newsletter ? "success" : "destructive"} className="text-xs">
-                        {customer.preferences.newsletter ? "Sí" : "No"}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Notas */}
-              {customer.notes && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Notas</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{customer.notes}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    );
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'active': return 'Activo';
+      case 'inactive': return 'Inactivo';
+      default: return 'Desconocido';
+    }
   };
 
   return (
@@ -434,89 +185,34 @@ export function CustomerManagement() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExportCustomers}>
             <Download className="w-4 h-4 mr-2" />
             Exportar
           </Button>
-          <Button variant="empanada" size="sm">
-            <UserPlus className="w-4 h-4 mr-2" />
+          <Button variant="empanada" onClick={handleAddCustomer}>
+            <Plus className="w-4 h-4 mr-2" />
             Nuevo Cliente
           </Button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Clientes</p>
-                <p className="text-2xl font-bold">{customerStats.total}</p>
-              </div>
-              <Users className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Clientes Activos</p>
-                <p className="text-2xl font-bold text-green-500">{customerStats.active}</p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Nuevos (30 días)</p>
-                <p className="text-2xl font-bold text-empanada-golden">{customerStats.new}</p>
-              </div>
-              <UserPlus className="w-8 h-8 text-empanada-golden" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
-                <p className="text-2xl font-bold text-purple-500">
-                  {formatPrice(customerStats.totalRevenue)}
-                </p>
-              </div>
-              <ShoppingBag className="w-8 h-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
+      {/* Filtros */}
+      <Card className="">
         <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Buscar por nombre, email o teléfono..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+          <div className="flex gap-4 items-center">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Buscar por nombre, email o teléfono..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border rounded-md text-sm"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               <option value="all">Todos los estados</option>
               <option value="active">Activos</option>
@@ -526,12 +222,66 @@ export function CustomerManagement() {
         </CardContent>
       </Card>
 
-      {/* Customers Table */}
-      <Card>
+      {/* Resumen de Clientes */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Clientes</p>
+                <p className="text-2xl font-bold">{customers.length}</p>
+              </div>
+              <User className="w-8 h-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Clientes Activos</p>
+                <p className="text-2xl font-bold text-green-500">
+                  {customers.filter(customer => customer.status === 'active').length}
+                </p>
+              </div>
+              <Star className="w-8 h-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
+                <p className="text-2xl font-bold">
+                  {formatPrice(customers.reduce((sum, customer) => sum + customer.totalSpent, 0))}
+                </p>
+              </div>
+              <CreditCard className="w-8 h-8 text-purple-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Promedio por Cliente</p>
+                <p className="text-2xl font-bold">
+                  {formatPrice(customers.length > 0 ? customers.reduce((sum, customer) => sum + customer.totalSpent, 0) / customers.length : 0)}
+                </p>
+              </div>
+              <ShoppingBag className="w-8 h-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tabla de Clientes */}
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5" />
-            Clientes ({filteredCustomers.length})
+            <User className="w-5 h-5" />
+            Clientes ({filteredCustomers.length} registros)
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -550,83 +300,79 @@ export function CustomerManagement() {
                   <tr className="border-b">
                     <th className="text-left p-4 font-medium">Cliente</th>
                     <th className="text-left p-4 font-medium">Contacto</th>
-                    <th className="text-left p-4 font-medium">Nivel</th>
                     <th className="text-left p-4 font-medium">Pedidos</th>
                     <th className="text-left p-4 font-medium">Total Gastado</th>
-                    <th className="text-left p-4 font-medium">Último Pedido</th>
                     <th className="text-left p-4 font-medium">Estado</th>
                     <th className="text-left p-4 font-medium">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCustomers.map((customer, index) => (
+                  {filteredCustomers.map((customer) => (
                     <motion.tr
                       key={customer.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="border-b admin-table-row"
                     >
                       <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center text-white font-bold">
-                            {customer.name.charAt(0)}
-                          </div>
                           <div>
                             <p className="font-medium">{customer.name}</p>
-                            <p className="text-sm text-muted-foreground">ID: {customer.id}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="text-sm">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Mail className="w-3 h-3 text-muted-foreground" />
-                            <span>{customer.email}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Phone className="w-3 h-3 text-muted-foreground" />
-                            <span>{customer.phone}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        {getCustomerLevelBadge(customer.customerLevel)}
-                      </td>
-                      <td className="p-4">
-                        <div className="text-center">
-                          <p className="font-medium">{customer.totalOrders}</p>
-                          <p className="text-sm text-muted-foreground">pedidos</p>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div>
-                          <p className="font-medium">{formatPrice(customer.totalSpent)}</p>
                           <p className="text-sm text-muted-foreground">
-                            Promedio: {formatPrice(customer.averageOrderValue)}
+                            Registrado: {new Date(customer.registrationDate).toLocaleDateString()}
                           </p>
                         </div>
                       </td>
                       <td className="p-4">
-                        <p className="text-sm">{formatDate(customer.lastOrder)}</p>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Mail className="w-3 h-3" />
+                            {customer.email}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Phone className="w-3 h-3" />
+                            {customer.phone}
+                          </div>
+                        </div>
                       </td>
                       <td className="p-4">
-                        {getStatusBadge(customer.status)}
+                        <div>
+                          <p className="font-medium">{customer.totalOrders}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Último: {new Date(customer.lastOrder).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <span className="font-medium">{formatPrice(customer.totalSpent)}</span>
+                      </td>
+                      <td className="p-4">
+                        <div className={`status-badge ${customer.status === 'active' ? 'status-badge-success' : 'status-badge-danger'}`}>
+                          {getStatusText(customer.status)}
+                        </div>
                       </td>
                       <td className="p-4">
                         <div className="flex gap-2">
                           <Button 
-                            variant="ghost" 
+                            variant="outline"
                             size="sm"
-                            onClick={() => setSelectedCustomer(customer)}
+                            onClick={() => handleViewCustomer(customer)}
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditCustomer(customer)}
+                          >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
-                            <MoreVertical className="w-4 h-4" />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteCustomer(customer.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </td>
@@ -639,13 +385,626 @@ export function CustomerManagement() {
         </CardContent>
       </Card>
 
-      {/* Customer Detail Modal */}
-      {selectedCustomer && (
-        <CustomerDetailModal
-          customer={selectedCustomer}
-          onClose={() => setSelectedCustomer(null)}
+      {/* Modales */}
+      {showAddModal && (
+        <NewCustomerModal
+          onClose={() => setShowAddModal(false)}
+          onSave={(newCustomer) => {
+            setCustomers(prev => [...prev, newCustomer]);
+            setShowAddModal(false);
+            toast.success(`Cliente ${newCustomer.name} agregado correctamente`);
+          }}
         />
       )}
+
+      {showEditModal && selectedCustomer && (
+        <EditCustomerModal
+          customer={selectedCustomer}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedCustomer(null);
+          }}
+          onSave={(updatedCustomer) => {
+            setCustomers(prev => prev.map(customer => 
+              customer.id === updatedCustomer.id ? updatedCustomer : customer
+            ));
+            setShowEditModal(false);
+            setSelectedCustomer(null);
+            toast.success(`Cliente ${updatedCustomer.name} actualizado correctamente`);
+          }}
+        />
+      )}
+
+      {showDetailModal && selectedCustomer && (
+        <CustomerDetailModal
+          customer={selectedCustomer}
+          onClose={() => {
+            setShowDetailModal(false);
+            setSelectedCustomer(null);
+          }}
+        />
+      )}
+
+      {/* Modal Component */}
+      <ConfirmModalComponent />
     </div>
+  );
+}
+
+// Modal de Detalle del Cliente
+function CustomerDetailModal({ customer, onClose }) {
+  return (
+    <Portal>
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          className="w-full max-w-6xl h-[95vh] flex flex-col"
+        >
+          <Card className="shadow-2xl h-full flex flex-col ">
+            {/* Header */}
+            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Detalles del Cliente
+                  </CardTitle>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Información completa del cliente
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            </CardHeader>
+
+            {/* Content */}
+            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
+              {/* Información Personal */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <User className="w-5 h-5" />
+                    Información Personal
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre Completo</label>
+                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.name}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
+                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.email}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono</label>
+                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.phone}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección</label>
+                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.address}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Fecha de Registro</label>
+                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">
+                        {new Date(customer.registrationDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
+                      <div className={`status-badge ${customer.status === 'active' ? 'status-badge-success' : 'status-badge-danger'}`}>
+                        {customer.status === 'active' ? 'Activo' : 'Inactivo'}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Estadísticas de Pedidos */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <ShoppingBag className="w-5 h-5" />
+                    Estadísticas de Pedidos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-white dark:bg-gray-700 rounded-lg">
+                      <p className="text-2xl font-bold text-blue-600">{customer.totalOrders}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Total Pedidos</p>
+                    </div>
+                    <div className="text-center p-4 bg-white dark:bg-gray-700 rounded-lg">
+                      <p className="text-2xl font-bold text-green-600">{formatPrice(customer.totalSpent)}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Total Gastado</p>
+                    </div>
+                    <div className="text-center p-4 bg-white dark:bg-gray-700 rounded-lg">
+                      <p className="text-2xl font-bold text-purple-600">
+                        {formatPrice(customer.totalOrders > 0 ? customer.totalSpent / customer.totalOrders : 0)}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Promedio por Pedido</p>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Último Pedido</label>
+                    <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">
+                      {new Date(customer.lastOrder).toLocaleString()}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Preferencias */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <Bell className="w-5 h-5" />
+                    Preferencias de Comunicación
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
+                      <span className="text-gray-700 dark:text-gray-300">Notificaciones</span>
+                      <div className={`status-badge ${customer.preferences.notifications ? 'status-badge-success' : 'status-badge-danger'}`}>
+                        {customer.preferences.notifications ? "Sí" : "No"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
+                      <span className="text-gray-700 dark:text-gray-300">Promociones</span>
+                      <div className={`status-badge ${customer.preferences.promotions ? 'status-badge-success' : 'status-badge-danger'}`}>
+                        {customer.preferences.promotions ? "Sí" : "No"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
+                      <span className="text-gray-700 dark:text-gray-300">Newsletter</span>
+                      <div className={`status-badge ${customer.preferences.newsletter ? 'status-badge-success' : 'status-badge-danger'}`}>
+                        {customer.preferences.newsletter ? "Sí" : "No"}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Notas */}
+              {customer.notes && (
+                <Card className="">
+                  <CardHeader>
+                    <CardTitle className="text-gray-900 dark:text-white">Notas</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{customer.notes}</p>
+                  </CardContent>
+                </Card>
+              )}
+            </CardContent>
+
+            {/* Footer */}
+            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                  Cerrar
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    </Portal>
+  );
+}
+
+// Modal de Nuevo Cliente
+function NewCustomerModal({ onClose, onSave }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    preferences: {
+      notifications: true,
+      promotions: true,
+      newsletter: false
+    },
+    notes: ''
+  });
+
+  const handleSave = () => {
+    const newCustomer = {
+      ...formData,
+      id: `CUST-${Date.now()}`,
+      registrationDate: new Date().toISOString(),
+      status: 'active',
+      totalOrders: 0,
+      totalSpent: 0,
+      lastOrder: null
+    };
+    onSave(newCustomer);
+  };
+
+  const isFormValid = formData.name && formData.email && formData.phone;
+
+  return (
+    <Portal>
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          className="w-full max-w-6xl h-[95vh] flex flex-col"
+        >
+          <Card className="shadow-2xl h-full flex flex-col ">
+            {/* Header */}
+            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Nuevo Cliente
+                  </CardTitle>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Agrega un nuevo cliente al sistema
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            </CardHeader>
+
+            {/* Content */}
+            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
+              {/* Información Básica */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <User className="w-5 h-5" />
+                    Información Básica
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre Completo *</label>
+                      <Input
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Nombre completo del cliente"
+                        required
+                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email *</label>
+                        <Input
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="email@ejemplo.com"
+                          required
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono *</label>
+                        <Input
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder="+54 11 1234-5678"
+                          required
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección</label>
+                      <Input
+                        value={formData.address}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        placeholder="Dirección completa"
+                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Preferencias */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <Bell className="w-5 h-5" />
+                    Preferencias de Comunicación
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={formData.preferences.notifications}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          preferences: { ...formData.preferences, notifications: e.target.checked }
+                        })}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <span className="text-sm">Recibir notificaciones</span>
+                    </label>
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={formData.preferences.promotions}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          preferences: { ...formData.preferences, promotions: e.target.checked }
+                        })}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <span className="text-sm">Recibir promociones</span>
+                    </label>
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={formData.preferences.newsletter}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          preferences: { ...formData.preferences, newsletter: e.target.checked }
+                        })}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <span className="text-sm">Suscribirse al newsletter</span>
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Notas */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-white">Notas Adicionales</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <textarea
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    placeholder="Notas adicionales sobre el cliente..."
+                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                  />
+                </CardContent>
+              </Card>
+            </CardContent>
+
+            {/* Footer */}
+            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                  Cancelar
+                </Button>
+                <Button 
+                  variant="empanada" 
+                  onClick={handleSave}
+                  disabled={!isFormValid}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Crear Cliente
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    </Portal>
+  );
+}
+
+// Modal de Editar Cliente
+function EditCustomerModal({ customer, onClose, onSave }) {
+  const [formData, setFormData] = useState({
+    name: customer.name,
+    email: customer.email,
+    phone: customer.phone,
+    address: customer.address,
+    status: customer.status,
+    preferences: { ...customer.preferences },
+    notes: customer.notes
+  });
+
+  const handleSave = () => {
+    const updatedCustomer = {
+      ...customer,
+      ...formData
+    };
+    onSave(updatedCustomer);
+  };
+
+  const isFormValid = formData.name && formData.email && formData.phone;
+
+  return (
+    <Portal>
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          className="w-full max-w-6xl h-[95vh] flex flex-col"
+        >
+          <Card className="shadow-2xl h-full flex flex-col ">
+            {/* Header */}
+            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Editar Cliente
+                  </CardTitle>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Modifica la información del cliente
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            </CardHeader>
+
+            {/* Content */}
+            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
+              {/* Información Básica */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <User className="w-5 h-5" />
+                    Información Básica
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre Completo *</label>
+                      <Input
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Nombre completo del cliente"
+                        required
+                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email *</label>
+                        <Input
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="email@ejemplo.com"
+                          required
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono *</label>
+                        <Input
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder="+54 11 1234-5678"
+                          required
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección</label>
+                      <Input
+                        value={formData.address}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        placeholder="Dirección completa"
+                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                      >
+                        <option value="active">Activo</option>
+                        <option value="inactive">Inactivo</option>
+                      </select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Preferencias */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <Bell className="w-5 h-5" />
+                    Preferencias de Comunicación
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={formData.preferences.notifications}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          preferences: { ...formData.preferences, notifications: e.target.checked }
+                        })}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <span className="text-sm">Recibir notificaciones</span>
+                    </label>
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={formData.preferences.promotions}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          preferences: { ...formData.preferences, promotions: e.target.checked }
+                        })}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <span className="text-sm">Recibir promociones</span>
+                    </label>
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={formData.preferences.newsletter}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          preferences: { ...formData.preferences, newsletter: e.target.checked }
+                        })}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <span className="text-sm">Suscribirse al newsletter</span>
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Notas */}
+              <Card className="">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-white">Notas Adicionales</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <textarea
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    placeholder="Notas adicionales sobre el cliente..."
+                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                  />
+                </CardContent>
+              </Card>
+            </CardContent>
+
+            {/* Footer */}
+            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                  Cancelar
+                </Button>
+                <Button 
+                  variant="empanada" 
+                  onClick={handleSave}
+                  disabled={!isFormValid}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Guardar Cambios
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    </Portal>
   );
 }

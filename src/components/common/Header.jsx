@@ -51,7 +51,7 @@ export function Header() {
     <>
       <motion.header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-20 transition-all duration-300",
           scrolled
             ? "bg-white/20 backdrop-blur-sm shadow-lg"
             : "bg-white/95 backdrop-blur-md shadow-lg border-b"
@@ -247,7 +247,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 lg:hidden"
+            className="fixed inset-0 z-10 lg:hidden"
           >
             <div
               className="fixed inset-0 bg-black/50 backdrop-blur-sm"

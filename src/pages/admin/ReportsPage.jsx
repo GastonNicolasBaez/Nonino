@@ -20,7 +20,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
+import { SalesChart, TopProductsChart, OrdersStatusChart, CustomerTrendsChart, CategorySalesChart, HourlySalesChart, CustomerLevelChart } from "../../components/charts/DashboardCharts";
+import { SimpleTopProductsChart, SimpleCategorySalesChart, SimpleHourlySalesChart, SimpleCustomerLevelChart } from "../../components/charts/SimpleCharts";
 import { formatPrice, formatDate } from "../../lib/utils";
+import { toast } from "sonner";
 
 export function ReportsPage() {
   const [dateRange, setDateRange] = useState("last7days");
@@ -34,26 +37,26 @@ export function ReportsPage() {
     averageOrderValue: 2780,
     growth: 15.4,
     dailySales: [
-      { date: "2024-01-09", sales: 18500, orders: 67 },
-      { date: "2024-01-10", sales: 22000, orders: 78 },
-      { date: "2024-01-11", sales: 19800, orders: 71 },
-      { date: "2024-01-12", sales: 25200, orders: 89 },
-      { date: "2024-01-13", sales: 21700, orders: 76 },
-      { date: "2024-01-14", sales: 17800, orders: 62 },
-      { date: "2024-01-15", sales: 20000, orders: 72 }
+      { day: 'Lun', sales: 18500, orders: 67 },
+      { day: 'Mar', sales: 22000, orders: 78 },
+      { day: 'Mié', sales: 19800, orders: 71 },
+      { day: 'Jue', sales: 25200, orders: 89 },
+      { day: 'Vie', sales: 21700, orders: 76 },
+      { day: 'Sáb', sales: 17800, orders: 62 },
+      { day: 'Dom', sales: 20000, orders: 72 }
     ],
     topProducts: [
-      { name: "Empanada de Carne", sales: 890, revenue: 400500 },
-      { name: "Empanada de Pollo", sales: 756, revenue: 317520 },
-      { name: "Empanada de Dulce de Leche", sales: 634, revenue: 221900 },
-      { name: "Empanada de Jamón y Queso", sales: 445, revenue: 169100 },
-      { name: "Empanada de Cordero", sales: 234, revenue: 152100 }
+      { name: "Empanada de Carne", sales: 890, revenue: 400500, color: "#f59e0b" },
+      { name: "Empanada de Pollo", sales: 756, revenue: 317520, color: "#10b981" },
+      { name: "Empanada de Dulce de Leche", sales: 634, revenue: 221900, color: "#8b5cf6" },
+      { name: "Empanada de Jamón y Queso", sales: 445, revenue: 169100, color: "#3b82f6" },
+      { name: "Empanada de Cordero", sales: 234, revenue: 152100, color: "#ef4444" }
     ],
     salesByCategory: [
-      { category: "Tradicionales", sales: 75000, percentage: 60 },
-      { category: "Gourmet", sales: 25000, percentage: 20 },
-      { category: "Dulces", sales: 18750, percentage: 15 },
-      { category: "Vegetarianas", sales: 6250, percentage: 5 }
+      { name: "Tradicionales", value: 60, color: "#f59e0b" },
+      { name: "Gourmet", value: 20, color: "#10b981" },
+      { name: "Dulces", value: 15, color: "#8b5cf6" },
+      { name: "Vegetarianas", value: 5, color: "#ef4444" }
     ],
     salesByHour: [
       { hour: "11:00", sales: 8500 },
@@ -84,10 +87,10 @@ export function ReportsPage() {
       { name: "Ana Patricia López", orders: 5, spent: 1890 }
     ],
     customersByLevel: [
-      { level: "Platino", count: 12, percentage: 15 },
-      { level: "Oro", count: 89, percentage: 25 },
-      { level: "Plata", count: 234, percentage: 35 },
-      { level: "Bronce", count: 895, percentage: 25 }
+      { name: "Platino", value: 15, color: "#8b5cf6" },
+      { name: "Oro", value: 25, color: "#ffd700" },
+      { name: "Plata", value: 35, color: "#c0c0c0" },
+      { name: "Bronce", value: 25, color: "#cd7f32" }
     ],
     acquisitionChannels: [
       { channel: "Orgánico", customers: 456, percentage: 37 },
@@ -125,11 +128,24 @@ export function ReportsPage() {
     }, 800);
   }, [dateRange, reportType]);
 
+  const handleExportPDF = () => {
+    toast.success(`Exportando reporte de ${reportType} en PDF...`);
+    // Aquí se generaría el PDF del reporte
+  };
+
+  const handleRefreshReport = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Reporte actualizado");
+    }, 1000);
+  };
+
   const SalesReport = () => (
     <div className="space-y-6">
       {/* Métricas principales */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -147,7 +163,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -162,7 +178,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -179,7 +195,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -196,7 +212,7 @@ export function ReportsPage() {
       </div>
 
       {/* Gráfico de ventas diarias */}
-      <Card>
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <LineChart className="w-5 h-5" />
@@ -204,19 +220,13 @@ export function ReportsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-80 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-500">Gráfico de ventas diarias</p>
-              <p className="text-sm text-gray-400">Aquí iría un gráfico de líneas con las ventas por día</p>
-            </div>
-          </div>
+          <SalesChart data={salesData.dailySales} />
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top productos */}
-        <Card>
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Star className="w-5 h-5" />
@@ -224,30 +234,12 @@ export function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {salesData.topProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      {index + 1}
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">{product.sales} unidades</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-sm">{formatPrice(product.revenue)}</p>
-                    <p className="text-xs text-muted-foreground">ingresos</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <SimpleTopProductsChart data={salesData.topProducts} />
           </CardContent>
         </Card>
 
         {/* Ventas por categoría */}
-        <Card>
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <PieChart className="w-5 h-5" />
@@ -255,31 +247,13 @@ export function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {salesData.salesByCategory.map((category, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">{category.category}</span>
-                    <span className="text-sm text-muted-foreground">{category.percentage}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-empanada-golden h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${category.percentage}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center text-xs text-muted-foreground">
-                    <span>{formatPrice(category.sales)}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <SimpleCategorySalesChart data={salesData.salesByCategory} />
           </CardContent>
         </Card>
       </div>
 
       {/* Ventas por horario */}
-      <Card>
+      <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5" />
@@ -287,13 +261,7 @@ export function ReportsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-500">Gráfico de barras por horario</p>
-              <p className="text-sm text-gray-400">Muestra las horas de mayor demanda</p>
-            </div>
-          </div>
+          <SimpleHourlySalesChart data={salesData.salesByHour} />
         </CardContent>
       </Card>
     </div>
@@ -303,7 +271,7 @@ export function ReportsPage() {
     <div className="space-y-6">
       {/* Métricas de clientes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -315,7 +283,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -328,7 +296,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -341,7 +309,7 @@ export function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -357,7 +325,7 @@ export function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top clientes */}
-        <Card>
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Star className="w-5 h-5" />
@@ -367,7 +335,7 @@ export function ReportsPage() {
           <CardContent>
             <div className="space-y-4">
               {customerData.topCustomers.map((customer, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3  rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center text-white font-bold text-sm">
                       {customer.name.charAt(0)}
@@ -388,7 +356,7 @@ export function ReportsPage() {
         </Card>
 
         {/* Clientes por nivel */}
-        <Card>
+        <Card className="">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <PieChart className="w-5 h-5" />
@@ -396,29 +364,7 @@ export function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {customerData.customersByLevel.map((level, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">{level.level}</span>
-                    <span className="text-sm text-muted-foreground">{level.percentage}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        level.level === 'Platino' ? 'bg-purple-500' :
-                        level.level === 'Oro' ? 'bg-yellow-500' :
-                        level.level === 'Plata' ? 'bg-gray-500' : 'bg-amber-600'
-                      }`}
-                      style={{ width: `${level.percentage}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center text-xs text-muted-foreground">
-                    <span>{level.count} clientes</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <SimpleCustomerLevelChart data={customerData.customersByLevel} />
           </CardContent>
         </Card>
       </div>
@@ -439,7 +385,7 @@ export function ReportsPage() {
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="px-3 py-2 border rounded-md text-sm"
+            className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
           >
             <option value="today">Hoy</option>
             <option value="last7days">Últimos 7 días</option>
@@ -448,15 +394,27 @@ export function ReportsPage() {
             <option value="lastMonth">Mes anterior</option>
             <option value="thisYear">Este año</option>
           </select>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleExportPDF}
+          >
             <Download className="w-4 h-4 mr-2" />
             Exportar PDF
+          </Button>
+          <Button 
+            variant="secondary" 
+            size="sm"
+            onClick={handleRefreshReport}
+          >
+            <RefreshCcw className="w-4 h-4 mr-2" />
+            Actualizar
           </Button>
         </div>
       </div>
 
       {/* Tabs de reportes */}
-      <Card>
+      <Card className="">
         <CardContent className="p-6">
           <div className="flex flex-wrap gap-2">
             <Button
@@ -491,8 +449,8 @@ export function ReportsPage() {
       {loading ? (
         <div className="space-y-6">
           {[1, 2, 3, 4].map(i => (
-            <Card key={i} className="animate-pulse">
-              <div className="bg-gray-200 h-64 rounded-lg" />
+            <Card key={i} className="animate-pulse ">
+              <div className="bg-input h-64 rounded-lg" />
             </Card>
           ))}
         </div>

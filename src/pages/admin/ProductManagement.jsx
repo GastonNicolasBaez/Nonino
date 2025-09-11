@@ -16,7 +16,8 @@ import {
   Upload,
   Download,
   MoreVertical,
-  X
+  X,
+  Save
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -24,6 +25,9 @@ import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
+import { useConfirmModal } from "../../components/common/ConfirmModal";
+import { useUpdateStockModal } from "../../components/common/UpdateStockModal";
+import { Portal } from "../../components/common/Portal";
 
 export function ProductManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,6 +36,10 @@ export function ProductManagement() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  
+  // Hooks para modales
+  const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
+  const { openModal: openStockModal, UpdateStockModalComponent } = useUpdateStockModal();
 
   // Mock products data
   const mockProducts = [
@@ -238,10 +246,18 @@ export function ProductManagement() {
   };
 
   const deleteProduct = (productId) => {
-    if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
-      setProducts(prev => prev.filter(product => product.id !== productId));
-      toast.success("Producto eliminado correctamente");
-    }
+    const product = products.find(p => p.id === productId);
+    openConfirmModal({
+      title: "Eliminar Producto",
+      message: `¿Estás seguro de que quieres eliminar "${product?.name}"? Esta acción no se puede deshacer.`,
+      confirmText: "Eliminar",
+      cancelText: "Cancelar",
+      type: "danger",
+      onConfirm: () => {
+        setProducts(prev => prev.filter(product => product.id !== productId));
+        toast.success("Producto eliminado correctamente");
+      }
+    });
   };
 
   const updateStock = (productId, newStock) => {
@@ -251,6 +267,27 @@ export function ProductManagement() {
         : product
     ));
     toast.success("Stock actualizado correctamente");
+  };
+
+  const handleExportProducts = () => {
+    toast.success("Exportando catálogo de productos...");
+    // Aquí se generaría el archivo de exportación
+  };
+
+  const handleImportProducts = () => {
+    // TODO: Implementar importación de productos
+    console.log('Importación de productos pendiente de implementar');
+  };
+
+  const handleUpdateStock = (productId) => {
+    const product = products.find(p => p.id === productId);
+    openStockModal({
+      productName: product?.name || 'Producto',
+      currentStock: product?.stock || 0,
+      onSave: (newStock) => {
+        updateStock(productId, newStock);
+      }
+    });
   };
 
   const ProductModal = ({ product, onClose, onSave }) => {
@@ -292,140 +329,180 @@ export function ProductManagement() {
     };
 
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">
-              {product ? "Editar Producto" : "Nuevo Producto"}
-            </h2>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
+      <Portal>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="w-full max-w-6xl h-[95vh] flex flex-col"
+          >
+            <Card className="shadow-2xl h-full flex flex-col ">
+              {/* Header */}
+              <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {product ? "Editar Producto" : "Nuevo Producto"}
+                    </CardTitle>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {product ? "Modifica los detalles del producto" : "Agrega un nuevo producto al catálogo"}
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+              </CardHeader>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Nombre</label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Nombre del producto"
-                />
+              {/* Content */}
+              <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
+                {/* Información Básica */}
+                <Card className="">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                      <Package className="w-5 h-5" />
+                      Información Básica
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre *</label>
+                        <Input
+                          value={formData.name}
+                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Nombre del producto"
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Categoría *</label>
+                        <select
+                          value={formData.category}
+                          onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                          className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                        >
+                          <option value="Tradicionales">Tradicionales</option>
+                          <option value="Gourmet">Gourmet</option>
+                          <option value="Vegetarianas">Vegetarianas</option>
+                          <option value="Dulces">Dulces</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Precio *</label>
+                        <Input
+                          type="number"
+                          value={formData.price}
+                          onChange={(e) => setFormData(prev => ({ ...prev, price: Number(e.target.value) }))}
+                          placeholder="Precio de venta"
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Costo</label>
+                        <Input
+                          type="number"
+                          value={formData.cost}
+                          onChange={(e) => setFormData(prev => ({ ...prev, cost: Number(e.target.value) }))}
+                          placeholder="Costo de producción"
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Descripción</label>
+                      <textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Descripción del producto..."
+                        className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Inventario y Disponibilidad */}
+                <Card className="">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                      <Package className="w-5 h-5" />
+                      Inventario y Disponibilidad
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Stock Actual</label>
+                        <Input
+                          type="number"
+                          value={formData.stock}
+                          onChange={(e) => setFormData(prev => ({ ...prev, stock: Number(e.target.value) }))}
+                          placeholder="Cantidad en stock"
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Stock Mínimo</label>
+                        <Input
+                          type="number"
+                          value={formData.minStock}
+                          onChange={(e) => setFormData(prev => ({ ...prev, minStock: Number(e.target.value) }))}
+                          placeholder="Stock mínimo"
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Tiempo de Preparación (min)</label>
+                        <Input
+                          type="number"
+                          value={formData.preparationTime}
+                          onChange={(e) => setFormData(prev => ({ ...prev, preparationTime: Number(e.target.value) }))}
+                          placeholder="Minutos"
+                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4 flex gap-4">
+                      <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                        <input
+                          type="checkbox"
+                          checked={formData.isAvailable}
+                          onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
+                          className="rounded border-gray-300 dark:border-gray-600"
+                        />
+                        Disponible para venta
+                      </label>
+                      <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                        <input
+                          type="checkbox"
+                          checked={formData.isPopular}
+                          onChange={(e) => setFormData(prev => ({ ...prev, isPopular: e.target.checked }))}
+                          className="rounded border-gray-300 dark:border-gray-600"
+                        />
+                        Producto popular
+                      </label>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CardContent>
+
+              {/* Footer */}
+              <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                    Cancelar
+                  </Button>
+                  <Button variant="empanada" onClick={handleSave}>
+                    <Save className="w-4 h-4 mr-2" />
+                    {product ? "Actualizar" : "Crear"} Producto
+                  </Button>
+                </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Categoría</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-md"
-                >
-                  <option value="Tradicionales">Tradicionales</option>
-                  <option value="Gourmet">Gourmet</option>
-                  <option value="Vegetarianas">Vegetarianas</option>
-                  <option value="Dulces">Dulces</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Precio</label>
-                <Input
-                  type="number"
-                  value={formData.price}
-                  onChange={(e) => setFormData(prev => ({ ...prev, price: Number(e.target.value) }))}
-                  placeholder="Precio de venta"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Costo</label>
-                <Input
-                  type="number"
-                  value={formData.cost}
-                  onChange={(e) => setFormData(prev => ({ ...prev, cost: Number(e.target.value) }))}
-                  placeholder="Costo de producción"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Stock Actual</label>
-                <Input
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) => setFormData(prev => ({ ...prev, stock: Number(e.target.value) }))}
-                  placeholder="Cantidad en stock"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Stock Mínimo</label>
-                <Input
-                  type="number"
-                  value={formData.minStock}
-                  onChange={(e) => setFormData(prev => ({ ...prev, minStock: Number(e.target.value) }))}
-                  placeholder="Stock mínimo"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Tiempo de Preparación (min)</label>
-                <Input
-                  type="number"
-                  value={formData.preparationTime}
-                  onChange={(e) => setFormData(prev => ({ ...prev, preparationTime: Number(e.target.value) }))}
-                  placeholder="Minutos"
-                />
-              </div>
-
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.isAvailable}
-                    onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
-                  />
-                  <span className="text-sm">Disponible</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.isPopular}
-                    onChange={(e) => setFormData(prev => ({ ...prev, isPopular: e.target.checked }))}
-                  />
-                  <span className="text-sm">Popular</span>
-                </label>
-              </div>
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-1">Descripción</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Descripción del producto"
-                className="w-full px-3 py-2 border rounded-md h-20"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 mt-6">
-            <Button variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button variant="empanada" onClick={handleSave}>
-              {product ? "Actualizar" : "Crear"} Producto
-            </Button>
-          </div>
-        </motion.div>
-      </div>
+            </Card>
+          </motion.div>
+        </div>
+      </Portal>
     );
   };
 
@@ -440,11 +517,11 @@ export function ProductManagement() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExportProducts}>
             <Download className="w-4 h-4 mr-2" />
             Exportar
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleImportProducts}>
             <Upload className="w-4 h-4 mr-2" />
             Importar
           </Button>
@@ -457,7 +534,7 @@ export function ProductManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -469,7 +546,7 @@ export function ProductManagement() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -481,7 +558,7 @@ export function ProductManagement() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -493,7 +570,7 @@ export function ProductManagement() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -509,7 +586,7 @@ export function ProductManagement() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
@@ -526,7 +603,7 @@ export function ProductManagement() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-2 border rounded-md text-sm"
+              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
@@ -542,7 +619,7 @@ export function ProductManagement() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {loading ? (
           Array.from({ length: 8 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+              <Card key={i} className="animate-pulse ">
               <div className="aspect-square bg-gray-200 rounded-t-lg" />
               <CardContent className="p-4">
                 <div className="space-y-2">
@@ -561,27 +638,27 @@ export function ProductManagement() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300">
+              <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 ">
                 <div className="aspect-square relative">
                   <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
                     <span className="text-6xl">{product.icon || "🥟"}</span>
                   </div>
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     {product.isPopular && (
-                      <Badge variant="empanada" className="text-xs">
+                      <div className="status-badge status-badge-warning text-xs">
                         <Star className="w-3 h-3 mr-1" />
                         Popular
-                      </Badge>
+                      </div>
                     )}
                     {!product.isAvailable && (
-                      <Badge variant="destructive" className="text-xs">
+                      <div className="status-badge status-badge-danger text-xs">
                         No disponible
-                      </Badge>
+                      </div>
                     )}
                     {product.stock <= product.minStock && product.stock > 0 && (
-                      <Badge variant="warning" className="text-xs bg-yellow-500 text-white">
+                      <div className="status-badge status-badge-warning text-xs">
                         Stock bajo
-                      </Badge>
+                      </div>
                     )}
                   </div>
                   <div className="absolute top-2 right-2">
@@ -658,12 +735,7 @@ export function ProductManagement() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => {
-                          const newStock = prompt(`Actualizar stock para ${product.name}:`, product.stock);
-                          if (newStock && !isNaN(newStock)) {
-                            updateStock(product.id, parseInt(newStock));
-                          }
-                        }}
+                        onClick={() => handleUpdateStock(product.id)}
                       >
                         <Package className="w-3 h-3" />
                       </Button>
@@ -700,6 +772,10 @@ export function ProductManagement() {
           />
         )}
       </AnimatePresence>
+      
+      {/* Modal Components */}
+      <ConfirmModalComponent />
+      <UpdateStockModalComponent />
     </div>
   );
 }

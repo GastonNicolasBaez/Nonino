@@ -32,6 +32,19 @@ export const getLoginQueryFunction = async ({ _email, _password }) => {
     return await response.data;
 }
 
+export const getRefreshQueryFunction = async () => {
+    const axiosSetup = {
+        axiosData: {
+        },
+        axiosConfig: {
+            withCredentials: true
+        }
+    }
+
+    const response = await axios.post(`https://nonino-auth.fly.dev/auth/refresh`, null, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
 
 
 

@@ -15,7 +15,7 @@ export function AdminLogin() {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        email: "admin@noninoempanadas.com",
+        email: "admin@nonino",
         password: "admin123"
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +24,9 @@ export function AdminLogin() {
 
     //Redirigir si ya está autenticado como admin
     useEffect(() => {
-      if (session.isAuthenticated && session.isAdmin) {
-        navigate('/admin');
-      }
+        if (session.isAuthenticated && session.isAdmin) {
+            navigate('/intranet/admin');
+        }
     }, [session.isAuthenticated]);
 
 
@@ -221,8 +221,8 @@ export function AdminLogin() {
                                         required
                                         placeholder="admin@noninoempanadas.com"
                                         className={`pl-10 pr-4 py-3 border-2 transition-colors ${errors.email
-                                                ? 'border-red-300 focus:border-red-500'
-                                                : 'border-gray-300 focus:border-empanada-golden'
+                                            ? 'border-red-300 focus:border-red-500'
+                                            : 'border-gray-300 focus:border-empanada-golden'
                                             }`}
                                         aria-invalid={!!errors.email}
                                         aria-describedby={errors.email ? "email-error" : undefined}
@@ -259,8 +259,8 @@ export function AdminLogin() {
                                         required
                                         placeholder="Tu contraseña de administrador"
                                         className={`pl-10 pr-12 py-3 border-2 transition-colors ${errors.password
-                                                ? 'border-red-300 focus:border-red-500'
-                                                : 'border-gray-300 focus:border-empanada-golden'
+                                            ? 'border-red-300 focus:border-red-500'
+                                            : 'border-gray-300 focus:border-empanada-golden'
                                             }`}
                                         aria-invalid={!!errors.password}
                                         aria-describedby={errors.password ? "password-error" : undefined}

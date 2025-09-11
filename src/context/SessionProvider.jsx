@@ -3,60 +3,83 @@
 
 import { createContext, useState, useContext, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { getLoginQueryFunction } from "@/config/apiQueryFunctions";
+import {
+    getLoginQueryFunction,
+    getRefreshQueryFunction
+} from "@/config/apiQueryFunctions";
 //import { toast } from "react-toastify";
 
 
 const SessionContext = createContext();
 
-export const SessionProvider = ({ children }) => {
+const mockUser = {
+    accessToken: 'accessT',
+    id: 0,
+    name: 'Admin',
+    role: 'ADMIN',
+    email: 'admin@noninoempanadas.com'
+}
 
-    const [accessToken, setAccessToken] = useState(() => {
-        const storedAccessToken = localStorage.getItem("accessToken");
-        return storedAccessToken ? storedAccessToken : null;
-    });
+export const SessionProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
 
-    const { mutate, isPending: loading } = useMutation({
+    const { mutate: callLogin, isPending: callLoginLoading } = useMutation({
         mutationKey: ['login'],
         mutationFn: getLoginQueryFunction,
         onSuccess: (data) => {
-            setUserData(data);
-            setIsAdmin(data.role ? data.role === 'ADMIN' : true);
+            const user = {
+                id: data.id,
+                email: data.email,
+                name: data.fullName,
+                roleId: data.roles[0].id,
+                roleName: data.roles[0].name,
+                accessToken: data.accessToken,
+            }
+            localStorage.setItem('noninoSys', true);
+            setUserData(user);
+            setIsAdmin(data.roles[0].name === 'ADMIN');
             setIsAuthenticated(true);
-            setAccessToken(data.accessToken);
         }
     });
 
-    // guardar en localstorage cada cambio de accesstoken
-    useEffect(() => {
-        if (accessToken) {
-            localStorage.setItem("accessToken", accessToken);
+    const { mutate: callRelogin, isPending: callReloginLoading } = useMutation({
+        mutationKey: ['relogin'],
+        mutationFn: getRefreshQueryFunction,
+        onSuccess: (data) => {
+            setUserData(mockUser);
+            setIsAdmin(data.role ? data.role === 'ADMIN' : true);
+            setIsAuthenticated(true);
+        },
+        onError: () => {
+            localStorage.removeItem("noninoSys");
         }
-    }, [accessToken]);
+    })
+
+    useEffect(() => {
+        if (localStorage.getItem('noninoSys')) {
+            callRelogin();
+        }
+    }, []);
 
     const login = (_email, _password) => {
-        mutate({ _email, _password });
+        callLogin({ _email, _password });
     }
 
     const logout = () => {
-        setAccessToken(null);
         setUserData(null);
         setIsAuthenticated(false);
-        localStorage.removeItem("accessToken");
+        setIsAdmin(false);
+        localStorage.removeItem("noninoSys");
     }
 
-
+    const loading = callLoginLoading || callReloginLoading;
 
     return (
         <SessionContext.Provider value={{
-            accessToken,
-            setAccessToken,
             userData,
-            setUserData,
             isAuthenticated,
             isAdmin,
             loading,

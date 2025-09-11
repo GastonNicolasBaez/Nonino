@@ -9,19 +9,18 @@ const AuthProvider = ({ children, allowedRole }) => {
 
     const session = useSession();
 
-    // Show loading if we have a token but userData is not loaded yet
-    if (session.accessToken && session.userData === null) {
-        return <Loading />; // or a spinner component
-    }
-
-    // If no token, redirect to login
-    if (!session.accessToken) {
+    // no tiene userData
+    if (!session.userData) {
         return <Navigate to="/intranet/login" replace />;
     }
 
-    // If userData is loaded, check role
-    const userOk = session.userData && allowedRole && session.userData.role === allowedRole;
-    if (!userOk) {
+    // no esta autenticado
+    if (!session.isAuthenticated) {
+        return <Navigate to="/intranet/login" replace />;
+    }
+
+    // rol no permitido
+    if (session.userData.roleName !== allowedRole) {
         return <Navigate to="/intranet/login" replace />;
     }
 

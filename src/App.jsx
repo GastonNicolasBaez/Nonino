@@ -1,3 +1,5 @@
+// fucking GIT
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CartProvider } from "@/context/CartContext";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';

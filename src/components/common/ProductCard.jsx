@@ -31,13 +31,14 @@ export function ProductCard({ product, className }) {
 
   return (
     <motion.div
-      className={className}
+      className={'h-full'}
       whileHover={{ y: -5 }}
       transition={{ duration: 0.2 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <Card className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300">
+      <Card className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col">
+        <div>
         <div className="relative">
           <div className="aspect-[4/3] overflow-hidden">
             <motion.img
@@ -139,6 +140,7 @@ export function ProductCard({ product, className }) {
             </div>
           )}
         </CardContent>
+        </div>
 
         <CardFooter className="p-4 pt-0">
           <Button

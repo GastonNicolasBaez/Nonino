@@ -8,7 +8,7 @@ import useApiRefreshToken from "@/hooks/useApiRefreshToken";
 
 const SessionContext = createContext();
 
-export function SessionProvider({ children }) {
+export const SessionProvider = ({ children }) => {
 
     const { callLoginUserData } = useApiLoginUserData();
     const { callRefreshToken } = useApiRefreshToken();
@@ -90,6 +90,6 @@ export function SessionProvider({ children }) {
     );
 }
 
-export function useSession() {
+export const useSession = () => {
     return useContext(SessionContext);
 }

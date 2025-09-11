@@ -10,34 +10,17 @@ import { AnimatedGradientText } from "../../components/ui/animated-gradient-text
 import { NumberTicker } from "../../components/ui/number-ticker";
 import { ProductCard } from "../../components/common/ProductCard";
 import { productService, promotionService } from "../../services/api";
+import { usePublicData } from "@/context/PublicDataProvider";
 
 export function HomePage() {
-  const [popularProducts, setPopularProducts] = useState([]);
+
+    const {productos, isPending: loading} = usePublicData();
+
   const [promotions, setPromotions] = useState([]);
-  const [loading, setLoading] = useState(true);
   
   // Parallax scroll effect
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 800], [0, -200]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [productsRes, promotionsRes] = await Promise.all([
-          productService.getPopularProducts(),
-          promotionService.getActivePromotions(),
-        ]);
-        setPopularProducts(productsRes.data);
-        setPromotions(promotionsRes.data);
-      } catch (error) {
-        // Error silencioso en desarrollo - en producción usar sistema de logging
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const features = [
     {
@@ -254,7 +237,8 @@ export function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-              {popularProducts.map((product, index) => (
+              {productos.map((product, index) => (
+                product.isPopular &&
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 30 }}

@@ -2,10 +2,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { createContext, useState, useContext, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { getLoginQueryFunction } from "@/config/apiQueryFunctions";
 //import { toast } from "react-toastify";
-
-import useApiLoginUserData from "@/hooks/useApiLoginUserData";
-import useApiRefreshToken from "@/hooks/useApiRefreshToken";
 
 
 const SessionContext = createContext();
@@ -17,86 +16,30 @@ export const SessionProvider = ({ children }) => {
         return storedAccessToken ? storedAccessToken : null;
     });
 
-    const [userData, setUserData] = useState(() => {
-        const storedUserData = localStorage.getItem("userData");
-        const parsed = storedUserData ? JSON.parse(storedUserData) : null;
-        return parsed;
+    const [userData, setUserData] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    const { mutate, isPending: loading } = useMutation({
+        mutationKey: ['login'],
+        mutationFn: getLoginQueryFunction,
+        onSuccess: (data) => {
+            setUserData(data);
+            setIsAdmin(data.role ? data.role === 'ADMIN' : true);
+            setIsAuthenticated(true);
+            setAccessToken(data.accessToken);
+        }
     });
 
-    const [isAuthenticated, setIsAuthenticated] = useState(() => {
-        const hasToken = localStorage.getItem("accessToken");
-        return hasToken ? true : false;
-    });
-
+    // guardar en localstorage cada cambio de accesstoken
     useEffect(() => {
-        if (userData)
-            setIsAdmin(userData.role === 'ADMIN');
-    }, [userData]);
+        if (accessToken) {
+            localStorage.setItem("accessToken", accessToken);
+        }
+    }, [accessToken]);
 
-
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-
-    //         setLoading(true);
-
-    //         if (accessToken) {
-    //             localStorage.setItem("accessToken", accessToken);
-
-    //             const llamada = callLoginUserData;
-    //             const doSuccess = (data) => {
-    //                 setUserData(data);
-    //             }
-    //             const doFailure = (errmsg) => {
-    //                 //toast.error("Falló la operación: " + errmsg);
-    //             }
-    //             const doBadToken = (errmsg) => {
-    //                 //toast.error("Falla al refrescar token: " + errmsg);
-    //                 logout();
-    //             }
-
-    //             // DISPARAR PRIMERA LLAMADA
-    //             const result = await llamada(accessToken);
-    //             if (result.success) {
-    //                 // EXITO LLAMADA
-    //                 doSuccess(result.data);
-    //             } else if (result.error.status === 401) {
-    //                 const response = await callRefreshToken();
-    //                 if (response.success) {
-    //                     await setAccessToken(response.data.accessToken);
-    //                 } else {
-    //                     // MSG ERROR TOKEN
-    //                     doBadToken(result.error.message);
-    //                 }
-    //             } else {
-    //                 // MSG ERROR GENERAL
-    //                 doFailure(result.error.message);
-    //             }
-    //         } else {
-    //             localStorage.removeItem("accessToken");
-    //             setUserData(null);
-    //         }
-    //         setLoading(false);
-    //     };
-    //     fetchUserData();
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [accessToken]);
-
-    const login = (data) => {
-        const userInfo = {
-            id: data.id,
-            name: data.username,
-            email: data.email,
-            role: data.role
-        };
-        
-        // Guardar en localStorage primero
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("userData", JSON.stringify(userInfo));
-        
-        // Luego actualizar estado
-        setAccessToken(data.accessToken);
-        setUserData(userInfo);
-        setIsAuthenticated(true);
+    const login = (_email, _password) => {
+        mutate({ _email, _password });
     }
 
     const logout = () => {
@@ -104,10 +47,10 @@ export const SessionProvider = ({ children }) => {
         setUserData(null);
         setIsAuthenticated(false);
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("userData");
     }
 
-    
+
+
     return (
         <SessionContext.Provider value={{
             accessToken,
@@ -116,6 +59,7 @@ export const SessionProvider = ({ children }) => {
             setUserData,
             isAuthenticated,
             isAdmin,
+            loading,
             login,
             logout,
         }}

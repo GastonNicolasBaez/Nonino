@@ -14,7 +14,7 @@ import { usePublicData } from "@/context/PublicDataProvider";
 
 export function HomePage() {
 
-    const {productos, isPending: loading} = usePublicData();
+    const {productos, publicLoading: loading} = usePublicData();
 
   const [promotions, setPromotions] = useState([]);
   

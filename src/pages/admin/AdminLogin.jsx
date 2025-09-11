@@ -1,5 +1,3 @@
-// eslint-disable react-hooks/exhaustive-deps
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff, Mail, Lock, Shield, Info, AlertTriangle } from "lucide-react";
@@ -11,22 +9,10 @@ import { DEV_CREDENTIALS, DEV_CONFIG, SECURITY_CONFIG, ERROR_MESSAGES } from "@/
 import { toast } from "sonner";
 import { useSession } from "@/context/SessionProvider";
 
-import { useQuery } from "@tanstack/react-query";
-import { getLoginQuery } from "@/config/api";
-
-/**
- * Componente de login para administradores
- * Proporciona acceso seguro al panel de administración con validaciones robustas
- *
- * @component
- * @example
- * ```jsx
- * <AdminLogin />
- * ```
- */
 export function AdminLogin() {
 
     const session = useSession();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         email: "admin@noninoempanadas.com",
@@ -36,14 +22,12 @@ export function AdminLogin() {
     const [errors, setErrors] = useState({});
     const [attempts, setAttempts] = useState(0);
 
-    const navigate = useNavigate();
-
-    // Redirigir si ya está autenticado como admin
+    //Redirigir si ya está autenticado como admin
     useEffect(() => {
-        if (session.isAuthenticated && session.isAdmin) {
-            navigate('/admin');
-        }
-    }, [session.isAuthenticated, session.isAdmin]);
+      if (session.isAuthenticated && session.isAdmin) {
+        navigate('/admin');
+      }
+    }, [session.isAuthenticated]);
 
 
     // Limpiar errores cuando cambian los campos
@@ -52,6 +36,8 @@ export function AdminLogin() {
             setErrors({});
         }
     }, [formData, errors]);
+
+
 
     /**
      * Valida los campos del formulario
@@ -80,8 +66,6 @@ export function AdminLogin() {
         return newErrors;
     };
 
-    const { data: loginData, isFetching: loading, refetch: callLogin } = useQuery(getLoginQuery(formData.email, formData.password));
-
     /**
      * Maneja el envío del formulario de login
      * @param {Event} e - Evento del formulario
@@ -98,67 +82,46 @@ export function AdminLogin() {
 
         setErrors({});
 
-        callLogin();
-    }
+        session.login(formData.email, formData.password);
 
-    useEffect(() => {
-        console.log(loginData);
-        // if (session.accessToken && session.userData) {
-        //     // You can redirect based on role if needed
-        //     switch (session.userData.role) {
-        //         case 'ADMIN':
-        //             navigate('/intranet/admin', { replace: true });
-        //             break;
-        //         case 'MODERATOR':
-        //             navigate('/intranet/moderator', { replace: true });
-        //             break;
-        //         case 'USER':
-        //             navigate('/intranet/user', { replace: true });
-        //             break;
-        //         default:
-        //             navigate('/intranet', { replace: true });
-        //     }
-        // }
-    }, [loginData]);
+    };
 
-    const user = {"id":1,"username":"Martin","email":"admin@noninoempanadas.com","role":"ADMIN","accessToken":"fake"};
-    session.login(user);
-    
-    // Esperar un momento antes de navegar para asegurar que el estado se actualice
-    setTimeout(() => {
-      navigate("/intranet/admin");
-    }, 100); 
-    
+
+    // const user = {"id":1,"username":"Martin","email":"admin@noninoempanadas.com","role":"ADMIN","accessToken":"fake"};
+    // session.login(user);
+
+    // // Esperar un momento antes de navegar para asegurar que el estado se actualice
+    // setTimeout(() => {
+    //   navigate("/intranet/admin");
+    // }, 100); 
+
     // try {
     //   const result = await login(formData.email.trim(), formData.password);
 
-    //     // try {
-    //     //   const result = await login(formData.email.trim(), formData.password);
+    //   if (result.success) {
+    //     if (result.user.role === 'admin') {
+    //       toast.success("¡Bienvenido al panel de administración!");
+    //       navigate("/admin");
+    //       setAttempts(0); // Resetear intentos en login exitoso
+    //     } else {
+    //       toast.error("No tienes permisos de administrador");
+    //       setAttempts(prev => prev + 1);
+    //     }
+    //   } else {
+    //     setErrors({ general: result.error });
+    //     setAttempts(prev => prev + 1);
+    //     toast.error(result.error);
+    //   }
+    // } catch (error) {
+    //   console.error('Error en login de admin:', error);
+    //   const errorMessage = 'Error interno del sistema';
+    //   setErrors({ general: errorMessage });
+    //   toast.error(errorMessage);
+    //   setAttempts(prev => prev + 1);
+    // } finally {
+    //   setLoading(false);
+    // }
 
-    //     //   if (result.success) {
-    //     //     if (result.user.role === 'admin') {
-    //     //       toast.success("¡Bienvenido al panel de administración!");
-    //     //       navigate("/admin");
-    //     //       setAttempts(0); // Resetear intentos en login exitoso
-    //     //     } else {
-    //     //       toast.error("No tienes permisos de administrador");
-    //     //       setAttempts(prev => prev + 1);
-    //     //     }
-    //     //   } else {
-    //     //     setErrors({ general: result.error });
-    //     //     setAttempts(prev => prev + 1);
-    //     //     toast.error(result.error);
-    //     //   }
-    //     // } catch (error) {
-    //     //   console.error('Error en login de admin:', error);
-    //     //   const errorMessage = 'Error interno del sistema';
-    //     //   setErrors({ general: errorMessage });
-    //     //   toast.error(errorMessage);
-    //     //   setAttempts(prev => prev + 1);
-    //     // } finally {
-    //     //   setLoading(false);
-    //     // }
-    //   };
 
     /**
      * Maneja los cambios en los campos del formulario
@@ -180,135 +143,64 @@ export function AdminLogin() {
         }
     };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-empanada-dark flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <Card className="shadow-2xl border-0">
-          <CardHeader className="text-center bg-gradient-to-r from-empanada-golden to-empanada-crust text-white rounded-t-lg">
-            <div className="flex items-center justify-center mb-4">
-              <Shield className="w-12 h-12" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Panel de Administración</CardTitle>
-            <p className="text-white/90">Nonino Empanadas</p>
-          </CardHeader>
-          
-          <CardContent className="p-8">
-            {/* Información de credenciales por defecto - Solo en desarrollo */}
-            {import.meta.env.DEV && (
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">🔧 Modo Desarrollo:</p>
-                    <p className="text-blue-700">Puedes usar credenciales de prueba</p>
-                    <button
-                      onClick={fillDefaultCredentials}
-                      className="mt-2 text-blue-600 hover:text-blue-800 underline text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-                      aria-label="Llenar credenciales de desarrollo automáticamente"
-                    >
-                      Llenar automáticamente
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+    /**
+     * Llena el formulario con credenciales de desarrollo (solo en desarrollo)
+     * @returns {void}
+     */
+    const fillDefaultCredentials = () => {
+        if (import.meta.env.DEV && DEV_CONFIG.enableDevMode) {
+            setFormData({
+                email: DEV_CREDENTIALS.admin.email,
+                password: DEV_CREDENTIALS.admin.password
+            });
+            // Credenciales de desarrollo cargadas automáticamente
+        } else {
+            toast.error("Esta función solo está disponible en desarrollo");
+        }
+    };
 
-            {/* Mostrar errores generales */}
-            {errors.general && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                  <p className="text-sm text-red-800 font-medium">{errors.general}</p>
-                </div>
-              </div>
-            )}
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-empanada-dark flex items-center justify-center p-4">
+            <div className="w-full max-w-md">
+                <Card className="shadow-2xl border-0">
+                    <CardHeader className="text-center bg-gradient-to-r from-empanada-golden to-empanada-crust text-white rounded-t-lg">
+                        <div className="flex items-center justify-center mb-4">
+                            <Shield className="w-12 h-12" />
+                        </div>
+                        <CardTitle className="text-2xl font-bold">Panel de Administración</CardTitle>
+                        <p className="text-white/90">Nonino Empanadas</p>
+                    </CardHeader>
 
-            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-              <div>
-                <label
-                  htmlFor="admin-email"
-                  className="block text-sm font-medium mb-2 text-gray-700"
-                >
-                  Email de Administrador *
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    id="admin-email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="admin@noninoempanadas.com"
-                    className={`pl-10 pr-4 py-3 border-2 transition-colors ${
-                      errors.email
-                        ? 'border-red-300 focus:border-red-500'
-                        : 'border-gray-300 focus:border-empanada-golden'
-                    }`}
-                    aria-invalid={!!errors.email}
-                    aria-describedby={errors.email ? "email-error" : undefined}
-                    autoComplete="email"
-                  />
-                </div>
-                {errors.email && (
-                  <p
-                    className="mt-1 text-sm text-red-600 flex items-center gap-1"
-                    id="email-error"
-                    role="alert"
-                  >
-                    <AlertTriangle className="w-4 h-4" />
-                    {errors.email}
-                  </p>
-                )}
-              </div>
+                    <CardContent className="p-8">
+                        {/* Información de credenciales por defecto - Solo en desarrollo */}
+                        {import.meta.env.DEV && (
+                            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div className="flex items-start space-x-3">
+                                    <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                                    <div className="text-sm text-blue-800">
+                                        <p className="font-medium mb-1">🔧 Modo Desarrollo:</p>
+                                        <p className="text-blue-700">Puedes usar credenciales de prueba</p>
+                                        <button
+                                            onClick={fillDefaultCredentials}
+                                            className="mt-2 text-blue-600 hover:text-blue-800 underline text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                                            aria-label="Llenar credenciales de desarrollo automáticamente"
+                                        >
+                                            Llenar automáticamente
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
-              <div>
-                <label
-                  htmlFor="admin-password"
-                  className="block text-sm font-medium mb-2 text-gray-700"
-                >
-                  Contraseña *
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    id="admin-password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    placeholder="Tu contraseña de administrador"
-                    className={`pl-10 pr-12 py-3 border-2 transition-colors ${
-                      errors.password
-                        ? 'border-red-300 focus:border-red-500'
-                        : 'border-gray-300 focus:border-empanada-golden'
-                    }`}
-                    aria-invalid={!!errors.password}
-                    aria-describedby={errors.password ? "password-error" : undefined}
-                    autoComplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 focus:outline-none focus:ring-2 focus:ring-empanada-golden rounded"
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p
-                    className="mt-1 text-sm text-red-600 flex items-center gap-1"
-                    id="password-error"
-                    role="alert"
-                  >
-                    <AlertTriangle className="w-4 h-4" />
-                    {errors.password}
-                  </p>
-                )}
-              </div>
+                        {/* Mostrar errores generales */}
+                        {errors.general && (
+                            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <div className="flex items-center space-x-2">
+                                    <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                                    <p className="text-sm text-red-800 font-medium">{errors.general}</p>
+                                </div>
+                            </div>
+                        )}
 
                         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                             <div>
@@ -329,8 +221,8 @@ export function AdminLogin() {
                                         required
                                         placeholder="admin@noninoempanadas.com"
                                         className={`pl-10 pr-4 py-3 border-2 transition-colors ${errors.email
-                                            ? 'border-red-300 focus:border-red-500'
-                                            : 'border-gray-300 focus:border-empanada-golden'
+                                                ? 'border-red-300 focus:border-red-500'
+                                                : 'border-gray-300 focus:border-empanada-golden'
                                             }`}
                                         aria-invalid={!!errors.email}
                                         aria-describedby={errors.email ? "email-error" : undefined}
@@ -338,34 +230,97 @@ export function AdminLogin() {
                                     />
                                 </div>
                                 {errors.email && (
-                                    <motion.p
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
+                                    <p
                                         className="mt-1 text-sm text-red-600 flex items-center gap-1"
                                         id="email-error"
                                         role="alert"
                                     >
                                         <AlertTriangle className="w-4 h-4" />
                                         {errors.email}
-                                    </motion.p>
+                                    </p>
                                 )}
                             </div>
 
-            {/* Back to site */}
-            <div className="mt-6 text-center">
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 text-sm text-empanada-golden hover:underline focus:outline-none focus:ring-2 focus:ring-empanada-golden rounded px-2 py-1"
-                aria-label="Volver al sitio web principal"
-              >
-                ← Volver al sitio web
-              </Link>
+                            <div>
+                                <label
+                                    htmlFor="admin-password"
+                                    className="block text-sm font-medium mb-2 text-gray-700"
+                                >
+                                    Contraseña *
+                                </label>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <Input
+                                        id="admin-password"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Tu contraseña de administrador"
+                                        className={`pl-10 pr-12 py-3 border-2 transition-colors ${errors.password
+                                                ? 'border-red-300 focus:border-red-500'
+                                                : 'border-gray-300 focus:border-empanada-golden'
+                                            }`}
+                                        aria-invalid={!!errors.password}
+                                        aria-describedby={errors.password ? "password-error" : undefined}
+                                        autoComplete="current-password"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 focus:outline-none focus:ring-2 focus:ring-empanada-golden rounded"
+                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                </div>
+                                {errors.password && (
+                                    <p
+                                        className="mt-1 text-sm text-red-600 flex items-center gap-1"
+                                        id="password-error"
+                                        role="alert"
+                                    >
+                                        <AlertTriangle className="w-4 h-4" />
+                                        {errors.password}
+                                    </p>
+                                )}
+                            </div>
+
+                            <Button
+                                type="submit"
+                                variant="empanada"
+                                className="w-full py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                                disabled={session.loading || attempts >= 3}
+                            >
+                                {session.loading ? (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                        Iniciando sesión...
+                                    </div>
+                                ) : attempts >= 3 ? (
+                                    "Bloqueado temporalmente"
+                                ) : (
+                                    "Acceder al Panel"
+                                )}
+                            </Button>
+                        </form>
+
+                        {/* Back to site */}
+                        <div className="mt-6 text-center">
+                            <Link
+                                to="/"
+                                className="inline-flex items-center gap-2 text-sm text-empanada-golden hover:underline focus:outline-none focus:ring-2 focus:ring-empanada-golden rounded px-2 py-1"
+                                aria-label="Volver al sitio web principal"
+                            >
+                                ← Volver al sitio web
+                            </Link>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
 
 

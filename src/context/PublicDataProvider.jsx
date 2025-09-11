@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState, useContext, createContext } from 'react'
 import { useQuery } from '@tanstack/react-query';
-import { getPublicDataQuery } from '@/config/api';
+import { getPublicDataQueryFunction } from '@/config/apiQueryFunctions';
 
 const PublicDataContext = createContext();
 
@@ -11,11 +11,15 @@ export const PublicDataProvider = ({ children }) => {
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
+    const [idSucursal, setIdSucursal] = useState(1);
 
-    const { data: publicCatalog, isPending } = useQuery(getPublicDataQuery(1));
+    const { data: publicCatalog, isPending: publicLoading } = useQuery({
+        queryKey: ['publicData', idSucursal],
+        queryFn: () => getPublicDataQueryFunction(idSucursal),
+    });
 
     useEffect(() => {
-        if (publicCatalog && !isPending) {
+        if (publicCatalog && !publicLoading) {
             const gotCategories = publicCatalog.categories.map((categoria) => ({
                 id: categoria.id,
                 name: categoria.name
@@ -53,7 +57,7 @@ export const PublicDataProvider = ({ children }) => {
 
 
     return (
-        <PublicDataContext.Provider value={{ productos, categorias, isPending }}>
+        <PublicDataContext.Provider value={{ productos, categorias, publicLoading }}>
             {children}
         </PublicDataContext.Provider>
     )

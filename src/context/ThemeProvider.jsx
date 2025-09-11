@@ -26,7 +26,7 @@ export const useTheme = () => {
  */
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    const savedTheme = getStorageItem('theme');
+    const savedTheme = localStorage.getItem('theme');
     if (savedTheme) return savedTheme;
     
     // Detectar preferencia del sistema
@@ -40,7 +40,7 @@ export const ThemeProvider = ({ children }) => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
-    setStorageItem('theme', theme);
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

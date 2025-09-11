@@ -58,56 +58,54 @@ function App() {
     return (
         <BrowserRouter>
             <SessionProvider>
-                <CartProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <ChakraProvider>
+                <QueryClientProvider client={queryClient}>
+                    <ChakraProvider>
 
-                            <Routes>
-                                {/* PUBLIC */}
-                                <Route element={<PublicLayout />}>
-                                    <Route index element={<HomePage />} />
-                                    <Route path="/menu" element={<MenuPage />} />
-                                    <Route path="/promociones" element={<PromotionsPage />} />
-                                    <Route path="/locales" element={<StoresPage />} />
-                                    <Route path="/nosotros" element={<AboutPage />} />
-                                    <Route path="/contacto" element={<ContactPage />} />
-                                    <Route path="/carrito" element={<CartPage />} />
-                                    <Route path="/checkout" element={<CheckoutPage />} />
-                                    <Route path="/tracking/:orderId" element={<OrderTrackingPage />} />
+                        <Routes>
+                            {/* PUBLIC */}
+                            <Route element={<PublicLayout />}>
+                                <Route index element={<HomePage />} />
+                                <Route path="/menu" element={<MenuPage />} />
+                                <Route path="/promociones" element={<PromotionsPage />} />
+                                <Route path="/locales" element={<StoresPage />} />
+                                <Route path="/nosotros" element={<AboutPage />} />
+                                <Route path="/contacto" element={<ContactPage />} />
+                                <Route path="/carrito" element={<CartPage />} />
+                                <Route path="/checkout" element={<CheckoutPage />} />
+                                <Route path="/tracking/:orderId" element={<OrderTrackingPage />} />
+                            </Route>
+
+                            {/* INTRANET */}
+                            <Route path="/intranet" element={<Navigate to="/intranet/login" replace />} />
+                            <Route path="/intranet/*" element={<IntranetPortal />} >
+                                <Route path="login" element={<AdminLogin />} />
+
+                                {/* ADMIN */}
+                                <Route path="admin"
+                                    element={
+                                        <AuthProvider allowedRole={'ADMIN'}>
+                                            <ThemeProvider>
+                                                <AdminLayout />
+                                            </ThemeProvider>
+                                        </AuthProvider>
+                                    }
+                                >
+                                    <Route index element={<AdminDashboard />} />
+                                    <Route path="pedidos" element={<OrderManagement />} />
+                                    <Route path="productos" element={<ProductManagement />} />
+                                    <Route path="inventario" element={<InventoryManagement />} />
+                                    <Route path="clientes" element={<CustomerManagement />} />
+                                    <Route path="reportes" element={<ReportsPage />} />
+                                    <Route path="configuracion" element={<SettingsPage />} />
                                 </Route>
+                            </Route>
 
-                                {/* INTRANET */}
-                                <Route path="/intranet" element={<Navigate to="/intranet/login" replace />} />
-                                <Route path="/intranet/*" element={<IntranetPortal />} >
-                                    <Route path="login" element={<AdminLogin />} />
+                            {/* FALLBACK */}
+                            <Route path="*" element={<NotFound />} />
+                        </Routes>
 
-                                    {/* ADMIN */}
-                                    <Route path="admin"
-                                        element={
-                                            <AuthProvider allowedRole={'ADMIN'}>
-                                                <ThemeProvider>
-                                                    <AdminLayout />
-                                                </ThemeProvider>
-                                            </AuthProvider>
-                                        }
-                                    >
-                                        <Route index element={<AdminDashboard />} />
-                                        <Route path="pedidos" element={<OrderManagement />} />
-                                        <Route path="productos" element={<ProductManagement />} />
-                                        <Route path="inventario" element={<InventoryManagement />} />
-                                        <Route path="clientes" element={<CustomerManagement />} />
-                                        <Route path="reportes" element={<ReportsPage />} />
-                                        <Route path="configuracion" element={<SettingsPage />} />
-                                    </Route>
-                                </Route>
-
-                                {/* FALLBACK */}
-                                <Route path="*" element={<NotFound />} />
-                            </Routes>
-
-                        </ChakraProvider>
-                    </QueryClientProvider>
-                </CartProvider>
+                    </ChakraProvider>
+                </QueryClientProvider>
             </SessionProvider>
         </BrowserRouter>
     );

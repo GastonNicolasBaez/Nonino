@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   Search, 
   Plus, 
@@ -308,10 +308,8 @@ export function CustomerManagement() {
                 </thead>
                 <tbody>
                   {filteredCustomers.map((customer) => (
-                    <motion.tr
+                    <tr
                       key={customer.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
                       className="border-b admin-table-row"
                     >
                       <td className="p-4">
@@ -376,7 +374,7 @@ export function CustomerManagement() {
                           </Button>
                         </div>
                       </td>
-                    </motion.tr>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -436,10 +434,7 @@ function CustomerDetailModal({ customer, onClose }) {
   return (
     <Portal>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
+        <div
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
           <Card className="shadow-2xl h-full flex flex-col ">
@@ -592,7 +587,7 @@ function CustomerDetailModal({ customer, onClose }) {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </Portal>
   );
@@ -631,10 +626,7 @@ function NewCustomerModal({ onClose, onSave }) {
   return (
     <Portal>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
+        <div
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
           <Card className="shadow-2xl h-full flex flex-col ">
@@ -796,7 +788,7 @@ function NewCustomerModal({ onClose, onSave }) {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </Portal>
   );
@@ -827,10 +819,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
   return (
     <Portal>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
+        <div
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
           <Card className="shadow-2xl h-full flex flex-col ">
@@ -1003,7 +992,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </Portal>
   );

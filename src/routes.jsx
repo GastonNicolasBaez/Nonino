@@ -1,3 +1,4 @@
+import { createBrowserRouter } from "react-router-dom";
 import { PublicLayout } from "./components/layouts/PublicLayout";
 import { AdminLayout } from "./components/layouts/AdminLayout";
 
@@ -92,11 +93,11 @@ export const router = createBrowserRouter([
 
   // Rutas de administración
   {
-    path: "/admin/login",
+    path: "/intranet/admin/login",
     element: <AdminLogin />,
   },
   {
-    path: "/admin",
+    path: "/intranet/admin",
     element: (
       <AdminRoute>
         <AdminLayout />

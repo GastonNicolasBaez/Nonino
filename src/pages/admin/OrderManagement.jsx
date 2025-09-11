@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   Search, 
   Filter, 
@@ -95,10 +95,7 @@ function OrderViewModal({ order, onClose }) {
   return (
     <Portal>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
+        <div
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
           <Card className="shadow-2xl h-full flex flex-col ">
@@ -234,7 +231,7 @@ function OrderViewModal({ order, onClose }) {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </Portal>
   );

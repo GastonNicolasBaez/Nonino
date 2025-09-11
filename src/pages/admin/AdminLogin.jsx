@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, Shield, Info, AlertTriangle } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { useAuth } from "../../context/AuthContext";
 import { validateEmail } from "../../lib/utils";
 import { DEV_CREDENTIALS, DEV_CONFIG, SECURITY_CONFIG, ERROR_MESSAGES } from "../../config/constants";
 import { toast } from "sonner";
@@ -96,7 +94,11 @@ export function AdminLogin() {
 
     const user = {"id":1,"username":"Martin","email":"admin@noninoempanadas.com","role":"ADMIN","accessToken":"fake"};
     session.login(user);
-    navigate("/intranet/admin"); 
+    
+    // Esperar un momento antes de navegar para asegurar que el estado se actualice
+    setTimeout(() => {
+      navigate("/intranet/admin");
+    }, 100); 
     
     // try {
     //   const result = await login(formData.email.trim(), formData.password);
@@ -164,12 +166,7 @@ export function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-empanada-dark flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
+      <div className="w-full max-w-md">
         <Card className="shadow-2xl border-0">
           <CardHeader className="text-center bg-gradient-to-r from-empanada-golden to-empanada-crust text-white rounded-t-lg">
             <div className="flex items-center justify-center mb-4">
@@ -182,11 +179,7 @@ export function AdminLogin() {
           <CardContent className="p-8">
             {/* Información de credenciales por defecto - Solo en desarrollo */}
             {import.meta.env.DEV && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"
-              >
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-start space-x-3">
                   <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div className="text-sm text-blue-800">
@@ -201,21 +194,17 @@ export function AdminLogin() {
                     </button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Mostrar errores generales */}
             {errors.general && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
-              >
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
                   <p className="text-sm text-red-800 font-medium">{errors.general}</p>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -247,16 +236,14 @@ export function AdminLogin() {
                   />
                 </div>
                 {errors.email && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <p
                     className="mt-1 text-sm text-red-600 flex items-center gap-1"
                     id="email-error"
                     role="alert"
                   >
                     <AlertTriangle className="w-4 h-4" />
                     {errors.email}
-                  </motion.p>
+                  </p>
                 )}
               </div>
 
@@ -296,16 +283,14 @@ export function AdminLogin() {
                   </button>
                 </div>
                 {errors.password && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <p
                     className="mt-1 text-sm text-red-600 flex items-center gap-1"
                     id="password-error"
                     role="alert"
                   >
                     <AlertTriangle className="w-4 h-4" />
                     {errors.password}
-                  </motion.p>
+                  </p>
                 )}
               </div>
 
@@ -340,7 +325,7 @@ export function AdminLogin() {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }

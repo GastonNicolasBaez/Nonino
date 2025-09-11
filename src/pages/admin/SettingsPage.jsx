@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   Settings, 
   Store,
@@ -676,18 +676,15 @@ export function SettingsPage() {
 
         {/* Contenido principal */}
         <div className="lg:col-span-3">
-          <motion.div
+          <div
             key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
           >
             {activeTab === "general" && <GeneralSettings />}
             {activeTab === "store" && <StoreSettings />}
             {activeTab === "notifications" && <NotificationSettings />}
             {activeTab === "payment" && <PaymentSettings />}
             {activeTab === "security" && <SecuritySettings />}
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   Plus, 
   Search, 
@@ -275,8 +275,7 @@ export function ProductManagement() {
   };
 
   const handleImportProducts = () => {
-    // TODO: Implementar importación de productos
-    console.log('Importación de productos pendiente de implementar');
+    toast.info("Funcionalidad de importación próximamente");
   };
 
   const handleUpdateStock = (productId) => {
@@ -331,12 +330,7 @@ export function ProductManagement() {
     return (
       <Portal>
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="w-full max-w-6xl h-[95vh] flex flex-col"
-          >
+          <div className="w-full max-w-6xl h-[95vh] flex flex-col">
             <Card className="shadow-2xl h-full flex flex-col ">
               {/* Header */}
               <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -500,7 +494,7 @@ export function ProductManagement() {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         </div>
       </Portal>
     );
@@ -632,12 +626,7 @@ export function ProductManagement() {
           ))
         ) : (
           filteredProducts.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
+            <div key={product.id}>
               <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 ">
                 <div className="aspect-square relative">
                   <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
@@ -751,27 +740,25 @@ export function ProductManagement() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))
         )}
       </div>
 
       {/* Modals */}
-      <AnimatePresence>
-        {showAddModal && (
-          <ProductModal
-            onClose={() => setShowAddModal(false)}
-            onSave={() => setShowAddModal(false)}
-          />
-        )}
-        {editingProduct && (
-          <ProductModal
-            product={editingProduct}
-            onClose={() => setEditingProduct(null)}
-            onSave={() => setEditingProduct(null)}
-          />
-        )}
-      </AnimatePresence>
+      {showAddModal && (
+        <ProductModal
+          onClose={() => setShowAddModal(false)}
+          onSave={() => setShowAddModal(false)}
+        />
+      )}
+      {editingProduct && (
+        <ProductModal
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onSave={() => setEditingProduct(null)}
+        />
+      )}
       
       {/* Modal Components */}
       <ConfirmModalComponent />

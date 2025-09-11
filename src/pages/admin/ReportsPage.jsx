@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   BarChart3, 
   TrendingUp, 

@@ -1,6 +1,6 @@
-import { Outlet, Link, useLocation } from "react-router";
+import { Outlet, Link, useLocation, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   Home, 
   ShoppingCart, 
@@ -16,7 +16,8 @@ import {
   LogOut,
   Bell,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  User
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -32,9 +33,16 @@ import { useTheme } from "@/context/ThemeProvider";
 
 const AdminLayout = () => {
   const session = useSession();
+  const navigate = useNavigate();
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { theme, toggleTheme, isDark } = useTheme();
+
+  const handleLogout = () => {
+    session.logout();
+    navigate('/intranet/login');
+  };
   // const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -53,55 +61,45 @@ const AdminLayout = () => {
 
   const navigationItems = [
     { name: "Dashboard", href: "/intranet/admin", icon: Home },
-    { name: "Pedidos", href: "pedidos", icon: ShoppingCart },
-    { name: "Productos", href: "productos", icon: Package },
-    { name: "Inventario", href: "inventario", icon: Archive },
-    { name: "Clientes", href: "clientes", icon: Users },
-    { name: "Reportes", href: "reportes", icon: BarChart3 },
-    { name: "Configuración", href: "configuracion", icon: Settings },
+    { name: "Pedidos", href: "/intranet/admin/pedidos", icon: ShoppingCart },
+    { name: "Productos", href: "/intranet/admin/productos", icon: Package },
+    { name: "Inventario", href: "/intranet/admin/inventario", icon: Archive },
+    { name: "Clientes", href: "/intranet/admin/clientes", icon: Users },
+    { name: "Reportes", href: "/intranet/admin/reportes", icon: BarChart3 },
+    { name: "Configuración", href: "/intranet/admin/configuracion", icon: Settings },
   ];
 
   const isActive = (href) => {
-    if (href === "/admin") {
+    if (href === "/intranet/admin") {
       return location.pathname === href;
     }
-    return location.pathname.startsWith(href);
+    return location.pathname === href;
   };
 
-  const sidebarVariants = {
-    closed: { x: "-100%" },
-    open: { x: 0 },
-  };
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex overflow-hidden">
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 admin-layout-light flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
-          />
-        )}
-      </AnimatePresence>
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+        />
+      )}
 
       {/* Sidebar */}
-      <aside className={`hidden lg:flex lg:flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 h-screen ${
-        sidebarCollapsed ? 'w-16' : 'w-64'
-      }`}>
+      <aside 
+        className="hidden lg:flex lg:flex-col bg-white dark:bg-gray-800 admin-sidebar-light border-r border-gray-200 dark:border-gray-700 transition-all duration-300 h-screen"
+        style={{ width: sidebarCollapsed ? '5.5rem' : '16rem' }}
+      >
         {/* Desktop Sidebar Content */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <Link to="/admin" className="flex items-center space-x-2">
-            <motion.div
-              className="text-2xl"
-              whileHover={{ rotate: 15, scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              🥟
-            </motion.div>
+            <img 
+              src="/src/assets/images/remo.png" 
+              alt="Nonino Empanadas" 
+              className={sidebarCollapsed ? "w-10 h-10" : "w-8 h-8"}
+            />
             {!sidebarCollapsed && (
               <div>
                 <AnimatedGradientText className="text-lg font-bold">
@@ -119,9 +117,9 @@ const AdminLayout = () => {
             <Link
               key={item.name}
               to={item.href}
-              className={`relative flex items-center px-4 py-3 rounded-lg transition-colors group ${
+              className={`relative flex items-center px-4 py-3 rounded-lg admin-nav-item group ${
                 isActive(item.href)
-                  ? "bg-empanada-golden text-white"
+                  ? "bg-empanada-golden text-white active"
                   : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               } ${sidebarCollapsed ? "justify-center" : "justify-between"}`}
               title={sidebarCollapsed ? item.name : undefined}
@@ -152,19 +150,32 @@ const AdminLayout = () => {
         {/* Desktop User Info */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           {sidebarCollapsed ? (
-            <div className="flex flex-col items-center space-y-2">
-              <Avatar name={session.userData?.name} size="md" />
+            <div className="flex flex-col items-center space-y-3">
+              <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                className="w-10 h-10 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                title="Cerrar sesión"
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
             </div>
           ) : (
             <Card className="p-4 ">
               <div className="flex items-center space-x-3 mb-3">
-                <Avatar name={session.userData?.name} size="md" />
+                <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {session.userData?.name}
+                    {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    {session.userData?.email}
+                    {session.userData?.email || 'EMAIL NO ENCONTRADO'}
                   </p>
                 </div>
               </div>
@@ -181,7 +192,7 @@ const AdminLayout = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={session.logout}
+                  onClick={handleLogout}
                   className="flex-1"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
@@ -194,23 +205,19 @@ const AdminLayout = () => {
       </aside>
 
       {/* Mobile Sidebar */}
-      <motion.aside
-        variants={sidebarVariants}
-        initial="closed"
-        animate={sidebarOpen ? "open" : "closed"}
-        transition={{ type: "tween", duration: 0.3 }}
-        className="fixed lg:hidden inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-xl border-r border-gray-200 dark:border-gray-700"
+      <aside
+        className={`fixed lg:hidden inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-xl border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-200 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <Link to="/admin" className="flex items-center space-x-2">
-            <motion.div
-              className="text-2xl"
-              whileHover={{ rotate: 15, scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              🥟
-            </motion.div>
+            <img 
+              src="/src/assets/images/remo.png" 
+              alt="Nonino Empanadas" 
+              className="w-8 h-8"
+            />
             <div>
               <AnimatedGradientText className="text-lg font-bold">
                 NONINO
@@ -261,14 +268,17 @@ const AdminLayout = () => {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
           <Card className="p-4 ">
             <div className="flex items-center space-x-3 mb-3">
-              <Avatar name={session.userData?.name} size="md" />
+              <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {session.userData?.name}
+                  {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {session.userData?.email}
+                  {session.userData?.email || 'EMAIL NO ENCONTRADO'}
                 </p>
+                <p className="text-xs text-red-500">Debug: {JSON.stringify(session.userData)}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -284,7 +294,7 @@ const AdminLayout = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={session.logout}
+                onClick={handleLogout}
                 className="flex-1"
               >
                 <LogOut className="w-4 h-4 mr-2" />
@@ -293,15 +303,15 @@ const AdminLayout = () => {
             </div>
           </Card>
         </div>
-      </motion.aside>
+      </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen">
         {/* Header */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <header className="bg-white dark:bg-gray-800 admin-header shadow-sm border-b border-gray-200 dark:border-gray-700">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 flex-1">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -322,7 +332,9 @@ const AdminLayout = () => {
                 </Button>
                 
                 {/* Componente de búsqueda global */}
-                <InlineSearch />
+                <div className="flex-1 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
+                  <InlineSearch />
+                </div>
               </div>
               
               <div className="flex items-center space-x-4">
@@ -338,13 +350,15 @@ const AdminLayout = () => {
                 <div className="flex items-center space-x-3">
                   <div className="text-right hidden sm:block">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {session.userData?.name}
+                      {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Administrador
+                      {session.userData?.email || 'EMAIL NO ENCONTRADO'}
                     </p>
                   </div>
-                  <Avatar name={session.userData?.name} size="sm" />
+                  <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -352,14 +366,8 @@ const AdminLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Outlet />
-          </motion.div>
+        <main className="flex-1 p-6 overflow-y-auto admin-main-content m-4">
+          <Outlet />
         </main>
       </div>
     </div>

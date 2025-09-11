@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   TrendingUp, 
   Users, 
@@ -100,9 +100,7 @@ export function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+        <div
           className="text-center"
         >
           <div className="relative">
@@ -111,7 +109,7 @@ export function AdminDashboard() {
           </div>
           <p className="text-lg font-medium text-gray-600 dark:text-gray-400">Cargando dashboard...</p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Preparando datos en tiempo real</p>
-        </motion.div>
+        </div>
       </div>
     );
   }
@@ -120,9 +118,7 @@ export function AdminDashboard() {
   if (!metrics) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
           className="text-center max-w-md"
         >
           <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -141,7 +137,7 @@ export function AdminDashboard() {
           >
             Reintentar
           </Button>
-        </motion.div>
+        </div>
       </div>
     );
   }
@@ -149,9 +145,7 @@ export function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
         <div>
@@ -180,13 +174,10 @@ export function AdminDashboard() {
             </Badge>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Alerts Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+      <div
         className="space-y-4"
       >
         <div className="flex items-center space-x-2">
@@ -198,7 +189,7 @@ export function AdminDashboard() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Stock bajo */}
-          <Card className="border-amber-200  dark:border-amber-800">
+          <Card className="admin-alert admin-alert-warning">
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center flex-shrink-0">
@@ -225,7 +216,7 @@ export function AdminDashboard() {
           </Card>
 
           {/* Pedidos pendientes */}
-          <Card className="border-blue-200  dark:border-blue-800">
+          <Card className="admin-alert admin-alert-info">
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
@@ -251,21 +242,17 @@ export function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
-      </motion.div>
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => (
-          <motion.div
+          <div
             key={stat.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 + index * 0.1 }}
-            whileHover={{ y: -2 }}
             className="group"
           >
             <Card 
-              className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300  cursor-pointer"
+              className="relative overflow-hidden admin-stats-card cursor-pointer"
               onClick={() => {
                 switch(stat.title) {
                   case 'Ventas Totales':
@@ -322,7 +309,7 @@ export function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -330,12 +317,8 @@ export function AdminDashboard() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Recent Orders - Takes 2 columns on XL */}
         <div className="xl:col-span-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <Card className="h-full ">
+          <div>
+            <Card className="h-full admin-card">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
@@ -356,11 +339,8 @@ export function AdminDashboard() {
               
               <CardContent className="space-y-4">
                 {metrics?.recentOrders?.slice(0, 5).map((order, index) => (
-                  <motion.div
+                  <div
                     key={order.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.7 + index * 0.1 }}
                     className="flex items-center justify-between p-3 rounded-lg admin-table-row"
                   >
                     <div className="flex items-center space-x-3">
@@ -394,7 +374,7 @@ export function AdminDashboard() {
                          order.status === "pending" ? "Pendiente" : order.status}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
                 
                 {(!metrics?.recentOrders || metrics.recentOrders.length === 0) && (
@@ -405,17 +385,13 @@ export function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         </div>
 
         {/* Top Products - Takes 1 column on XL */}
         <div className="xl:col-span-1">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-          >
-            <Card className="h-full ">
+          <div>
+            <Card className="h-full admin-card">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
@@ -436,11 +412,8 @@ export function AdminDashboard() {
               
               <CardContent className="space-y-4">
                 {metrics?.topProducts?.map((item, index) => (
-                  <motion.div
+                  <div
                     key={item.name || index}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.9 + index * 0.1 }}
                     className="flex items-center space-x-3 p-3 rounded-lg admin-table-row"
                   >
                     <div className="flex-shrink-0">
@@ -463,7 +436,7 @@ export function AdminDashboard() {
                         {formatPrice(item.revenue)}
                       </p>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
                 
                 {(!metrics?.topProducts || metrics.topProducts.length === 0) && (
@@ -474,17 +447,13 @@ export function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Charts Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0 }}
-      >
-        <Card className="">
+      <div>
+        <Card className="admin-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
@@ -513,7 +482,7 @@ export function AdminDashboard() {
             <SalesChart data={metrics?.salesData} />
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }

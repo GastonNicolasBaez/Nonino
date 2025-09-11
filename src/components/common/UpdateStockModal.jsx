@@ -43,14 +43,14 @@ export function UpdateStockModal({
           className="fixed inset-0 z-[999999] flex items-center justify-center p-4"
         >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
+        <div className="absolute inset-0 bg-black/60" onClick={handleClose} />
         
         {/* Modal */}
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
+          initial={{ scale: 0.96, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          exit={{ scale: 0.96, opacity: 0 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
           className="relative w-full max-w-md"
         >
           <Card className="shadow-xl border-2 border-empanada-golden/20">

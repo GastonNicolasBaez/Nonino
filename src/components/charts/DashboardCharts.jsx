@@ -92,11 +92,16 @@ export function SalesChart({ data }) {
           />
           <Tooltip 
             contentStyle={{
-              backgroundColor: 'var(--background)',
-              border: '1px solid var(--border)',
+              backgroundColor: 'white',
+              border: '2px solid #e5e7eb',
               borderRadius: '8px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              color: 'var(--foreground)'
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+              color: '#1f2937',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+            wrapperStyle={{
+              filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.07))'
             }}
             formatter={(value, name) => [
               name === 'sales' ? `$${value.toLocaleString()}` : value,

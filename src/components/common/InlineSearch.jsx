@@ -173,7 +173,7 @@ export function InlineSearch() {
   }, []);
 
   return (
-    <div className="relative w-full max-w-md" ref={resultsRef}>
+    <div className="relative w-full" ref={resultsRef}>
       {/* Input de búsqueda */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

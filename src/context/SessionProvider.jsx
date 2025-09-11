@@ -22,9 +22,17 @@ export const SessionProvider = ({ children }) => {
         return storedAccessToken ? storedAccessToken : null;
     });
 
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState(() => {
+        const storedUserData = localStorage.getItem("userData");
+        const parsed = storedUserData ? JSON.parse(storedUserData) : null;
+        return parsed;
+    });
 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        const hasToken = localStorage.getItem("accessToken");
+        return hasToken ? true : false;
+    });
+
 
 
     // useEffect(() => {
@@ -75,7 +83,20 @@ export const SessionProvider = ({ children }) => {
     // }, [accessToken]);
 
     const login = (data) => {
+        const userInfo = {
+            id: data.id,
+            name: data.username,
+            email: data.email,
+            role: data.role
+        };
+        
+        // Guardar en localStorage primero
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("userData", JSON.stringify(userInfo));
+        
+        // Luego actualizar estado
         setAccessToken(data.accessToken);
+        setUserData(userInfo);
         setIsAuthenticated(true);
     }
 
@@ -83,8 +104,11 @@ export const SessionProvider = ({ children }) => {
         setAccessToken(null);
         setUserData(null);
         setIsAuthenticated(false);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userData");
     }
 
+    
     return (
         <SessionContext.Provider value={{ accessToken, setAccessToken, userData, setUserData, isAuthenticated, loading, login, logout,  }}>
             {children}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+// Removed framer-motion for simpler admin experience
 import { 
   Search, 
   Plus, 
@@ -326,10 +326,8 @@ export function InventoryManagement() {
                 </thead>
                 <tbody>
                   {filteredInventory.map((item) => (
-                    <motion.tr
+                    <tr
                       key={item.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
                       className="border-b admin-table-row"
                     >
                       <td className="p-4">
@@ -381,7 +379,7 @@ export function InventoryManagement() {
                           </Button>
                         </div>
                       </td>
-                    </motion.tr>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -438,10 +436,7 @@ function AddItemModal({ onClose, onSave }) {
   return (
     <Portal>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
+        <div
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
           <Card className="shadow-2xl h-full flex flex-col ">
@@ -625,7 +620,7 @@ function AddItemModal({ onClose, onSave }) {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </Portal>
   );

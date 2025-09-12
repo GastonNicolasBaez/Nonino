@@ -278,7 +278,6 @@ const AdminLayout = () => {
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {session.userData?.email || 'EMAIL NO ENCONTRADO'}
                 </p>
-                <p className="text-xs text-red-500">Debug: {JSON.stringify(session.userData)}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">

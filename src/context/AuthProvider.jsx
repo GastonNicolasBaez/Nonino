@@ -8,7 +8,6 @@ import Loading from "@/components/common/Loading";
 const AuthProvider = ({ children, allowedRole }) => {
     const session = useSession();
 
-    console.log(session);
 
     // Show loading while session is being restored
     if (session.loading) {

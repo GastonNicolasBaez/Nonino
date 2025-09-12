@@ -111,7 +111,10 @@ export function ConfirmModal({
                   {cancelText}
                 </Button>
                 <Button 
-                  onClick={onConfirm}
+                  onClick={() => {
+                    onConfirm();
+                    onClose();
+                  }}
                   disabled={isLoading}
                   className={`px-6 ${styles.confirmButton}`}
                 >

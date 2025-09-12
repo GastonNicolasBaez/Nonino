@@ -599,14 +599,69 @@ html:not(.dark) .admin-main-content {
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
-/* Dark mode: mantener comportamiento original */
-html.dark .admin-layout-light {
-  background-color: transparent;
-}
 
 html.dark .admin-main-content {
   background-color: transparent;
   border: none;
   border-radius: 0;
   box-shadow: none;
+}
+
+/* Sliders personalizados para el editor de imágenes */
+.slider-empanada {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 5px;
+  outline: none;
+  transition: background 0.3s ease;
+}
+
+.slider-empanada::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider-empanada::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slider-empanada::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider-empanada::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slider-empanada::-moz-range-track {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 5px;
+}
+
+/* Modo oscuro para sliders */
+.dark .slider-empanada {
+  background: #374151;
+}
+
+.dark .slider-empanada::-moz-range-track {
+  background: #374151;
 }

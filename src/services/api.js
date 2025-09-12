@@ -148,6 +148,45 @@ export const promotionService = {
   },
 };
 
+// ============ IMAGE SERVICES ============
+export const imageService = {
+  async uploadImage(file, type = 'product') {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('type', type);
+
+    return api.post('/images/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  async uploadProductImage(productId, file) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    return api.post(`/products/${productId}/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  async deleteImage(imageId) {
+    return api.delete(`/images/${imageId}`);
+  },
+
+  async processImage(imageId, options = {}) {
+    return api.post(`/images/${imageId}/process`, {
+      resize: options.resize,
+      crop: options.crop,
+      format: options.format || 'jpeg',
+      quality: options.quality || 80,
+    });
+  },
+};
+
 // ============ ADMIN SERVICES ============
 export const adminService = {
   async getDashboardMetrics() {
@@ -159,11 +198,43 @@ export const adminService = {
   },
 
   async updateProduct(productId, productData) {
+    // Si hay imagen nueva, subirla primero
+    if (productData.image instanceof File) {
+      try {
+        const imageResponse = await imageService.uploadProductImage(productId, productData.image);
+        productData.imageUrl = imageResponse.data.imageUrl;
+        delete productData.image; // Remover el archivo del objeto
+      } catch (error) {
+        console.error('Error al subir imagen:', error);
+        throw new Error('Error al procesar la imagen');
+      }
+    }
+    
     return api.put(`/admin/products/${productId}`, productData);
   },
 
   async createProduct(productData) {
-    return api.post('/admin/products', productData);
+    let imageUrl = null;
+    
+    // Si hay imagen, subirla primero
+    if (productData.image instanceof File) {
+      try {
+        const imageResponse = await imageService.uploadImage(productData.image, 'product');
+        imageUrl = imageResponse.data.imageUrl;
+      } catch (error) {
+        console.error('Error al subir imagen:', error);
+        throw new Error('Error al procesar la imagen');
+      }
+    }
+
+    // Crear producto con la URL de la imagen
+    const productPayload = {
+      ...productData,
+      imageUrl,
+    };
+    delete productPayload.image; // Remover el archivo del objeto
+
+    return api.post('/admin/products', productPayload);
   },
 
   async deleteProduct(productId) {

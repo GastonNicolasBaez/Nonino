@@ -291,7 +291,6 @@ export function ProductManagement() {
     });
   };
 
-  // ProductModal component definition (moved inside the main component)
   const ProductModal = ({ product, onClose }) => {
     const [formData, setFormData] = useState(product || {
       name: "",

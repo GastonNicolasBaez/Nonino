@@ -164,7 +164,7 @@ export function Header() {
                     "text-xs sm:text-sm hidden md:block font-medium",
                     "text-gray-900"
                   )}>
-                    Hola, {session.username.split(' ')[0]}
+                    Hola, {session.userData.name.split(' ')[0]}
                   </span>
                   <Button
                     variant="ghost"

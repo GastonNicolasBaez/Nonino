@@ -6,26 +6,26 @@ import { Navigate } from "react-router";
 import Loading from "@/components/common/Loading";
 
 const AuthProvider = ({ children, allowedRole }) => {
+    const session = useSession();
 
-    // const session = useSession();
+    console.log(session);
 
-    // // Show loading if we have a token but userData is not loaded yet
-    // if (session.accessToken && session.userData === null) {
-    //     return <Loading />; // or a spinner component
-    // }
+    // Show loading while session is being restored
+    if (session.loading) {
+        return <div style={{backgroundColor: '#09090B', height: '100vh'}}></div>;
+    }
 
-    // // If no token, redirect to login
-    // if (!session.accessToken) {
-    //     return <Navigate to="/intranet/login" replace />;
-    // }
+    // After loading, check authentication
+    if (!session.userData || !session.isAuthenticated) {
+        return <Navigate to="/intranet/login" replace />;
+    }
 
-    // // If userData is loaded, check role
-    // const userOk = session.userData && allowedRole && session.userData.role === allowedRole;
-    // if (!userOk) {
-    //     return <Navigate to="/intranet/login" replace />;
-    // }
+    // If allowedRole is set, check role
+    if (allowedRole && session.userData.roleName !== allowedRole) {
+        return <Navigate to="/intranet/login" replace />;
+    }
 
     return children;
 };
 
-export default AuthProvider
+export default AuthProvider;

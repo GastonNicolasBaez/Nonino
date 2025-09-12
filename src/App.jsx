@@ -1,13 +1,11 @@
 // fucking GIT
 
 // PROVIDERS
-import { Provider as ChakraProvider } from "@/components/ui/provider"
 import AuthProvider from "@/context/AuthProvider";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { SessionProvider } from "@/context/SessionProvider";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { CartProvider } from "@/context/CartProvider";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 
 // LAYOUTS
@@ -57,9 +55,8 @@ const queryClient = new QueryClient({
 function App() {
     return (
         <BrowserRouter>
-            <SessionProvider>
-                <QueryClientProvider client={queryClient}>
-                    <ChakraProvider>
+            <QueryClientProvider client={queryClient}>
+                <SessionProvider>
 
                         <Routes>
                             {/* PUBLIC */}
@@ -104,9 +101,8 @@ function App() {
                             <Route path="*" element={<NotFound />} />
                         </Routes>
 
-                    </ChakraProvider>
-                </QueryClientProvider>
-            </SessionProvider>
+                </SessionProvider>
+            </QueryClientProvider>
         </BrowserRouter>
     );
 }

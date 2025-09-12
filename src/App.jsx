@@ -1,4 +1,4 @@
-// fucking GIT
+// fucking GIT punto de control
 
 // PROVIDERS
 import AuthProvider from "@/context/AuthProvider";

@@ -1,5 +1,5 @@
 const Loading = () => {
-    <div>load</div>
+    <div style={{backgroundColor: '#09090B', height: '100vh'}}></div>
 }
 
 export default Loading

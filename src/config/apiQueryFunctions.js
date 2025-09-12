@@ -32,11 +32,15 @@ export const getLoginQueryFunction = async ({ _email, _password }) => {
     return await response.data;
 }
 
-export const getRefreshQueryFunction = async () => {
+export const getRefreshQueryFunction = async (_csrfToken) => {
     const axiosSetup = {
         axiosData: {
         },
         axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": _csrfToken,
+            },
             withCredentials: true
         }
     }

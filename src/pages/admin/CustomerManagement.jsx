@@ -27,8 +27,10 @@ import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
+import { generateCustomersReportPDF, downloadPDF } from "../../services/pdfService";
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { Portal } from "../../components/common/Portal";
+import { mockCustomers } from "../../lib/mockData";
 
 export function CustomerManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -155,7 +157,27 @@ export function CustomerManagement() {
   };
 
   const handleExportCustomers = () => {
-    toast.info("Función de exportar próximamente");
+    try {
+      const stats = {
+        total: customers.length,
+        active: customers.filter(c => c.status === 'active').length,
+        newThisMonth: customers.filter(c => {
+          const customerDate = new Date(c.joinDate);
+          const now = new Date();
+          return customerDate.getMonth() === now.getMonth() && customerDate.getFullYear() === now.getFullYear();
+        }).length,
+        vip: customers.filter(c => c.totalSpent > 10000).length
+      };
+      
+      const doc = generateCustomersReportPDF(filteredCustomers, stats);
+      const filename = `reporte-clientes-${new Date().toISOString().split('T')[0]}.pdf`;
+      downloadPDF(doc, filename);
+      
+      toast.success('Reporte de clientes exportado correctamente');
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+    }
   };
 
   const getStatusVariant = (status) => {

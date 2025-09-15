@@ -206,7 +206,7 @@ export function AdminDashboard() {
                     size="sm" 
                     variant="outline" 
                     className="mt-2 text-xs h-7"
-                    onClick={() => window.location.href = '/admin/inventario'}
+                    onClick={() => window.location.href = '/intranet/admin/inventario'}
                   >
                     Reabastecer
                   </Button>
@@ -233,7 +233,7 @@ export function AdminDashboard() {
                     size="sm" 
                     variant="outline" 
                     className="mt-2 text-xs h-7"
-                    onClick={() => window.location.href = '/admin/pedidos?status=pending'}
+                    onClick={() => window.location.href = '/intranet/admin/pedidos?status=pending'}
                   >
                     Revisar
                   </Button>
@@ -256,16 +256,16 @@ export function AdminDashboard() {
               onClick={() => {
                 switch(stat.title) {
                   case 'Ventas Totales':
-                    window.location.href = '/admin/reportes?type=sales';
+                    window.location.href = '/intranet/admin/reportes?type=sales';
                     break;
-                  case 'Pedidos':
-                    window.location.href = '/admin/pedidos';
+                  case 'Pedidos Totales':
+                    window.location.href = '/intranet/admin/pedidos';
                     break;
                   case 'Valor Promedio':
-                    window.location.href = '/admin/reportes?type=aov';
+                    window.location.href = '/intranet/admin/reportes?type=aov';
                     break;
-                  case 'Clientes':
-                    window.location.href = '/admin/clientes';
+                  case 'Clientes Activos':
+                    window.location.href = '/intranet/admin/clientes';
                     break;
                   default:
                     break;
@@ -330,7 +330,7 @@ export function AdminDashboard() {
                   variant="outline" 
                   size="sm" 
                   className="text-xs"
-                  onClick={() => window.location.href = '/admin/pedidos'}
+                  onClick={() => window.location.href = '/intranet/admin/pedidos'}
                 >
                   <Eye className="w-3 h-3 mr-1" />
                   Ver Todos
@@ -403,7 +403,7 @@ export function AdminDashboard() {
                   variant="outline" 
                   size="sm" 
                   className="text-xs"
-                  onClick={() => window.location.href = '/admin/productos'}
+                  onClick={() => window.location.href = '/intranet/admin/productos'}
                 >
                   <Eye className="w-3 h-3 mr-1" />
                   Ver Todos
@@ -470,7 +470,7 @@ export function AdminDashboard() {
                 variant="outline" 
                 size="sm" 
                 className="text-xs"
-                onClick={() => window.location.href = '/admin/reportes?type=sales'}
+                onClick={() => window.location.href = '/intranet/admin/reportes?type=sales'}
               >
                 <Eye className="w-3 h-3 mr-1" />
                 Ver Detalles

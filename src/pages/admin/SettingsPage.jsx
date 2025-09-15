@@ -34,7 +34,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
-import { toast } from "sonner";
+import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfService";
 
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
@@ -796,7 +796,22 @@ export function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
-            <Button variant="outline" className="w-full justify-start text-red-500 border-red-200 hover:bg-red-50">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start text-red-500 border-red-200 hover:bg-red-50"
+              onClick={() => {
+                try {
+                  const doc = generateSystemConfigReportPDF(settings);
+                  const filename = `configuracion-sistema-${new Date().toISOString().split('T')[0]}.pdf`;
+                  downloadPDF(doc, filename);
+                  
+                  toast.success('Configuración del sistema exportada correctamente');
+                } catch (error) {
+                  console.error('Error generando PDF:', error);
+                  toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+                }
+              }}
+            >
               <Download className="w-4 h-4 mr-2" />
               Exportar Datos del Sistema
             </Button>

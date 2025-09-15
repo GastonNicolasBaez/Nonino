@@ -21,7 +21,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { formatPrice } from "../../lib/utils";
-import { toast } from "sonner";
+import { generateInventoryReportPDF, downloadPDF } from "../../services/pdfService";
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { useUpdateStockModal } from "../../components/common/UpdateStockModal";
 import { Portal } from "../../components/common/Portal";
@@ -196,7 +196,25 @@ export function InventoryManagement() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => toast.info("Función de exportar próximamente")}>
+          <Button variant="outline" onClick={() => {
+            try {
+              const stats = {
+                totalItems: inventoryItems.length,
+                lowStock: inventoryItems.filter(item => item.currentStock < item.minStock).length,
+                outOfStock: inventoryItems.filter(item => item.currentStock === 0).length,
+                totalValue: inventoryItems.reduce((sum, item) => sum + (item.currentStock * item.price), 0)
+              };
+              
+              const doc = generateInventoryReportPDF(filteredItems, stats);
+              const filename = `reporte-inventario-${new Date().toISOString().split('T')[0]}.pdf`;
+              downloadPDF(doc, filename);
+              
+              toast.success('Reporte de inventario exportado correctamente');
+            } catch (error) {
+              console.error('Error generando PDF:', error);
+              toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+            }
+          }}>
             <FileDown className="w-4 h-4 mr-2" />
             Exportar
           </Button>

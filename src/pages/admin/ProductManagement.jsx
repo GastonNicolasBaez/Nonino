@@ -28,8 +28,9 @@ import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { useUpdateStockModal } from "../../components/common/UpdateStockModal";
-import { adminService } from "../../services/api";
 import { Portal } from "../../components/common/Portal";
+import { adminService } from "../../services/api";
+import { generateProductsReportPDF, downloadPDF } from "../../services/pdfService";
 
 // Mock products data - movido fuera del componente para evitar re-renders
 const mockProducts = [
@@ -272,8 +273,23 @@ export function ProductManagement() {
   };
 
   const handleExportProducts = () => {
-    toast.success("Exportando catálogo de productos...");
-    // Aquí se generaría el archivo de exportación
+    try {
+      const stats = {
+        total: productStats.total,
+        available: productStats.available,
+        outOfStock: productStats.outOfStock,
+        lowStock: productStats.lowStock
+      };
+      
+      const doc = generateProductsReportPDF(filteredProducts, stats);
+      const filename = `reporte-productos-${new Date().toISOString().split('T')[0]}.pdf`;
+      downloadPDF(doc, filename);
+      
+      toast.success('Reporte de productos exportado correctamente');
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+    }
   };
 
   const handleImportProducts = () => {

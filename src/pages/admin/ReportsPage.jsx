@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { 
   BarChart3, 
   TrendingUp, 
+  TrendingDown,
   DollarSign,
   Download,
   Calendar,
@@ -15,7 +16,9 @@ import {
   LineChart,
   Activity,
   Filter,
-  RefreshCcw
+  RefreshCcw,
+  AlertTriangle,
+  XCircle
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -24,6 +27,7 @@ import { SalesChart, TopProductsChart, OrdersStatusChart, CustomerTrendsChart, C
 import { SimpleTopProductsChart, SimpleCategorySalesChart, SimpleHourlySalesChart, SimpleCustomerLevelChart } from "../../components/charts/SimpleCharts";
 import { formatPrice, formatDate } from "../../lib/utils";
 import { toast } from "sonner";
+import { generateReportPDF, downloadPDF } from "../../services/pdfService";
 
 export function ReportsPage() {
   const [dateRange, setDateRange] = useState("last7days");
@@ -106,18 +110,33 @@ export function ReportsPage() {
     outOfStockItems: 2,
     totalInventoryValue: 45600,
     stockMovement: [
-      { product: "Carne Picada", movement: -15, type: "out" },
-      { product: "Harina 000", movement: +25, type: "in" },
-      { product: "Queso Mozzarella", movement: -8, type: "out" },
-      { product: "Aceitunas", movement: +10, type: "in" },
-      { product: "Cebolla", movement: -12, type: "out" }
+      { product: "Carne Picada", movement: -15, type: "out", currentStock: 5, minStock: 20 },
+      { product: "Harina 000", movement: +25, type: "in", currentStock: 45, minStock: 30 },
+      { product: "Queso Mozzarella", movement: -8, type: "out", currentStock: 12, minStock: 15 },
+      { product: "Aceitunas", movement: +10, type: "in", currentStock: 25, minStock: 20 },
+      { product: "Cebolla", movement: -12, type: "out", currentStock: 8, minStock: 15 },
+      { product: "Tomate", movement: -5, type: "out", currentStock: 18, minStock: 20 },
+      { product: "Aceite", movement: +15, type: "in", currentStock: 35, minStock: 25 }
     ],
     categoryDistribution: [
-      { category: "Proteínas", value: 18500, percentage: 40.6 },
-      { category: "Masa", value: 12300, percentage: 27.0 },
-      { category: "Lácteos", value: 8900, percentage: 19.5 },
-      { category: "Verduras", value: 3600, percentage: 7.9 },
-      { category: "Condimentos", value: 2300, percentage: 5.0 }
+      { category: "Proteínas", value: 18500, percentage: 40.6, items: 8 },
+      { category: "Masa", value: 12300, percentage: 27.0, items: 5 },
+      { category: "Lácteos", value: 8900, percentage: 19.5, items: 6 },
+      { category: "Verduras", value: 3600, percentage: 7.9, items: 4 },
+      { category: "Condimentos", value: 2300, percentage: 5.0, items: 2 }
+    ],
+    lowStockAlerts: [
+      { product: "Carne Picada", current: 5, minimum: 20, urgency: "high" },
+      { product: "Queso Mozzarella", current: 12, minimum: 15, urgency: "medium" },
+      { product: "Cebolla", current: 8, minimum: 15, urgency: "high" },
+      { product: "Tomate", current: 18, minimum: 20, urgency: "medium" }
+    ],
+    topMovingProducts: [
+      { product: "Carne Picada", unitsSold: 156, revenue: 46800 },
+      { product: "Harina 000", unitsSold: 89, revenue: 13350 },
+      { product: "Queso Mozzarella", unitsSold: 78, revenue: 23400 },
+      { product: "Cebolla", unitsSold: 45, revenue: 4500 },
+      { product: "Aceitunas", unitsSold: 34, revenue: 5100 }
     ]
   };
 
@@ -129,8 +148,34 @@ export function ReportsPage() {
   }, [dateRange, reportType]);
 
   const handleExportPDF = () => {
-    toast.success(`Exportando reporte de ${reportType} en PDF...`);
-    // Aquí se generaría el PDF del reporte
+    try {
+      let data, filename;
+      
+      switch (reportType) {
+        case 'sales':
+          data = salesData;
+          filename = `reporte-ventas-${dateRange}-${new Date().toISOString().split('T')[0]}.pdf`;
+          break;
+        case 'customers':
+          data = customerData;
+          filename = `reporte-clientes-${dateRange}-${new Date().toISOString().split('T')[0]}.pdf`;
+          break;
+        case 'inventory':
+          data = inventoryData;
+          filename = `reporte-inventario-${dateRange}-${new Date().toISOString().split('T')[0]}.pdf`;
+          break;
+        default:
+          throw new Error('Tipo de reporte no válido');
+      }
+      
+      const doc = generateReportPDF(reportType, data, dateRange);
+      downloadPDF(doc, filename);
+      
+      toast.success(`Reporte de ${reportType} exportado correctamente`);
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+    }
   };
 
   const handleRefreshReport = () => {
@@ -371,6 +416,226 @@ export function ReportsPage() {
     </div>
   );
 
+  const InventoryReport = () => (
+    <div className="space-y-6">
+      {/* Métricas de inventario */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Productos</p>
+                <p className="text-2xl font-bold">{inventoryData.totalProducts}</p>
+                <p className="text-xs text-muted-foreground mt-1">En catálogo</p>
+              </div>
+              <Package className="w-8 h-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Stock Bajo</p>
+                <p className="text-2xl font-bold text-yellow-500">{inventoryData.lowStockItems}</p>
+                <p className="text-xs text-muted-foreground mt-1">Requieren atención</p>
+              </div>
+              <AlertTriangle className="w-8 h-8 text-yellow-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Sin Stock</p>
+                <p className="text-2xl font-bold text-red-500">{inventoryData.outOfStockItems}</p>
+                <p className="text-xs text-muted-foreground mt-1">Urgente</p>
+              </div>
+              <XCircle className="w-8 h-8 text-red-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
+                <p className="text-2xl font-bold text-green-500">
+                  {formatPrice(inventoryData.totalInventoryValue)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">En inventario</p>
+              </div>
+              <DollarSign className="w-8 h-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Alertas de stock bajo */}
+      <Card className="">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-yellow-500" />
+            Alertas de Stock Bajo
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {inventoryData.lowStockAlerts.map((alert, index) => (
+              <div key={index} className={`flex items-center justify-between p-3 rounded-lg border ${
+                alert.urgency === 'high' 
+                  ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
+                  : 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    alert.urgency === 'high' 
+                      ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' 
+                      : 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400'
+                  }`}>
+                    <Package className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">{alert.product}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Stock actual: {alert.current} | Mínimo: {alert.minimum}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <Badge variant={alert.urgency === 'high' ? 'destructive' : 'secondary'}>
+                    {alert.urgency === 'high' ? 'Crítico' : 'Bajo'}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Movimientos de stock */}
+        <Card className="">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              Movimientos Recientes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {inventoryData.stockMovement.map((movement, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      movement.type === 'in' 
+                        ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' 
+                        : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+                    }`}>
+                      {movement.type === 'in' ? (
+                        <TrendingUp className="w-4 h-4" />
+                      ) : (
+                        <TrendingDown className="w-4 h-4" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{movement.product}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Stock: {movement.currentStock} | Mín: {movement.minStock}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-medium text-sm ${
+                      movement.type === 'in' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {movement.movement > 0 ? '+' : ''}{movement.movement}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {movement.type === 'in' ? 'Entrada' : 'Salida'}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Productos más movidos */}
+        <Card className="">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Star className="w-5 h-5" />
+              Productos Más Movidos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {inventoryData.topMovingProducts.map((product, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{product.product}</p>
+                      <p className="text-xs text-muted-foreground">{product.unitsSold} unidades</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-sm">{formatPrice(product.revenue)}</p>
+                    <p className="text-xs text-muted-foreground">ingresos</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Distribución por categoría */}
+      <Card className="">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <PieChart className="w-5 h-5" />
+            Distribución por Categoría
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {inventoryData.categoryDistribution.map((category, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-empanada-golden"></div>
+                    <span className="font-medium text-sm">{category.category}</span>
+                    <Badge variant="outline" className="text-xs">
+                      {category.items} items
+                    </Badge>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-sm">{formatPrice(category.value)}</p>
+                    <p className="text-xs text-muted-foreground">{category.percentage}%</p>
+                  </div>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div 
+                    className="bg-empanada-golden h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${category.percentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -458,15 +723,7 @@ export function ReportsPage() {
         <>
           {reportType === "sales" && <SalesReport />}
           {reportType === "customers" && <CustomerReport />}
-          {reportType === "inventory" && (
-            <div className="text-center py-12">
-              <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Reporte de Inventario</h3>
-              <p className="text-muted-foreground">
-                Los reportes de inventario estarán disponibles próximamente
-              </p>
-            </div>
-          )}
+          {reportType === "inventory" && <InventoryReport />}
         </>
       )}
     </div>

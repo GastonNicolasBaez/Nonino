@@ -11,9 +11,11 @@ export function ImageUpload({
   disabled = false 
 }) {
   const [preview, setPreview] = useState(value || null);
-  const [originalImage, setOriginalImage] = useState(null); // Nueva: imagen original sin procesar
+  const [originalImage, setOriginalImage] = useState(value || null);
+  const [processedImage, setProcessedImage] = useState(null); // Nueva: imagen procesada temporal
   const [isDragging, setIsDragging] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isImageEdited, setIsImageEdited] = useState(false); // Nueva: track si la imagen ha sido editada
   const [editSettings, setEditSettings] = useState({
     zoom: 100, // Cambio a porcentaje (100% = 1x)
     rotation: 0,
@@ -28,6 +30,17 @@ export function ImageUpload({
   const fileInputRef = useRef(null);
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
+  const previewRef = useRef(null); // Nueva referencia para el contenedor del preview
+
+  // Sincronizar estado con props cuando cambian (SOLO al inicio)
+  useEffect(() => {
+    if (value && !originalImage) {
+      // Solo establecer la imagen original una vez, cuando no existe
+      setOriginalImage(value);
+      setPreview(value);
+      setIsImageEdited(false);
+    }
+  }, [value]);
 
   const handleFileSelect = useCallback((file) => {
     if (!file) return;
@@ -58,10 +71,12 @@ export function ImageUpload({
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageData = e.target.result;
-      setOriginalImage(imageData); // Guardar imagen original
-      setPreview(imageData);
-      setIsEditing(true);
-      onChange?.(file);
+      setOriginalImage(imageData); // Guardar imagen original (NUNCA cambiar)
+      setPreview(imageData); // Mostrar imagen original en preview
+      setProcessedImage(null); // Limpiar imagen procesada anterior
+      setIsImageEdited(false); // Resetear estado de edición
+      setIsEditing(false); // NO entrar automáticamente en modo edición
+      // NO llamar onChange aquí - solo al finalizar todo el proceso
     };
     reader.readAsDataURL(file);
   }, [onChange]);
@@ -94,8 +109,10 @@ export function ImageUpload({
 
   const handleRemoveImage = () => {
     setPreview(null);
-    setOriginalImage(null); // Limpiar imagen original
+    setOriginalImage(null);
+    setProcessedImage(null);
     setIsEditing(false);
+    setIsImageEdited(false);
     setEditSettings({
       zoom: 100,
       rotation: 0,
@@ -169,6 +186,7 @@ export function ImageUpload({
     setIsDraggingImage(false);
   };
 
+
   // Agregar event listeners para mouse global
   useEffect(() => {
     if (isDraggingImage) {
@@ -181,14 +199,48 @@ export function ImageUpload({
     }
   }, [isDraggingImage, dragStart]);
 
-  const handleStartEdit = () => {
-    // Si no tenemos imagen original pero sí preview, usar el preview como original
-    if (!originalImage && preview) {
-      setOriginalImage(preview);
+  // Event listener para scroll zoom en modo edición
+  useEffect(() => {
+    if (isEditing && previewRef.current) {
+      const previewElement = previewRef.current;
+      
+      const handleWheelCapture = (e) => {
+        console.log('Wheel event captured:', e.deltaY);
+        
+        // Prevenir completamente el scroll de la página
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const delta = e.deltaY > 0 ? -10 : 10;
+        const newZoom = Math.max(25, Math.min(300, editSettings.zoom + delta));
+        
+        console.log('Zoom change:', editSettings.zoom, '->', newZoom);
+        
+        setEditSettings(prev => ({
+          ...prev,
+          zoom: newZoom
+        }));
+        
+        return false;
+      };
+      
+      // Usar addEventListener con capture = true para interceptar antes que cualquier otro listener
+      previewElement.addEventListener('wheel', handleWheelCapture, { passive: false, capture: true });
+      
+      return () => {
+        previewElement.removeEventListener('wheel', handleWheelCapture, { capture: true });
+      };
     }
-    // Resetear ajustes cuando vuelve a editar
-    resetSettings();
+  }, [isEditing, editSettings.zoom]);
+
+  const handleStartEdit = () => {
+    // SIEMPRE usar la imagen original al entrar al modo edición
+    setPreview(originalImage); // Volver al original para editar
+    resetSettings(); // Resetear todos los ajustes de edición
     setIsEditing(true);
+    // Temporalmente marcar como no editada para mostrar object-contain en modo edición
+    setIsImageEdited(false);
   };
 
   const handleSaveEdit = async () => {
@@ -198,10 +250,11 @@ export function ImageUpload({
     const ctx = canvas.getContext('2d');
     const img = imageRef.current;
 
-    // Usar exactamente el mismo tamaño que el contenedor del preview (160px)
-    const size = 160;
-    canvas.width = size;
-    canvas.height = size;
+    // Usar exactamente las mismas dimensiones que el contenedor del preview
+    // w-64 = 256px de ancho, aspect-square = 256px de alto (cuadrado)
+    const canvasSize = 256;
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
 
     // Limpiar canvas con fondo gris (igual que el preview)
     ctx.fillStyle = '#f9fafb'; // bg-gray-50
@@ -211,73 +264,122 @@ export function ImageUpload({
     ctx.filter = `brightness(${editSettings.brightness}%) contrast(${editSettings.contrast}%)`;
 
     // Aplicar las mismas transformaciones que en el CSS del preview
+    // CSS order: scale → rotate → translate
+    // Canvas debe aplicarlas en ORDEN INVERSO: translate → rotate → scale
     ctx.save();
     
-    // Centro del canvas
-    ctx.translate(size / 2, size / 2);
+    // Centro del canvas (ahora es cuadrado)
+    ctx.translate(canvasSize / 2, canvasSize / 2);
     
-    // Rotación
-    ctx.rotate((editSettings.rotation * Math.PI) / 180);
-    
-    // Zoom (convertir porcentaje a decimal)
+    // Aplicar transformaciones en ORDEN INVERSO al CSS
+    // 1. Zoom (scale - último en CSS)
     const zoomFactor = editSettings.zoom / 100;
     ctx.scale(zoomFactor, zoomFactor);
     
-    // Posición
+    // 2. Rotación (rotate - medio en CSS)
+    ctx.rotate((editSettings.rotation * Math.PI) / 180);
+    
+    // 3. Posición (translate - primero en CSS)
     ctx.translate(editSettings.x, editSettings.y);
 
-     // Dibujar la imagen con el mismo comportamiento que object-cover
-     // Calcular dimensiones para que la imagen llene todo el contenedor
-     const containerSize = size;
+     // Dibujar la imagen exactamente como se ve en el preview
+     // El preview usa object-contain cuando está en modo edición (!isImageEdited)
      const imgAspect = img.naturalWidth / img.naturalHeight;
-     let drawWidth, drawHeight;
-
+     
+     // Usar object-contain logic (mismo que el preview CSS)
+     // Esto hace que la imagen se ajuste completamente dentro del contenedor
+     let baseWidth, baseHeight;
      if (imgAspect > 1) {
-       // Imagen más ancha que alta - usar altura completa
-       drawHeight = containerSize;
-       drawWidth = containerSize * imgAspect;
+       // Imagen más ancha que alta - limitar por ancho
+       baseWidth = canvasSize;
+       baseHeight = canvasSize / imgAspect;
      } else {
-       // Imagen más alta que ancha - usar ancho completo
-       drawWidth = containerSize;
-       drawHeight = containerSize / imgAspect;
+       // Imagen más alta que ancha - limitar por altura
+       baseHeight = canvasSize;
+       baseWidth = canvasSize * imgAspect;
      }
 
-     // Dibujar imagen centrada (igual que object-cover)
-     ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+     // Dibujar imagen centrada con el tamaño base (object-contain behavior)
+     ctx.drawImage(img, -baseWidth / 2, -baseHeight / 2, baseWidth, baseHeight);
     
     ctx.restore();
 
     // Convertir a blob y actualizar
     canvas.toBlob((blob) => {
-      const file = new File([blob], 'edited-image.jpg', { type: 'image/jpeg' });
       const reader = new FileReader();
       reader.onload = (e) => {
-        setPreview(e.target.result);
-        onChange?.(file);
-        setIsEditing(false);
+        const editedImageUrl = e.target.result;
+        setProcessedImage(editedImageUrl); // Guardar imagen procesada separadamente
+        setPreview(editedImageUrl); // Mostrar resultado en preview
+        setIsImageEdited(true); // Marcar como imagen editada
+        setIsEditing(false); // Salir del modo edición
+        onChange?.(editedImageUrl); // SOLO aquí llamar onChange con la imagen final
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(blob);
     }, 'image/jpeg', 0.95);
   };
 
   if (isEditing && preview) {
     return (
       <div className="w-full flex justify-center">
-        {/* Layout principal: Card de preview + Controles al lado */}
-        <div className="flex flex-col lg:flex-row gap-8 items-center max-w-4xl">
-          {/* Preview como Card de Producto - Izquierda */}
+        {/* Layout principal: Zoom izquierda + Preview centro + Efectos derecha */}
+        <div className="flex flex-col lg:flex-row gap-6 items-start max-w-6xl">
+          
+          {/* Controles de Zoom - Izquierda */}
+          <div className="flex flex-col items-center gap-3">
+            
+            {/* Botón + */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleSliderChange('zoom', Math.min(300, editSettings.zoom + 25))}
+              className="h-10 w-10 p-0 text-lg text-gray-400 hover:text-empanada-golden"
+              title="Aumentar zoom"
+            >
+              +
+            </Button>
+            
+            {/* Slider Vertical */}
+            <div className="flex items-center justify-center h-40 w-12">
+              <input
+                type="range"
+                min="25"
+                max="300"
+                value={editSettings.zoom}
+                onChange={(e) => handleSliderChange('zoom', parseInt(e.target.value))}
+                className="w-32 slider-empanada"
+                style={{
+                  transform: 'rotate(-90deg)',
+                  transformOrigin: 'center center'
+                }}
+              />
+            </div>
+            
+            {/* Botón - */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleSliderChange('zoom', Math.max(25, editSettings.zoom - 25))}
+              className="h-10 w-10 p-0 text-lg text-gray-400 hover:text-empanada-golden"
+              title="Reducir zoom"
+            >
+              -
+            </Button>
+          </div>
+
+          {/* Preview como Card de Producto - Centro */}
           <div className="flex-shrink-0">
-            <div className="w-64 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div className="w-64 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
               <div 
-                className="relative overflow-hidden cursor-move select-none bg-gray-50" 
-                style={{ height: '160px' }}
+                ref={previewRef}
+                className="aspect-square relative overflow-hidden cursor-move select-none bg-gray-50 dark:bg-gray-700"
                 onMouseDown={handleMouseDown}
               >
                  <img
                    ref={imageRef}
                    src={originalImage}
                    alt="Preview"
-                   className="absolute inset-0 w-full h-full object-cover"
+                   className={`absolute inset-0 w-full h-full ${isImageEdited ? 'object-cover' : 'object-contain'}`}
                    style={{
                      transform: `
                        scale(${editSettings.zoom / 100}) 
@@ -290,64 +392,39 @@ export function ImageUpload({
                    draggable={false}
                  />
                 
-                {/* Indicador de arrastrar */}
-                <div className="absolute top-2 right-2 bg-empanada-golden text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                  <Move className="w-3 h-3" />
-                  Arrastrar
+                {/* Indicadores de control - muy discretos */}
+                <div className="absolute bottom-2 right-2 opacity-30 hover:opacity-70 transition-opacity">
+                  <div className="text-white text-xs bg-black/40 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-2">
+                    <Move className="w-3 h-3" />
+                    <span className="text-xs">⚬</span>
+                  </div>
                 </div>
               </div>
               
               {/* Información del producto simulada */}
               <div className="p-3">
-                <h3 className="font-semibold text-sm mb-1">Empanada de Carne</h3>
-                <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                <h3 className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">Empanada de Carne</h3>
+                <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
                   Carne picada, cebolla, huevo duro, aceitunas y condimentos
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-empanada-golden">$450</span>
                   <div className="flex items-center gap-1">
                     <span className="text-yellow-500 text-xs">★</span>
-                    <span className="text-xs text-gray-600">4.8</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-300">4.8</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Controles de edición - Derecha */}
-          <div className="w-full max-w-sm">
-            <div className="space-y-6">
-              {/* Zoom */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-gray-700">Zoom</label>
-                  <span className="text-sm font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded">
-                    {editSettings.zoom}%
-                  </span>
-                </div>
+          {/* Controles de Efectos - Derecha */}
+          <div className="w-full max-w-xs">
+            <div className="space-y-4">
+              {/* Rotación - Solo botones */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Rotación</div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 w-8">25%</span>
-                  <input
-                    type="range"
-                    min="25"
-                    max="300"
-                    value={editSettings.zoom}
-                    onChange={(e) => handleSliderChange('zoom', parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-empanada"
-                  />
-                  <span className="text-xs text-gray-400 w-8 text-right">300%</span>
-                </div>
-              </div>
-
-              {/* Rotación */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-gray-700">Rotación</label>
-                  <span className="text-sm font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded">
-                    {editSettings.rotation}°
-                  </span>
-                </div>
-                <div className="flex items-center justify-center gap-3">
                   <Button
                     variant="outline"
                     size="sm"
@@ -357,6 +434,9 @@ export function ImageUpload({
                   >
                     <RotateCcw className="w-4 h-4" />
                   </Button>
+                  <span className="text-xs font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded min-w-[40px] text-center">
+                    {editSettings.rotation}°
+                  </span>
                   <Button
                     variant="outline"
                     size="sm"
@@ -371,18 +451,18 @@ export function ImageUpload({
 
               {/* Efectos */}
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-3">Efectos</h3>
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 text-center">Efectos</h3>
                 
                 {/* Brillo */}
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-medium text-gray-600">Brillo</label>
+                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Brillo</label>
                     <span className="text-xs font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded">
                       {editSettings.brightness}%
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400 w-6">50%</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6">50%</span>
                     <input
                       type="range"
                       min="50"
@@ -391,20 +471,20 @@ export function ImageUpload({
                       onChange={(e) => handleSliderChange('brightness', parseInt(e.target.value))}
                       className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-empanada"
                     />
-                    <span className="text-xs text-gray-400 w-6 text-right">200%</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6 text-right">200%</span>
                   </div>
                 </div>
 
                 {/* Contraste */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-medium text-gray-600">Contraste</label>
+                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Contraste</label>
                     <span className="text-xs font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded">
                       {editSettings.contrast}%
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400 w-6">50%</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6">50%</span>
                     <input
                       type="range"
                       min="50"
@@ -413,7 +493,7 @@ export function ImageUpload({
                       onChange={(e) => handleSliderChange('contrast', parseInt(e.target.value))}
                       className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-empanada"
                     />
-                    <span className="text-xs text-gray-400 w-6 text-right">200%</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6 text-right">200%</span>
                   </div>
                 </div>
               </div>
@@ -438,7 +518,17 @@ export function ImageUpload({
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => setIsEditing(false)}
+                  onClick={() => {
+                    // Al cancelar, volver a mostrar la imagen anterior
+                    if (processedImage) {
+                      setPreview(processedImage); // Si hay imagen procesada, mostrarla
+                      setIsImageEdited(true); // Marcar como editada
+                    } else {
+                      setPreview(originalImage); // Si no, mostrar original
+                      setIsImageEdited(false); // Marcar como no editada
+                    }
+                    setIsEditing(false);
+                  }}
                   className="flex items-center justify-center gap-1 text-xs h-8 border-gray-300 hover:border-red-500 hover:bg-red-50 flex-1 min-w-0"
                 >
                   <X className="w-3 h-3" />
@@ -461,8 +551,8 @@ export function ImageUpload({
         <canvas
           ref={canvasRef}
           className="hidden"
-          width="800"
-          height="800"
+          width="256"
+          height="256"
         />
       </div>
     );
@@ -481,33 +571,33 @@ export function ImageUpload({
 
       {preview ? (
         <div className="w-full flex justify-center">
-          <div className="w-64 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-             <div className="relative bg-gray-50" style={{ height: '160px' }}>
+          <div className="w-64 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+             <div className="aspect-square relative bg-gray-50 dark:bg-gray-700">
                <img
                  src={preview}
                  alt="Preview"
-                 className="w-full h-full object-cover"
+                 className={`w-full h-full ${isImageEdited ? 'object-cover' : 'object-contain'}`}
                />
              </div>
             
             {/* Información del producto simulada */}
             <div className="p-3">
-              <h3 className="font-semibold text-sm mb-1">Empanada de Carne</h3>
-              <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+              <h3 className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">Empanada de Carne</h3>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
                 Carne picada, cebolla, huevo duro, aceitunas y condimentos
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-empanada-golden">$450</span>
                 <div className="flex items-center gap-1">
                   <span className="text-yellow-500 text-xs">★</span>
-                  <span className="text-xs text-gray-600">4.8</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-300">4.8</span>
                 </div>
               </div>
             </div>
             
             {/* Botones de acción */}
-            <div className="p-3 border-t border-gray-100">
-              <div className="flex gap-1">
+            <div className="p-3 border-t border-gray-100 dark:border-gray-700">
+              <div className="flex justify-center gap-1">
                 <Button
                   variant="outline"
                   size="sm"
@@ -530,7 +620,7 @@ export function ImageUpload({
                   variant="outline"
                   size="sm"
                   onClick={handleRemoveImage}
-                  className="flex-1 text-xs h-7 px-2 text-red-600 hover:bg-red-50"
+                  className="flex-1 text-xs h-7 px-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
                 >
                   <X className="w-3 h-3 mr-1" />
                   Eliminar

@@ -322,7 +322,6 @@ export function ProductManagement() {
       isPopular: false,
       ingredients: [],
       allergens: [],
-      image: null,
       imageUrl: ""
     });
 
@@ -455,12 +454,11 @@ export function ProductManagement() {
                   <CardContent>
                     <div className="w-full">
                       <ImageUpload
-                        value={formData.imageUrl || formData.image}
-                        onChange={(file) => {
+                        value={formData.imageUrl}
+                        onChange={(imageUrl) => {
                           setFormData(prev => ({ 
                             ...prev, 
-                            image: file,
-                            imageUrl: file ? URL.createObjectURL(file) : ""
+                            imageUrl: imageUrl || ""
                           }));
                         }}
                         placeholder="Subir imagen del producto"
@@ -686,10 +684,10 @@ export function ProductManagement() {
             <div key={product.id}>
               <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 ">
                 <div className="aspect-square relative">
-                  {product.imageUrl || product.image ? (
+                  {product.imageUrl ? (
                     <div className="w-full h-full bg-gray-100 dark:bg-gray-800">
                       <img 
-                        src={product.imageUrl || product.image}
+                        src={product.imageUrl}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

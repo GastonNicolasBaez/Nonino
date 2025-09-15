@@ -7,3 +7,4 @@ export { useAuth } from '../context/AuthContext';
 export { useCart } from '../context/CartProvider';
 export { useTheme } from '../context/ThemeProvider';
 export { useLoading } from './useLoading';
+export { useScrollToTop } from './useScrollToTop';

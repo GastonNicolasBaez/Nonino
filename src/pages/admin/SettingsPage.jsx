@@ -22,7 +22,13 @@ import {
   Palette,
   Database,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  Building2,
+  Tag,
+  History,
+  Plus,
+  Edit,
+  Trash
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -81,12 +87,108 @@ export function SettingsPage() {
       loginAttempts: 5,
       ipWhitelist: false,
       auditLogs: true
+    },
+    stores: [
+      {
+        id: 1,
+        name: "Nonino Empanadas - Centro",
+        address: "Av. San Martín 123, Centro, CABA",
+        phone: "+54 11 1234-5678",
+        coordinates: { lat: -34.6037, lng: -58.3816 },
+        hours: {
+          monday: { open: "09:00", close: "22:00" },
+          tuesday: { open: "09:00", close: "22:00" },
+          wednesday: { open: "09:00", close: "22:00" },
+          thursday: { open: "09:00", close: "22:00" },
+          friday: { open: "09:00", close: "23:00" },
+          saturday: { open: "10:00", close: "23:00" },
+          sunday: { open: "10:00", close: "21:00" }
+        },
+        deliveryTime: "30-45 min",
+        minOrder: 2000,
+        rating: 4.8,
+        isOpen: true
+      },
+      {
+        id: 2,
+        name: "Nonino Empanadas - Norte",
+        address: "Av. Santa Fe 456, Palermo, CABA",
+        phone: "+54 11 2345-6789",
+        coordinates: { lat: -34.5889, lng: -58.3974 },
+        hours: {
+          monday: { open: "09:00", close: "22:00" },
+          tuesday: { open: "09:00", close: "22:00" },
+          wednesday: { open: "09:00", close: "22:00" },
+          thursday: { open: "09:00", close: "22:00" },
+          friday: { open: "09:00", close: "23:00" },
+          saturday: { open: "10:00", close: "23:00" },
+          sunday: { open: "10:00", close: "21:00" }
+        },
+        deliveryTime: "25-40 min",
+        minOrder: 1800,
+        rating: 4.9,
+        isOpen: true
+      }
+    ],
+    promotions: [
+      {
+        id: 1,
+        title: "Descuento Bienvenida",
+        description: "10% de descuento en tu primera compra",
+        discount: 10,
+        code: "BIENVENIDO10",
+        validFrom: "2024-01-01",
+        validUntil: "2024-12-31",
+        minOrderAmount: 0,
+        maxUses: 1000,
+        isActive: true
+      },
+      {
+        id: 2,
+        title: "Envío Gratis",
+        description: "Envío gratis en pedidos superiores a $2500",
+        discount: 0,
+        code: "ENVIOGRATIS",
+        validFrom: "2024-01-01",
+        validUntil: "2024-12-31",
+        minOrderAmount: 2500,
+        maxUses: 500,
+        isActive: true
+      }
+    ],
+    companyHistory: {
+      foundedYear: 1995,
+      founderName: "Carlos Nonino",
+      companyDescription: "Una tradición familiar que comenzó hace más de 25 años con el sueño de compartir el auténtico sabor de las empanadas argentinas",
+      story: "Todo comenzó en 1995 cuando Don Carlos Nonino decidió cumplir su sueño de abrir su propia empanadora. Con las recetas heredadas de su abuela y una gran pasión por la cocina, abrió el primer local en el centro de la ciudad.",
+      milestones: [
+        { year: "1995", event: "Fundación de Nonino Empanadas", description: "Don Carlos Nonino abre el primer local familiar" },
+        { year: "2000", event: "Segundo Local", description: "Expansión a la zona norte de la ciudad" },
+        { year: "2010", event: "Delivery Online", description: "Lanzamiento de nuestro servicio de delivery" },
+        { year: "2020", event: "App Mobile", description: "Desarrollo de nuestra aplicación móvil" },
+        { year: "2024", event: "25 Años de Tradición", description: "Celebramos nuestro aniversario con nuevas recetas" }
+      ],
+      values: [
+        { title: "Pasión", description: "Cada empanada está hecha con amor y dedicación, manteniendo las recetas familiares que nos han acompañado por generaciones." },
+        { title: "Calidad", description: "Seleccionamos cuidadosamente cada ingrediente para garantizar el mejor sabor y frescura en todos nuestros productos." },
+        { title: "Familia", description: "Somos una empresa familiar que valora las relaciones humanas y el trato cercano con cada uno de nuestros clientes." },
+        { title: "Tradición", description: "Respetamos las técnicas tradicionales de elaboración mientras innovamos para satisfacer los gustos modernos." }
+      ],
+      stats: {
+        yearsExperience: 29,
+        happyCustomers: 15000,
+        empanadasSold: 100000,
+        averageRating: 4.8
+      }
     }
   });
 
   const tabs = [
     { id: "general", label: "General", icon: Settings },
     { id: "store", label: "Tienda", icon: Store },
+    { id: "stores", label: "Locales", icon: Building2 },
+    { id: "promotions", label: "Promociones", icon: Tag },
+    { id: "history", label: "Nuestra Historia", icon: History },
     { id: "notifications", label: "Notificaciones", icon: Bell },
     { id: "payment", label: "Pagos", icon: CreditCard },
     { id: "security", label: "Seguridad", icon: Shield }
@@ -106,6 +208,94 @@ export function SettingsPage() {
       ...prev,
       [section]: {
         ...prev[section],
+        [key]: value
+      }
+    }));
+  };
+
+  const addStore = () => {
+    const newStore = {
+      id: Date.now(),
+      name: "",
+      address: "",
+      phone: "",
+      coordinates: { lat: 0, lng: 0 },
+      hours: {
+        monday: { open: "09:00", close: "22:00" },
+        tuesday: { open: "09:00", close: "22:00" },
+        wednesday: { open: "09:00", close: "22:00" },
+        thursday: { open: "09:00", close: "22:00" },
+        friday: { open: "09:00", close: "23:00" },
+        saturday: { open: "10:00", close: "23:00" },
+        sunday: { open: "10:00", close: "21:00" }
+      },
+      deliveryTime: "30-45 min",
+      minOrder: 2000,
+      rating: 4.5,
+      isOpen: true
+    };
+    setSettings(prev => ({
+      ...prev,
+      stores: [...prev.stores, newStore]
+    }));
+  };
+
+  const updateStore = (storeId, key, value) => {
+    setSettings(prev => ({
+      ...prev,
+      stores: prev.stores.map(store => 
+        store.id === storeId ? { ...store, [key]: value } : store
+      )
+    }));
+  };
+
+  const deleteStore = (storeId) => {
+    setSettings(prev => ({
+      ...prev,
+      stores: prev.stores.filter(store => store.id !== storeId)
+    }));
+  };
+
+  const addPromotion = () => {
+    const newPromotion = {
+      id: Date.now(),
+      title: "",
+      description: "",
+      discount: 0,
+      code: "",
+      validFrom: new Date().toISOString().split('T')[0],
+      validUntil: new Date().toISOString().split('T')[0],
+      minOrderAmount: 0,
+      maxUses: 100,
+      isActive: true
+    };
+    setSettings(prev => ({
+      ...prev,
+      promotions: [...prev.promotions, newPromotion]
+    }));
+  };
+
+  const updatePromotion = (promotionId, key, value) => {
+    setSettings(prev => ({
+      ...prev,
+      promotions: prev.promotions.map(promotion => 
+        promotion.id === promotionId ? { ...promotion, [key]: value } : promotion
+      )
+    }));
+  };
+
+  const deletePromotion = (promotionId) => {
+    setSettings(prev => ({
+      ...prev,
+      promotions: prev.promotions.filter(promotion => promotion.id !== promotionId)
+    }));
+  };
+
+  const updateHistorySetting = (key, value) => {
+    setSettings(prev => ({
+      ...prev,
+      companyHistory: {
+        ...prev.companyHistory,
         [key]: value
       }
     }));
@@ -624,6 +814,344 @@ export function SettingsPage() {
     </div>
   );
 
+  const StoresSettings = () => (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="w-5 h-5" />
+              Gestión de Locales
+            </CardTitle>
+            <Button onClick={addStore} variant="empanada" size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Agregar Local
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {settings.stores.map((store) => (
+            <Card key={store.id} className="border-2">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-semibold">{store.name || "Nuevo Local"}</h3>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => deleteStore(store.id)}>
+                      <Trash className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Nombre del Local</label>
+                    <Input
+                      value={store.name}
+                      onChange={(e) => updateStore(store.id, "name", e.target.value)}
+                      placeholder="Ej: Nonino Empanadas - Centro"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Teléfono</label>
+                    <Input
+                      value={store.phone}
+                      onChange={(e) => updateStore(store.id, "phone", e.target.value)}
+                      placeholder="+54 11 1234-5678"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium mb-1">Dirección</label>
+                    <Input
+                      value={store.address}
+                      onChange={(e) => updateStore(store.id, "address", e.target.value)}
+                      placeholder="Dirección completa del local"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Tiempo de Delivery</label>
+                    <Input
+                      value={store.deliveryTime}
+                      onChange={(e) => updateStore(store.id, "deliveryTime", e.target.value)}
+                      placeholder="30-45 min"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Pedido Mínimo</label>
+                    <Input
+                      type="number"
+                      value={store.minOrder}
+                      onChange={(e) => updateStore(store.id, "minOrder", Number(e.target.value))}
+                      placeholder="2000"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Latitud</label>
+                    <Input
+                      type="number"
+                      step="any"
+                      value={store.coordinates.lat}
+                      onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lat: Number(e.target.value) })}
+                      placeholder="-34.6037"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Longitud</label>
+                    <Input
+                      type="number"
+                      step="any"
+                      value={store.coordinates.lng}
+                      onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lng: Number(e.target.value) })}
+                      placeholder="-58.3816"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={store.isOpen}
+                      onChange={(e) => updateStore(store.id, "isOpen", e.target.checked)}
+                    />
+                    <span className="text-sm">Local abierto</span>
+                  </label>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const PromotionsSettings = () => (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle className="flex items-center gap-2">
+              <Tag className="w-5 h-5" />
+              Gestión de Promociones
+            </CardTitle>
+            <Button onClick={addPromotion} variant="empanada" size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Agregar Promoción
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {settings.promotions.map((promotion) => (
+            <Card key={promotion.id} className="border-2">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-semibold">{promotion.title || "Nueva Promoción"}</h3>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => deletePromotion(promotion.id)}>
+                      <Trash className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Título</label>
+                    <Input
+                      value={promotion.title}
+                      onChange={(e) => updatePromotion(promotion.id, "title", e.target.value)}
+                      placeholder="Ej: Descuento Bienvenida"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Código</label>
+                    <Input
+                      value={promotion.code}
+                      onChange={(e) => updatePromotion(promotion.id, "code", e.target.value)}
+                      placeholder="BIENVENIDO10"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium mb-1">Descripción</label>
+                    <Input
+                      value={promotion.description}
+                      onChange={(e) => updatePromotion(promotion.id, "description", e.target.value)}
+                      placeholder="Descripción de la promoción"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Descuento (%)</label>
+                    <Input
+                      type="number"
+                      value={promotion.discount}
+                      onChange={(e) => updatePromotion(promotion.id, "discount", Number(e.target.value))}
+                      placeholder="10"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Pedido Mínimo</label>
+                    <Input
+                      type="number"
+                      value={promotion.minOrderAmount}
+                      onChange={(e) => updatePromotion(promotion.id, "minOrderAmount", Number(e.target.value))}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Válido Desde</label>
+                    <Input
+                      type="date"
+                      value={promotion.validFrom}
+                      onChange={(e) => updatePromotion(promotion.id, "validFrom", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Válido Hasta</label>
+                    <Input
+                      type="date"
+                      value={promotion.validUntil}
+                      onChange={(e) => updatePromotion(promotion.id, "validUntil", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Usos Máximos</label>
+                    <Input
+                      type="number"
+                      value={promotion.maxUses}
+                      onChange={(e) => updatePromotion(promotion.id, "maxUses", Number(e.target.value))}
+                      placeholder="1000"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={promotion.isActive}
+                      onChange={(e) => updatePromotion(promotion.id, "isActive", e.target.checked)}
+                    />
+                    <span className="text-sm">Promoción activa</span>
+                  </label>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const HistorySettings = () => (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <History className="w-5 h-5" />
+            Información de la Empresa
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Año de Fundación</label>
+              <Input
+                type="number"
+                value={settings.companyHistory.foundedYear}
+                onChange={(e) => updateHistorySetting("foundedYear", Number(e.target.value))}
+                placeholder="1995"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Nombre del Fundador</label>
+              <Input
+                value={settings.companyHistory.founderName}
+                onChange={(e) => updateHistorySetting("founderName", e.target.value)}
+                placeholder="Carlos Nonino"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-1">Descripción de la Empresa</label>
+            <textarea
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              rows="3"
+              value={settings.companyHistory.companyDescription}
+              onChange={(e) => updateHistorySetting("companyDescription", e.target.value)}
+              placeholder="Descripción general de la empresa"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Historia de la Empresa</label>
+            <textarea
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+              rows="4"
+              value={settings.companyHistory.story}
+              onChange={(e) => updateHistorySetting("story", e.target.value)}
+              placeholder="Historia detallada de la empresa"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="w-5 h-5" />
+            Estadísticas de la Empresa
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Años de Experiencia</label>
+              <Input
+                type="number"
+                value={settings.companyHistory.stats.yearsExperience}
+                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, yearsExperience: Number(e.target.value) })}
+                placeholder="29"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Clientes Felices</label>
+              <Input
+                type="number"
+                value={settings.companyHistory.stats.happyCustomers}
+                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, happyCustomers: Number(e.target.value) })}
+                placeholder="15000"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Empanadas Vendidas</label>
+              <Input
+                type="number"
+                value={settings.companyHistory.stats.empanadasSold}
+                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, empanadasSold: Number(e.target.value) })}
+                placeholder="100000"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Calificación Promedio</label>
+              <Input
+                type="number"
+                step="0.1"
+                value={settings.companyHistory.stats.averageRating}
+                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, averageRating: Number(e.target.value) })}
+                placeholder="4.8"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -681,6 +1209,9 @@ export function SettingsPage() {
           >
             {activeTab === "general" && <GeneralSettings />}
             {activeTab === "store" && <StoreSettings />}
+            {activeTab === "stores" && <StoresSettings />}
+            {activeTab === "promotions" && <PromotionsSettings />}
+            {activeTab === "history" && <HistorySettings />}
             {activeTab === "notifications" && <NotificationSettings />}
             {activeTab === "payment" && <PaymentSettings />}
             {activeTab === "security" && <SecuritySettings />}

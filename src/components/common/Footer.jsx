@@ -56,8 +56,8 @@ export function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white">
-      {/* Newsletter Section */}
-      <div className="bg-empanada-golden py-8 sm:py-12 lg:py-16">
+      {/* Newsletter Section - Comentado temporalmente */}
+      {/* <div className="bg-empanada-golden py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -83,7 +83,7 @@ export function Footer() {
             </div>
           </motion.div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Footer */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">

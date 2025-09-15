@@ -41,6 +41,7 @@ import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { Portal } from "../../components/common/Portal";
 import { NewOrderModal } from "./components/NewOrderModal";
 import { OrderEditModal } from "./components/OrderEditModal";
+import { generateOrdersReportPDF, downloadPDF } from "../../services/pdfService";
 import { mockOrders } from "../../lib/mockData";
 
 // Función helper para obtener variante de status
@@ -321,7 +322,22 @@ export function OrderManagement() {
   };
 
   const handleExportOrders = () => {
-    toast.info("Función de exportar próximamente");
+    try {
+      const filters = {
+        status: statusFilter,
+        searchTerm: searchTerm,
+        dateRange: 'current'
+      };
+      
+      const doc = generateOrdersReportPDF(filteredOrders, filters);
+      const filename = `reporte-pedidos-${new Date().toISOString().split('T')[0]}.pdf`;
+      downloadPDF(doc, filename);
+      
+      toast.success('Reporte de pedidos exportado correctamente');
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+    }
   };
 
   const handleNewOrder = () => {

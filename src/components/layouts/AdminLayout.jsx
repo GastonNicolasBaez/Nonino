@@ -28,6 +28,7 @@ import { GlobalSearch } from "../common/GlobalSearch";
 import { InlineSearch } from "../common/InlineSearch";
 import { NotificationsDropdown } from "../common/NotificationsDropdown";
 import { Avatar } from "../ui/avatar";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 import { useTheme } from "@/context/ThemeProvider";
 
@@ -38,6 +39,9 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { theme, toggleTheme, isDark } = useTheme();
+
+  // Automatically scroll to top when route changes
+  useScrollToTop();
 
   const handleLogout = () => {
     session.logout();
@@ -93,22 +97,56 @@ const AdminLayout = () => {
         style={{ width: sidebarCollapsed ? '5.5rem' : '16rem' }}
       >
         {/* Desktop Sidebar Content */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <Link to="/admin" className="flex items-center space-x-2">
-            <img 
-              src="/src/assets/images/remo.png" 
-              alt="Nonino Empanadas" 
-              className={sidebarCollapsed ? "w-10 h-10" : "w-8 h-8"}
-            />
-            {!sidebarCollapsed && (
-              <div>
-                <AnimatedGradientText className="text-lg font-bold">
-                  NONINO
-                </AnimatedGradientText>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Admin Panel</p>
-              </div>
-            )}
-          </Link>
+        <div className={`flex items-center border-b border-gray-200 dark:border-gray-700 ${
+          sidebarCollapsed ? 'justify-center p-4' : 'justify-between p-6'
+        }`}>
+          {sidebarCollapsed ? (
+            /* Layout colapsado: Logo centrado con botón debajo */
+            <div className="flex flex-col items-center space-y-3">
+              <Link to="/admin" className="flex items-center justify-center">
+                <img 
+                  src="/src/assets/images/remo.png" 
+                  alt="Nonino Empanadas" 
+                  className="w-12 h-12"
+                />
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleSidebar}
+                className="w-8 h-8 hover:bg-gray-100 dark:hover:bg-gray-700"
+                title="Expandir sidebar"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            /* Layout expandido: Logo, texto y botón de colapso */
+            <>
+              <Link to="/admin" className="flex items-center space-x-2">
+                <img 
+                  src="/src/assets/images/remo.png" 
+                  alt="Nonino Empanadas" 
+                  className="w-8 h-8"
+                />
+                <div>
+                  <AnimatedGradientText className="text-lg font-bold">
+                    NONINO
+                  </AnimatedGradientText>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Admin Panel</p>
+                </div>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleSidebar}
+                className="w-8 h-8 hover:bg-gray-100 dark:hover:bg-gray-700"
+                title="Colapsar sidebar"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Desktop Navigation */}
@@ -320,15 +358,6 @@ const AdminLayout = () => {
                   <Menu className="w-5 h-5" />
                 </Button>
                 
-                {/* Botón para colapsar sidebar en desktop */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={toggleSidebar}
-                  className="hidden lg:flex"
-                >
-                  {sidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-                </Button>
                 
                 {/* Componente de búsqueda global */}
                 <div className="flex-1 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">

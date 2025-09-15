@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Filter, SlidersHorizontal, X } from "lucide-react";
+import { Search, Filter, SlidersHorizontal, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -68,35 +68,34 @@ export function MenuPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Hero Section */}
-            <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-12 sm:py-16 lg:py-20">
+            <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-6 sm:py-8">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <TextAnimate
                         animation="slideUp"
                         by="word"
-                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2"
+                        className="text-2xl sm:text-3xl md:text-4xl font-bold px-2"
                     >
                         Nuestro Delicioso Menú
                     </TextAnimate>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 }}
-                        className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-2"
-                    >
-                        Descubre nuestra variedad de empanadas artesanales,
-                        hechas con ingredientes frescos y recetas tradicionales
-                    </motion.p>
                 </div>
             </section>
 
+            {/* Main Content Layout */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+                    
+                    {/* Sidebar Filters - Desktop */}
+                    <aside className="hidden lg:block lg:w-64 flex-shrink-0">
+                        <div className="fixed top-20 left-0 right-0 lg:static lg:top-auto lg:left-auto lg:right-auto lg:w-64 lg:h-screen lg:overflow-y-auto">
+                            <div className="bg-white lg:bg-transparent border-b lg:border-b-0 lg:pt-4 space-y-4 px-4 lg:px-0">
             {/* Categories */}
-            <section className="py-8 sm:py-12 bg-white border-b">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 justify-center max-w-4xl mx-auto">
+                                <div>
+                                    <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">Categorías</h4>
+                                    <div className="flex flex-wrap gap-1">
                         <Button
                             variant={selectedCategory === "all" ? "empanada" : "outline"}
                             onClick={() => setSelectedCategory("all")}
-                            className="mb-2 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 flex-shrink-0"
+                                            className="text-xs px-2 py-1 flex-shrink-0"
                             size="sm"
                         >
                             Todas
@@ -105,26 +104,152 @@ export function MenuPage() {
                             <Button
                                 key={category.id}
                                 variant={selectedCategory === category.id ? "empanada" : "outline"}
-                                onClick={() => {
-                                    setSelectedCategory(category.id);
-                                }}
-                                className="mb-2 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 flex-shrink-0"
+                                                onClick={() => setSelectedCategory(category.id)}
+                                                className="text-xs px-2 py-1 flex-shrink-0"
                                 size="sm"
                             >
-                                <span className="mr-1 sm:mr-2 text-sm sm:text-base">{category.icon}</span>
+                                                <span className="mr-1 text-xs">{category.icon}</span>
                                 <span className="hidden xs:inline">{category.name}</span>
                                 <span className="xs:hidden">{category.name.split(' ')[0]}</span>
                             </Button>
                         ))}
                     </div>
                 </div>
-            </section>
 
-            {/* Filters and Search */}
-            <div className="sticky top-16 lg:top-20 bg-white border-b shadow-sm">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-                    <div className="flex flex-col gap-3 sm:gap-4">
-                        {/* Search - Full width on mobile */}
+                                {/* Search */}
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4 z-10" />
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="w-full pl-10 pr-10 py-2.5 text-sm border border-gray-300 focus:border-empanada-golden focus:ring-0 focus:outline-none rounded-lg bg-gray-50 focus:bg-white transition-all"
+                                        style={{ outline: 'none', boxShadow: 'none' }}
+                                        onFocus={(e) => e.target.style.outline = 'none'}
+                                        onBlur={(e) => e.target.style.outline = 'none'}
+                                    />
+                                    {searchTerm && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => setSearchTerm("")}
+                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 hover:bg-empanada-golden/10 z-10"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {/* Sort */}
+                                <div className="relative">
+                                    <select
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                        className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-0 focus:border-empanada-golden text-sm bg-gray-50 focus:bg-white transition-all appearance-none cursor-pointer"
+                                        style={{ outline: 'none', boxShadow: 'none' }}
+                                        onFocus={(e) => e.target.style.outline = 'none'}
+                                        onBlur={(e) => e.target.style.outline = 'none'}
+                                    >
+                                        {sortOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4 pointer-events-none" />
+                                </div>
+
+                                {/* Advanced Filters */}
+                                <div className="space-y-4">
+                                    <div>
+                                        <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">Precio</h4>
+                                        <div className="space-y-1">
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                Hasta $400
+                                            </label>
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                $400 - $600
+                                            </label>
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                Más de $600
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">Alergenos</h4>
+                                        <div className="space-y-1">
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                Sin Gluten
+                                            </label>
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                Sin Lactosa
+                                            </label>
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                Vegetariano
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">Tiempo</h4>
+                                        <div className="space-y-1">
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                &lt; 15 min
+                                            </label>
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                15-20 min
+                                            </label>
+                                            <label className="flex items-center text-xs cursor-pointer hover:text-empanada-golden transition-colors">
+                                                <input type="checkbox" className="mr-2 w-3 h-3 text-empanada-golden focus:ring-empanada-golden" />
+                                                &gt; 20 min
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* Mobile Filters */}
+                    <div className="lg:hidden">
+                        <div className="bg-white border-b shadow-sm py-3">
+                            <div className="flex flex-col gap-3">
+                                {/* Categories */}
+                                <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        variant={selectedCategory === "all" ? "empanada" : "outline"}
+                                        onClick={() => setSelectedCategory("all")}
+                                        className="text-xs px-3 py-2 flex-shrink-0"
+                                        size="sm"
+                                    >
+                                        Todas
+                                    </Button>
+                                    {categories.map((category) => (
+                                        <Button
+                                            key={category.id}
+                                            variant={selectedCategory === category.id ? "empanada" : "outline"}
+                                            onClick={() => setSelectedCategory(category.id)}
+                                            className="text-xs px-3 py-2 flex-shrink-0"
+                                            size="sm"
+                                        >
+                                            <span className="mr-1 text-xs">{category.icon}</span>
+                                            <span className="hidden xs:inline">{category.name}</span>
+                                            <span className="xs:hidden">{category.name.split(' ')[0]}</span>
+                                        </Button>
+                                    ))}
+                                </div>
+
+                                {/* Search */}
                         <div className="relative w-full">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
@@ -145,15 +270,13 @@ export function MenuPage() {
                             )}
                         </div>
 
-                        {/* Controls - Responsive layout */}
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
-                            <div className="flex items-center gap-2 sm:gap-3">
-                                {/* Sort - Full width on mobile */}
-                                <div className="flex-1 sm:flex-none min-w-0">
+                                {/* Controls */}
+                                <div className="flex gap-3 items-center justify-between">
+                                    <div className="flex-1">
                                     <select
                                         value={sortBy}
                                         onChange={(e) => setSortBy(e.target.value)}
-                                        className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-sm sm:text-base bg-white"
+                                            className="w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-sm bg-white"
                                     >
                                         {sortOptions.map((option) => (
                                             <option key={option.value} value={option.value}>
@@ -163,35 +286,32 @@ export function MenuPage() {
                                     </select>
                                 </div>
 
-                                {/* Filter Toggle - Prominent on mobile */}
                                 <Button
                                     variant={showFilters ? "empanada" : "outline"}
                                     onClick={() => setShowFilters(!showFilters)}
-                                    className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base whitespace-nowrap"
+                                        className="flex items-center gap-2 px-4 py-2 text-sm whitespace-nowrap"
                                     size="sm"
                                 >
                                     <SlidersHorizontal className="w-4 h-4" />
-                                    <span className="hidden xs:inline">Filtros</span>
-                                    <span className="xs:hidden">Filtro</span>
+                                        <span>Filtros</span>
                                     {showFilters && <X className="w-4 h-4 ml-1" />}
                                 </Button>
-                            </div>
                         </div>
                     </div>
 
-                    {/* Filter Panel */}
+                            {/* Mobile Filter Panel */}
                     <AnimatePresence>
                         {showFilters && (
                             <motion.div
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: "auto", opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                className="mt-4 p-4 sm:p-6 bg-gray-50 rounded-lg border-2 border-empanada-golden/20"
+                                        className="mt-4 p-4 bg-gray-50 rounded-lg border-2 border-empanada-golden/20"
                             >
                                 <h3 className="text-lg font-semibold mb-4 text-empanada-golden">Filtros Avanzados</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-3">
-                                        <h4 className="font-medium text-sm sm:text-base text-gray-700 border-b border-gray-300 pb-1">Precio</h4>
+                                                <h4 className="font-medium text-sm text-gray-700 border-b border-gray-300 pb-1">Precio</h4>
                                         <div className="space-y-2">
                                             <label className="flex items-center text-sm cursor-pointer hover:text-empanada-golden transition-colors">
                                                 <input type="checkbox" className="mr-3 w-4 h-4 text-empanada-golden focus:ring-empanada-golden" />
@@ -209,7 +329,7 @@ export function MenuPage() {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <h4 className="font-medium text-sm sm:text-base text-gray-700 border-b border-gray-300 pb-1">Alergenos</h4>
+                                                <h4 className="font-medium text-sm text-gray-700 border-b border-gray-300 pb-1">Alergenos</h4>
                                         <div className="space-y-2">
                                             <label className="flex items-center text-sm cursor-pointer hover:text-empanada-golden transition-colors">
                                                 <input type="checkbox" className="mr-3 w-4 h-4 text-empanada-golden focus:ring-empanada-golden" />
@@ -225,32 +345,13 @@ export function MenuPage() {
                                             </label>
                                         </div>
                                     </div>
-
-                                    <div className="space-y-3 sm:col-span-2 lg:col-span-1">
-                                        <h4 className="font-medium text-sm sm:text-base text-gray-700 border-b border-gray-300 pb-1">Tiempo de Preparación</h4>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center text-sm cursor-pointer hover:text-empanada-golden transition-colors">
-                                                <input type="checkbox" className="mr-3 w-4 h-4 text-empanada-golden focus:ring-empanada-golden" />
-                                                Menos de 15 min
-                                            </label>
-                                            <label className="flex items-center text-sm cursor-pointer hover:text-empanada-golden transition-colors">
-                                                <input type="checkbox" className="mr-3 w-4 h-4 text-empanada-golden focus:ring-empanada-golden" />
-                                                15-20 min
-                                            </label>
-                                            <label className="flex items-center text-sm cursor-pointer hover:text-empanada-golden transition-colors">
-                                                <input type="checkbox" className="mr-3 w-4 h-4 text-empanada-golden focus:ring-empanada-golden" />
-                                                Más de 20 min
-                                            </label>
-                                        </div>
-                                    </div>
                                 </div>
 
-                                {/* Clear Filters Button */}
                                 <div className="mt-6 pt-4 border-t border-gray-300">
                                     <Button
                                         variant="outline"
                                         onClick={() => setShowFilters(false)}
-                                        className="w-full sm:w-auto text-sm"
+                                                className="w-full text-sm"
                                     >
                                         Aplicar Filtros
                                     </Button>
@@ -261,8 +362,10 @@ export function MenuPage() {
                 </div>
             </div>
 
+                    {/* Main Content */}
+                    <main className="flex-1 min-w-0 lg:ml-0">
             {/* Results Info */}
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                        <div className="py-4 sm:py-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                     <p className="text-sm sm:text-base text-gray-600">
                         {filteredProducts.length} {filteredProducts.length === 1 ? "empanada encontrada" : "empanadas encontradas"}
@@ -287,7 +390,7 @@ export function MenuPage() {
             </div>
 
             {/* Products Grid */}
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
+                        <div className="pb-16 sm:pb-20">
                 {filteredProducts.length === 0 ? (
                     <motion.div
                         className="text-center py-12 sm:py-16 lg:py-20 px-4"
@@ -314,7 +417,7 @@ export function MenuPage() {
                 ) : (
                     <motion.div
                         layout
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
+                                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-6"
                     >
                         <AnimatePresence>
                             {filteredProducts.map((product, index) => (
@@ -332,6 +435,9 @@ export function MenuPage() {
                         </AnimatePresence>
                     </motion.div>
                 )}
+                        </div>
+                    </main>
+                </div>
             </div>
         </div>
     );

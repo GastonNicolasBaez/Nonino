@@ -28,8 +28,9 @@ import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { useUpdateStockModal } from "../../components/common/UpdateStockModal";
-import { adminService } from "../../services/api";
 import { Portal } from "../../components/common/Portal";
+import { adminService } from "../../services/api";
+import { generateProductsReportPDF, downloadPDF } from "../../services/pdfService";
 
 // Mock products data - movido fuera del componente para evitar re-renders
 const mockProducts = [
@@ -272,8 +273,23 @@ export function ProductManagement() {
   };
 
   const handleExportProducts = () => {
-    toast.success("Exportando catálogo de productos...");
-    // Aquí se generaría el archivo de exportación
+    try {
+      const stats = {
+        total: productStats.total,
+        available: productStats.available,
+        outOfStock: productStats.outOfStock,
+        lowStock: productStats.lowStock
+      };
+      
+      const doc = generateProductsReportPDF(filteredProducts, stats);
+      const filename = `reporte-productos-${new Date().toISOString().split('T')[0]}.pdf`;
+      downloadPDF(doc, filename);
+      
+      toast.success('Reporte de productos exportado correctamente');
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+    }
   };
 
   const handleImportProducts = () => {
@@ -306,7 +322,6 @@ export function ProductManagement() {
       isPopular: false,
       ingredients: [],
       allergens: [],
-      image: null,
       imageUrl: ""
     });
 
@@ -439,12 +454,11 @@ export function ProductManagement() {
                   <CardContent>
                     <div className="w-full">
                       <ImageUpload
-                        value={formData.imageUrl || formData.image}
-                        onChange={(file) => {
+                        value={formData.imageUrl}
+                        onChange={(imageUrl) => {
                           setFormData(prev => ({ 
                             ...prev, 
-                            image: file,
-                            imageUrl: file ? URL.createObjectURL(file) : ""
+                            imageUrl: imageUrl || ""
                           }));
                         }}
                         placeholder="Subir imagen del producto"
@@ -670,10 +684,10 @@ export function ProductManagement() {
             <div key={product.id}>
               <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 ">
                 <div className="aspect-square relative">
-                  {product.imageUrl || product.image ? (
+                  {product.imageUrl ? (
                     <div className="w-full h-full bg-gray-100 dark:bg-gray-800">
                       <img 
-                        src={product.imageUrl || product.image}
+                        src={product.imageUrl}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

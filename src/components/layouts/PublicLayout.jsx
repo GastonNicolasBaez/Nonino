@@ -5,8 +5,12 @@ import { Footer } from "@/components/common/Footer";
 import { CartSidebar } from "@/components/common/CartSidebar";
 import { CartProvider } from "@/context/CartProvider";
 import { PublicDataProvider } from "@/context/PublicDataProvider";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const PublicLayout = () => {
+    // Automatically scroll to top when route changes
+    useScrollToTop();
+
     return (
         <CartProvider>
             <div className="min-h-screen flex flex-col">

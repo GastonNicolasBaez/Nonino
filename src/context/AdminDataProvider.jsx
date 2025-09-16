@@ -83,15 +83,18 @@ export const AdminDataProvider = ({ children }) => {
 
     //eliminar producto
 
+    const adminDataLoading =
+        callProductoNuevoLoading ||
+        callProductosYCategoriasLoading;
+
     return (
         <AdminDataContext.Provider value={{
             productos,
             categorias,
+            adminDataLoading,
             callProductosYCategorias,
-            callProductosYCategoriasLoading,
 
             callProductoNuevo,
-            callProductoNuevoLoading,
 
         }}>
             {children}

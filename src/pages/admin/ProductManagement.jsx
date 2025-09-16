@@ -46,11 +46,10 @@ export function ProductManagement() {
     const {
         productos: products,
         categorias: categories,
-        callProductosYCategorias,
-        callProductosYCategoriasLoading: loading,
+        adminDataLoading: loading,
 
+        callProductosYCategorias,
         callProductoNuevo,
-        callProductoNuevoLoading,
     } = useAdminData();
 
     const categoriasTodas = [

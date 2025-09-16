@@ -35,6 +35,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfService";
+import { toast } from "sonner";
 
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general");

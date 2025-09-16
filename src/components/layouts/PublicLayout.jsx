@@ -1,5 +1,4 @@
 import { Outlet } from "react-router";
-import { Toaster } from "sonner";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
 import { CartSidebar } from "@/components/common/CartSidebar";
@@ -19,13 +18,6 @@ const PublicLayout = () => {
                 </main>
                 <Footer />
                 <CartSidebar />
-                <Toaster
-                    position="bottom-right"
-                    toastOptions={{
-                        style: { background: '#f7a82a', color: 'white' },
-                        className: 'empanada-toast',
-                    }}
-                />
             </div >
         </CartProvider>
     )

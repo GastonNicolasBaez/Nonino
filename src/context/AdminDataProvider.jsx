@@ -5,7 +5,9 @@ import React, { useEffect, useState, useContext, createContext } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
     getAdminCatalogQueryFunction,
-    postAdminCatalogAddProductQueryFunction
+    postAdminCatalogAddProductQueryFunction,
+    deleteAdminCatalogDeleteProductQueryFunction,
+
 } from '@/config/apiQueryFunctions';
 
 const AdminDataContext = createContext();
@@ -20,6 +22,12 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callProductoNuevo, isPending: callProductoNuevoLoading } = useMutation({
         mutationKey: ['adminProductoNuevo'],
         mutationFn: postAdminCatalogAddProductQueryFunction,
+    });
+
+    //eliminar producto
+    const { mutateAsync: callBorrarProducto, isPending: callBorrarProductoLoading } = useMutation({
+        mutationKey: ['adminBorrarProducto'],
+        mutationFn: deleteAdminCatalogDeleteProductQueryFunction,
     });
 
     //listar productos
@@ -81,21 +89,25 @@ export const AdminDataProvider = ({ children }) => {
 
     //modificar disponible
 
-    //eliminar producto
+
+    //
 
     const adminDataLoading =
         callProductoNuevoLoading ||
-        callProductosYCategoriasLoading;
+        callProductosYCategoriasLoading || 
+        callBorrarProductoLoading;
 
     return (
         <AdminDataContext.Provider value={{
             productos,
             categorias,
             adminDataLoading,
+
             callProductosYCategorias,
 
             callProductoNuevo,
 
+            callBorrarProducto,
         }}>
             {children}
         </AdminDataContext.Provider>

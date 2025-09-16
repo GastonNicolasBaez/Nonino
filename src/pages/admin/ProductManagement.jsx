@@ -50,6 +50,7 @@ export function ProductManagement() {
 
         callProductosYCategorias,
         callProductoNuevo,
+        callBorrarProducto,
     } = useAdminData();
 
     const categoriasTodas = [
@@ -110,8 +111,9 @@ export function ProductManagement() {
             confirmText: "Eliminar",
             cancelText: "Cancelar",
             type: "danger",
-            onConfirm: () => {
-                setProducts(prev => prev.filter(product => product.id !== productId));
+            onConfirm: async () => {
+                await callBorrarProducto({_id: productId, _accessToken: session.userData.accessToken});
+                callProductosYCategorias(session.userData.accessToken);
                 toast.success("Producto eliminado correctamente");
             }
         });

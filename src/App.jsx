@@ -5,6 +5,7 @@ import AuthProvider from "@/context/AuthProvider";
 import { PublicDataProvider } from "./context/PublicDataProvider";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { SessionProvider } from "@/context/SessionProvider";
+import { Toaster } from "sonner";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
@@ -110,6 +111,14 @@ function App() {
                         {/* FALLBACK */}
                         <Route path="*" element={<NotFound />} />
                     </Routes>
+
+                    <Toaster
+                        position="bottom-right"
+                        toastOptions={{
+                            style: { background: '#f7a82a', color: 'white' },
+                            className: 'empanada-toast',
+                        }}
+                    />
 
                 </SessionProvider>
             </QueryClientProvider>

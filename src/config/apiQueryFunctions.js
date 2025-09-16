@@ -77,3 +77,17 @@ export const postAdminCatalogAddProductQueryFunction = async ({_producto, _acces
     return await response.data;
 }
 
+export const deleteAdminCatalogDeleteProductQueryFunction = async ({_id, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.delete(`https://nonino-catalog.fly.dev/admin/products/${_id}`, axiosSetup.axiosConfig);
+    return await response.data;
+}

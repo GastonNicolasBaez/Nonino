@@ -14,16 +14,16 @@ const PDF_CONFIG = {
   headerHeight: 45,
   footerHeight: 25,
   logoSize: 35,
-  primaryColor: '#f59e0b', // empanada-golden
-  secondaryColor: '#1f2937', // gray-800
-  textColor: '#111827', // gray-900
-  lightTextColor: '#6b7280', // gray-500
-  accentColor: '#3b82f6', // blue-500
-  successColor: '#10b981', // emerald-500
-  warningColor: '#f59e0b', // amber-500
-  dangerColor: '#ef4444', // red-500
-  backgroundColor: '#f9fafb', // gray-50
-  borderColor: '#e5e7eb' // gray-200
+  primaryColor: '#d4af37', // empanada-golden
+  secondaryColor: '#1a1a1a', // empanada-dark (gris oscuro)
+  textColor: '#1a1a1a', // empanada-dark (gris oscuro)
+  lightTextColor: '#8b7355', // neutral-medium
+  accentColor: '#dc143c', // argentina-red
+  successColor: '#228b22', // argentina-green
+  warningColor: '#ff8c00', // argentina-orange
+  dangerColor: '#dc143c', // argentina-red
+  backgroundColor: '#fdf5e6', // empanada-light
+  borderColor: '#f5f5dc' // empanada-cream
 };
 
 /**

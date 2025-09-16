@@ -9,7 +9,7 @@ function Badge({ className, variant = "default", ...props }) {
     outline: "text-foreground border border-input",
     success: "bg-green-500 hover:bg-green-500/80 text-white",
     warning: "bg-yellow-500 hover:bg-yellow-500/80 text-white",
-    empanada: "bg-gradient-to-r from-empanada-golden to-empanada-crust text-white",
+    empanada: "bg-gradient-to-r from-empanada-golden to-empanada-warm text-white",
   };
 
   return (

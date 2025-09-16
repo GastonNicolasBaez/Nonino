@@ -25,7 +25,7 @@ export function Footer() {
 
   const quickLinks = [
     { name: "Inicio", href: "/" },
-    { name: "Menú", href: "/menu" },
+    { name: "Pedir Ya", href: "/pedir" },
     { name: "Promociones", href: "/promociones" },
     { name: "Locales", href: "/locales" },
     { name: "Nosotros", href: "/nosotros" },
@@ -55,7 +55,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-empanada-dark text-white">
       {/* Newsletter Section - Comentado temporalmente */}
       {/* <div className="bg-empanada-golden py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -77,7 +77,7 @@ export function Footer() {
                 placeholder="Tu email"
                 className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white text-base"
               />
-              <button className="px-4 sm:px-6 py-3 bg-white text-empanada-golden rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm sm:text-base">
+              <button className="px-4 sm:px-6 py-3 bg-white text-empanada-golden rounded-lg font-semibold hover:bg-empanada-light transition-colors text-sm sm:text-base">
                 Suscribirse
               </button>
             </div>
@@ -112,7 +112,7 @@ export function Footer() {
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  className="text-gray-400 hover:text-empanada-golden transition-colors p-2 hover:bg-gray-800 rounded-full"
+                  className="text-empanada-terracotta hover:text-empanada-golden transition-colors p-2 hover:bg-empanada-dark rounded-full"
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                   aria-label={social.label}

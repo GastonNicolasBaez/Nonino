@@ -65,42 +65,75 @@ export function ProductManagement() {
 
     // Cargar productos al montar ACTUALIZADO
     useEffect(() => {
-        callProductosYCategorias(session.userData.accessToken);
-    }, []); // Removida la dependencia que causaba el loop
+        if (session.userData?.accessToken) {
+            callProductosYCategorias(session.userData.accessToken);
+        }
+    }, [session.userData?.accessToken]);
+
+    // Función para calcular la prioridad del producto
+    const calculatePriority = (product) => {
+        let priority = 0;
+        
+        // Stock bajo = alta prioridad (usando un valor mínimo por defecto de 10)
+        const minStock = product.minStock || 10;
+        if (product.stock <= minStock && product.stock > 0) {
+            priority += 3;
+        }
+        
+        // Sin stock = máxima prioridad
+        if (product.stock <= 0) {
+            priority += 5;
+        }
+        
+        // Producto popular = prioridad adicional
+        if (product.isPopular) {
+            priority += 2;
+        }
+        
+        // No disponible = prioridad alta
+        if (!product.isAvailable) {
+            priority += 1;
+        }
+        
+        return priority;
+    };
 
     const filteredProducts = products.filter(product => {
         const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             product.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
         return matchesSearch && matchesCategory;
+    }).sort((a, b) => {
+        // Ordenar por prioridad (mayor a menor)
+        const priorityA = calculatePriority(a);
+        const priorityB = calculatePriority(b);
+        
+        if (priorityA !== priorityB) {
+            return priorityB - priorityA;
+        }
+        
+        // Si tienen la misma prioridad, ordenar por nombre
+        return a.name.localeCompare(b.name);
     });
 
     const productStats = {
         total: products.length,
         available: products.filter(p => p.isAvailable).length,
-        outOfStock: products.filter(p => !p.isAvailable || p.stock <= 0).length,
-        lowStock: products.filter(p => p.stock <= p.minStock && p.stock > 0).length,
+        outOfStock: products.filter(p => !p.isAvailable || (p.stock || 0) <= 0).length,
+        lowStock: products.filter(p => (p.stock || 0) <= (p.minStock || 10) && (p.stock || 0) > 0).length,
         popular: products.filter(p => p.isPopular).length,
-        totalValue: products.reduce((sum, p) => sum + (p.stock * p.price), 0),
-        totalRevenue: products.reduce((sum, p) => sum + (p.sales * p.price), 0),
-        averageRating: products.reduce((sum, p) => sum + p.rating, 0) / products.length
+        totalValue: products.reduce((sum, p) => sum + ((p.stock || 0) * (p.price || 0)), 0),
+        totalRevenue: products.reduce((sum, p) => sum + ((p.sales || 0) * (p.price || 0)), 0),
+        averageRating: products.length > 0 ? products.reduce((sum, p) => sum + (p.rating || 0), 0) / products.length : 0
     };
 
     const toggleAvailability = (productId) => {
-        setProducts(prev => prev.map(product =>
-            product.id === productId
-                ? { ...product, isAvailable: !product.isAvailable }
-                : product
-        ));
+        // TODO: Implementar llamada al backend para actualizar disponibilidad
         toast.success("Estado del producto actualizado");
     };
 
     const togglePopular = (productId) => {
-        setProducts(prev => prev.map(product =>
-            product.id === productId
-                ? { ...product, isPopular: !product.isPopular }
-                : product
-        ));
+        // TODO: Implementar llamada al backend para actualizar popularidad
         toast.success("Estado de popularidad actualizado");
     };
 
@@ -122,11 +155,7 @@ export function ProductManagement() {
     };
 
     const updateStock = (productId, newStock) => {
-        setProducts(prev => prev.map(product =>
-            product.id === productId
-                ? { ...product, stock: newStock }
-                : product
-        ));
+        // TODO: Implementar llamada al backend para actualizar stock
         toast.success("Stock actualizado correctamente");
     };
 
@@ -188,7 +217,8 @@ export function ProductManagement() {
                 if (product) {
                     // Editar producto existente
                     await adminService.updateProduct(product.id, formData);
-                    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, ...formData } : p));
+                    // TODO: Recargar productos desde el backend
+                    callProductosYCategorias(session.userData.accessToken);
                     toast.success("Producto actualizado correctamente");
                 } else {
                     // Crear nuevo producto ACTUALIZADO
@@ -525,149 +555,173 @@ export function ProductManagement() {
                 </CardContent>
             </Card>
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* Products List */}
+            <div className="space-y-3">
                 {loading ? (
                     Array.from({ length: 8 }).map((_, i) => (
-                        <Card key={i} className="animate-pulse ">
-                            <div className="aspect-square bg-gray-200 rounded-t-lg" />
+                        <Card key={i} className="animate-pulse">
                             <CardContent className="p-4">
-                                <div className="space-y-2">
-                                    <div className="bg-gray-200 h-4 rounded" />
-                                    <div className="bg-gray-200 h-3 rounded w-2/3" />
-                                    <div className="bg-gray-200 h-3 rounded w-1/2" />
+                                <div className="flex items-center gap-4">
+                                    <div className="w-16 h-16 bg-gray-200 rounded-lg" />
+                                    <div className="flex-1 space-y-2">
+                                        <div className="bg-gray-200 h-4 rounded w-1/3" />
+                                        <div className="bg-gray-200 h-3 rounded w-2/3" />
+                                        <div className="bg-gray-200 h-3 rounded w-1/2" />
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
                     ))
                 ) : (
-                    filteredProducts.map((product) => (
-                        <div key={product.id}>
-                            <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 ">
-                                <div className="aspect-square relative">
-                                    {product.imageUrl ? (
-                                        <div className="w-full h-full bg-gray-100 dark:bg-gray-800">
-                                            <img
-                                                src={product.imageUrl}
-                                                alt={product.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
-                                            <span className="text-6xl">{product.icon || "🥟"}</span>
-                                        </div>
-                                    )}
-                                    <div className="absolute top-2 left-2 flex flex-col gap-1">
-                                        {product.isPopular && (
-                                            <div className="status-badge status-badge-warning text-xs">
-                                                <Star className="w-3 h-3 mr-1" />
-                                                Popular
-                                            </div>
-                                        )}
-                                        {!product.isAvailable && (
-                                            <div className="status-badge status-badge-danger text-xs">
-                                                No disponible
-                                            </div>
-                                        )}
-                                        {product.stock <= product.minStock && product.stock > 0 && (
-                                            <div className="status-badge status-badge-warning text-xs">
-                                                Stock bajo
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="absolute top-2 right-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="bg-white/80 backdrop-blur-sm hover:bg-white"
-                                            onClick={() => toggleAvailability(product.id)}
-                                        >
-                                            {product.isAvailable ?
-                                                <Eye className="w-4 h-4 text-green-500" /> :
-                                                <EyeOff className="w-4 h-4 text-red-500" />
-                                            }
-                                        </Button>
-                                    </div>
-                                </div>
+                    filteredProducts.map((product) => {
+                        const priority = calculatePriority(product);
+                        const getPriorityColor = (priority) => {
+                            if (priority >= 7) return "border-l-red-500 bg-red-50 dark:bg-red-950/20"; // Sin stock + popular
+                            if (priority >= 5) return "border-l-red-400 bg-red-50/50 dark:bg-red-950/10"; // Sin stock
+                            if (priority >= 5) return "border-l-orange-500 bg-orange-50 dark:bg-orange-950/20"; // Stock bajo + popular
+                            if (priority >= 3) return "border-l-orange-400 bg-orange-50/50 dark:bg-orange-950/10"; // Stock bajo
+                            if (priority >= 2) return "border-l-yellow-400 bg-yellow-50 dark:bg-yellow-950/10"; // Solo popular
+                            return "border-l-gray-200 dark:border-l-gray-700"; // Normal
+                        };
 
+                        const getPriorityBadge = (priority) => {
+                            if (priority >= 7) return { text: "CRÍTICO", color: "bg-red-500 text-white" };
+                            if (priority >= 5) return { text: "SIN STOCK", color: "bg-red-400 text-white" };
+                            if (priority >= 5) return { text: "ALTA", color: "bg-orange-500 text-white" };
+                            if (priority >= 3) return { text: "MEDIA", color: "bg-orange-400 text-white" };
+                            if (priority >= 2) return { text: "POPULAR", color: "bg-yellow-400 text-black" };
+                            return { text: "NORMAL", color: "bg-gray-400 text-white" };
+                        };
+
+                        const priorityInfo = getPriorityBadge(priority);
+
+                        return (
+                            <Card 
+                                key={product.id} 
+                                className={`hover:shadow-lg transition-all duration-300 border-l-4 ${getPriorityColor(priority)}`}
+                            >
                                 <CardContent className="p-4">
-                                    <div className="space-y-2">
-                                        <div className="flex items-start justify-between">
-                                            <h3 className="font-semibold text-sm leading-tight">{product.name}</h3>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-6 w-6"
-                                                onClick={() => togglePopular(product.id)}
-                                            >
-                                                <Star
-                                                    className={`w-3 h-3 ${product.isPopular ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`}
+                                    <div className="flex items-center gap-4">
+                                        {/* Imagen pequeña */}
+                                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                            {product.imageUrl ? (
+                                                <img
+                                                    src={product.imageUrl}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-cover"
                                                 />
-                                            </Button>
+                                            ) : (
+                                                <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
+                                                    <span className="text-2xl">{product.icon || "🥟"}</span>
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <p className="text-xs text-muted-foreground line-clamp-2">
-                                            {product.description}
-                                        </p>
-
-                                        <div className="flex items-center justify-between">
-                                            <Badge variant="outline" className="text-xs">
-                                                {product.category}
-                                            </Badge>
-                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                <Clock className="w-3 h-3" />
-                                                {product.preparationTime}min
+                                        {/* Información principal */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-start justify-between mb-2">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <h3 className="font-semibold text-lg truncate">{product.name}</h3>
+                                                        <Badge className={`text-xs px-2 py-1 ${priorityInfo.color}`}>
+                                                            {priorityInfo.text}
+                                                        </Badge>
+                                                    </div>
+                                                    <p className="text-sm text-muted-foreground line-clamp-1 mb-2">
+                                                        {product.description}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-2 ml-4">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        onClick={() => toggleAvailability(product.id)}
+                                                    >
+                                                        {product.isAvailable ?
+                                                            <Eye className="w-4 h-4 text-green-500" /> :
+                                                            <EyeOff className="w-4 h-4 text-red-500" />
+                                                        }
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        onClick={() => togglePopular(product.id)}
+                                                    >
+                                                        <Star
+                                                            className={`w-4 h-4 ${product.isPopular ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`}
+                                                        />
+                                                    </Button>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm font-bold text-empanada-golden">
-                                                    {formatPrice(product.price)}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    Costo: {formatPrice(product.cost)}
-                                                </span>
+                                            {/* Detalles del producto */}
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                                <div className="flex items-center gap-1">
+                                                    <Badge variant="outline" className="text-xs">
+                                                        {product.category}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex items-center gap-1 text-muted-foreground">
+                                                    <Clock className="w-3 h-3" />
+                                                    {product.preparationTime}min
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Package className="w-3 h-3" />
+                                                    <span className={product.stock <= (product.minStock || 10) ? "text-orange-500 font-semibold" : ""}>
+                                                        Stock: {product.stock}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Star className="w-3 h-3" />
+                                                    {product.rating} ({product.reviews})
+                                                </div>
                                             </div>
 
-                                            <div className="flex justify-between items-center text-xs">
-                                                <span>Stock: {product.stock}</span>
-                                                <span>★ {product.rating} ({product.reviews})</span>
+                                            {/* Precios y acciones */}
+                                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="text-lg font-bold text-empanada-golden">
+                                                        {formatPrice(product.price)}
+                                                    </span>
+                                                    <span className="text-sm text-muted-foreground">
+                                                        Costo: {formatPrice(product.cost)}
+                                                    </span>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => setEditingProduct(product)}
+                                                    >
+                                                        <Edit className="w-3 h-3 mr-1" />
+                                                        Editar
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleUpdateStock(product.id)}
+                                                    >
+                                                        <Package className="w-3 h-3 mr-1" />
+                                                        Stock
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="text-red-500 hover:text-red-700"
+                                                        onClick={() => deleteProduct(product.id)}
+                                                    >
+                                                        <Trash2 className="w-3 h-3" />
+                                                    </Button>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div className="flex gap-1 pt-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="flex-1"
-                                                onClick={() => setEditingProduct(product)}
-                                            >
-                                                <Edit className="w-3 h-3 mr-1" />
-                                                Editar
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => handleUpdateStock(product.id)}
-                                            >
-                                                <Package className="w-3 h-3" />
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="text-red-500 hover:text-red-700"
-                                                onClick={() => deleteProduct(product.id)}
-                                            >
-                                                <Trash2 className="w-3 h-3" />
-                                            </Button>
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
 

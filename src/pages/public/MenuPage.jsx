@@ -66,9 +66,9 @@ export function MenuPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-empanada-light">
             {/* Hero Section */}
-            <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-6 sm:py-8">
+            <section className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white py-6 sm:py-8">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <TextAnimate
                         animation="slideUp"

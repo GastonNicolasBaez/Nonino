@@ -32,6 +32,7 @@ import { ContactPage } from "@/pages/public/ContactPage";
 import { CartPage } from "@/pages/public/CartPage";
 import { CheckoutPage } from "@/pages/public/CheckoutPage";
 import { OrderTrackingPage } from "@/pages/public/OrderTrackingPage";
+import { StoreSelectionPage } from "@/pages/public/StoreSelectionPage";
 //import { ProfilePage } from "@/pages/public/ProfilePage";
 
 // ADMINS
@@ -76,6 +77,7 @@ function App() {
                             <Route path="/locales" element={<StoresPage />} />
                             <Route path="/nosotros" element={<AboutPage />} />
                             <Route path="/contacto" element={<ContactPage />} />
+                            <Route path="/pedir" element={<StoreSelectionPage />} />
                             <Route path="/carrito" element={<CartPage />} />
                             <Route path="/checkout" element={<CheckoutPage />} />
                             <Route path="/tracking/:orderId" element={<OrderTrackingPage />} />

@@ -35,7 +35,7 @@ export function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 sm:py-16 lg:py-20">
+      <div className="min-h-screen bg-empanada-light py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -59,7 +59,7 @@ export function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8">
+    <div className="min-h-screen bg-empanada-light py-4 sm:py-6 lg:py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -71,7 +71,7 @@ export function CartPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Tu Carrito</h1>
-            <p className="text-sm sm:text-base text-gray-600">
+            <p className="text-sm sm:text-base text-empanada-rich">
               {itemCount} {itemCount === 1 ? "producto" : "productos"} en tu carrito
             </p>
           </div>

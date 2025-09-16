@@ -5,6 +5,7 @@ import { Badge } from "../ui/badge";
 import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { Link } from "react-router";
+import { StoreSelector } from "./StoreSelector";
 
 export function CartSidebar() {
   const {
@@ -20,6 +21,8 @@ export function CartSidebar() {
     itemCount,
     promoCode,
     removePromoCode,
+    selectedStore,
+    updateStore,
   } = useCart();
 
   const sidebarVariants = {
@@ -223,6 +226,21 @@ export function CartSidebar() {
                   </div>
                 </div>
 
+                {/* Store Selection */}
+                <div className="space-y-3">
+                  <div className="text-sm font-medium">Sucursal para el pedido:</div>
+                  <StoreSelector
+                    selectedStore={selectedStore}
+                    onStoreSelect={updateStore}
+                    className="w-full"
+                  />
+                  {selectedStore && selectedStore.minOrder && subtotal < selectedStore.minOrder && (
+                    <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                      ⚠️ Pedido mínimo: {formatPrice(selectedStore.minOrder)}
+                    </div>
+                  )}
+                </div>
+
                 {/* Actions */}
                 <div className="space-y-3">
                   <Link to="/carrito" onClick={() => setIsOpen(false)}>
@@ -231,8 +249,12 @@ export function CartSidebar() {
                     </Button>
                   </Link>
                   <Link to="/checkout" onClick={() => setIsOpen(false)}>
-                    <Button variant="empanada" className="w-full py-3 sm:py-4 text-sm sm:text-base font-semibold">
-                      Proceder al Pago
+                    <Button 
+                      variant="empanada" 
+                      className="w-full py-3 sm:py-4 text-sm sm:text-base font-semibold"
+                      disabled={!selectedStore}
+                    >
+                      {selectedStore ? "Proceder al Pago" : "Selecciona una Sucursal"}
                     </Button>
                   </Link>
                 </div>

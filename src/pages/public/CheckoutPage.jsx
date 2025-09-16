@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
-import { CreditCard, MapPin, Clock, Phone, User } from "lucide-react";
+import { CreditCard, MapPin, Clock, Phone, User, Store } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { useCart } from "../../context/CartProvider";
-import { useAuth } from "../../context/AuthContext";
+import { useSession } from "../../context/SessionProvider";
+import { StoreSelector } from "../../components/common/StoreSelector";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
 
 export function CheckoutPage() {
-  const { items, total, subtotal, discount, deliveryFee, createOrder } = useCart();
-  const { user } = useAuth(); // Opcional - si hay usuario, pre-llenar datos
+  const { items, total, subtotal, discount, deliveryFee, createOrder, selectedStore, updateStore } = useCart();
+  const session = useSession();
+  const user = session?.userData; // Opcional - si hay usuario, pre-llenar datos
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -40,6 +42,13 @@ export function CheckoutPage() {
     setLoading(true);
 
     try {
+      // Validar sucursal seleccionada
+      if (!selectedStore) {
+        toast.error("Por favor selecciona una sucursal");
+        setLoading(false);
+        return;
+      }
+
       // Validar datos requeridos
       if (!orderData.customerInfo.name || !orderData.customerInfo.phone) {
         toast.error("Por favor completa tu nombre y teléfono");
@@ -61,8 +70,24 @@ export function CheckoutPage() {
         return;
       }
 
+      // Validar pedido mínimo de la sucursal
+      if (selectedStore && selectedStore.minOrder && subtotal < selectedStore.minOrder) {
+        toast.error(`El pedido mínimo para ${selectedStore.name} es de ${formatPrice(selectedStore.minOrder)}`);
+        setLoading(false);
+        return;
+      }
+
       // Crear la orden con toda la información
-      const order = await createOrder(orderData);
+      const orderWithStore = {
+        ...orderData,
+        items,
+        subtotal,
+        discount,
+        deliveryFee,
+        total,
+        selectedStore
+      };
+      const order = await createOrder(orderWithStore);
       
       // Si el método de pago es MercadoPago, aquí el backend se encargará
       // de generar el link de pago y redirigir al usuario
@@ -107,6 +132,34 @@ export function CheckoutPage() {
             {/* Checkout Form */}
             <div className="lg:col-span-2 space-y-6">
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Store Selection */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Store className="w-5 h-5" />
+                      Sucursal
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <StoreSelector
+                      selectedStore={selectedStore}
+                      onStoreSelect={updateStore}
+                      className="w-full"
+                    />
+                    {selectedStore && (
+                      <div className="mt-3 p-3 bg-empanada-golden/10 rounded-lg">
+                        <div className="text-sm text-empanada-golden">
+                          <p className="font-medium">✓ Sucursal seleccionada</p>
+                          <p className="text-xs mt-1">
+                            Tiempo estimado: {selectedStore.deliveryTime} • 
+                            Pedido mínimo: {formatPrice(selectedStore.minOrder)}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 {/* Delivery Type */}
                 <Card>
                   <CardHeader>

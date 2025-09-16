@@ -7,19 +7,16 @@ const API_INVENTORYURL = "";
 const API_STOREURL = "";
 const API_ORDERURL = "";
 
-export const ENDPOINTS = '';
+// PUBLIC DATA
 
 export const getPublicDataQueryFunction = async (_idSucursal) => {
     const response = await axios.get(`https://nonino-catalog.fly.dev/public/catalog/stores/${_idSucursal}/menu`);
     return await response.data;
 }
 
-export const getLoginQueryFunction = async ({ _email, _password }) => {
+export const getLoginQueryFunction = async (_credentials) => {
     const axiosSetup = {
-        axiosData: {
-            email: _email,
-            password: _password,
-        },
+        axiosData: _credentials,
         axiosConfig: {
             headers: {
                 "Content-Type": "application/json"
@@ -34,8 +31,7 @@ export const getLoginQueryFunction = async ({ _email, _password }) => {
 
 export const getRefreshQueryFunction = async (_csrfToken) => {
     const axiosSetup = {
-        axiosData: {
-        },
+        axiosData: null,
         axiosConfig: {
             headers: {
                 "Content-Type": "application/json",
@@ -45,11 +41,39 @@ export const getRefreshQueryFunction = async (_csrfToken) => {
         }
     }
 
-    const response = await axios.post(`https://nonino-auth.fly.dev/auth/refresh`, null, axiosSetup.axiosConfig);
+    const response = await axios.post(`https://nonino-auth.fly.dev/auth/refresh`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
+// ADMIN DATA
 
+export const getAdminCatalogQueryFunction = async (_accessToken) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            },
+        }
+    }
 
+    const response = await axios.get(`https://nonino-catalog.fly.dev/admin/products`, axiosSetup.axiosConfig);
+    return await response.data;
+}
 
+export const postAdminCatalogAddProductQueryFunction = async ({_producto, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _producto,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.post(`https://nonino-catalog.fly.dev/admin/products`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
 

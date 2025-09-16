@@ -4,7 +4,6 @@ import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
 import { CartSidebar } from "@/components/common/CartSidebar";
 import { CartProvider } from "@/context/CartProvider";
-import { PublicDataProvider } from "@/context/PublicDataProvider";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const PublicLayout = () => {
@@ -15,10 +14,8 @@ const PublicLayout = () => {
         <CartProvider>
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1">
-                    <PublicDataProvider>
-                        <Outlet />
-                    </PublicDataProvider>
+                <main className="flex-1">                    
+                    <Outlet />
                 </main>
                 <Footer />
                 <CartSidebar />

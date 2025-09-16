@@ -70,8 +70,8 @@ export const SessionProvider = ({ children }) => {
         setComponentLoading(false);
     }, []);
 
-    const login = (_email, _password) => {
-        callLogin({ _email, _password });
+    const login = (_credentials) => {
+        callLogin(_credentials);
     };
 
     const logout = () => {

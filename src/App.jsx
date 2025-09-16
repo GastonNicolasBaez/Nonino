@@ -2,6 +2,7 @@
 
 // PROVIDERS
 import AuthProvider from "@/context/AuthProvider";
+import { PublicDataProvider } from "./context/PublicDataProvider";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { SessionProvider } from "@/context/SessionProvider";
 
@@ -41,6 +42,7 @@ import { InventoryManagement } from "@/pages/admin/InventoryManagement";
 import { CustomerManagement } from "@/pages/admin/CustomerManagement";
 import { ReportsPage } from "@/pages/admin/ReportsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
+import { AdminDataProvider } from "./context/AdminDataProvider";
 
 // Crear cliente de React Query
 const queryClient = new QueryClient({
@@ -58,48 +60,56 @@ function App() {
             <QueryClientProvider client={queryClient}>
                 <SessionProvider>
 
-                        <Routes>
-                            {/* PUBLIC */}
-                            <Route element={<PublicLayout />}>
-                                <Route index element={<HomePage />} />
-                                <Route path="/menu" element={<MenuPage />} />
-                                <Route path="/promociones" element={<PromotionsPage />} />
-                                <Route path="/locales" element={<StoresPage />} />
-                                <Route path="/nosotros" element={<AboutPage />} />
-                                <Route path="/contacto" element={<ContactPage />} />
-                                <Route path="/carrito" element={<CartPage />} />
-                                <Route path="/checkout" element={<CheckoutPage />} />
-                                <Route path="/tracking/:orderId" element={<OrderTrackingPage />} />
-                            </Route>
+                    <Routes>
+                        {/* PUBLIC */}
+                        <Route
+                            element={
+                                <PublicDataProvider>
+                                    <PublicLayout />
+                                </PublicDataProvider>
+                            }
+                        >
+                            <Route index element={<HomePage />} />
+                            <Route path="/menu" element={<MenuPage />} />
+                            <Route path="/promociones" element={<PromotionsPage />} />
+                            <Route path="/locales" element={<StoresPage />} />
+                            <Route path="/nosotros" element={<AboutPage />} />
+                            <Route path="/contacto" element={<ContactPage />} />
+                            <Route path="/carrito" element={<CartPage />} />
+                            <Route path="/checkout" element={<CheckoutPage />} />
+                            <Route path="/tracking/:orderId" element={<OrderTrackingPage />} />
+                        </Route>
 
-                            {/* INTRANET */}
-                            <Route path="/intranet" element={<Navigate to="/intranet/login" replace />} />
-                            <Route path="/intranet/*" element={<IntranetPortal />} >
-                                <Route path="login" element={<AdminLogin />} />
+                        {/* INTRANET */}
+                        <Route path="/intranet" element={<Navigate to="/intranet/login" replace />} />
+                        <Route path="/intranet/*" element={<IntranetPortal />} >
+                            <Route path="login" element={<AdminLogin />} />
 
-                                {/* ADMIN */}
-                                <Route path="admin"
-                                    element={
-                                        <AuthProvider allowedRole={'ADMIN'}>
-                                            <ThemeProvider>
+                            {/* ADMIN */}
+                            <Route path="admin"
+                                element={
+                                    <AuthProvider allowedRole={'ADMIN'}>
+                                        <ThemeProvider>
+                                            <AdminDataProvider>
                                                 <AdminLayout />
-                                            </ThemeProvider>
-                                        </AuthProvider>
-                                    }
-                                >
-                                    <Route index element={<AdminDashboard />} />
-                                    <Route path="pedidos" element={<OrderManagement />} />
-                                    <Route path="productos" element={<ProductManagement />} />
-                                    <Route path="inventario" element={<InventoryManagement />} />
-                                    <Route path="clientes" element={<CustomerManagement />} />
-                                    <Route path="reportes" element={<ReportsPage />} />
-                                    <Route path="configuracion" element={<SettingsPage />} />
-                                </Route>
+                                            </AdminDataProvider>
+                                        </ThemeProvider>
+                                    </AuthProvider>
+                                }
+                            >
+                                <Route index element={<AdminDashboard />} />
+                                <Route path="pedidos" element={<OrderManagement />} />
+                                <Route path="productos" element={<ProductManagement />} />
+                                <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="clientes" element={<CustomerManagement />} />
+                                <Route path="reportes" element={<ReportsPage />} />
+                                <Route path="configuracion" element={<SettingsPage />} />
                             </Route>
+                        </Route>
 
-                            {/* FALLBACK */}
-                            <Route path="*" element={<NotFound />} />
-                        </Routes>
+                        {/* FALLBACK */}
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
 
                 </SessionProvider>
             </QueryClientProvider>

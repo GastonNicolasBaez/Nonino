@@ -82,7 +82,10 @@ export function AdminLogin() {
 
         setErrors({});
 
-        session.login(formData.email, formData.password);
+        session.login({
+            email: formData.email,
+            password: formData.password
+        });
 
     };
 

@@ -1,12 +1,5 @@
 import axios from "axios";
 
-const API_LOGIN = `https://nonino-auth.fly.dev/auth/login`;
-const API_REFRESH = `https://nonino-auth.fly.dev/auth/refresh`;
-const API_CATALOGURL = `https://nonino-catalog.fly.dev/public/catalog/stores/1/menu`;
-const API_INVENTORYURL = "";
-const API_STOREURL = "";
-const API_ORDERURL = "";
-
 // PUBLIC DATA
 
 export const getPublicDataQueryFunction = async (_idSucursal) => {

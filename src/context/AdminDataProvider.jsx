@@ -1,8 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
-/* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useEffect, useState, useContext, createContext } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query';
+import React, { useState, useContext, createContext } from 'react'
+import { useMutation } from '@tanstack/react-query';
 import {
     getAdminCatalogQueryFunction,
     postAdminCatalogAddProductQueryFunction,
@@ -16,8 +15,6 @@ export const AdminDataProvider = ({ children }) => {
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
-    const [idSucursal, setIdSucursal] = useState(1);
-
     //crear producto
     const { mutateAsync: callProductoNuevo, isPending: callProductoNuevoLoading } = useMutation({
         mutationKey: ['adminProductoNuevo'],

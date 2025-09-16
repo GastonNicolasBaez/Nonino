@@ -63,6 +63,7 @@ export function ProductManagement() {
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
     const { openModal: openStockModal, UpdateStockModalComponent } = useUpdateStockModal();
 
+    // Cargar productos al montar ACTUALIZADO
     useEffect(() => {
         callProductosYCategorias(session.userData.accessToken);
     }, []); // Removida la dependencia que causaba el loop
@@ -103,6 +104,7 @@ export function ProductManagement() {
         toast.success("Estado de popularidad actualizado");
     };
 
+    // ACTUALIZADO
     const deleteProduct = (productId) => {
         const product = products.find(p => p.id === productId);
         openConfirmModal({
@@ -189,7 +191,7 @@ export function ProductManagement() {
                     setProducts(prev => prev.map(p => p.id === product.id ? { ...p, ...formData } : p));
                     toast.success("Producto actualizado correctamente");
                 } else {
-                    // Crear nuevo producto
+                    // Crear nuevo producto ACTUALIZADO
                     const adaptedProduct = {
                         "sku": "SKU-" + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
                         "name": formData.name,

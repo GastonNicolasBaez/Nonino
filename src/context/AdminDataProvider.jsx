@@ -6,6 +6,7 @@ import {
     getAdminCatalogQueryFunction,
     postAdminCatalogAddProductQueryFunction,
     deleteAdminCatalogDeleteProductQueryFunction,
+    updateAdminCatalogUpdateProductQueryFunction,
 
 } from '@/config/apiQueryFunctions';
 
@@ -37,10 +38,10 @@ export const AdminDataProvider = ({ children }) => {
                 id: producto.id,
                 name: producto.name,
                 description: producto.description,
-                categoryId: producto.categoryId,
-                category: producto.categoryName,
+                categoryName: producto.categoryName,
+                category: producto.categoryId,
                 price: producto.basePrice,
-                image: producto.imageId,
+                imageUrl: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
                 isAvailable: producto.active,
                 sku: producto.sku,
                 cost: 0,
@@ -75,16 +76,21 @@ export const AdminDataProvider = ({ children }) => {
         },
         onError: (error) => {
             console.log(error);
+            setProductos([]);
+            setCategorias([]);
         }
     });
 
-    //listar un producto
-
     //modificar producto
+    const { mutateAsync: callModificarProducto, isPending: callModificarProductoLoading } = useMutation({
+        mutationKey: ['adminModificarProducto'],
+        mutationFn: updateAdminCatalogUpdateProductQueryFunction,
+    });
 
     //modificar imagen
 
-    //modificar disponible
+
+
 
 
     //
@@ -92,7 +98,8 @@ export const AdminDataProvider = ({ children }) => {
     const adminDataLoading =
         callProductoNuevoLoading ||
         callProductosYCategoriasLoading || 
-        callBorrarProductoLoading;
+        callBorrarProductoLoading ||
+        callModificarProductoLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -101,10 +108,9 @@ export const AdminDataProvider = ({ children }) => {
             adminDataLoading,
 
             callProductosYCategorias,
-
             callProductoNuevo,
-
             callBorrarProducto,
+            callModificarProducto,
         }}>
             {children}
         </AdminDataContext.Provider>

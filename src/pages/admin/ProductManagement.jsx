@@ -36,7 +36,7 @@ import { useSession } from "@/context/SessionProvider";
 
 export function ProductManagement() {
     const [searchTerm, setSearchTerm] = useState("");
-    const [categoryFilter, setCategoryFilter] = useState("all");
+    const [categoryFilter, setCategoryFilter] = useState("-1");
     //   const [products, setProducts] = useState([]);
     //   const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
@@ -51,6 +51,7 @@ export function ProductManagement() {
         callProductosYCategorias,
         callProductoNuevo,
         callBorrarProducto,
+        callModificarProducto,
     } = useAdminData();
 
     const categoriasTodas = [
@@ -71,7 +72,7 @@ export function ProductManagement() {
     const filteredProducts = products.filter(product => {
         const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             product.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+        const matchesCategory = categoryFilter === '-1' || product.category == categoryFilter;
         return matchesSearch && matchesCategory;
     });
 
@@ -114,7 +115,7 @@ export function ProductManagement() {
             cancelText: "Cancelar",
             type: "danger",
             onConfirm: async () => {
-                await callBorrarProducto({_id: productId, _accessToken: session.userData.accessToken});
+                await callBorrarProducto({ _id: productId, _accessToken: session.userData.accessToken });
                 callProductosYCategorias(session.userData.accessToken);
                 toast.success("Producto eliminado correctamente");
             }
@@ -185,29 +186,38 @@ export function ProductManagement() {
 
         const handleSave = async () => {
             try {
+                const adaptedProduct = {
+                    "sku": "SKU-" + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
+                    "name": formData.name,
+                    "description": formData.description,
+                    "basePrice": formData.price,
+                    "active": formData.isAvailable,
+                    "categoryId": formData.category,
+                    "imageBase64": formData.imageUrl,
+                }
+
                 if (product) {
-                    // Editar producto existente
-                    await adminService.updateProduct(product.id, formData);
-                    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, ...formData } : p));
-                    toast.success("Producto actualizado correctamente");
-                } else {
-                    // Crear nuevo producto ACTUALIZADO
-                    const adaptedProduct = {
-                        "sku": "SKU-" + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
-                        "name": formData.name,
-                        "description": formData.description,
-                        "basePrice": formData.price,
-                        "active": formData.isAvailable,
-                        "categoryId": formData.category,
+                    // EDITAR EXISTENTE
+                    const updateProduct = {
+                        ...adaptedProduct,
+                        "id": product.id,
                     }
+                    await callModificarProducto({
+                        _producto: updateProduct,
+                        _accessToken: session.userData.accessToken,
+                    });
+                    toast.success("Producto actualizado correctamente");
+                    callProductosYCategorias(session.userData.accessToken);
+                } else {
+                    // CREAR NUEVO
                     await callProductoNuevo({
                         _producto: adaptedProduct,
                         _accessToken: session.userData.accessToken
                     });
                     toast.success("Producto creado correctamente");
                     callProductosYCategorias(session.userData.accessToken);
-                    onClose();
                 }
+                onClose();
             } catch (error) {
                 console.error('Error al guardar producto:', error);
                 toast.error(error.message || "Error al guardar el producto");
@@ -515,9 +525,10 @@ export function ProductManagement() {
                             onChange={(e) => setCategoryFilter(e.target.value)}
                             className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
                         >
+                            <option value='-1'>Todo</option>
                             {categories.map(category => (
-                                <option key={category.id} value={category.name}>
-                                    {category.name === "all" ? "Todas las categorías" : category.name}
+                                <option key={category.id} value={category.id}>
+                                    {category.name}
                                 </option>
                             ))}
                         </select>
@@ -613,7 +624,7 @@ export function ProductManagement() {
 
                                         <div className="flex items-center justify-between">
                                             <Badge variant="outline" className="text-xs">
-                                                {product.category}
+                                                {product.categoryName}
                                             </Badge>
                                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                                 <Clock className="w-3 h-3" />

@@ -39,7 +39,7 @@ export const getRefreshQueryFunction = async (_csrfToken) => {
 }
 
 // ADMIN DATA
-
+// traer todos los productos
 export const getAdminCatalogQueryFunction = async (_accessToken) => {
     const axiosSetup = {
         axiosData: null,
@@ -55,6 +55,7 @@ export const getAdminCatalogQueryFunction = async (_accessToken) => {
     return await response.data;
 }
 
+// agregar un producto completo
 export const postAdminCatalogAddProductQueryFunction = async ({_producto, _accessToken}) => {
     const axiosSetup = {
         axiosData: _producto,
@@ -70,6 +71,7 @@ export const postAdminCatalogAddProductQueryFunction = async ({_producto, _acces
     return await response.data;
 }
 
+// borrar un producto
 export const deleteAdminCatalogDeleteProductQueryFunction = async ({_id, _accessToken}) => {
     const axiosSetup = {
         axiosData: null,
@@ -82,5 +84,55 @@ export const deleteAdminCatalogDeleteProductQueryFunction = async ({_id, _access
     }
 
     const response = await axios.delete(`https://nonino-catalog.fly.dev/admin/products/${_id}`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// borrar la imagen de un producto
+export const deleteAdminCatalogDeleteProductImageQueryFunction = async ({_id, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.delete(`https://nonino-catalog.fly.dev/admin/products/${_id}/image`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// agregar la imagen de un producto
+export const postAdminCatalogAddProductImageQueryFunction = async ({_producto, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: {
+            "imageBase64" : _producto.imageBase64,
+        },
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.post(`https://nonino-catalog.fly.dev/admin/products/${_producto.id}/image`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// actualizar un producto
+export const updateAdminCatalogUpdateProductQueryFunction = async ({_producto, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _producto,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.put(`https://nonino-catalog.fly.dev/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }

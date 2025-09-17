@@ -186,8 +186,8 @@ export function InlineSearch() {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={openSearch}
-          placeholder="Buscar en el panel..."
-          className="block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-input text-foreground placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-transparent"
+          placeholder="Buscar..."
+          className="block w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-input text-foreground placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-transparent"
         />
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
           {/* Removed ⌘K shortcut display */}
@@ -202,7 +202,7 @@ export function InlineSearch() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-80 overflow-y-auto"
+            className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-60 sm:max-h-80 overflow-y-auto"
           >
             {results.length === 0 ? (
               <div className="p-4 text-center text-gray-500 dark:text-gray-400">
@@ -218,7 +218,7 @@ export function InlineSearch() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleResultClick(result)}
-                    className={`flex items-center space-x-3 px-4 py-3 cursor-pointer transition-colors ${
+                    className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 cursor-pointer transition-colors ${
                       selectedIndex === index
                         ? "bg-empanada-golden/10 border-l-4 border-empanada-golden"
                         : "hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -226,13 +226,13 @@ export function InlineSearch() {
                   >
                     <div className="text-lg">{result.icon}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2">
-                        <p className="font-medium text-gray-900 dark:text-white truncate">
+                      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                        <p className="font-medium text-gray-900 dark:text-white truncate text-sm sm:text-base">
                           {result.title}
                         </p>
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${
+                        <Badge
+                          variant="outline"
+                          className={`text-xs flex-shrink-0 hidden sm:inline-flex ${
                             result.type === "page" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" :
                             result.type === "product" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" :
                             result.type === "inventory" ? "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400" :
@@ -252,7 +252,7 @@ export function InlineSearch() {
                            result.type === "metric" ? "Métrica" : "Configuración"}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
                         {result.description}
                       </p>
                     </div>

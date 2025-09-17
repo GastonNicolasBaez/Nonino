@@ -3,6 +3,7 @@ import { Heart, Award, Users, Clock } from "lucide-react";
 import { TextAnimate } from "../../components/ui/text-animate";
 import { Card, CardContent } from "../../components/ui/card";
 import { NumberTicker } from "../../components/ui/number-ticker";
+import { FloatingOrderButton } from "../../components/common/FloatingOrderButton";
 
 export function AboutPage() {
   const values = [
@@ -46,8 +47,8 @@ export function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-empanada-golden via-empanada-warm to-empanada-rich text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/20" />
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-empanada-dark text-white overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-empanada-golden/20 via-empanada-warm/15 to-empanada-rich/20"></div>
         <div className="relative container mx-auto px-4 text-center">
           <TextAnimate
             animation="slideUp"
@@ -306,6 +307,8 @@ export function AboutPage() {
           </div>
         </div>
       </section>
+
+      <FloatingOrderButton />
     </div>
   );
 }

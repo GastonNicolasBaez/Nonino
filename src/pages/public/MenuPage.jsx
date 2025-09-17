@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Filter, SlidersHorizontal, X, ChevronDown } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronDown, Clock, Truck, Star, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { TextAnimate } from "@/components/ui/text-animate";
 import { ProductCard } from "@/components/common/ProductCard";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
-// import { cn } from "../../lib/utils"; // No utilizado actualmente
 
 export function MenuPage() {
 
@@ -20,6 +19,47 @@ export function MenuPage() {
 
     const [showFilters, setShowFilters] = useState(false);
     const [sortBy, setSortBy] = useState("popular");
+
+    // Datos para las nuevas secciones
+    const todaysPicks = products.slice(0, 6); // Los primeros 6 productos como destacados
+
+    const promotions = [
+        {
+            id: 1,
+            title: "2x1 en Empanadas",
+            description: "Lleva 2 docenas y paga solo 1",
+            discount: "50%",
+            image: "/api/placeholder/300/200",
+            validUntil: "2025-12-31"
+        },
+        {
+            id: 2,
+            title: "Combo Familiar",
+            description: "3 docenas + bebida grande",
+            discount: "25%",
+            image: "/api/placeholder/300/200",
+            validUntil: "2025-12-31"
+        }
+    ];
+
+    const combos = [
+        {
+            id: 1,
+            name: "Combo Ejecutivo",
+            description: "6 empanadas + bebida + postre",
+            price: 4500,
+            originalPrice: 5200,
+            image: "/api/placeholder/300/200"
+        },
+        {
+            id: 2,
+            name: "Combo Familiar",
+            description: "2 docenas + 2 bebidas + ensalada",
+            price: 12000,
+            originalPrice: 14000,
+            image: "/api/placeholder/300/200"
+        }
+    ];
 
     // console.log(products);
     // console.log(categories);
@@ -66,19 +106,142 @@ export function MenuPage() {
     }
 
     return (
-        <div className="min-h-screen bg-empanada-light">
-            {/* Hero Section */}
-            <section className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white py-6 sm:py-8">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <TextAnimate
-                        animation="slideUp"
-                        by="word"
-                        className="text-2xl sm:text-3xl md:text-4xl font-bold px-2"
-                    >
-                        Nuestro Delicioso Menú
-                    </TextAnimate>
+        <div className="min-h-screen bg-gray-50">
+            {/* Restaurant Info Header */}
+            <div className="bg-white border-b border-gray-200 py-4">
+                <div className="container mx-auto px-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-xl font-bold text-gray-900">Nonino Empanadas</h1>
+                            <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                                <div className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4" />
+                                    <span>30 min</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <Truck className="w-4 h-4" />
+                                    <span>$500</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <span>Mín: $2000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                            <span className="font-semibold">4.5</span>
+                            <span className="text-gray-600">(500+)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Los elegidos de hoy */}
+            <section className="py-6 bg-white">
+                <div className="container mx-auto px-4">
+                    <div className="flex items-center gap-2 mb-4">
+                        <Flame className="w-5 h-5 text-orange-500" />
+                        <h2 className="text-lg font-bold text-gray-900">Los elegidos de hoy</h2>
+                        <span className="text-sm text-gray-500">¡Apúrate que vuelan!</span>
+                    </div>
+
+                    <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                        {todaysPicks.map((product) => (
+                            <div key={product.id} className="flex-none w-40">
+                                <Card className="overflow-hidden hover:shadow-md transition-shadow">
+                                    <div className="aspect-square bg-gray-200 relative">
+                                        <img
+                                            src={product.image || "/api/placeholder/150/150"}
+                                            alt={product.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute top-2 right-2">
+                                            <Badge className="bg-orange-500 text-white text-xs">
+                                                Popular
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                    <CardContent className="p-3">
+                                        <h3 className="font-medium text-sm text-gray-900 line-clamp-2">{product.name}</h3>
+                                        <p className="text-lg font-bold text-empanada-golden mt-1">${product.price}</p>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
+
+            {/* Promociones */}
+            <section className="py-6 bg-gray-50">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4">Promociones</h2>
+
+                    <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                        {promotions.map((promo) => (
+                            <div key={promo.id} className="flex-none w-72">
+                                <Card className="overflow-hidden hover:shadow-md transition-shadow bg-gradient-to-r from-red-500 to-orange-500 text-white">
+                                    <CardContent className="p-4">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h3 className="font-bold text-lg">{promo.title}</h3>
+                                                <p className="text-sm opacity-90">{promo.description}</p>
+                                            </div>
+                                            <Badge className="bg-white text-red-500 font-bold">
+                                                {promo.discount}
+                                            </Badge>
+                                        </div>
+                                        <div className="mt-4">
+                                            <Button className="bg-white text-red-500 hover:bg-gray-100 font-semibold">
+                                                ¡Quiero esta promo!
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Paquetes/Combos */}
+            <section className="py-6 bg-white">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4">Combos Especiales</h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {combos.map((combo) => (
+                            <Card key={combo.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                                <div className="flex">
+                                    <div className="w-24 h-24 bg-gray-200 flex-shrink-0">
+                                        <img
+                                            src={combo.image}
+                                            alt={combo.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <CardContent className="flex-1 p-4">
+                                        <h3 className="font-semibold text-gray-900">{combo.name}</h3>
+                                        <p className="text-sm text-gray-600 mb-2">{combo.description}</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg font-bold text-empanada-golden">${combo.price}</span>
+                                            <span className="text-sm text-gray-500 line-through">${combo.originalPrice}</span>
+                                        </div>
+                                    </CardContent>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Título de categorías */}
+            <div className="bg-white border-t border-gray-200">
+                <div className="container mx-auto px-4 py-4">
+                    <h2 className="text-xl font-bold text-gray-900">Todas las Categorías</h2>
+                    <p className="text-gray-600 text-sm">Explora nuestro menú completo</p>
+                </div>
+            </div>
 
             {/* Main Content Layout */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -439,6 +602,8 @@ export function MenuPage() {
                     </main>
                 </div>
             </div>
+
+            <FloatingOrderButton />
         </div>
     );
 }

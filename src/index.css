@@ -25,19 +25,19 @@
   }
 
   .dark {
-    --background: 25 20% 8%;
+    --background: 217 32% 17%;
     --foreground: 45 20% 95%;
-    --card: 25 15% 12%;
+    --card: 216 28% 16%;
     --card-foreground: 45 20% 95%;
-    --muted: 25 15% 15%;
+    --muted: 216 28% 16%;
     --muted-foreground: 45 10% 65%;
-    --border: 25 15% 20%;
-    --input: 25 15% 20%;
+    --border: 215 25% 25%;
+    --input: 216 28% 16%;
     --primary: 45 65% 50%;
     --primary-foreground: 25 20% 8%;
-    --secondary: 25 15% 15%;
+    --secondary: 216 28% 16%;
     --secondary-foreground: 45 20% 95%;
-    --accent: 25 15% 15%;
+    --accent: 216 28% 16%;
     --accent-foreground: 45 20% 95%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -61,6 +61,37 @@
   /* Ocultar scrollbar en WebKit browsers (Chrome, Safari, Edge) */
   body::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@layer utilities {
+  /* Scrollbar Hide */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Line Clamp Utilities */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 
   /* Ocultar scrollbar en todos los elementos */
@@ -344,16 +375,17 @@ html:not(.dark) .admin-card:hover {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-/* Dark mode: usar comportamiento por defecto */
+/* Dark mode: cards con color específico #20252e */
 html.dark .admin-card {
-  border: 1px solid hsl(var(--border));
+  border: 1px solid #374151;
   box-shadow: none;
-  background-color: hsl(var(--card));
+  background-color: #20252e;
 }
 
 html.dark .admin-card:hover {
-  border-color: hsl(var(--border));
+  border-color: #4b5563;
   box-shadow: none;
+  background-color: #2a2f38;
 }
 
 /* Headers con separación clara - SOLO MODO CLARO */
@@ -362,10 +394,10 @@ html:not(.dark) .admin-header {
   background: linear-gradient(to right, hsl(var(--muted) / 0.5), transparent);
 }
 
-/* Dark mode: usar comportamiento por defecto */
+/* Dark mode: header con color específico #1f2937 */
 html.dark .admin-header {
   border-bottom: 1px solid hsl(var(--border));
-  background: transparent;
+  background: #1f2937;
 }
 
 /* Sidebar con más contraste - SOLO MODO CLARO */
@@ -375,9 +407,9 @@ html:not(.dark) .admin-sidebar-light {
   box-shadow: 2px 0 4px -1px rgb(0 0 0 / 0.05);
 }
 
-/* Dark mode: mantener comportamiento original */
+/* Dark mode: sidebar con color específico #1f2937 */
 html.dark .admin-sidebar-light {
-  background-color: transparent;
+  background-color: #1f2937;
   border-right: 1px solid hsl(var(--border));
   box-shadow: none;
 }
@@ -456,16 +488,17 @@ html:not(.dark) .admin-stats-card:hover {
   transform: none; /* Sin movimiento */
 }
 
-/* Dark mode: stats cards normales */
+/* Dark mode: stats cards con color específico #20252e */
 html.dark .admin-stats-card {
-  border: 1px solid hsl(var(--border));
-  background: hsl(var(--card));
+  border: 1px solid #374151;
+  background: #20252e;
   box-shadow: none;
 }
 
 html.dark .admin-stats-card:hover {
-  border-color: hsl(var(--border));
+  border-color: #4b5563;
   box-shadow: none;
+  background: #2a2f38;
 }
 
 /* Botones del admin más definidos - SOLO MODO CLARO */
@@ -489,7 +522,7 @@ html:not(.dark) .admin-button-outline:hover {
   background-color: hsl(var(--muted) / 0.5);
 }
 
-/* Dark mode: botones normales */
+/* Dark mode: botones con color específico #20252e */
 html.dark .admin-button-primary {
   background: hsl(var(--primary));
   border: 1px solid hsl(var(--primary));
@@ -497,8 +530,12 @@ html.dark .admin-button-primary {
 }
 
 html.dark .admin-button-outline {
-  border: 1px solid hsl(var(--border));
-  background-color: hsl(var(--card));
+  border: 1px solid #374151;
+  background-color: #20252e;
+}
+
+html.dark .admin-button-outline:hover {
+  background-color: #2a2f38;
 }
 
 /* Input fields con más definición - SOLO MODO CLARO */
@@ -513,10 +550,14 @@ html:not(.dark) .admin-input:focus {
   box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
 }
 
-/* Dark mode: inputs normales */
+/* Dark mode: inputs con color específico #20252e */
 html.dark .admin-input {
-  border: 1px solid hsl(var(--border));
-  background-color: hsl(var(--input));
+  border: 1px solid #374151;
+  background-color: #20252e;
+}
+
+html.dark .admin-input:focus {
+  background-color: #2a2f38;
 }
 
 /* Separadores más visibles - SOLO MODO CLARO */
@@ -560,11 +601,11 @@ html:not(.dark) .admin-alert-danger {
   color: rgb(185 28 28);
 }
 
-/* Dark mode: alertas normales */
+/* Dark mode: alertas con color específico #20252e */
 html.dark .admin-alert {
   border: 1px solid;
   border-radius: 0.5rem;
-  background: hsl(var(--card));
+  background: #20252e;
 }
 
 html.dark .admin-alert-warning {
@@ -605,6 +646,16 @@ html.dark .admin-main-content {
   border: none;
   border-radius: 0;
   box-shadow: none;
+}
+
+/* Mejoras específicas para cards de usuario con color #20252e */
+html.dark .admin-user-card {
+  background-color: #20252e !important;
+  border: 1px solid #374151 !important;
+}
+
+html.dark .admin-user-card:hover {
+  background-color: #2a2f38 !important;
 }
 
 /* Sliders personalizados para el editor de imágenes */
@@ -664,4 +715,16 @@ html.dark .admin-main-content {
 
 .dark .slider-empanada::-moz-range-track {
   background: #374151;
+}
+
+/* Mejoras para el header público en resoluciones intermedias */
+@media (min-width: 1024px) and (max-width: 1535px) {
+  .header-logo-text {
+    font-size: 1rem !important;
+  }
+
+  .header-nav-item {
+    font-size: 0.875rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
 }

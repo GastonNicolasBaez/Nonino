@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle, Clock, Truck, MapPin } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, Truck, MapPin, Store } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,12 +52,15 @@ export function StoreSelectionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-empanada-cream flex items-center justify-center">
-            <div className="text-center bg-empanada-light p-8 rounded-lg shadow-lg max-w-md w-full mx-4 border border-empanada-cream">
-        <h1 className="text-4xl font-bold text-empanada-golden mb-4">
-          🏪 Elige tu Sucursal
-        </h1>
-        <p className="text-empanada-dark mb-6">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+            <div className="text-center bg-white p-8 rounded-xl shadow-2xl max-w-md w-full mx-4">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Store className="w-8 h-8 text-empanada-golden" />
+          <h1 className="text-3xl font-bold text-gray-900">
+            Elige tu Sucursal
+          </h1>
+        </div>
+        <p className="text-gray-600 mb-6">
           Selecciona la sucursal más cercana para hacer tu pedido
         </p>
         
@@ -71,9 +74,9 @@ export function StoreSelectionPage() {
             >
               <Card 
                         className={`cursor-pointer transition-all duration-300 hover:shadow-md ${
-                          selectedStore?.id === store.id 
-                            ? 'bg-empanada-cream border-empanada-golden border-2' 
-                            : 'bg-empanada-light hover:bg-empanada-cream'
+                          selectedStore?.id === store.id
+                            ? 'bg-empanada-golden/10 border-empanada-golden border-2'
+                            : 'bg-gray-100 hover:bg-gray-200 border border-gray-300'
                         }`}
                 onClick={() => handleSelectStore(store)}
               >
@@ -81,7 +84,7 @@ export function StoreSelectionPage() {
                   <div className="flex items-start justify-between mb-2">
                     <div className="text-left flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-empanada-dark text-sm">{store.name}</h3>
+                              <h3 className="font-semibold text-gray-900 text-sm">{store.name}</h3>
                         <Badge 
                           className={`text-xs px-2 py-0.5 ${
                             store.isOpen 
@@ -92,7 +95,7 @@ export function StoreSelectionPage() {
                           {store.isOpen ? "Abierto" : "Cerrado"}
                         </Badge>
                       </div>
-                              <div className="flex items-center gap-1 text-xs text-empanada-rich mb-1">
+                              <div className="flex items-center gap-1 text-xs text-gray-600 mb-1">
                         <MapPin className="w-3 h-3" />
                         <span>{store.address}</span>
                       </div>

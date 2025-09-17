@@ -15,32 +15,32 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          50: '#fef7ee',
-          100: '#fdedc8',
-          200: '#fbd88d',
-          300: '#f9c152',
-          400: '#f7a82a',
-          500: '#f28e1c',
-          600: '#d97009',
-          700: '#b4520a',
-          800: '#92400e',
-          900: '#78350f',
-          950: '#451a03',
+          50: '#fdf5e6',   // neutral-light
+          100: '#f5f5dc',  // secondary-cream
+          200: '#f0e68c',  // secondary-wheat
+          300: '#cd853f',  // secondary-terracotta
+          400: '#b8860b',  // primary-warm
+          500: '#d4af37',  // primary-golden
+          600: '#8b4513',  // primary-rich
+          700: '#654321',  // marrón medio oscuro
+          800: '#1a1a1a',  // neutral-dark (gris oscuro)
+          900: '#1a0f0a',  // marrón muy oscuro
+          950: '#0d0704',  // casi negro
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
+          50: '#fdf5e6',   // neutral-light
+          100: '#f5f5dc',  // secondary-cream
+          200: '#f0e68c',  // secondary-wheat
+          300: '#cd853f',  // secondary-terracotta
+          400: '#b8860b',  // primary-warm
+          500: '#d4af37',  // primary-golden
+          600: '#8b4513',  // primary-rich
+          700: '#654321',  // marrón medio oscuro
+          800: '#1a1a1a',  // neutral-dark (gris oscuro)
+          900: '#1a0f0a',  // marrón muy oscuro
+          950: '#0d0704',  // casi negro
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -58,15 +58,27 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Nueva paleta "Tradición Argentina"
         empanada: {
-          golden: '#f7a82a',
-          crust: '#d97009',
-          dark: '#451a03',
+          golden: '#d4af37',      // primary-golden
+          warm: '#b8860b',        // primary-warm
+          rich: '#8b4513',        // primary-rich
+          cream: '#f5f5dc',       // secondary-cream
+          wheat: '#f0e68c',       // secondary-wheat
+          terracotta: '#cd853f',  // secondary-terracotta
+          dark: '#1a1a1a',        // neutral-dark (gris oscuro)
+          light: '#fdf5e6',       // neutral-light
+        },
+        // Colores de acento
+        argentina: {
+          red: '#dc143c',         // accent-red
+          green: '#228b22',       // accent-green
+          orange: '#ff8c00',      // accent-orange
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['DM Sans', 'Poppins', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

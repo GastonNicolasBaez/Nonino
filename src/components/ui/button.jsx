@@ -11,7 +11,7 @@ const Button = React.forwardRef(({ className, variant = "default", size = "defau
     secondary: "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 shadow-sm",
     ghost: "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300",
     link: "text-primary underline-offset-4 hover:underline",
-    empanada: "bg-gradient-to-r from-empanada-golden to-empanada-crust text-white hover:from-empanada-crust hover:to-empanada-golden shadow-lg",
+    empanada: "bg-gradient-to-r from-empanada-golden to-empanada-warm text-white hover:from-empanada-warm hover:to-empanada-rich shadow-lg",
     shimmer: "relative overflow-hidden bg-empanada-golden text-white before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent hover:shadow-lg",
   };
 

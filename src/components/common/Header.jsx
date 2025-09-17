@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   ShoppingCart,
   User,
@@ -22,11 +22,37 @@ import { cn } from "../../lib/utils";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const session = useSession();
+
+  // Scroll effect for logo centering
+  const { scrollY } = useScroll();
+  
+  // Hero logo effect - moves from hero section to navbar center
+  const heroLogoY = useTransform(scrollY, [0, 400], [400, -20]); // Moves from below viewport to navbar
+  const heroLogoOpacity = useTransform(scrollY, [0, 100], [0, 1]); // Fades in as it approaches
+  
+  // Logo section movement - movimiento sutil como antes
+  const logoSectionX = useTransform(scrollY, [200, 400], [0, -15]);
+
+  // Left navigation movement - navegación central izquierda (Inicio, Pedir Ya, Promociones)
+  const leftNavX = useTransform(scrollY, [0, 300], [80, -30]);
+
+  // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
+  const rightNavX = useTransform(scrollY, [0, 300], [-80, 30]);
+
+  // Icons section movement - movimiento sutil como antes
+  const iconsSectionX = useTransform(scrollY, [200, 400], [0, 8]);
+  
+  // Individual icon movements - sincronizados con el movimiento de las secciones
+  const heartIconX = useTransform(scrollY, [200, 300], [0, 3]);
+  const cartIconX = useTransform(scrollY, [200, 300], [0, 4]);
+  const userIconX = useTransform(scrollY, [200, 300], [0, 5]);
+
+  // Navbar logo opacity - desaparece cuando hay scroll
+  const navbarLogoOpacity = useTransform(scrollY, [50, 150], [1, 0]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,10 +62,13 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navigation = [
+  const leftNavigation = [
     { name: "Inicio", href: "/" },
-    { name: "Menú", href: "/menu" },
+    { name: "Pedir Ya", href: "/pedir" },
     { name: "Promociones", href: "/promociones" },
+  ];
+
+  const rightNavigation = [
     { name: "Locales", href: "/locales" },
     { name: "Nosotros", href: "/nosotros" },
     { name: "Contacto", href: "/contacto" },
@@ -63,101 +92,132 @@ export function Header() {
 
         {/* Main Header */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-              <motion.div
-                className="text-2xl sm:text-3xl"
-                whileHover={{ rotate: 15, scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                🥟
-              </motion.div>
-              <AnimatedGradientText className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight hidden xs:block">
-                NONINO EMPANADAS
-              </AnimatedGradientText>
-              <span className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight xs:hidden text-empanada-golden">
-                NONINO
-              </span>
-            </Link>
+          <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-hidden">
+            {/* Logo Section */}
+            <motion.div
+              style={{
+                x: logoSectionX
+              }}
+              className="flex items-center flex-shrink-0"
+            >
+              <Link to="/" className="flex items-center space-x-2">
+                <motion.img
+                  src="/src/assets/images/LogoNonino.png"
+                  alt="Logo Nonino"
+                  className="w-8 h-8 sm:w-10 sm:h-10"
+                  style={{ opacity: navbarLogoOpacity }}
+                />
+                <AnimatedGradientText className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight hidden xs:block">
+                  NONINO EMPANADAS
+                </AnimatedGradientText>
+                <span className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight xs:hidden text-empanada-golden">
+                  NONINO
+                </span>
+              </Link>
+            </motion.div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "text-sm xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-2 py-1",
-                    isActive(item.href)
-                      ? "text-empanada-golden"
-                      : "text-gray-900"
-                  )}
-                >
-                  {item.name}
-                  {isActive(item.href) && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
-                      initial={false}
-                    />
-                  )}
-                </Link>
-              ))}
-            </nav>
+            {/* Left Navigation Section */}
+            <motion.nav
+              style={{ x: leftNavX }}
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8"
+            >
+                {leftNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "text-sm xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-2 py-1",
+                      isActive(item.href)
+                        ? "text-empanada-golden"
+                        : "text-empanada-dark"
+                    )}
+                  >
+                    {item.name}
+                    {isActive(item.href) && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
+                        initial={false}
+                      />
+                    )}
+                  </Link>
+                ))}
+            </motion.nav>
 
-            {/* Actions */}
-            <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4">
-              {/* Search */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={cn(
-                  "relative h-10 w-10 sm:h-11 sm:w-11",
-                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
-                )}
-                aria-label="Buscar productos"
-                aria-expanded={isSearchOpen}
-              >
-                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
+            {/* Right Navigation Section */}
+            <motion.nav
+              style={{ x: rightNavX }}
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8"
+            >
+                {rightNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "text-sm xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-2 py-1",
+                      isActive(item.href)
+                        ? "text-empanada-golden"
+                        : "text-empanada-dark"
+                    )}
+                  >
+                    {item.name}
+                    {isActive(item.href) && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
+                        initial={false}
+                      />
+                    )}
+                  </Link>
+                ))}
+            </motion.nav>
+
+            {/* Actions Section */}
+            <motion.div 
+              style={{ x: iconsSectionX }}
+              className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4"
+            >
 
               {/* Favorites - Hidden on very small screens */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "relative h-10 w-10 sm:h-11 sm:w-11 hidden sm:flex",
-                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
-                )}
-              >
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
+              <motion.div style={{ x: heartIconX }}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "relative h-10 w-10 sm:h-11 sm:w-11 hidden sm:flex",
+                    "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
+                  )}
+                >
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
+                </Button>
+              </motion.div>
 
               {/* Cart */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setCartOpen(true)}
-                className={cn(
-                  "relative h-10 w-10 sm:h-11 sm:w-11",
-                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
-                )}
-                aria-label={`Carrito de compras${itemCount > 0 ? ` (${itemCount} productos)` : ''}`}
-              >
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                {itemCount > 0 && (
-                  <Badge
-                    variant="empanada"
-                    className="absolute -top-2 -right-2 h-5 w-5 sm:h-6 sm:w-6 flex items-center justify-center p-0 text-xs"
-                  >
-                    {itemCount > 99 ? '99+' : itemCount}
-                  </Badge>
-                )}
-              </Button>
+              <motion.div style={{ x: cartIconX }}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setCartOpen(true)}
+                  className={cn(
+                    "relative h-10 w-10 sm:h-11 sm:w-11",
+                    "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
+                  )}
+                  aria-label={`Carrito de compras${itemCount > 0 ? ` (${itemCount} productos)` : ''}`}
+                >
+                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {itemCount > 0 && (
+                    <Badge
+                      variant="empanada"
+                      className="absolute -top-2 -right-2 h-5 w-5 sm:h-6 sm:w-6 flex items-center justify-center p-0 text-xs"
+                    >
+                      {itemCount > 99 ? '99+' : itemCount}
+                    </Badge>
+                  )}
+                </Button>
+              </motion.div>
 
               {/* User */}
+              <motion.div style={{ x: userIconX }}>
               {session.isAuthenticated ? (
                 <div className="flex items-center gap-1 sm:gap-2">
                   <span className={cn(
@@ -172,7 +232,7 @@ export function Header() {
                     onClick={session.logout}
                     className={cn(
                       "h-10 w-10 sm:h-11 sm:w-11",
-                      "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
+                      "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
                     )}
                   >
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -185,7 +245,7 @@ export function Header() {
                     size="icon"
                     className={cn(
                       "h-10 w-10 sm:h-11 sm:w-11",
-                      "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
+                      "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
                     )}
                   >
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -197,6 +257,7 @@ export function Header() {
                   </div>
                 </div>
               )}
+              </motion.div>
 
               {/* Mobile Menu Button */}
               <Button
@@ -205,39 +266,17 @@ export function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   "lg:hidden h-10 w-10 sm:h-11 sm:w-11",
-                  "text-gray-900 hover:text-empanada-golden hover:bg-empanada-golden/10"
+                  "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
                 )}
                 aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
                 aria-expanded={isMenuOpen}
               >
                 {isMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
               </Button>
-            </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* Search Bar */}
-        <AnimatePresence>
-          {isSearchOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="border-t bg-white/95 backdrop-blur-md shadow-lg"
-            >
-              <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div className="relative max-w-md mx-auto">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Buscar empanadas..."
-                    className="pl-10 pr-4 py-3 text-base sm:text-lg border-2 focus:border-empanada-golden"
-                    autoFocus
-                  />
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.header>
 
       {/* Mobile Menu */}
@@ -261,16 +300,14 @@ export function Header() {
               className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl"
             >
               {/* Header */}
-              <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-golden/10 to-empanada-crust/10">
+              <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-cream to-empanada-wheat">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <motion.div
-                      className="text-2xl"
-                      whileHover={{ rotate: 15, scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      🥟
-                    </motion.div>
+                    <img 
+                      src="/src/assets/images/LogoNonino.png" 
+                      alt="Logo Nonino" 
+                      className="w-8 h-8"
+                    />
                     <div>
                       <h2 className="text-lg sm:text-xl font-bold text-empanada-golden">NONINO</h2>
                       <p className="text-xs text-gray-600">Menú de navegación</p>
@@ -304,7 +341,7 @@ export function Header() {
                           "flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all duration-200 hover:bg-empanada-golden/10 group",
                           isActive(item.href)
                             ? "bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30"
-                            : "text-gray-900 hover:text-empanada-golden"
+                            : "text-empanada-dark hover:text-empanada-golden"
                         )}
                       >
                         <span className="text-base sm:text-lg font-medium">
@@ -323,12 +360,16 @@ export function Header() {
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     <Link
-                      to="/menu"
+                      to="/pedir"
                       onClick={() => setIsMenuOpen(false)}
                       className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <div className="text-2xl mb-2">🥟</div>
-                      <span className="text-xs font-medium text-gray-700">Menú</span>
+                      <img 
+                        src="/src/assets/images/LogoNonino.png" 
+                        alt="Logo Nonino" 
+                        className="w-6 h-6 mb-2"
+                      />
+                      <span className="text-xs font-medium text-gray-700">Pedir Ya</span>
                     </Link>
                     <Link
                       to="/locales"

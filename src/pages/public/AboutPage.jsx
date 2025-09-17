@@ -46,13 +46,13 @@ export function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-empanada-golden via-empanada-crust to-empanada-dark text-white overflow-hidden">
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-empanada-golden via-empanada-warm to-empanada-rich text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative container mx-auto px-4 text-center">
           <TextAnimate
             animation="slideUp"
             by="word"
-            className="text-4xl md:text-6xl font-bold mb-6"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2"
           >
             Nuestra Historia
           </TextAnimate>
@@ -60,7 +60,7 @@ export function AboutPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-xl text-white/90 max-w-3xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-2"
           >
             Una tradición familiar que comenzó hace más de 25 años con el sueño de 
             compartir el auténtico sabor de las empanadas argentinas
@@ -69,7 +69,7 @@ export function AboutPage() {
       </section>
 
       {/* Story Section */}
-      <section className="py-20 bg-white">
+      <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -77,10 +77,10 @@ export function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-white">
                 La Historia de Don Carlos
               </h2>
-              <div className="space-y-4 text-gray-600 leading-relaxed">
+              <div className="space-y-4 text-empanada-rich leading-relaxed">
                 <p>
                   Todo comenzó en 1995 cuando Don Carlos Nonino decidió cumplir su sueño 
                   de abrir su propia empanadora. Con las recetas heredadas de su abuela 
@@ -122,7 +122,7 @@ export function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 sm:py-16 lg:py-20 bg-empanada-cream">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -165,7 +165,7 @@ export function AboutPage() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-20 bg-white">
+      <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -222,7 +222,7 @@ export function AboutPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-empanada-golden/10">
+      <section className="py-12 sm:py-16 lg:py-20 bg-empanada-dark">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

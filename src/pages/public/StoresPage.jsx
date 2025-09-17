@@ -57,12 +57,12 @@ export function StoresPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-20">
+      <section className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-4 text-center">
           <TextAnimate
             animation="slideUp"
             by="word"
-            className="text-4xl md:text-5xl font-bold mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2"
           >
             Nuestros Locales
           </TextAnimate>
@@ -70,7 +70,7 @@ export function StoresPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-xl text-white/90 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-2"
           >
             Encuentra el local más cercano y disfruta nuestras empanadas frescas
           </motion.p>

@@ -59,7 +59,7 @@ export function CartSidebar() {
             className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-golden/10 to-empanada-crust/10">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-cream to-empanada-wheat">
               <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-empanada-golden" />
                 Tu Carrito

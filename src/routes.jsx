@@ -14,7 +14,7 @@ import { RegisterPage } from "./pages/public/RegisterPage";
 import { CartPage } from "./pages/public/CartPage";
 import { CheckoutPage } from "./pages/public/CheckoutPage";
 import { OrderTrackingPage } from "./pages/public/OrderTrackingPage";
-import { ProfilePage } from "./pages/public/ProfilePage";
+import { StoreSelectionPage } from "./pages/public/StoreSelectionPage";
 
 // Páginas de administración
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
@@ -67,6 +67,10 @@ export const router = createBrowserRouter([
       {
         path: "register",
         element: <RegisterPage />,
+      },
+      {
+        path: "pedir",
+        element: <StoreSelectionPage />,
       },
       {
         path: "carrito",

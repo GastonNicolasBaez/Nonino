@@ -8,8 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { TextAnimate } from "@/components/ui/text-animate";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { NumberTicker } from "@/components/ui/number-ticker";
-import { ProductCard } from "@/components/common/ProductCard";
+import { ProductCardDisplay } from "@/components/common/ProductCardDisplay";
+import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { productService, promotionService } from "@/services/api";
+import { formatPrice } from "@/lib/utils";
 import { usePublicData } from "@/context/PublicDataProvider";
 
 export function HomePage() {
@@ -54,11 +56,28 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen">
+            {/* Logo animado independiente */}
+            <motion.div
+                className="fixed z-[9999] pointer-events-none"
+                style={{
+                    left: "50%",
+                    top: useTransform(scrollY, [0, 300], ["18vh", "4.5rem"]),
+                    x: "-50%",
+                    y: "-50%",
+                    scale: useTransform(scrollY, [200, 300], [1, 0.4])
+                }}
+            >
+                <img
+                    src="/src/assets/images/LogoNonino.png"
+                    alt="Logo Nonino"
+                    className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-80 lg:h-80"
+                />
+            </motion.div>
             {/* Hero Section */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
                 {/* Background Image with Parallax Effect */}
                 <motion.div
-                    className="absolute inset-0 w-full h-[140%] -top-[20%]"
+                    className="absolute inset-0 w-full h-[160%] -top-[30%]"
                     style={{
                         backgroundImage: "url('/src/assets/images/SanMartin.jpg')",
                         backgroundSize: "cover",
@@ -81,8 +100,8 @@ export function HomePage() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
+                        className="mt-32 sm:mt-40 md:mt-48 lg:mt-56"
                     >
-                        <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-4 sm:mb-6 animate-bounce-subtle">🥟</div>
 
                         <TextAnimate
                             animation="slideUp"
@@ -123,6 +142,196 @@ export function HomePage() {
                     </motion.div>
                 </div>
             </section>
+
+            {/* Popular Products */}
+            <section className="min-h-screen bg-empanada-dark relative">
+                {/* Decoración superior */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-empanada-golden/30 to-transparent"></div>
+                
+                {/* Split Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 h-screen">
+                    {/* Hero Image - Left Side */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="relative order-2 lg:order-1"
+                    >
+                        <div className="relative h-full overflow-hidden">
+                            <img
+                                src="/src/assets/images/SanMartin2.jpg"
+                                alt="Empanadas artesanales de Nonino"
+                                className="w-full h-full object-cover"
+                            />
+                            {/* Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-empanada-dark/90 via-empanada-dark/20 to-transparent" />
+                            
+                            {/* Menu Label */}
+                            <div className="absolute bottom-6 left-6">
+                                <h3 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-wide drop-shadow-lg">
+                                    MENÚ
+                                </h3>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Product List - Right Side */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.4 }}
+                        className="order-1 lg:order-2 flex flex-col h-full"
+                    >
+                        {/* Header */}
+                        <div className="p-6 sm:p-8">
+                            <div className="text-center lg:text-left mb-6">
+                                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-wide mb-2">
+                                    EMPANADAS POPULARES
+                                </h3>
+                                <div className="w-16 h-px bg-empanada-golden mx-auto lg:mx-0"></div>
+                            </div>
+                        </div>
+
+                        {/* Product Slider */}
+                        <div className="flex-1 px-6 sm:px-8 pb-6 sm:pb-8">
+                            <div className="relative h-full">
+                                {/* Slider Container */}
+                                <div className="overflow-hidden h-full">
+                                    <div className="space-y-3 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-empanada-golden/30 scrollbar-track-transparent">
+                                        {loading ? (
+                                            <div className="space-y-4">
+                                                {[1, 2, 3, 4, 5].map((i) => (
+                                                    <div key={i} className="animate-pulse">
+                                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-empanada-rich/5">
+                                                            <div className="w-16 h-16 bg-empanada-rich/30 rounded-full"></div>
+                                                            <div className="flex-1">
+                                                                <div className="bg-empanada-rich/30 h-4 rounded mb-2"></div>
+                                                                <div className="bg-empanada-rich/20 h-3 rounded w-2/3"></div>
+                                                            </div>
+                                                            <div className="bg-empanada-rich/30 h-4 w-12 rounded"></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                {(productos && productos.length > 0 ? productos : [
+                                                    { id: 1, name: "Empanada de Carne", description: "Carne molida con cebolla y especias", price: 450, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
+                                                    { id: 2, name: "Empanada de Pollo", description: "Pollo desmenuzado con verduras", price: 420, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
+                                                    { id: 3, name: "Empanada de Jamón y Queso", description: "Jamón cocido y queso mozzarella", price: 400, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
+                                                    { id: 4, name: "Empanada de Verdura", description: "Espinaca, acelga y queso", price: 380, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
+                                                    { id: 5, name: "Empanada de Humita", description: "Choclo cremoso con especias", price: 390, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
+                                                    { id: 6, name: "Empanada de Caprese", description: "Tomate, mozzarella y albahaca", price: 410, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
+                                                    { id: 7, name: "Empanada de Atún", description: "Atún con cebolla y huevo", price: 430, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
+                                                    { id: 8, name: "Empanada de Choclo", description: "Choclo dulce con crema", price: 395, image: "/src/assets/images/SanMartin.jpg", isPopular: true }
+                                                ]).map((product, index) => (
+                                                    <motion.div
+                                                        key={product.id}
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        whileInView={{ opacity: 1, y: 0 }}
+                                                        viewport={{ once: true }}
+                                                        transition={{ delay: 0.6 + index * 0.1 }}
+                                                        className="group cursor-pointer"
+                                                    >
+                                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-empanada-rich/5 hover:bg-empanada-rich/10 transition-all duration-300 border border-empanada-rich/10 hover:border-empanada-golden/30">
+                                                            {/* Product Image */}
+                                                            <div className="relative w-20 h-16 rounded-[30px] overflow-hidden flex-shrink-0 ring-1 ring-empanada-golden/20 group-hover:ring-empanada-golden/50 transition-all duration-300 shadow-lg">
+                                                                <img
+                                                                    src={product.image}
+                                                                    alt={product.name}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-empanada-golden rounded-full flex items-center justify-center shadow-lg">
+                                                                    <span className="text-xs font-bold text-white">★</span>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Product Info */}
+                                                            <div className="flex-1 min-w-0">
+                                                                <h4 className="text-lg font-semibold text-white group-hover:text-empanada-golden transition-colors duration-300">
+                                                                    {product.name.toUpperCase()}
+                                                                </h4>
+                                                                <p className="text-sm text-empanada-cream/80 line-clamp-1">
+                                                                    {product.description}
+                                                                </p>
+                                                            </div>
+
+                                                            {/* Price */}
+                                                            <div className="text-right flex-shrink-0">
+                                                                <span className="text-xl font-bold text-empanada-golden">
+                                                                    ${product.price}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Scroll Indicator */}
+                                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col items-center space-y-2">
+                                    <div className="w-1 h-8 bg-empanada-golden/20 rounded-full overflow-hidden">
+                                        <div className="w-full h-4 bg-empanada-golden/60 rounded-full animate-pulse"></div>
+                                    </div>
+                                    <div className="text-empanada-golden/60 text-xs font-medium">Scroll</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer Actions */}
+                        <div className="p-6 sm:p-8 pt-0">
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <Link
+                                    to="/pedir"
+                                    className="flex-1 bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-6 py-3 rounded-xl font-semibold text-center hover:from-empanada-warm hover:to-empanada-rich transition-all duration-300 shadow-lg hover:shadow-empanada-golden/20"
+                                >
+                                    Ver Menú Completo →
+                                </Link>
+                                <Link
+                                    to="/pedir"
+                                    className="flex-1 bg-transparent border-2 border-empanada-golden text-empanada-golden px-6 py-3 rounded-xl font-semibold text-center hover:bg-empanada-golden hover:text-white transition-all duration-300"
+                                >
+                                    Pedir Ya
+                                </Link>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* Separador simple entre secciones */}
+            <div className="relative py-8 bg-gradient-to-b from-empanada-dark via-empanada-dark/90 to-empanada-dark/70">
+                {/* Línea dorada horizontal */}
+                <div className="absolute inset-x-0 top-1/2 h-1 bg-empanada-golden/60 transform -translate-y-1/2"></div>
+                
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-center">
+                        <div className="flex items-center space-x-3">
+                            <div className="w-16 h-px bg-gradient-to-r from-transparent via-empanada-golden/40 to-empanada-golden/60"></div>
+                            <div className="relative w-12 h-12 bg-empanada-dark rounded-full flex items-center justify-center border-2 border-empanada-golden/60">
+                                <svg 
+                                    className="w-6 h-6 text-empanada-golden" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round" 
+                                        strokeWidth={2} 
+                                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" 
+                                    />
+                                </svg>
+                            </div>
+                            <div className="w-16 h-px bg-gradient-to-l from-transparent via-empanada-golden/40 to-empanada-golden/60"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Features Section */}
             <section className="py-12 sm:py-16 lg:py-20 bg-white">
@@ -167,8 +376,23 @@ export function HomePage() {
                 </div>
             </section>
 
+            {/* Transición entre secciones */}
+            <div className="relative py-8 bg-empanada-dark">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-center">
+                        <div className="flex items-center space-x-4">
+                            <div className="w-12 h-px bg-gradient-to-r from-transparent via-empanada-golden/20 to-empanada-golden/40"></div>
+                            <div className="w-2 h-2 bg-empanada-golden/60 rounded-full"></div>
+                            <div className="w-12 h-px bg-gradient-to-l from-transparent via-empanada-golden/20 to-empanada-golden/40"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Stats Section */}
-            <section className="py-12 sm:py-16 lg:py-20 bg-empanada-golden/10">
+            <section className="py-12 sm:py-16 lg:py-20 bg-empanada-dark relative">
+                {/* Decoración superior */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-empanada-golden/20 to-transparent"></div>
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -176,10 +400,10 @@ export function HomePage() {
                         viewport={{ once: true }}
                         className="text-center mb-8 sm:mb-12 lg:mb-16"
                     >
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-white">
                             Números que hablan por nosotros
                         </h2>
-                        <p className="text-base sm:text-lg text-muted-foreground px-2">
+                        <p className="text-base sm:text-lg text-empanada-cream px-2">
                             La confianza de nuestros clientes es nuestro mejor respaldo
                         </p>
                     </motion.div>
@@ -194,79 +418,63 @@ export function HomePage() {
                                 transition={{ delay: index * 0.1 }}
                                 className="text-center flex flex-col items-center"
                             >
-                                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-empanada-golden mb-2 text-center">
+                                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-center drop-shadow-lg">
                                     <NumberTicker
                                         value={stat.value}
                                         decimalPlaces={stat.decimals || 0}
+                                        className="text-white"
                                     />
-                                    {stat.suffix}
+                                    <span className="text-empanada-golden drop-shadow-md">{stat.suffix}</span>
                                 </div>
-                                <p className="text-sm sm:text-base text-muted-foreground font-medium px-1 text-center">{stat.label}</p>
+                                <p className="text-sm sm:text-base text-white font-medium px-1 text-center drop-shadow-sm">{stat.label}</p>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Popular Products */}
-            <section className="py-12 sm:py-16 lg:py-20 bg-white">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-center mb-8 sm:mb-12 lg:mb-16"
-                    >
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
-                            Nuestras Empanadas Más Populares
-                        </h2>
-                        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
-                            Descubre los sabores favoritos de nuestros clientes
-                        </p>
-                    </motion.div>
-
-                    {loading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-                            {[1, 2, 3, 4, 5, 6].map((i) => (
-                                <div key={i} className="animate-pulse">
-                                    <div className="bg-gray-200 aspect-[4/3] rounded-lg mb-4" />
-                                    <div className="bg-gray-200 h-4 rounded mb-2" />
-                                    <div className="bg-gray-200 h-4 rounded w-2/3" />
+            {/* Transición Elegante hacia CTA */}
+            <div className="relative">
+                {/* Gradiente de transición */}
+                <div className="absolute inset-0 bg-gradient-to-b from-empanada-dark via-empanada-dark/80 to-empanada-golden/20"></div>
+                
+                {/* Separador Visual Mejorado */}
+                <div className="relative py-12 sm:py-16">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-center">
+                            <div className="flex items-center space-x-6">
+                                <div className="w-16 h-px bg-gradient-to-r from-transparent via-empanada-golden/40 to-empanada-golden/60"></div>
+                                <div className="relative">
+                                    <div className="w-16 h-16 bg-empanada-golden/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-empanada-golden/30">
+                                        <svg 
+                                            className="w-8 h-8 text-empanada-golden" 
+                                            fill="none" 
+                                            stroke="currentColor" 
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path 
+                                                strokeLinecap="round" 
+                                                strokeLinejoin="round" 
+                                                strokeWidth={2} 
+                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div className="absolute inset-0 w-16 h-16 bg-empanada-golden/10 rounded-full animate-pulse"></div>
                                 </div>
-                            ))}
+                                <div className="w-16 h-px bg-gradient-to-l from-transparent via-empanada-golden/40 to-empanada-golden/60"></div>
+                            </div>
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-                            {productos.map((product, index) => (
-                                product.isPopular &&
-                                <motion.div
-                                    key={product.id}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.1 }}
-                                >
-                                    <ProductCard product={product} />
-                                </motion.div>
-                            ))}
+                        
+                        {/* Texto de transición */}
+                        <div className="text-center mt-8">
+                            <p className="text-empanada-golden/90 text-sm font-medium tracking-wide uppercase">
+                                ¡Es Hora de Disfrutar!
+                            </p>
                         </div>
-                    )}
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-center mt-8 sm:mt-12"
-                    >
-                        <Link to="/menu">
-                            <Button size="lg" variant="empanada" className="px-6 sm:px-8 py-3 sm:py-4">
-                                Ver Todo el Menú
-                                <ChevronRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-                            </Button>
-                        </Link>
-                    </motion.div>
+                    </div>
                 </div>
-            </section>
+            </div>
 
             {/* Promotions */}
             {promotions.length > 0 && (
@@ -324,7 +532,9 @@ export function HomePage() {
             )}
 
             {/* CTA Section */}
-            <section className="py-12 sm:py-16 lg:py-20 bg-empanada-golden text-white">
+            <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-r from-empanada-golden to-empanada-warm text-white relative">
+                {/* Decoración superior */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -339,13 +549,13 @@ export function HomePage() {
                             en la comodidad de tu hogar
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-                            <Link to="/menu" className="w-full sm:w-auto">
+                            <Link to="/pedir" className="w-full sm:w-auto">
                                 <Button
                                     size="lg"
                                     variant="shimmer"
-                                    className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white text-empanada-golden hover:bg-gray-100 border-2 border-white shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
+                                    className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white text-empanada-golden hover:bg-empanada-light border-2 border-white shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
                                 >
-                                    Hacer Pedido Ahora
+                                    Pedir Ahora
                                 </Button>
                             </Link>
                             <a href="tel:+541112345678" className="w-full sm:w-auto">
@@ -357,6 +567,9 @@ export function HomePage() {
                     </motion.div>
                 </div>
             </section>
+
+            {/* Floating Order Button */}
+            <FloatingOrderButton />
         </div>
     );
 }

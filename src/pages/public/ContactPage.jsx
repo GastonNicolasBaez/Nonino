@@ -65,7 +65,7 @@ export function ContactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-12 sm:py-16 lg:py-20">
+      <section className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <TextAnimate
             animation="slideUp"

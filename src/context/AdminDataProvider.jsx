@@ -7,8 +7,9 @@ import {
     postAdminCatalogAddProductQueryFunction,
     deleteAdminCatalogDeleteProductQueryFunction,
     updateAdminCatalogUpdateProductQueryFunction,
-    
+
     getAdminStoresQueryFunction,
+    getPublicDataQueryFunction,
 
 } from '@/config/apiQueryFunctions';
 
@@ -24,6 +25,8 @@ export const AdminDataProvider = ({ children }) => {
     const [categorias, setCategorias] = useState([]);
     const [sucursales, setSucursales] = useState([]);
 
+    const [productosSucursal, setProductosSucursal] = useState([]);
+
     //cargar información de admin al montar la vista de administrador
     useEffect(() => {
         if (session.userData?.accessToken) {
@@ -31,9 +34,47 @@ export const AdminDataProvider = ({ children }) => {
             callSucursales(session.userData.accessToken);
         }
     }, [session.userData?.accessToken]);
-    
 
-    // ---------- PRODUCTOS Y CATEGORIAS
+    // ---------- PRODUCTOS Y CATEGORIAS PÚBLICO
+    // listar
+    const { mutateAsync: callProductosYCategoriasSucursal, isPending: callProductosYCategoriasSucursalLoading } = useMutation({
+        mutationKey: ['publicProductosYCategoriasSucursal'],
+        mutationFn: getPublicDataQueryFunction,
+        onSuccess: (data) => {
+            const gotProducts = data.categories.flatMap(categoria =>
+                categoria.products.map((producto) => ({
+                    id: producto.productId,
+                    name: producto.name,
+                    description: producto.description,
+                    category: categoria.id,
+                    price: producto.price,
+                    image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
+                    // mockdata
+                    stock: 45,
+                    isPopular: true,
+                    isAvailable: true,
+                    sku: "EMP-CARNE-001",
+                    status: "active",
+                    allergens: ["gluten"],
+                    nutritionalInfo: {
+                        calories: 280,
+                        protein: 12,
+                        carbs: 35,
+                        fat: 8
+                    },
+                    createdAt: "2024-01-01T00:00:00Z",
+                    updatedAt: "2024-01-15T00:00:00Z"
+                })));
+
+            setProductosSucursal(gotProducts);
+        },
+        onError: (error) => {
+            console.log(error);
+            setProductosSucursal([]);
+        }
+    });
+
+    // ---------- PRODUCTOS Y CATEGORIAS ADMIN
     //crear
     const { mutateAsync: callProductoNuevo, isPending: callProductoNuevoLoading } = useMutation({
         mutationKey: ['adminProductoNuevo'],
@@ -111,7 +152,10 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: getAdminStoresQueryFunction,
         onSuccess: (data) => {
             setSucursales(data);
-            console.log(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setSucursales([]);
         }
     });
 
@@ -129,16 +173,19 @@ export const AdminDataProvider = ({ children }) => {
 
     const adminDataLoading =
         callProductoNuevoLoading ||
-        callProductosYCategoriasLoading || 
+        callProductosYCategoriasLoading ||
         callBorrarProductoLoading ||
-        callModificarProductoLoading || 
-        callSucursalesLoading;
+        callModificarProductoLoading ||
+        callSucursalesLoading ||
+        callProductosYCategoriasSucursalLoading;
 
     return (
         <AdminDataContext.Provider value={{
             productos,
             categorias,
             sucursales,
+            productosSucursal,
+
             adminDataLoading,
 
             callProductosYCategorias,
@@ -146,6 +193,7 @@ export const AdminDataProvider = ({ children }) => {
             callBorrarProducto,
             callModificarProducto,
             callSucursales,
+            callProductosYCategoriasSucursal
         }}>
             {children}
         </AdminDataContext.Provider>

@@ -16,27 +16,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAdminData } from "@/context/AdminDataProvider";
-import { useProductosPorSucursal } from "@/hooks/useProductosPorSucursal";
+import { toast } from "sonner";
 
 export function ProductosPorSucursal() {
-    const { productos: products, sucursales: stores, adminDataLoading } = useAdminData();
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
-    
     const {
-        selectedStore,
-        setSelectedStore,
-        searchTerm,
-        setSearchTerm,
-        selectedProducts,
-        setSelectedProducts,
-        loading,
-        storeProducts,
-        storesLoading,
-        handleProductSelection,
-        handleSelectAll,
-        handleUnirProductos,
-        getStoreProducts,
-    } = useProductosPorSucursal();
+        productos: products,
+        sucursales: stores,
+        productosSucursal,
+        callProductosYCategoriasSucursal,
+        adminDataLoading 
+    } = useAdminData();
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+    const [selectedStore, setSelectedStore] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedProducts, setSelectedProducts] = useState([]);
+
+    console.log(selectedProducts);
 
     // Filtrar productos según el término de búsqueda
     const filteredProducts = products.filter(product => {
@@ -64,6 +61,143 @@ export function ProductosPorSucursal() {
         }
     };
 
+    // Función para manejar la selección de productos
+    const handleProductSelection = (productId) => {
+        setSelectedProducts(prev => {
+            if (prev.includes(productId)) {
+                return prev.filter(id => id !== productId);
+            } else {
+                return [...prev, productId];
+            }
+        });
+    };
+
+    // Función para seleccionar/deseleccionar todos los productos
+    const handleSelectAll = (filteredProducts) => {
+        if (selectedProducts.length === filteredProducts.length) {
+            setSelectedProducts([]);
+        } else {
+            setSelectedProducts(filteredProducts.map(product => product.id));
+        }
+    };
+
+    // Función para unir productos a la sucursal
+    const handleUnirProductos = async () => {
+        if (!selectedStore) {
+            toast.error("Por favor selecciona una sucursal");
+            return false;
+        }
+
+        if (selectedProducts.length === 0) {
+            toast.error("Por favor selecciona al menos un producto");
+            return false;
+        }
+
+        try {
+            // Llamada real al backend
+            const response = await storeService.linkProductsToStore(selectedStore, selectedProducts);
+            
+            toast.success(`${selectedProducts.length} productos vinculados exitosamente a la sucursal`);
+            
+            // Limpiar selección
+            setSelectedProducts([]);
+            setSearchTerm("");
+            
+            // Actualizar lista de productos de la sucursal
+            await getStoreProducts(selectedStore);
+            
+            return true;
+        } catch (error) {
+            console.error('Error al vincular productos:', error);
+            toast.error(error.response?.data?.message || "Error al vincular productos. Inténtalo de nuevo.");
+            return false;
+        }
+    };
+
+    // Función para obtener productos ya vinculados a la sucursal
+    const getStoreProducts = async (storeId) => {
+        if (!storeId) return;
+        
+        try {
+            // Llamada real al backend
+            await callProductosYCategoriasSucursal(storeId);            
+        } catch (error) {
+            console.error('Error al obtener productos de la sucursal:', error);
+            toast.error("Error al cargar productos de la sucursal");
+        }
+    };
+
+    // Función para desvincular productos de la sucursal
+    const handleDesvincularProductos = async (productIds) => {
+        if (!selectedStore) {
+            toast.error("Por favor selecciona una sucursal");
+            return false;
+        }
+
+        try {
+            const response = await storeService.unlinkProductsFromStore(selectedStore, productIds);
+            
+            toast.success(`${productIds.length} productos desvinculados exitosamente`);
+            
+            // Actualizar lista de productos de la sucursal
+            await getStoreProducts(selectedStore);
+            
+            return true;
+        } catch (error) {
+            console.error('Error al desvincular productos:', error);
+            toast.error(error.response?.data?.message || "Error al desvincular productos. Inténtalo de nuevo.");
+            return false;
+        }
+    };
+
+    // Función para actualizar disponibilidad de un producto en la sucursal
+    const handleUpdateProductAvailability = async (productId, isAvailable) => {
+        if (!selectedStore) {
+            toast.error("Por favor selecciona una sucursal");
+            return false;
+        }
+
+        try {
+            const response = await storeService.updateStoreProductAvailability(selectedStore, productId, isAvailable);
+            
+            toast.success(`Disponibilidad del producto actualizada`);
+            
+            // Actualizar lista de productos de la sucursal
+            await getStoreProducts(selectedStore);
+            
+            return true;
+        } catch (error) {
+            console.error('Error al actualizar disponibilidad:', error);
+            toast.error(error.response?.data?.message || "Error al actualizar disponibilidad. Inténtalo de nuevo.");
+            return false;
+        }
+    };
+
+    // Efecto para cargar productos de la sucursal cuando se selecciona una
+    useEffect(() => {
+        if (selectedStore) {
+            getStoreProducts(selectedStore);
+            // Limpiar selección cuando cambia la sucursal
+            setSelectedProducts([]);
+        }
+    }, [selectedStore]);
+
+    // Efecto para marcar automáticamente los productos ya vinculados cuando se cargan
+    useEffect(() => {
+        if (productosSucursal.length > 0 && selectedStore) {
+            // Marcar automáticamente los productos ya vinculados
+            setSelectedProducts(prev => {
+                const newSelection = [...prev];
+                productosSucursal.forEach(productId => {
+                    if (!newSelection.includes(productId)) {
+                        newSelection.push(productId);
+                    }
+                });
+                return newSelection;
+            });
+        }
+    }, [productosSucursal, selectedStore]);
+
     return (
         <div className="space-y-6 pb-24">
             {/* Header - más compacto */}
@@ -82,10 +216,10 @@ export function ProductosPorSucursal() {
                         variant="outline" 
                         size="sm" 
                         onClick={() => getStoreProducts(selectedStore)}
-                        disabled={!selectedStore || loading}
+                        disabled={!selectedStore || adminDataLoading}
                         className="h-8 px-3 text-xs"
                     >
-                        <RefreshCw className={`w-3 h-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-3 h-3 mr-1 ${adminDataLoading ? 'animate-spin' : ''}`} />
                         Actualizar
                     </Button>
                 </div>
@@ -141,7 +275,7 @@ export function ProductosPorSucursal() {
                             <div>
                                 <p className="text-xs font-medium text-muted-foreground">Vinculados</p>
                                 <p className="text-xl font-bold text-purple-500">
-                                    {storeProducts.length}
+                                    {productosSucursal.length}
                                 </p>
                             </div>
                             <CheckCircle2 className="w-5 h-5 text-purple-500" />
@@ -167,11 +301,11 @@ export function ProductosPorSucursal() {
                             <select
                                 value={selectedStore}
                                 onChange={(e) => setSelectedStore(e.target.value)}
-                                disabled={storesLoading}
+                                disabled={adminDataLoading}
                                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <option value="">
-                                    {storesLoading ? "Cargando sucursales..." : "Selecciona una sucursal"}
+                                    {adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal"}
                                 </option>
                                 {stores.map(store => (
                                     <option key={store.id} value={store.id}>
@@ -280,7 +414,7 @@ export function ProductosPorSucursal() {
                             <div className="space-y-2">
                                 {filteredProducts.map((product) => {
                                     const isSelected = selectedProducts.includes(product.id);
-                                    const isLinked = storeProducts.includes(product.id);
+                                    const isLinked = productosSucursal.includes(product.id);
                                     
                                     return (
                                         <div
@@ -391,7 +525,7 @@ export function ProductosPorSucursal() {
                                             setSearchTerm("");
                                             setShowConfirmModal(false);
                                         }}
-                                        disabled={loading}
+                                        disabled={adminDataLoading}
                                         className="h-9 px-3"
                                     >
                                         <X className="w-3 h-3 mr-1" />
@@ -401,10 +535,10 @@ export function ProductosPorSucursal() {
                                         variant="empanada"
                                         size="sm"
                                         onClick={handleConfirmUnirProductos}
-                                        disabled={loading}
+                                        disabled={adminDataLoading}
                                         className="h-9 px-4 font-semibold"
                                     >
-                                        {loading ? (
+                                        {adminDataLoading ? (
                                             <>
                                                 <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
                                                 Procesando...

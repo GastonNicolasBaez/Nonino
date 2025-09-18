@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { TextAnimate } from "../../components/ui/text-animate";
+import { FloatingOrderButton } from "../../components/common/FloatingOrderButton";
 import { toast } from "sonner";
 
 export function ContactPage() {
@@ -65,8 +66,9 @@ export function ContactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white py-12 sm:py-16 lg:py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="bg-empanada-dark text-white py-12 sm:py-16 lg:py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-empanada-golden/20 to-empanada-warm/20"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <TextAnimate
             animation="slideUp"
             by="word"
@@ -296,6 +298,8 @@ export function ContactPage() {
           </div>
         </div>
       </section>
+
+      <FloatingOrderButton />
     </div>
   );
 }

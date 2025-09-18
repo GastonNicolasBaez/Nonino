@@ -87,10 +87,10 @@ export function Footer() {
 
       {/* Main Footer */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
-          {/* Brand */}
-          <div className="space-y-3 sm:space-y-4 col-span-1 sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center space-x-2">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-12">
+          {/* Brand - Simplificado en móvil */}
+          <div className="space-y-3 sm:space-y-4 col-span-1 lg:col-span-1 text-center lg:text-left">
+            <div className="flex items-center justify-center lg:justify-start space-x-2">
               <motion.div
                 className="text-2xl sm:text-3xl"
                 whileHover={{ rotate: 15, scale: 1.1 }}
@@ -102,7 +102,7 @@ export function Footer() {
                 NONINO EMPANADAS
               </AnimatedGradientText>
             </div>
-            <p className="text-gray-400 text-sm sm:text-base leading-relaxed max-w-xs">
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto lg:mx-0 hidden lg:block">
               Las mejores empanadas artesanales de la ciudad.
               Tradición familiar desde 1995. Ingredientes frescos,
               sabores únicos y la calidez de siempre.
@@ -123,8 +123,8 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-3 sm:space-y-4">
+          {/* Quick Links - Oculto en móvil */}
+          <div className="space-y-3 sm:space-y-4 hidden lg:block">
             <h4 className="text-base sm:text-lg font-semibold text-empanada-golden">
               Enlaces Rápidos
             </h4>
@@ -142,8 +142,8 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Stores */}
-          <div className="space-y-3 sm:space-y-4">
+          {/* Stores - Simplificado en móvil */}
+          <div className="space-y-3 sm:space-y-4 hidden lg:block">
             <h4 className="text-base sm:text-lg font-semibold text-empanada-golden">
               Nuestros Locales
             </h4>
@@ -170,34 +170,36 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Contact */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="text-base sm:text-lg font-semibold text-empanada-golden">
+          {/* Contact - Solo info esencial en móvil */}
+          <div className="space-y-3 sm:space-y-4 text-center lg:text-left">
+            <h4 className="text-base sm:text-lg font-semibold text-empanada-golden lg:block hidden">
               Contacto
             </h4>
             <div className="space-y-2 sm:space-y-3 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                <a
-                  href="mailto:info@noninoempanadas.com"
-                  className="hover:text-white transition-colors text-xs sm:text-sm"
-                >
-                  info@noninoempanadas.com
-                </a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+              <div className="flex items-center justify-center lg:justify-start gap-2">
+                <Phone className="w-4 h-4 flex-shrink-0" />
                 <a
                   href="tel:+541112345678"
-                  className="hover:text-white transition-colors text-xs sm:text-sm"
+                  className="hover:text-white transition-colors text-sm"
                 >
                   +54 11 1234-5678
                 </a>
               </div>
-              <div className="pt-2">
-                <h5 className="font-medium text-white mb-2 text-sm sm:text-base">Horarios de Atención</h5>
-                <p className="text-xs sm:text-sm">Lunes a Viernes: 11:00 - 23:00</p>
-                <p className="text-xs sm:text-sm">Sábados y Domingos: 11:00 - 24:00</p>
+              <div className="hidden lg:block">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <a
+                    href="mailto:info@noninoempanadas.com"
+                    className="hover:text-white transition-colors text-xs sm:text-sm"
+                  >
+                    info@noninoempanadas.com
+                  </a>
+                </div>
+                <div className="pt-2">
+                  <h5 className="font-medium text-white mb-2 text-sm sm:text-base">Horarios de Atención</h5>
+                  <p className="text-xs sm:text-sm">Lunes a Viernes: 11:00 - 23:00</p>
+                  <p className="text-xs sm:text-sm">Sábados y Domingos: 11:00 - 24:00</p>
+                </div>
               </div>
             </div>
           </div>
@@ -218,7 +220,7 @@ export function Footer() {
                 <span>en Argentina</span>
               </div>
             </div>
-            <div className="flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-end text-xs sm:text-sm">
+            <div className="hidden lg:flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-end text-xs sm:text-sm">
               {legalLinks.map((link) => (
                 <Link
                   key={link.name}

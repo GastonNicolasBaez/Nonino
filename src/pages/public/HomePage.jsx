@@ -58,7 +58,7 @@ export function HomePage() {
         <div className="min-h-screen">
             {/* Logo animado independiente */}
             <motion.div
-                className="fixed z-[9999] pointer-events-none"
+                className="fixed z-[25] pointer-events-none"
                 style={{
                     left: "50%",
                     top: useTransform(scrollY, [0, 200], ["18vh", "4.5rem"]),

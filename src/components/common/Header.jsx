@@ -30,29 +30,32 @@ export function Header() {
   // Scroll effect for logo centering
   const { scrollY } = useScroll();
   
+  // Detectar si estamos en páginas que no deben tener animaciones
+  const isStaticPage = ['/pedir', '/promociones', '/locales', '/nosotros', '/contacto', '/menu'].includes(location.pathname);
+
   // Hero logo effect - moves from hero section to navbar center
   const heroLogoY = useTransform(scrollY, [0, 400], [400, -20]); // Moves from below viewport to navbar
   const heroLogoOpacity = useTransform(scrollY, [0, 100], [0, 1]); // Fades in as it approaches
-  
+
   // Logo section movement - movimiento sutil como antes
-  const logoSectionX = useTransform(scrollY, [200, 400], [0, -15]);
+  const logoSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, -15]);
 
   // Left navigation movement - navegación central izquierda (Inicio, Pedir Ya, Promociones)
-  const leftNavX = useTransform(scrollY, [0, 300], [80, -20]);
+  const leftNavX = useTransform(scrollY, [0, 300], isStaticPage ? [80, 80] : [80, -20]);
 
   // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
-  const rightNavX = useTransform(scrollY, [0, 300], [-80, -55]);
+  const rightNavX = useTransform(scrollY, [0, 300], isStaticPage ? [-80, -80] : [-80, -55]);
 
   // Icons section movement - movimiento sutil como antes
-  const iconsSectionX = useTransform(scrollY, [200, 400], [0, 8]);
-  
+  const iconsSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, 8]);
+
   // Individual icon movements - sincronizados con el movimiento de las secciones
-  const heartIconX = useTransform(scrollY, [200, 300], [0, 2]);
-  const cartIconX = useTransform(scrollY, [200, 300], [0, 3]);
-  const userIconX = useTransform(scrollY, [200, 300], [0, 4]);
+  const heartIconX = useTransform(scrollY, [200, 300], isStaticPage ? [0, 0] : [0, 2]);
+  const cartIconX = useTransform(scrollY, [200, 300], isStaticPage ? [0, 0] : [0, 3]);
+  const userIconX = useTransform(scrollY, [200, 300], isStaticPage ? [0, 0] : [0, 4]);
 
   // Navbar logo opacity - desaparece cuando hay scroll
-  const navbarLogoOpacity = useTransform(scrollY, [50, 150], [1, 0]);
+  const navbarLogoOpacity = useTransform(scrollY, [50, 150], isStaticPage ? [1, 1] : [1, 0]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,6 +77,9 @@ export function Header() {
     { name: "Contacto", href: "/contacto" },
   ];
 
+  // Combinar navegaciones para el menú móvil
+  const navigation = [...leftNavigation, ...rightNavigation];
+
   const isActive = (href) => location.pathname === href;
 
   return (
@@ -81,24 +87,26 @@ export function Header() {
       <motion.header
         className={cn(
           "fixed top-0 left-0 right-0 z-20 transition-all duration-300",
-          scrolled
+          isStaticPage
+            ? "bg-white/95 backdrop-blur-md shadow-lg border-b"
+            : scrolled
             ? "bg-white/20 backdrop-blur-sm shadow-lg"
             : "bg-white/95 backdrop-blur-md shadow-lg border-b"
         )}
-        initial={{ y: -100 }}
+        initial={{ y: isStaticPage ? 0 : -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: isStaticPage ? 0 : 0.5 }}
       >
 
         {/* Main Header */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-hidden">
+          <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-hidden gap-4 lg:gap-8">
             {/* Logo Section */}
             <motion.div
               style={{
                 x: logoSectionX
               }}
-              className="flex items-center flex-shrink-0"
+              className="flex items-center flex-shrink-0 min-w-0 header-motion-element"
             >
               <Link to="/" className="flex items-center space-x-1 sm:space-x-2">
                 <motion.img
@@ -128,7 +136,7 @@ export function Header() {
                     key={item.name}
                     to={item.href}
                     className={cn(
-                      "text-sm xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-2 py-1",
+                      "text-xs lg:text-sm xl:text-sm 2xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-1 lg:px-2 py-1 whitespace-nowrap header-nav-item",
                       isActive(item.href)
                         ? "text-empanada-golden"
                         : "text-empanada-dark"
@@ -156,7 +164,7 @@ export function Header() {
                     key={item.name}
                     to={item.href}
                     className={cn(
-                      "text-sm xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-2 py-1",
+                      "text-xs lg:text-sm xl:text-sm 2xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-1 lg:px-2 py-1 whitespace-nowrap header-nav-item",
                       isActive(item.href)
                         ? "text-empanada-golden"
                         : "text-empanada-dark"
@@ -175,9 +183,9 @@ export function Header() {
             </motion.nav>
 
             {/* Actions Section */}
-            <motion.div 
+            <motion.div
               style={{ x: iconsSectionX }}
-              className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4"
+              className="flex items-center space-x-1 sm:space-x-2 xl:space-x-3 flex-shrink-0 header-motion-element"
             >
 
               {/* Favorites - Hidden on very small screens */}
@@ -288,7 +296,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-10 lg:hidden"
+            className="fixed inset-0 z-30 lg:hidden"
           >
             <div
               className="fixed inset-0 bg-black/50 backdrop-blur-sm"

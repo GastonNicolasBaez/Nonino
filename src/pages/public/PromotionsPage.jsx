@@ -6,6 +6,7 @@ import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { TextAnimate } from "../../components/ui/text-animate";
 import { LoadingSpinner } from "../../components/common/LoadingSpinner";
+import { FloatingOrderButton } from "../../components/common/FloatingOrderButton";
 import { promotionService } from "../../services/api";
 import { formatPrice } from "../../lib/utils";
 
@@ -39,8 +40,9 @@ export function PromotionsPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-empanada-golden to-empanada-crust text-white py-20">
-        <div className="container mx-auto px-4 text-center">
+      <section className="bg-empanada-dark text-white py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-empanada-golden/20 to-empanada-crust/20"></div>
+        <div className="relative container mx-auto px-4 text-center">
           <TextAnimate
             animation="slideUp"
             by="word"
@@ -186,6 +188,8 @@ export function PromotionsPage() {
           </div>
         </div>
       </section>
+
+      <FloatingOrderButton />
     </div>
   );
 }

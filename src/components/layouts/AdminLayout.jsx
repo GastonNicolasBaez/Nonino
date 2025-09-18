@@ -38,7 +38,7 @@ const AdminLayout = () => {
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
 
   // Automatically scroll to top when route changes
   useScrollToTop();
@@ -203,7 +203,7 @@ const AdminLayout = () => {
               </Button>
             </div>
           ) : (
-            <Card className="p-4 ">
+            <Card className="p-4 admin-user-card">
               <div className="flex items-center space-x-3 mb-3">
                 <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
                   <User className="w-5 h-5 text-white" />
@@ -304,7 +304,7 @@ const AdminLayout = () => {
 
         {/* User Info */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
-          <Card className="p-4 ">
+          <Card className="p-4 admin-user-card">
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
@@ -346,45 +346,46 @@ const AdminLayout = () => {
       <div className="flex-1 flex flex-col min-w-0 h-screen">
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 admin-header shadow-sm border-b border-gray-200 dark:border-gray-700">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4 flex-1">
+          <div className="px-4 sm:px-6 py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden"
+                  className="lg:hidden flex-shrink-0"
                 >
                   <Menu className="w-5 h-5" />
                 </Button>
-                
-                
+
                 {/* Componente de búsqueda global */}
-                <div className="flex-1 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
+                <div className="flex-1 min-w-0 max-w-[200px] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
                   <InlineSearch />
                 </div>
               </div>
-              
-              <div className="flex items-center space-x-4">
+
+              <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                 {/* Notifications Dropdown */}
-                <NotificationsDropdown />
+                <div className="hidden sm:block">
+                  <NotificationsDropdown />
+                </div>
 
                 {/* Theme Toggle */}
-                <Button variant="ghost" size="icon" onClick={toggleTheme}>
+                <Button variant="ghost" size="icon" onClick={toggleTheme} className="flex-shrink-0">
                   {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
 
                 {/* User Menu */}
-                <div className="flex items-center space-x-3">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                  <div className="text-right hidden md:block">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[120px] lg:max-w-none">
                       {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[120px] lg:max-w-none">
                       {session.userData?.email || 'EMAIL NO ENCONTRADO'}
                     </p>
                   </div>
-                  <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center flex-shrink-0">
                     <User className="w-4 h-4 text-white" />
                   </div>
                 </div>
@@ -394,7 +395,7 @@ const AdminLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-6 overflow-y-auto admin-main-content m-4">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto admin-main-content">
           <Outlet />
         </main>
       </div>

@@ -10,6 +10,7 @@ import {
 
     getAdminStoresQueryFunction,
     getPublicDataQueryFunction,
+    postAdminCatalogAsignarASucursalQueryFunction,
 
 } from '@/config/apiQueryFunctions';
 
@@ -72,6 +73,12 @@ export const AdminDataProvider = ({ children }) => {
             console.log(error);
             setProductosSucursal([]);
         }
+    });
+
+    //asignar a sucursal
+    const { mutateAsync: callAsignarASucursal, isPending: callAsignarASucursalLoading } = useMutation({
+        mutationKey: ['adminAsignarASucursal'],
+        mutationFn: postAdminCatalogAsignarASucursalQueryFunction,
     });
 
     // ---------- PRODUCTOS Y CATEGORIAS ADMIN
@@ -177,7 +184,8 @@ export const AdminDataProvider = ({ children }) => {
         callBorrarProductoLoading ||
         callModificarProductoLoading ||
         callSucursalesLoading ||
-        callProductosYCategoriasSucursalLoading;
+        callProductosYCategoriasSucursalLoading ||
+        callAsignarASucursalLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -193,7 +201,8 @@ export const AdminDataProvider = ({ children }) => {
             callBorrarProducto,
             callModificarProducto,
             callSucursales,
-            callProductosYCategoriasSucursal
+            callProductosYCategoriasSucursal,
+            callAsignarASucursal
         }}>
             {children}
         </AdminDataContext.Provider>

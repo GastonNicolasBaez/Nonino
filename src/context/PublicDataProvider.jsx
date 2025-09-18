@@ -32,7 +32,7 @@ export const PublicDataProvider = ({ children }) => {
                     description: producto.description,
                     category: categoria.id,
                     price: producto.price,
-                    image: producto.imageUrl,
+                    image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
                     // mockdata
                     stock: 45,
                     isPopular: true,

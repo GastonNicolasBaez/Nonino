@@ -1,5 +1,3 @@
-// fucking GIT punto de control
-
 // PROVIDERS
 import AuthProvider from "@/context/AuthProvider";
 import { PublicDataProvider } from "./context/PublicDataProvider";

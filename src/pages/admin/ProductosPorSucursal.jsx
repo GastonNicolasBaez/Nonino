@@ -1,3 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useState, useEffect } from "react";
 import {
     Search,
@@ -17,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { toast } from "sonner";
+import { useSession } from "@/context/SessionProvider";
 
 export function ProductosPorSucursal() {
     const {
@@ -24,8 +28,11 @@ export function ProductosPorSucursal() {
         sucursales: stores,
         productosSucursal,
         callProductosYCategoriasSucursal,
-        adminDataLoading 
+        callAsignarASucursal,
+        adminDataLoading
     } = useAdminData();
+
+    const session = useSession();
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -95,17 +102,24 @@ export function ProductosPorSucursal() {
 
         try {
             // Llamada real al backend
-            const response = await storeService.linkProductsToStore(selectedStore, selectedProducts);
-            
+            await callAsignarASucursal({
+                _productosCombos: {
+                    "visibleProductIds": selectedProducts,
+                    "visibleComboIds": []
+                },
+                _idSucursal: selectedStore,
+                _accessToken: session.userData.accessToken,
+            })
+
             toast.success(`${selectedProducts.length} productos vinculados exitosamente a la sucursal`);
-            
+
             // Limpiar selección
             setSelectedProducts([]);
             setSearchTerm("");
-            
+
             // Actualizar lista de productos de la sucursal
             await getStoreProducts(selectedStore);
-            
+
             return true;
         } catch (error) {
             console.error('Error al vincular productos:', error);
@@ -117,10 +131,10 @@ export function ProductosPorSucursal() {
     // Función para obtener productos ya vinculados a la sucursal
     const getStoreProducts = async (storeId) => {
         if (!storeId) return;
-        
+
         try {
             // Llamada real al backend
-            await callProductosYCategoriasSucursal(storeId);            
+            await callProductosYCategoriasSucursal(storeId);
         } catch (error) {
             console.error('Error al obtener productos de la sucursal:', error);
             toast.error("Error al cargar productos de la sucursal");
@@ -136,12 +150,12 @@ export function ProductosPorSucursal() {
 
         try {
             const response = await storeService.unlinkProductsFromStore(selectedStore, productIds);
-            
+
             toast.success(`${productIds.length} productos desvinculados exitosamente`);
-            
+
             // Actualizar lista de productos de la sucursal
             await getStoreProducts(selectedStore);
-            
+
             return true;
         } catch (error) {
             console.error('Error al desvincular productos:', error);
@@ -159,12 +173,12 @@ export function ProductosPorSucursal() {
 
         try {
             const response = await storeService.updateStoreProductAvailability(selectedStore, productId, isAvailable);
-            
+
             toast.success(`Disponibilidad del producto actualizada`);
-            
+
             // Actualizar lista de productos de la sucursal
             await getStoreProducts(selectedStore);
-            
+
             return true;
         } catch (error) {
             console.error('Error al actualizar disponibilidad:', error);
@@ -185,16 +199,9 @@ export function ProductosPorSucursal() {
     // Efecto para marcar automáticamente los productos ya vinculados cuando se cargan
     useEffect(() => {
         if (productosSucursal.length > 0 && selectedStore) {
-            // Marcar automáticamente los productos ya vinculados
-            setSelectedProducts(prev => {
-                const newSelection = [...prev];
-                productosSucursal.forEach(productId => {
-                    if (!newSelection.includes(productId)) {
-                        newSelection.push(productId);
-                    }
-                });
-                return newSelection;
-            });
+            // Only select products that are in productosSucursal
+            const productosSucursalIds = productosSucursal.map(p => typeof p === "object" ? p.id : p);
+            setSelectedProducts(productosSucursalIds);
         }
     }, [productosSucursal, selectedStore]);
 
@@ -212,9 +219,9 @@ export function ProductosPorSucursal() {
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
+                    <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => getStoreProducts(selectedStore)}
                         disabled={!selectedStore || adminDataLoading}
                         className="h-8 px-3 text-xs"
@@ -286,55 +293,23 @@ export function ProductosPorSucursal() {
 
             {/* Selector de Sucursal */}
             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5" />
-                        Seleccionar Sucursal
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
+                <CardContent className="py-4">
                     <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                                Sucursal *
-                            </label>
-                            <select
-                                value={selectedStore}
-                                onChange={(e) => setSelectedStore(e.target.value)}
-                                disabled={adminDataLoading}
-                                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <option value="">
-                                    {adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal"}
+                        <select
+                            value={selectedStore}
+                            onChange={(e) => setSelectedStore(e.target.value)}
+                            disabled={adminDataLoading}
+                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <option value="">
+                                {adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal"}
+                            </option>
+                            {stores.map(store => (
+                                <option key={store.id} value={store.id}>
+                                    {store.name} - {store.address}
                                 </option>
-                                {stores.map(store => (
-                                    <option key={store.id} value={store.id}>
-                                        {store.name} - {store.address}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        
-                        {selectedStoreData && (
-                            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                                            {selectedStoreData.name}
-                                        </h3>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                                            {selectedStoreData.address}
-                                        </p>
-                                    </div>
-                                    <Badge 
-                                        variant={selectedStoreData.status === 'active' ? 'default' : 'secondary'}
-                                        className={selectedStoreData.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}
-                                    >
-                                        {selectedStoreData.status === 'active' ? 'Activa' : 'Inactiva'}
-                                    </Badge>
-                                </div>
-                            </div>
-                        )}
+                            ))}
+                        </select>
                     </div>
                 </CardContent>
             </Card>
@@ -414,16 +389,15 @@ export function ProductosPorSucursal() {
                             <div className="space-y-2">
                                 {filteredProducts.map((product) => {
                                     const isSelected = selectedProducts.includes(product.id);
-                                    const isLinked = productosSucursal.includes(product.id);
-                                    
+                                    const isLinked = productosSucursal.some(p => (typeof p === "object" ? p.id : p) === product.id);
+
                                     return (
                                         <div
                                             key={product.id}
-                                            className={`flex items-center gap-3 p-2 border rounded-md transition-all duration-200 hover:shadow-sm cursor-pointer ${
-                                                isSelected 
-                                                    ? 'border-empanada-golden bg-empanada-golden/5' 
-                                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                                            }`}
+                                            className={`flex items-center gap-3 p-2 border rounded-md transition-all duration-200 hover:shadow-sm cursor-pointer ${isSelected
+                                                ? 'border-empanada-golden bg-empanada-golden/5'
+                                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                                                }`}
                                             onClick={() => handleProductSelection(product.id)}
                                         >
                                             {/* Imagen del producto - muy pequeña */}

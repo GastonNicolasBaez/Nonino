@@ -159,3 +159,20 @@ export const getAdminStoresQueryFunction = async (_accessToken) => {
 
     return mockStores;
 }
+
+
+// publicar para sucursal
+export const postAdminCatalogAsignarASucursalQueryFunction = async ({_productosCombos, _idSucursal, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _productosCombos,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.post(`https://nonino-catalog.fly.dev/admin/publish/${_idSucursal}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}

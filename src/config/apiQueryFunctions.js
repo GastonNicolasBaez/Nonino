@@ -40,7 +40,7 @@ export const getRefreshQueryFunction = async (_csrfToken) => {
 
 // ADMIN DATA
 // traer todos los productos
-export const getAdminCatalogQueryFunction = async (_accessToken) => {
+export const getAdminCatalogProductosYCategoriasQueryFunction = async (_accessToken) => {
     const axiosSetup = {
         axiosData: null,
         axiosConfig: {
@@ -135,4 +135,30 @@ export const updateAdminCatalogUpdateProductQueryFunction = async ({_producto, _
 
     const response = await axios.put(`https://nonino-catalog.fly.dev/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
+}
+
+// get sucursales
+
+export const getAdminStoresQueryFunction = async (_accessToken) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    // const response = await axios.put(`https://nonino-catalog.fly.dev/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    // return await response.data;
+
+    const mockStores = [
+                { id: "1", name: "Sucursal Centro", address: "Av. Corrientes 1234", status: "active" },
+                { id: "2", name: "Sucursal Palermo", address: "Av. Santa Fe 5678", status: "active" },
+                { id: "3", name: "Sucursal Belgrano", address: "Av. Cabildo 9012", status: "active" },
+                { id: "4", name: "Sucursal Recoleta", address: "Av. Callao 3456", status: "inactive" },
+            ];
+
+    return mockStores;
 }

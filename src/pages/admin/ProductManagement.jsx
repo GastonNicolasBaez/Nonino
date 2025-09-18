@@ -29,7 +29,6 @@ import { toast } from "sonner";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
 import { Portal } from "@/components/common/Portal";
-import { adminService } from "@/services/api";
 import { generateProductsReportPDF, downloadPDF } from "@/services/pdfService";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
@@ -63,13 +62,6 @@ export function ProductManagement() {
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
     const { openModal: openStockModal, UpdateStockModalComponent } = useUpdateStockModal();
-
-    // Cargar productos al montar ACTUALIZADO
-    useEffect(() => {
-        if (session.userData?.accessToken) {
-            callProductosYCategorias(session.userData.accessToken);
-        }
-    }, [session.userData?.accessToken]);
 
     // Función para calcular la prioridad del producto
     const calculatePriority = (product) => {

@@ -1,38 +1,55 @@
 /* eslint-disable react-refresh/only-export-components */
 
-import React, { useState, useContext, createContext } from 'react'
+import React, { useState, useEffect, useContext, createContext } from 'react'
 import { useMutation } from '@tanstack/react-query';
 import {
-    getAdminCatalogQueryFunction,
+    getAdminCatalogProductosYCategoriasQueryFunction,
     postAdminCatalogAddProductQueryFunction,
     deleteAdminCatalogDeleteProductQueryFunction,
     updateAdminCatalogUpdateProductQueryFunction,
+    
+    getAdminStoresQueryFunction,
 
 } from '@/config/apiQueryFunctions';
+
+import { useSession } from '@/context/SessionProvider';
 
 const AdminDataContext = createContext();
 
 export const AdminDataProvider = ({ children }) => {
 
+    const session = useSession();
+
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
-    //crear producto
+    const [sucursales, setSucursales] = useState([]);
+
+    //cargar información de admin al montar la vista de administrador
+    useEffect(() => {
+        if (session.userData?.accessToken) {
+            callProductosYCategorias(session.userData.accessToken);
+            callSucursales(session.userData.accessToken);
+        }
+    }, [session.userData?.accessToken]);
+    
+
+    // ---------- PRODUCTOS Y CATEGORIAS
+    //crear
     const { mutateAsync: callProductoNuevo, isPending: callProductoNuevoLoading } = useMutation({
         mutationKey: ['adminProductoNuevo'],
         mutationFn: postAdminCatalogAddProductQueryFunction,
     });
 
-    //eliminar producto
+    //eliminar
     const { mutateAsync: callBorrarProducto, isPending: callBorrarProductoLoading } = useMutation({
         mutationKey: ['adminBorrarProducto'],
         mutationFn: deleteAdminCatalogDeleteProductQueryFunction,
     });
 
-    //listar productos
-
-    const { mutate: callProductosYCategorias, isPending: callProductosYCategoriasLoading } = useMutation({
-        mutationKey: ['adminCatalog'],
-        mutationFn: getAdminCatalogQueryFunction,
+    //listar
+    const { mutateAsync: callProductosYCategorias, isPending: callProductosYCategoriasLoading } = useMutation({
+        mutationKey: ['adminProductosYCategorias'],
+        mutationFn: getAdminCatalogProductosYCategoriasQueryFunction,
         onSuccess: (data) => {
             const gotProducts = data.map((producto) => ({
                 id: producto.id,
@@ -87,7 +104,22 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: updateAdminCatalogUpdateProductQueryFunction,
     });
 
-    //modificar imagen
+    // ---------- SUCURSALES
+    // listar
+    const { mutateAsync: callSucursales, isPending: callSucursalesLoading } = useMutation({
+        mutationKey: ['adminSucursales'],
+        mutationFn: getAdminStoresQueryFunction,
+        onSuccess: (data) => {
+            setSucursales(data);
+            console.log(data);
+        }
+    });
+
+    // crear
+
+    // modificar
+
+    // eliminar
 
 
 
@@ -99,18 +131,21 @@ export const AdminDataProvider = ({ children }) => {
         callProductoNuevoLoading ||
         callProductosYCategoriasLoading || 
         callBorrarProductoLoading ||
-        callModificarProductoLoading;
+        callModificarProductoLoading || 
+        callSucursalesLoading;
 
     return (
         <AdminDataContext.Provider value={{
             productos,
             categorias,
+            sucursales,
             adminDataLoading,
 
             callProductosYCategorias,
             callProductoNuevo,
             callBorrarProducto,
             callModificarProducto,
+            callSucursales,
         }}>
             {children}
         </AdminDataContext.Provider>

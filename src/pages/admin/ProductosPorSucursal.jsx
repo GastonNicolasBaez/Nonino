@@ -19,7 +19,7 @@ import { useAdminData } from "@/context/AdminDataProvider";
 import { useProductosPorSucursal } from "@/hooks/useProductosPorSucursal";
 
 export function ProductosPorSucursal() {
-    const { productos: products, adminDataLoading } = useAdminData();
+    const { productos: products, sucursales: stores, adminDataLoading } = useAdminData();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     
     const {
@@ -31,7 +31,6 @@ export function ProductosPorSucursal() {
         setSelectedProducts,
         loading,
         storeProducts,
-        stores,
         storesLoading,
         handleProductSelection,
         handleSelectAll,

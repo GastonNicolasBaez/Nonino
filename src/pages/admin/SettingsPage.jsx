@@ -318,6 +318,7 @@ export function SettingsPage() {
               <Input
                 value={settings.general.businessName}
                 onChange={(e) => updateSetting("general", "businessName", e.target.value)}
+                className="admin-input"
               />
             </div>
             <div>
@@ -326,6 +327,7 @@ export function SettingsPage() {
                 type="email"
                 value={settings.general.businessEmail}
                 onChange={(e) => updateSetting("general", "businessEmail", e.target.value)}
+                className="admin-input"
               />
             </div>
             <div>
@@ -333,6 +335,7 @@ export function SettingsPage() {
               <Input
                 value={settings.general.businessPhone}
                 onChange={(e) => updateSetting("general", "businessPhone", e.target.value)}
+                className="admin-input"
               />
             </div>
             <div>
@@ -355,6 +358,7 @@ export function SettingsPage() {
               value={settings.general.businessAddress}
               onChange={(e) => updateSetting("general", "businessAddress", e.target.value)}
               placeholder="Dirección completa del negocio"
+              className="admin-input"
             />
           </div>
 
@@ -379,6 +383,7 @@ export function SettingsPage() {
                 onChange={(e) => updateSetting("general", "taxRate", Number(e.target.value))}
                 min="0"
                 max="50"
+                className="admin-input"
               />
             </div>
           </div>
@@ -405,6 +410,7 @@ export function SettingsPage() {
                 value={settings.store.minOrderAmount}
                 onChange={(e) => updateSetting("store", "minOrderAmount", Number(e.target.value))}
                 placeholder="Monto mínimo de pedido"
+                className="admin-input"
               />
             </div>
             <div>
@@ -414,6 +420,7 @@ export function SettingsPage() {
                 value={settings.store.deliveryFee}
                 onChange={(e) => updateSetting("store", "deliveryFee", Number(e.target.value))}
                 placeholder="Costo base de envío"
+                className="admin-input"
               />
             </div>
             <div>
@@ -423,6 +430,7 @@ export function SettingsPage() {
                 value={settings.store.freeDeliveryThreshold}
                 onChange={(e) => updateSetting("store", "freeDeliveryThreshold", Number(e.target.value))}
                 placeholder="Monto para envío gratuito"
+                className="admin-input"
               />
             </div>
             <div>
@@ -432,6 +440,7 @@ export function SettingsPage() {
                 value={settings.store.preparationTime}
                 onChange={(e) => updateSetting("store", "preparationTime", Number(e.target.value))}
                 placeholder="Tiempo promedio de preparación"
+                className="admin-input"
               />
             </div>
             <div>
@@ -441,6 +450,7 @@ export function SettingsPage() {
                 value={settings.store.deliveryRadius}
                 onChange={(e) => updateSetting("store", "deliveryRadius", Number(e.target.value))}
                 placeholder="Radio máximo de entrega"
+                className="admin-input"
               />
             </div>
             <div>
@@ -450,6 +460,7 @@ export function SettingsPage() {
                 value={settings.store.maxOrdersPerHour}
                 onChange={(e) => updateSetting("store", "maxOrdersPerHour", Number(e.target.value))}
                 placeholder="Capacidad máxima"
+                className="admin-input"
               />
             </div>
           </div>

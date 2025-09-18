@@ -293,7 +293,7 @@ export function ProductManagement() {
                                                     value={formData.name}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                                                     placeholder="Nombre del producto"
-                                                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                                                    className="admin-input"
                                                 />
                                             </div>
                                             <div>
@@ -317,7 +317,7 @@ export function ProductManagement() {
                                                     value={formData.price}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, price: Number(e.target.value) }))}
                                                     placeholder="Precio de venta"
-                                                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                                                    className="admin-input"
                                                 />
                                             </div>
                                             <div>
@@ -327,7 +327,7 @@ export function ProductManagement() {
                                                     value={formData.cost}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, cost: Number(e.target.value) }))}
                                                     placeholder="Costo de producción"
-                                                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                                                    className="admin-input"
                                                 />
                                             </div>
                                         </div>
@@ -388,7 +388,7 @@ export function ProductManagement() {
                                                     value={formData.stock}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, stock: Number(e.target.value) }))}
                                                     placeholder="Cantidad en stock"
-                                                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                                                    className="admin-input"
                                                 />
                                             </div>
                                             <div>
@@ -398,7 +398,7 @@ export function ProductManagement() {
                                                     value={formData.minStock}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, minStock: Number(e.target.value) }))}
                                                     placeholder="Stock mínimo"
-                                                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                                                    className="admin-input"
                                                 />
                                             </div>
                                             <div>
@@ -408,7 +408,7 @@ export function ProductManagement() {
                                                     value={formData.preparationTime}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, preparationTime: Number(e.target.value) }))}
                                                     placeholder="Minutos"
-                                                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                                                    className="admin-input"
                                                 />
                                             </div>
                                         </div>

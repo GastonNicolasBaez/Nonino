@@ -90,6 +90,27 @@ export const storeService = {
   async getDeliveryZones() {
     return api.get('/delivery/zones');
   },
+
+  // Nuevos servicios para productos por sucursal
+  async getStoreProducts(storeId) {
+    return api.get(`/stores/${storeId}/products`);
+  },
+
+  async linkProductsToStore(storeId, productIds) {
+    return api.post(`/stores/${storeId}/products`, { productIds });
+  },
+
+  async unlinkProductsFromStore(storeId, productIds) {
+    return api.delete(`/stores/${storeId}/products`, { data: { productIds } });
+  },
+
+  async updateStoreProductAvailability(storeId, productId, isAvailable) {
+    return api.patch(`/stores/${storeId}/products/${productId}`, { isAvailable });
+  },
+
+  async getStoreProductStats(storeId) {
+    return api.get(`/stores/${storeId}/products/stats`);
+  },
 };
 
 // ============ ORDER SERVICES ============

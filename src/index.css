@@ -547,17 +547,86 @@ html:not(.dark) .admin-input {
 
 html:not(.dark) .admin-input:focus {
   border-color: hsl(var(--primary));
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  box-shadow: none;
+  outline: none;
 }
 
 /* Dark mode: inputs con color específico #20252e */
 html.dark .admin-input {
-  border: 1px solid #374151;
-  background-color: #20252e;
+  border: 1px solid #4b5563;
+  background-color: #1f2937;
+  color: #f9fafb;
 }
 
 html.dark .admin-input:focus {
-  background-color: #2a2f38;
+  background-color: #374151;
+  border-color: hsl(var(--primary));
+}
+
+html.dark .admin-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Estilos específicos para el componente Input de shadcn/ui */
+html.dark input[type="text"],
+html.dark input[type="email"],
+html.dark input[type="password"],
+html.dark input[type="number"],
+html.dark input[type="date"],
+html.dark textarea,
+html.dark select {
+  background-color: #1f2937 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+html.dark input[type="text"]:focus,
+html.dark input[type="email"]:focus,
+html.dark input[type="password"]:focus,
+html.dark input[type="number"]:focus,
+html.dark input[type="date"]:focus,
+html.dark textarea:focus,
+html.dark select:focus {
+  background-color: #374151 !important;
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+html.dark input[type="text"]::placeholder,
+html.dark input[type="email"]::placeholder,
+html.dark input[type="password"]::placeholder,
+html.dark input[type="number"]::placeholder,
+html.dark textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Estilos para checkboxes en modo oscuro */
+html.dark input[type="checkbox"] {
+  background-color: #1f2937 !important;
+  border-color: #4b5563 !important;
+}
+
+html.dark input[type="checkbox"]:checked {
+  background-color: hsl(var(--primary)) !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+html.dark input[type="checkbox"]:focus {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
+}
+
+/* Eliminar spinners de inputs numéricos */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 /* Separadores más visibles - SOLO MODO CLARO */

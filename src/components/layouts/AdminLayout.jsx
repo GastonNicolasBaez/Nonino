@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router";
+import { Outlet, Link, NavLink, useLocation, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 // Removed framer-motion for simpler admin experience
 import { 
@@ -17,7 +17,10 @@ import {
   Bell,
   ChevronLeft,
   ChevronRight,
-  User
+  User,
+  ChevronDown,
+  ChevronUp,
+  Building2
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -35,9 +38,12 @@ import { useTheme } from "@/context/ThemeProvider";
 const AdminLayout = () => {
   const session = useSession();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(3);
   const { toggleTheme, isDark } = useTheme();
 
   // Automatically scroll to top when route changes
@@ -47,8 +53,13 @@ const AdminLayout = () => {
     session.logout();
     navigate('/intranet/login');
   };
-  // const { user, logout } = useAuth();
-  const location = useLocation();
+
+  // Cerrar dropdown de productos cuando cambias de ruta (excepto subsecciones de productos)
+  useEffect(() => {
+    if (!location.pathname.includes('/productos')) {
+      setProductsDropdownOpen(false);
+    }
+  }, [location.pathname]);
 
   // Persistir estado del sidebar en localStorage
   useEffect(() => {
@@ -58,6 +69,21 @@ const AdminLayout = () => {
     }
   }, []);
 
+  // Simular nuevos pedidos pendientes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPendingOrdersCount(prev => {
+        // Simular que llegan pedidos nuevos ocasionalmente
+        if (Math.random() < 0.2) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 45000); // Cada 45 segundos
+
+    return () => clearInterval(interval);
+  }, []);
+
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
     localStorage.setItem('admin-sidebar-collapsed', JSON.stringify(!sidebarCollapsed));
@@ -65,21 +91,42 @@ const AdminLayout = () => {
 
   const navigationItems = [
     { name: "Dashboard", href: "/intranet/admin", icon: Home },
-    { name: "Pedidos", href: "/intranet/admin/pedidos", icon: ShoppingCart },
-    { name: "Productos", href: "/intranet/admin/productos", icon: Package },
+    { 
+      name: "Pedidos", 
+      href: "/intranet/admin/pedidos", 
+      icon: ShoppingCart,
+      badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
+    },
+    { 
+      name: "Productos", 
+      icon: Package, 
+      hasDropdown: true,
+      dropdownItems: [
+        { name: "Gestión de Productos", href: "/intranet/admin/productos", icon: Package },
+        { name: "Productos por Sucursal", href: "/intranet/admin/productos-sucursal", icon: Building2 }
+      ]
+    },
     { name: "Inventario", href: "/intranet/admin/inventario", icon: Archive },
     { name: "Clientes", href: "/intranet/admin/clientes", icon: Users },
     { name: "Reportes", href: "/intranet/admin/reportes", icon: BarChart3 },
     { name: "Configuración", href: "/intranet/admin/configuracion", icon: Settings },
   ];
 
-  const isActive = (href) => {
-    if (href === "/intranet/admin") {
-      return location.pathname === href;
+  // Función simplificada para determinar si un item está activo
+  const isItemActive = (item) => {
+    if (item.hasDropdown) {
+      // Para productos: activo si el dropdown está abierto O si estás en una subsección
+      return productsDropdownOpen || location.pathname.includes('/productos');
+    } else {
+      // Para otros items: activo si la ruta coincide exactamente
+      return location.pathname === item.href;
     }
-    return location.pathname === href;
   };
 
+  // Función para determinar si otras secciones deben estar desactivadas
+  const shouldDeactivateOthers = () => {
+    return productsDropdownOpen || location.pathname.includes('/productos');
+  };
 
   return (
     <div className="h-screen bg-gray-50 dark:bg-gray-900 admin-layout-light flex overflow-hidden">
@@ -150,38 +197,103 @@ const AdminLayout = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
           {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={`relative flex items-center px-4 py-3 rounded-lg admin-nav-item group ${
-                isActive(item.href)
-                  ? "bg-empanada-golden text-white active"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              } ${sidebarCollapsed ? "justify-center" : "justify-between"}`}
-              title={sidebarCollapsed ? item.name : undefined}
-            >
-              <div className="flex items-center space-x-3">
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                {!sidebarCollapsed && (
-                  <span className="font-medium">{item.name}</span>
-                )}
-              </div>
-              {!sidebarCollapsed && item.badge && (
-                <Badge 
-                  variant={isActive(item.href) ? "secondary" : "empanada"} 
-                  className="text-xs"
-                >
-                  {item.badge}
-                </Badge>
-              )}
-              {sidebarCollapsed && item.badge && (
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                  {item.badge}
+            <div key={item.name}>
+              {item.hasDropdown ? (
+                <div className="space-y-1">
+                  <button
+                    onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
+                    className={`w-full flex items-center px-4 py-3 rounded-lg admin-nav-item group ${
+                      isItemActive(item)
+                        ? "bg-empanada-golden text-white active"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    } ${sidebarCollapsed ? "justify-center" : "justify-between"}`}
+                    title={sidebarCollapsed ? item.name : undefined}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
+                      {!sidebarCollapsed && (
+                        <span className="font-medium">{item.name}</span>
+                      )}
+                    </div>
+                    {!sidebarCollapsed && (
+                      <div className="flex items-center space-x-2">
+                        {item.badge && (
+                          <Badge 
+                            variant={isItemActive(item) ? "secondary" : "empanada"} 
+                            className="text-xs"
+                          >
+                            {item.badge}
+                          </Badge>
+                        )}
+                        {productsDropdownOpen ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                      </div>
+                    )}
+                    {sidebarCollapsed && item.badge && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                        {item.badge}
+                      </div>
+                    )}
+                  </button>
+                  
+                  {/* Dropdown Items */}
+                  {!sidebarCollapsed && productsDropdownOpen && (
+                    <div className="ml-4 space-y-1">
+                      {item.dropdownItems.map((subItem) => (
+                        <NavLink
+                          key={subItem.name}
+                          to={subItem.href}
+                          end
+                          className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${
+                            isActive
+                              ? "bg-empanada-golden/20 text-empanada-golden font-medium"
+                              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          }`}
+                        >
+                          <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
+                          <span>{subItem.name}</span>
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
                 </div>
+              ) : (
+                <Link
+                  to={item.href}
+                  className={`relative flex items-center px-4 py-3 rounded-lg admin-nav-item group ${
+                    isItemActive(item) && !shouldDeactivateOthers()
+                      ? "bg-empanada-golden text-white active"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  } ${sidebarCollapsed ? "justify-center" : "justify-between"}`}
+                  title={sidebarCollapsed ? item.name : undefined}
+                >
+                  <div className="flex items-center space-x-3">
+                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    {!sidebarCollapsed && (
+                      <span className="font-medium">{item.name}</span>
+                    )}
+                  </div>
+                  {!sidebarCollapsed && item.badge && (
+                    <Badge 
+                      variant={isItemActive(item) && !shouldDeactivateOthers() ? "secondary" : "empanada"} 
+                      className="text-xs"
+                    >
+                      {item.badge}
+                    </Badge>
+                  )}
+                  {sidebarCollapsed && item.badge && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                      {item.badge}
+                    </div>
+                  )}
+                </Link>
               )}
-            </Link>
+            </div>
           ))}
         </nav>
 
@@ -244,7 +356,7 @@ const AdminLayout = () => {
 
       {/* Mobile Sidebar */}
       <aside
-        className={`fixed lg:hidden inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-xl border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-200 ${
+        className={`fixed lg:hidden inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-xl border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-200 flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -274,36 +386,92 @@ const AdminLayout = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
           {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
-                isActive(item.href)
-                  ? "bg-empanada-golden text-white"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.name}</span>
-              </div>
-              {item.badge && (
-                <Badge 
-                  variant={isActive(item.href) ? "secondary" : "empanada"} 
-                  className="text-xs"
+            <div key={item.name}>
+              {item.hasDropdown ? (
+                <div className="space-y-1">
+                  <button
+                    onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+                      isItemActive(item)
+                        ? "bg-empanada-golden text-white"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <item.icon className="w-5 h-5" />
+                      <span className="font-medium">{item.name}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {item.badge && (
+                        <Badge 
+                          variant={isItemActive(item) ? "secondary" : "empanada"} 
+                          className="text-xs"
+                        >
+                          {item.badge}
+                        </Badge>
+                      )}
+                      {productsDropdownOpen ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </div>
+                  </button>
+                  
+                  {/* Dropdown Items */}
+                  {productsDropdownOpen && (
+                    <div className="ml-4 space-y-1">
+                      {item.dropdownItems.map((subItem) => (
+                        <NavLink
+                          key={subItem.name}
+                          to={subItem.href}
+                          end
+                          onClick={() => setSidebarOpen(false)}
+                          className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${
+                            isActive
+                              ? "bg-empanada-golden/20 text-empanada-golden font-medium"
+                              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          }`}
+                        >
+                          <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
+                          <span>{subItem.name}</span>
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+                    isItemActive(item) && !shouldDeactivateOthers()
+                      ? "bg-empanada-golden text-white"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
                 >
-                  {item.badge}
-                </Badge>
+                  <div className="flex items-center space-x-3">
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.name}</span>
+                  </div>
+                  {item.badge && (
+                    <Badge 
+                      variant={isItemActive(item) && !shouldDeactivateOthers() ? "secondary" : "empanada"} 
+                      className="text-xs"
+                    >
+                      {item.badge}
+                    </Badge>
+                  )}
+                </Link>
               )}
-            </Link>
+            </div>
           ))}
         </nav>
 
         {/* User Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
           <Card className="p-4 admin-user-card">
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">

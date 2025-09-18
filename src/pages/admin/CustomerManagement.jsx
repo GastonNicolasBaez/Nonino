@@ -688,7 +688,7 @@ function NewCustomerModal({ onClose, onSave }) {
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Nombre completo del cliente"
                         required
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -700,7 +700,7 @@ function NewCustomerModal({ onClose, onSave }) {
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           placeholder="email@ejemplo.com"
                           required
-                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                          className="admin-input"
                         />
                       </div>
                       <div>
@@ -710,7 +710,7 @@ function NewCustomerModal({ onClose, onSave }) {
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder="+54 11 1234-5678"
                           required
-                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                          className="admin-input"
                         />
                       </div>
                     </div>
@@ -720,7 +720,7 @@ function NewCustomerModal({ onClose, onSave }) {
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         placeholder="Dirección completa"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                   </div>
@@ -881,7 +881,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Nombre completo del cliente"
                         required
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -893,7 +893,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           placeholder="email@ejemplo.com"
                           required
-                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                          className="admin-input"
                         />
                       </div>
                       <div>
@@ -903,7 +903,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder="+54 11 1234-5678"
                           required
-                          className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                          className="admin-input"
                         />
                       </div>
                     </div>
@@ -913,7 +913,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         placeholder="Dirección completa"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                     <div>

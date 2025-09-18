@@ -15,7 +15,13 @@ import {
   Activity,
   Zap,
   AlertTriangle,
-  Info
+  Info,
+  Bell,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  Plus,
+  Minus
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -26,12 +32,23 @@ import { mockDashboardData } from "../../lib/mockData";
 import { formatPrice, formatDateTime } from "../../lib/utils";
 import { SalesChart, TopProductsChart, OrdersStatusChart, CustomerTrendsChart } from "../../components/charts/DashboardCharts";
 
-
-
 export function AdminDashboard() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [usingMockData, setUsingMockData] = useState(false);
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(3);
+  const [lowStockProducts, setLowStockProducts] = useState([
+    { id: 1, name: "Empanada de Carne", currentStock: 5, minStock: 20 },
+    { id: 2, name: "Empanada de Pollo", currentStock: 8, minStock: 15 },
+    { id: 3, name: "Empanada de Jamón y Queso", currentStock: 3, minStock: 10 },
+    { id: 4, name: "Empanada de Verdura", currentStock: 12, minStock: 15 },
+    { id: 5, name: "Empanada de Cebolla", currentStock: 7, minStock: 12 },
+    { id: 6, name: "Empanada de Espinaca", currentStock: 4, minStock: 8 },
+    { id: 7, name: "Empanada de Choclo", currentStock: 9, minStock: 15 },
+    { id: 8, name: "Empanada de Atún", currentStock: 6, minStock: 10 },
+    { id: 9, name: "Empanada de Ricotta", currentStock: 2, minStock: 8 },
+    { id: 10, name: "Empanada de Caprese", currentStock: 11, minStock: 15 }
+  ]);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -52,6 +69,21 @@ export function AdminDashboard() {
     };
 
     fetchMetrics();
+  }, []);
+
+  // Simular nuevos pedidos pendientes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPendingOrdersCount(prev => {
+        // Simular que llegan pedidos nuevos ocasionalmente
+        if (Math.random() < 0.3) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 30000); // Cada 30 segundos
+
+    return () => clearInterval(interval);
   }, []);
 
   const statCards = [
@@ -97,12 +129,24 @@ export function AdminDashboard() {
     }
   ];
 
+  const handleReplenishStock = (productId) => {
+    setLowStockProducts(prev => 
+      prev.map(product => 
+        product.id === productId 
+          ? { ...product, currentStock: product.minStock + 10 }
+          : product
+      )
+    );
+  };
+
+  const handleProcessOrder = (orderId) => {
+    setPendingOrdersCount(prev => Math.max(0, prev - 1));
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div
-          className="text-center"
-        >
+        <div className="text-center">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-empanada-golden border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <div className="absolute inset-0 w-16 h-16 border-4 border-empanada-golden/20 rounded-full mx-auto"></div>
@@ -118,9 +162,7 @@ export function AdminDashboard() {
   if (!metrics) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div
-          className="text-center max-w-md"
-        >
+        <div className="text-center max-w-md">
           <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <AlertTriangle className="w-10 h-10 text-red-600 dark:text-red-400" />
           </div>
@@ -145,9 +187,7 @@ export function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Dashboard
@@ -176,68 +216,141 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      {/* Alerts Section */}
-      <div
-        className="space-y-4"
-      >
+      {/* Alertas Críticas - Nueva Sección */}
+      <div className="space-y-4">
         <div className="flex items-center space-x-2">
-          <AlertCircle className="w-5 h-5 text-amber-600" />
+          <AlertCircle className="w-5 h-5 text-red-600" />
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            Alertas Importantes
+            Alertas Críticas
           </h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Stock bajo */}
-          <Card className="admin-alert admin-alert-warning">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Stock Bajo - Lista Expandida */}
+          <Card className="admin-alert admin-alert-warning h-[400px] flex flex-col">
+            <CardHeader className="pb-3 flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <CardTitle className="text-amber-800 dark:text-amber-200">
+                    Stock Bajo ({lowStockProducts.length} productos)
+                  </CardTitle>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-amber-800 dark:text-amber-200 mb-1">
-                    Stock Bajo
-                  </h4>
-                  <p className="text-sm text-amber-700 dark:text-amber-300">
-                    Empanada de Carne: <span className="font-medium">5 unidades</span>
-                  </p>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="mt-2 text-xs h-7"
-                    onClick={() => window.location.href = '/intranet/admin/inventario'}
-                  >
-                    Reabastecer
-                  </Button>
-                </div>
+                <Badge variant="outline" className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700">
+                  Crítico
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col space-y-3 overflow-hidden">
+              <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-amber-300 scrollbar-track-amber-100 dark:scrollbar-thumb-amber-600 dark:scrollbar-track-amber-900/20 space-y-3 pr-2">
+                {lowStockProducts.map((product) => (
+                  <div key={product.id} className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <div className="flex-1">
+                      <p className="font-medium text-amber-900 dark:text-amber-100">
+                        {product.name}
+                      </p>
+                      <p className="text-sm text-amber-700 dark:text-amber-300">
+                        <span className="font-semibold">{product.currentStock}</span> unidades restantes
+                        <span className="text-amber-600 dark:text-amber-400"> • Mínimo: {product.minStock}</span>
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="text-xs h-7 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/30"
+                        onClick={() => handleReplenishStock(product.id)}
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Reabastecer
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="pt-2 border-t border-amber-200 dark:border-amber-800 flex-shrink-0">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full text-xs h-8 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/30"
+                  onClick={() => window.location.href = '/intranet/admin/inventario'}
+                >
+                  <Eye className="w-3 h-3 mr-1" />
+                  Ver Inventario Completo
+                </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Pedidos pendientes */}
-          <Card className="admin-alert admin-alert-info">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          {/* Pedidos Pendientes - Lista Expandida */}
+          <Card className="admin-alert admin-alert-info h-[400px] flex flex-col">
+            <CardHeader className="pb-3 flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <CardTitle className="text-blue-800 dark:text-blue-200">
+                    Pedidos Pendientes ({pendingOrdersCount})
+                  </CardTitle>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-1">
-                    Pedidos Pendientes
-                  </h4>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    <span className="font-medium">3 pedidos</span> esperando confirmación
-                  </p>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="mt-2 text-xs h-7"
-                    onClick={() => window.location.href = '/intranet/admin/pedidos?status=pending'}
-                  >
-                    Revisar
-                  </Button>
-                </div>
+                <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700">
+                  Urgente
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col space-y-3 overflow-hidden">
+              <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-300 scrollbar-track-blue-100 dark:scrollbar-thumb-blue-600 dark:scrollbar-track-blue-900/20 space-y-3 pr-2">
+                {Array.from({ length: Math.min(pendingOrdersCount, 10) }, (_, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                        <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                          #{String(i + 1).padStart(3, '0')}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-blue-900 dark:text-blue-100">
+                          Cliente #{i + 1}
+                        </p>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                          {Math.floor(Math.random() * 5) + 1} productos • ${Math.floor(Math.random() * 5000) + 2000}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="text-xs h-7 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                        onClick={() => handleProcessOrder(i)}
+                      >
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Procesar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {pendingOrdersCount > 10 && (
+                  <div className="text-center py-2">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Y {pendingOrdersCount - 10} pedidos más...
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="pt-2 border-t border-blue-200 dark:border-blue-800 flex-shrink-0">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full text-xs h-8 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                  onClick={() => window.location.href = '/intranet/admin/pedidos?status=pending'}
+                >
+                  <Eye className="w-3 h-3 mr-1" />
+                  Ver Todos los Pedidos
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -247,10 +360,7 @@ export function AdminDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {statCards.map((stat, index) => (
-          <div
-            key={stat.title}
-            className="group"
-          >
+          <div key={stat.title} className="group">
             <Card 
               className="relative overflow-hidden admin-stats-card cursor-pointer"
               onClick={() => {

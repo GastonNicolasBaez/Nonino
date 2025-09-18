@@ -21,6 +21,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminLogin } from "./pages/admin/AdminLogin";
 import { OrderManagement } from "./pages/admin/OrderManagement";
 import { ProductManagement } from "./pages/admin/ProductManagement";
+import { ProductosPorSucursal } from "./pages/admin/ProductosPorSucursal";
 import { InventoryManagement } from "./pages/admin/InventoryManagement";
 import { CustomerManagement } from "./pages/admin/CustomerManagement";
 import { ReportsPage } from "./pages/admin/ReportsPage";
@@ -119,6 +120,10 @@ export const router = createBrowserRouter([
       {
         path: "productos",
         element: <ProductManagement />,
+      },
+      {
+        path: "productos-sucursal",
+        element: <ProductosPorSucursal />,
       },
       {
         path: "inventario",

@@ -494,7 +494,7 @@ function AddItemModal({ onClose, onSave }) {
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Nombre del item"
                         required
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                     <div>
@@ -539,7 +539,7 @@ function AddItemModal({ onClose, onSave }) {
                         value={formData.supplier}
                         onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
                         placeholder="Nombre del proveedor"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                   </div>
@@ -564,7 +564,7 @@ function AddItemModal({ onClose, onSave }) {
                         onChange={(e) => setFormData({ ...formData, currentStock: parseInt(e.target.value) || 0 })}
                         placeholder="0"
                         min="0"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                     <div>
@@ -575,7 +575,7 @@ function AddItemModal({ onClose, onSave }) {
                         onChange={(e) => setFormData({ ...formData, minStock: parseInt(e.target.value) || 0 })}
                         placeholder="0"
                         min="0"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                     <div>
@@ -586,7 +586,7 @@ function AddItemModal({ onClose, onSave }) {
                         onChange={(e) => setFormData({ ...formData, maxStock: parseInt(e.target.value) || 0 })}
                         placeholder="0"
                         min="0"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="admin-input"
                       />
                     </div>
                   </div>

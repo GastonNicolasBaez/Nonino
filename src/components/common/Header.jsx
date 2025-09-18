@@ -38,18 +38,18 @@ export function Header() {
   const logoSectionX = useTransform(scrollY, [200, 400], [0, -15]);
 
   // Left navigation movement - navegación central izquierda (Inicio, Pedir Ya, Promociones)
-  const leftNavX = useTransform(scrollY, [0, 300], [80, -30]);
+  const leftNavX = useTransform(scrollY, [0, 300], [80, -20]);
 
   // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
-  const rightNavX = useTransform(scrollY, [0, 300], [-80, 30]);
+  const rightNavX = useTransform(scrollY, [0, 300], [-80, -55]);
 
   // Icons section movement - movimiento sutil como antes
   const iconsSectionX = useTransform(scrollY, [200, 400], [0, 8]);
   
   // Individual icon movements - sincronizados con el movimiento de las secciones
-  const heartIconX = useTransform(scrollY, [200, 300], [0, 3]);
-  const cartIconX = useTransform(scrollY, [200, 300], [0, 4]);
-  const userIconX = useTransform(scrollY, [200, 300], [0, 5]);
+  const heartIconX = useTransform(scrollY, [200, 300], [0, 2]);
+  const cartIconX = useTransform(scrollY, [200, 300], [0, 3]);
+  const userIconX = useTransform(scrollY, [200, 300], [0, 4]);
 
   // Navbar logo opacity - desaparece cuando hay scroll
   const navbarLogoOpacity = useTransform(scrollY, [50, 150], [1, 0]);
@@ -100,26 +100,28 @@ export function Header() {
               }}
               className="flex items-center flex-shrink-0"
             >
-              <Link to="/" className="flex items-center space-x-2">
+              <Link to="/" className="flex items-center space-x-1 sm:space-x-2">
                 <motion.img
                   src="/src/assets/images/LogoNonino.png"
                   alt="Logo Nonino"
-                  className="w-8 h-8 sm:w-10 sm:h-10"
+                  className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0"
                   style={{ opacity: navbarLogoOpacity }}
                 />
-                <AnimatedGradientText className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight hidden xs:block">
-                  NONINO EMPANADAS
-                </AnimatedGradientText>
-                <span className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight xs:hidden text-empanada-golden">
-                  NONINO
-                </span>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-1">
+                  <AnimatedGradientText className="text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-tight text-empanada-golden">
+                    NONINO
+                  </AnimatedGradientText>
+                  <span className="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-empanada-golden/80">
+                    EMPANADAS
+                  </span>
+                </div>
               </Link>
             </motion.div>
 
             {/* Left Navigation Section */}
             <motion.nav
               style={{ x: leftNavX }}
-              className="hidden lg:flex items-center space-x-6 xl:space-x-8"
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8 mr-4 xl:mr-6"
             >
                 {leftNavigation.map((item) => (
                   <Link
@@ -147,7 +149,7 @@ export function Header() {
             {/* Right Navigation Section */}
             <motion.nav
               style={{ x: rightNavX }}
-              className="hidden lg:flex items-center space-x-6 xl:space-x-8"
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8 ml-4 xl:ml-6"
             >
                 {rightNavigation.map((item) => (
                   <Link
@@ -302,15 +304,15 @@ export function Header() {
               {/* Header */}
               <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-cream to-empanada-wheat">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
                     <img 
                       src="/src/assets/images/LogoNonino.png" 
                       alt="Logo Nonino" 
-                      className="w-8 h-8"
+                      className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0"
                     />
                     <div>
-                      <h2 className="text-lg sm:text-xl font-bold text-empanada-golden">NONINO</h2>
-                      <p className="text-xs text-gray-600">Menú de navegación</p>
+                      <h2 className="text-base sm:text-lg md:text-xl font-bold text-empanada-golden">NONINO</h2>
+                      <p className="text-xs sm:text-sm text-gray-600">Menú de navegación</p>
                     </div>
                   </div>
                   <Button

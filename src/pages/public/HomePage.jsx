@@ -61,16 +61,16 @@ export function HomePage() {
                 className="fixed z-[9999] pointer-events-none"
                 style={{
                     left: "50%",
-                    top: useTransform(scrollY, [0, 300], ["18vh", "4.5rem"]),
+                    top: useTransform(scrollY, [0, 200], ["18vh", "4.5rem"]),
                     x: "-50%",
                     y: "-50%",
-                    scale: useTransform(scrollY, [200, 300], [1, 0.4])
+                    scale: useTransform(scrollY, [100, 200], [1, 0.4])
                 }}
             >
                 <img
                     src="/src/assets/images/LogoNonino.png"
                     alt="Logo Nonino"
-                    className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-80 lg:h-80"
+                    className="w-48 h-48 xs:w-56 xs:h-56 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72"
                 />
             </motion.div>
             {/* Hero Section */}
@@ -144,19 +144,19 @@ export function HomePage() {
             </section>
 
             {/* Popular Products */}
-            <section className="min-h-screen bg-empanada-dark relative">
+            <section className="min-h-[70vh] bg-empanada-dark relative">
                 {/* Decoración superior */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-empanada-golden/30 to-transparent"></div>
                 
                 {/* Split Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 h-screen">
-                    {/* Hero Image - Left Side */}
+                <div className="relative h-[70vh]">
+                    {/* Background Image - Full width on mobile, half on desktop */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
-                        className="relative order-2 lg:order-1"
+                        className="absolute inset-0 lg:w-1/2 lg:left-0"
                     >
                         <div className="relative h-full overflow-hidden">
                             <img
@@ -164,25 +164,18 @@ export function HomePage() {
                                 alt="Empanadas artesanales de Nonino"
                                 className="w-full h-full object-cover"
                             />
-                            {/* Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-empanada-dark/90 via-empanada-dark/20 to-transparent" />
-                            
-                            {/* Menu Label */}
-                            <div className="absolute bottom-6 left-6">
-                                <h3 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-wide drop-shadow-lg">
-                                    MENÚ
-                                </h3>
-                            </div>
+                            {/* Overlay - stronger on mobile for better text readability */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-empanada-dark/95 via-empanada-dark/40 to-empanada-dark/20 lg:bg-gradient-to-t lg:from-empanada-dark/90 lg:via-empanada-dark/20 lg:to-transparent" />
                         </div>
                     </motion.div>
 
-                    {/* Product List - Right Side */}
+                    {/* Product List - Overlay on mobile, right side on desktop */}
                     <motion.div
                         initial={{ opacity: 0, x: 50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.4 }}
-                        className="order-1 lg:order-2 flex flex-col h-full"
+                        className="relative z-10 flex flex-col h-full lg:ml-auto lg:w-1/2"
                     >
                         {/* Header */}
                         <div className="p-6 sm:p-8">
@@ -216,7 +209,7 @@ export function HomePage() {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <div className="space-y-3">
+                                            <div className="space-y-2">
                                                 {(productos && productos.length > 0 ? productos : [
                                                     { id: 1, name: "Empanada de Carne", description: "Carne molida con cebolla y especias", price: 450, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
                                                     { id: 2, name: "Empanada de Pollo", description: "Pollo desmenuzado con verduras", price: 420, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
@@ -235,32 +228,32 @@ export function HomePage() {
                                                         transition={{ delay: 0.6 + index * 0.1 }}
                                                         className="group cursor-pointer"
                                                     >
-                                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-empanada-rich/5 hover:bg-empanada-rich/10 transition-all duration-300 border border-empanada-rich/10 hover:border-empanada-golden/30">
+                                                        <div className="flex items-center gap-3 p-3 rounded-lg bg-empanada-rich/5 hover:bg-empanada-rich/10 transition-all duration-300 border border-empanada-rich/10 hover:border-empanada-golden/30">
                                                             {/* Product Image */}
-                                                            <div className="relative w-20 h-16 rounded-[30px] overflow-hidden flex-shrink-0 ring-1 ring-empanada-golden/20 group-hover:ring-empanada-golden/50 transition-all duration-300 shadow-lg">
+                                                            <div className="relative w-14 h-12 rounded-[20px] overflow-hidden flex-shrink-0 ring-1 ring-empanada-golden/20 group-hover:ring-empanada-golden/50 transition-all duration-300 shadow-lg">
                                                                 <img
                                                                     src={product.image}
                                                                     alt={product.name}
                                                                     className="w-full h-full object-cover"
                                                                 />
-                                                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-empanada-golden rounded-full flex items-center justify-center shadow-lg">
+                                                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-empanada-golden rounded-full flex items-center justify-center shadow-lg">
                                                                     <span className="text-xs font-bold text-white">★</span>
                                                                 </div>
                                                             </div>
 
                                                             {/* Product Info */}
                                                             <div className="flex-1 min-w-0">
-                                                                <h4 className="text-lg font-semibold text-white group-hover:text-empanada-golden transition-colors duration-300">
+                                                                <h4 className="text-sm font-semibold text-white group-hover:text-empanada-golden transition-colors duration-300">
                                                                     {product.name.toUpperCase()}
                                                                 </h4>
-                                                                <p className="text-sm text-empanada-cream/80 line-clamp-1">
+                                                                <p className="text-xs text-empanada-cream/80 line-clamp-1">
                                                                     {product.description}
                                                                 </p>
                                                             </div>
 
                                                             {/* Price */}
                                                             <div className="text-right flex-shrink-0">
-                                                                <span className="text-xl font-bold text-empanada-golden">
+                                                                <span className="text-lg font-bold text-empanada-golden">
                                                                     ${product.price}
                                                                 </span>
                                                             </div>
@@ -283,19 +276,13 @@ export function HomePage() {
                         </div>
 
                         {/* Footer Actions */}
-                        <div className="p-6 sm:p-8 pt-0">
-                            <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="p-4 sm:p-6 pt-0">
+                            <div className="flex justify-center">
                                 <Link
                                     to="/pedir"
-                                    className="flex-1 bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-6 py-3 rounded-xl font-semibold text-center hover:from-empanada-warm hover:to-empanada-rich transition-all duration-300 shadow-lg hover:shadow-empanada-golden/20"
+                                    className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-8 py-3 rounded-xl font-semibold text-center hover:from-empanada-warm hover:to-empanada-rich transition-all duration-300 shadow-lg hover:shadow-empanada-golden/20"
                                 >
                                     Ver Menú Completo →
-                                </Link>
-                                <Link
-                                    to="/pedir"
-                                    className="flex-1 bg-transparent border-2 border-empanada-golden text-empanada-golden px-6 py-3 rounded-xl font-semibold text-center hover:bg-empanada-golden hover:text-white transition-all duration-300"
-                                >
-                                    Pedir Ya
                                 </Link>
                             </div>
                         </div>

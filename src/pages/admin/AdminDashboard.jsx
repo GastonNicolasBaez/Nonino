@@ -185,6 +185,7 @@ export function AdminDashboard() {
           month: 'long', 
           day: 'numeric' 
         })}`}
+        icon={<Activity className="w-6 h-6" />}
         actions={headerActions}
       />
 

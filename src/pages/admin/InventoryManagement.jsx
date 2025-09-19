@@ -282,6 +282,7 @@ export function InventoryManagement() {
       <SectionHeader
         title="Gestión de Inventario"
         subtitle="Administra el inventario de ingredientes y productos"
+        icon={<Package className="w-6 h-6" />}
         actions={headerActions}
       />
 

@@ -253,6 +253,39 @@ export function ReportsPage() {
         {/* Stats usando StatsCards */}
         <StatsCards stats={salesStatsData} />
 
+        {/* Filtros de fecha y tipo de reporte */}
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={dateRange}
+                  onChange={setDateRange}
+                  options={dateRangeOptions}
+                  placeholder="Seleccionar período"
+                />
+              </div>
+              
+              <div className="flex items-center gap-2 ml-0 sm:ml-4">
+                <Filter className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={reportType}
+                  onChange={setReportType}
+                  options={reportTypeOptions}
+                  placeholder="Seleccionar tipo"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Gráfico de ventas diarias */}
       <Card className="">
         <CardHeader>
@@ -348,6 +381,39 @@ export function ReportsPage() {
         {/* Stats usando StatsCards */}
         <StatsCards stats={customerStatsData} />
 
+        {/* Filtros de fecha y tipo de reporte */}
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={dateRange}
+                  onChange={setDateRange}
+                  options={dateRangeOptions}
+                  placeholder="Seleccionar período"
+                />
+              </div>
+              
+              <div className="flex items-center gap-2 ml-0 sm:ml-4">
+                <Filter className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={reportType}
+                  onChange={setReportType}
+                  options={reportTypeOptions}
+                  placeholder="Seleccionar tipo"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top clientes */}
         <Card className="">
@@ -437,6 +503,39 @@ export function ReportsPage() {
       <div className="space-y-6">
         {/* Stats usando StatsCards */}
         <StatsCards stats={inventoryStatsData} />
+
+        {/* Filtros de fecha y tipo de reporte */}
+        <Card className="">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={dateRange}
+                  onChange={setDateRange}
+                  options={dateRangeOptions}
+                  placeholder="Seleccionar período"
+                />
+              </div>
+              
+              <div className="flex items-center gap-2 ml-0 sm:ml-4">
+                <Filter className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={reportType}
+                  onChange={setReportType}
+                  options={reportTypeOptions}
+                  placeholder="Seleccionar tipo"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Alertas de stock bajo */}
       <Card className="">
@@ -606,41 +705,9 @@ export function ReportsPage() {
       <SectionHeader
         title="Reportes y Análisis"
         subtitle="Analiza el rendimiento de tu negocio con métricas detalladas"
+        icon={<BarChart3 className="w-6 h-6" />}
         actions={headerActions}
       />
-
-      {/* Filtros de fecha y tipo de reporte */}
-      <Card className="">
-        <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
-            </div>
-            <div className="w-48">
-              <CustomSelect
-                value={dateRange}
-                onChange={setDateRange}
-                options={dateRangeOptions}
-                placeholder="Seleccionar período"
-              />
-            </div>
-            
-            <div className="flex items-center gap-2 ml-0 sm:ml-4">
-              <Filter className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
-            </div>
-            <div className="w-48">
-              <CustomSelect
-                value={reportType}
-                onChange={setReportType}
-                options={reportTypeOptions}
-                placeholder="Seleccionar tipo"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Contenido del reporte */}
       {loading ? (

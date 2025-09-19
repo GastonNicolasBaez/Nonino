@@ -11,6 +11,7 @@ import {
   X,
   Save,
   User,
+  Users,
   Mail,
   Phone,
   MapPin,
@@ -211,6 +212,7 @@ export function CustomerManagement() {
       <SectionHeader
         title="Gestión de Clientes"
         subtitle="Administra tu base de clientes y analiza su comportamiento"
+        icon={<Users className="w-6 h-6" />}
         actions={headerActions}
       />
 

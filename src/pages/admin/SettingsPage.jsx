@@ -36,11 +36,20 @@ import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfService";
 import { toast } from "sonner";
-import { SectionHeader, CustomSelect } from "@/components/branding";
+import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
+import { useAdminData } from "@/context/AdminDataProvider";
 
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(false);
+  
+  // Obtener datos del AdminDataProvider
+  const {
+    sucursales: stores,
+    sucursalSeleccionada: selectedStore,
+    setSucursalSeleccionada,
+    adminDataLoading
+  } = useAdminData();
   
   // Opciones para CustomSelect
   const currencyOptions = [
@@ -54,6 +63,12 @@ export function SettingsPage() {
     { value: "America/Argentina/Cordoba", label: "Córdoba (UTC-3)" },
     { value: "America/Argentina/Mendoza", label: "Mendoza (UTC-3)" }
   ];
+
+  // Opciones para el selector de sucursal
+  const storeOptions = stores.map(store => ({
+    value: store.id,
+    label: store.name || `Sucursal ${store.id}`
+  }));
 
   const [settings, setSettings] = useState({
     general: {
@@ -867,118 +882,149 @@ export function SettingsPage() {
     </div>
   );
 
-  const StoresSettings = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="w-5 h-5" />
-              Gestión de Locales
-            </CardTitle>
-            <Button onClick={addStore} variant="empanada" size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              Agregar Local
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {settings.stores.map((store) => (
-            <Card key={store.id} className="border-2">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-semibold">{store.name || "Nuevo Local"}</h3>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => deleteStore(store.id)}>
-                      <Trash className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Nombre del Local</label>
-                    <Input
-                      value={store.name}
-                      onChange={(e) => updateStore(store.id, "name", e.target.value)}
-                      placeholder="Ej: Nonino Empanadas - Centro"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Teléfono</label>
-                    <Input
-                      value={store.phone}
-                      onChange={(e) => updateStore(store.id, "phone", e.target.value)}
-                      placeholder="+54 11 1234-5678"
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1">Dirección</label>
-                    <Input
-                      value={store.address}
-                      onChange={(e) => updateStore(store.id, "address", e.target.value)}
-                      placeholder="Dirección completa del local"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Tiempo de Delivery</label>
-                    <Input
-                      value={store.deliveryTime}
-                      onChange={(e) => updateStore(store.id, "deliveryTime", e.target.value)}
-                      placeholder="30-45 min"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Pedido Mínimo</label>
-                    <Input
-                      type="number"
-                      value={store.minOrder}
-                      onChange={(e) => updateStore(store.id, "minOrder", Number(e.target.value))}
-                      placeholder="2000"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Latitud</label>
-                    <Input
-                      type="number"
-                      step="any"
-                      value={store.coordinates.lat}
-                      onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lat: Number(e.target.value) })}
-                      placeholder="-34.6037"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Longitud</label>
-                    <Input
-                      type="number"
-                      step="any"
-                      value={store.coordinates.lng}
-                      onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lng: Number(e.target.value) })}
-                      placeholder="-58.3816"
-                    />
-                  </div>
-                </div>
+  const StoresSettings = () => {
+    // Si hay una sucursal seleccionada, mostrar solo esa sucursal
+    const storesToShow = selectedStore 
+      ? stores.filter(store => store.id === selectedStore)
+      : settings.stores;
 
-                <div className="mt-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={store.isOpen}
-                      onChange={(e) => updateStore(store.id, "isOpen", e.target.checked)}
-                    />
-                    <span className="text-sm">Local abierto</span>
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </CardContent>
-      </Card>
-    </div>
-  );
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="w-5 h-5" />
+                {selectedStore ? 'Configuración de Local' : 'Gestión de Locales'}
+              </CardTitle>
+              {!selectedStore && (
+                <Button onClick={addStore} variant="empanada" size="sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Agregar Local
+                </Button>
+              )}
+            </div>
+            {selectedStore && (
+              <div className="mt-2 p-2 bg-empanada-golden/10 rounded-md border border-empanada-golden/20">
+                <p className="text-sm text-empanada-golden font-medium">
+                  <Building2 className="w-4 h-4 inline mr-1" />
+                  Configurando: {stores.find(s => s.id === selectedStore)?.name || `Sucursal ${selectedStore}`}
+                </p>
+              </div>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!selectedStore ? (
+              <EmptyState
+                title="Selecciona una Sucursal"
+                message="Elige una sucursal para comenzar a gestionar su configuración"
+                icon={<Building2 className="w-12 h-12 text-muted-foreground" />}
+              />
+            ) : storesToShow.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No se encontró información de esta sucursal
+              </div>
+            ) : (
+              storesToShow.map((store) => (
+                <Card key={store.id} className="border-2">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-lg font-semibold">{store.name || "Nuevo Local"}</h3>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        {!selectedStore && (
+                          <Button variant="outline" size="sm" onClick={() => deleteStore(store.id)}>
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Nombre del Local</label>
+                        <Input
+                          value={store.name || ''}
+                          onChange={(e) => updateStore(store.id, "name", e.target.value)}
+                          placeholder="Ej: Nonino Empanadas - Centro"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Teléfono</label>
+                        <Input
+                          value={store.phone || ''}
+                          onChange={(e) => updateStore(store.id, "phone", e.target.value)}
+                          placeholder="+54 11 1234-5678"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium mb-1">Dirección</label>
+                        <Input
+                          value={store.address || ''}
+                          onChange={(e) => updateStore(store.id, "address", e.target.value)}
+                          placeholder="Dirección completa del local"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Tiempo de Delivery</label>
+                        <Input
+                          value={store.deliveryTime || ''}
+                          onChange={(e) => updateStore(store.id, "deliveryTime", e.target.value)}
+                          placeholder="30-45 min"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Pedido Mínimo</label>
+                        <Input
+                          type="number"
+                          value={store.minOrder || ''}
+                          onChange={(e) => updateStore(store.id, "minOrder", Number(e.target.value))}
+                          placeholder="2000"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Latitud</label>
+                        <Input
+                          type="number"
+                          step="any"
+                          value={store.coordinates?.lat || ''}
+                          onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lat: Number(e.target.value) })}
+                          placeholder="-34.6037"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Longitud</label>
+                        <Input
+                          type="number"
+                          step="any"
+                          value={store.coordinates?.lng || ''}
+                          onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lng: Number(e.target.value) })}
+                          placeholder="-58.3816"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={store.isOpen || false}
+                          onChange={(e) => updateStore(store.id, "isOpen", e.target.checked)}
+                        />
+                        <span className="text-sm">Local abierto</span>
+                      </label>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   const PromotionsSettings = () => (
     <div className="space-y-6">
@@ -1412,8 +1458,10 @@ export function SettingsPage() {
       <SectionHeader
         title="Configuración del Sistema"
         subtitle="Administra la configuración general de tu aplicación"
+        icon={<Settings className="w-6 h-6" />}
         actions={headerActions}
       />
+
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar de navegación */}

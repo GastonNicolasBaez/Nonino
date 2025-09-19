@@ -10,7 +10,9 @@ import {
     X,
     RefreshCw,
     AlertCircle,
-    CheckCircle2
+    CheckCircle2,
+    Edit,
+    Trash2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,7 @@ import { useAdminData } from "@/context/AdminDataProvider";
 import { toast } from "sonner";
 import { useSession } from "@/context/SessionProvider";
 import { SectionHeader, StatsCards, EmptyState } from "@/components/branding";
+import { formatPrice } from "@/lib/utils";
 
 export function ProductosPorSucursal() {
     const {
@@ -37,6 +40,67 @@ export function ProductosPorSucursal() {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [productStates, setProductStates] = useState({});
+
+    // Función helper para obtener el estado actual de un producto
+    const getProductState = (product) => {
+        const localState = productStates[product.id] || {};
+        return {
+            ...product,
+            isAvailable: localState.isAvailable !== undefined ? localState.isAvailable : product.isAvailable,
+            isPopular: localState.isPopular !== undefined ? localState.isPopular : product.isPopular
+        };
+    };
+
+    const toggleAvailability = async (productId) => {
+        try {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Obtener el estado actual del producto
+            const currentProduct = getProductState(product);
+            const newAvailability = !currentProduct.isAvailable;
+
+            // Actualizar el estado local inmediatamente
+            setProductStates(prev => ({
+                ...prev,
+                [productId]: {
+                    ...prev[productId],
+                    isAvailable: newAvailability
+                }
+            }));
+
+            toast.success(`Producto ${newAvailability ? 'disponible' : 'no disponible'}`);
+        } catch (error) {
+            console.error('Error al actualizar disponibilidad:', error);
+            toast.error("Error al actualizar el estado del producto");
+        }
+    };
+
+    const togglePopular = async (productId) => {
+        try {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Obtener el estado actual del producto
+            const currentProduct = getProductState(product);
+            const newPopularity = !currentProduct.isPopular;
+
+            // Actualizar el estado local inmediatamente
+            setProductStates(prev => ({
+                ...prev,
+                [productId]: {
+                    ...prev[productId],
+                    isPopular: newPopularity
+                }
+            }));
+
+            toast.success(`Producto ${newPopularity ? 'marcado como popular' : 'removido de populares'}`);
+        } catch (error) {
+            console.error('Error al actualizar popularidad:', error);
+            toast.error("Error al actualizar el estado de popularidad");
+        }
+    };
 
     // Filtrar productos según el término de búsqueda
     const filteredProducts = products.filter(product => {
@@ -62,7 +126,7 @@ export function ProductosPorSucursal() {
             id: "sucursales",
             label: "Sucursales",
             value: stores.filter(s => s.status === 'active').length,
-            color: "green",
+            color: "blue",
             icon: <Building2 className="w-5 h-5" />
         },
         {
@@ -268,99 +332,127 @@ export function ProductosPorSucursal() {
                         </div>
                     </CardContent>
 
-                    {/* Lista de productos integrada */}
+                    {/* Tabla de productos */}
                     <CardContent className="pt-0">
                         {adminDataLoading ? (
-                            <div className="space-y-2">
-                                {Array.from({ length: 8 }).map((_, i) => (
-                                    <div key={i} className="animate-pulse">
-                                        <div className="flex items-center gap-3 p-2 border rounded-md">
-                                            <div className="w-8 h-8 bg-gray-200 rounded" />
-                                            <div className="w-10 h-10 bg-gray-200 rounded" />
-                                            <div className="flex-1 space-y-1">
-                                                <div className="bg-gray-200 h-3 rounded w-1/3" />
-                                                <div className="bg-gray-200 h-2 rounded w-2/3" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                        <tr>
+                                            <th className="text-left p-4">Producto</th>
+                                            <th className="text-center p-4">Vinculado</th>
+                                            <th className="text-center p-4">Seleccionar</th>
+                                            <th className="text-left p-4">Descripción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Array.from({ length: 8 }).map((_, i) => (
+                                            <tr key={i} className="border-b border-gray-200 dark:border-gray-700 animate-pulse">
+                                                <td className="p-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-12 h-12 bg-gray-200 rounded-md" />
+                                                        <div className="space-y-2">
+                                                            <div className="bg-gray-200 h-4 rounded w-32" />
+                                                            <div className="bg-gray-200 h-3 rounded w-20" />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-4 text-center">
+                                                    <div className="bg-gray-200 h-6 rounded w-16 mx-auto" />
+                                                </td>
+                                                <td className="p-4 text-center">
+                                                    <div className="bg-gray-200 h-4 rounded w-4 mx-auto" />
+                                                </td>
+                                                <td className="p-4">
+                                                    <div className="bg-gray-200 h-3 rounded w-full" />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         ) : (
-                            <div className="space-y-2">
-                                {filteredProducts.map((product) => {
-                                    const isSelected = selectedProducts.includes(product.id);
-                                    const isLinked = productosSucursal.some(p => (typeof p === "object" ? p.id : p) === product.id);
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                        <tr>
+                                            <th className="text-left p-4">Producto</th>
+                                            <th className="text-center p-4">Vinculado</th>
+                                            <th className="text-center p-4">Seleccionar</th>
+                                            <th className="text-left p-4">Descripción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredProducts.map((product) => {
+                                            const isLinked = productosSucursal.some(p => (typeof p === "object" ? p.id : p) === product.id);
+                                            const isSelected = selectedProducts.includes(product.id);
 
-                                    return (
-                                        <div
-                                            key={product.id}
-                                            className={`flex items-center gap-3 p-2 border rounded-md transition-all duration-200 hover:shadow-sm cursor-pointer ${isSelected
-                                                ? 'border-empanada-golden bg-empanada-golden/5'
-                                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                                                }`}
-                                            onClick={() => handleProductSelection(product.id)}
-                                        >
-                                            {/* Imagen del producto - muy pequeña */}
-                                            <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
-                                                {product.imageUrl ? (
-                                                    <img
-                                                        src={product.imageUrl}
-                                                        alt={product.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
-                                                        <Package className="w-3 h-3 text-empanada-golden" />
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Información del producto - más compacta */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <h3 className="font-medium text-sm truncate">
-                                                                {product.name}
-                                                            </h3>
-                                                            {isLinked && (
-                                                                <Badge className="bg-blue-500 text-white text-xs px-1 py-0">
-                                                                    <CheckCircle2 className="w-2 h-2 mr-1" />
-                                                                    Vinculado
-                                                                </Badge>
-                                                            )}
+                                            return (
+                                                <tr 
+                                                    key={product.id} 
+                                                    className={`border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${isSelected ? 'bg-empanada-golden/5 border-empanada-golden' : ''}`}
+                                                >
+                                                    {/* Columna Producto */}
+                                                    <td className="p-4">
+                                                        <div className="flex items-center gap-3">
+                                                            {/* Imagen del producto */}
+                                                            <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+                                                                {product.imageUrl ? (
+                                                                    <img
+                                                                        src={product.imageUrl}
+                                                                        alt={product.name}
+                                                                        className="w-full h-full object-cover"
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
+                                                                        <Package className="w-4 h-4 text-empanada-golden" />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            
+                                                            {/* Información del producto */}
+                                                            <div className="min-w-0">
+                                                                <h3 className="font-medium text-base text-gray-900 dark:text-white truncate">
+                                                                    {product.name}
+                                                                </h3>
+                                                                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                                                    {product.categoryName}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                                                            <span className="font-semibold text-empanada-golden">
-                                                                ${product.price}
-                                                            </span>
-                                                            {product.isAvailable ? (
-                                                                <Badge className="bg-green-500 text-white text-xs px-1 py-0">
-                                                                    Disponible
-                                                                </Badge>
-                                                            ) : (
-                                                                <Badge className="bg-red-500 text-white text-xs px-1 py-0">
-                                                                    No Disponible
-                                                                </Badge>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                    </td>
 
-                                            {/* Checkbox del lado derecho */}
-                                            <div className="flex items-center flex-shrink-0">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={isSelected}
-                                                    onChange={() => handleProductSelection(product.id)}
-                                                    className="w-4 h-4 text-empanada-golden bg-gray-100 border-gray-300 rounded focus:ring-empanada-golden focus:ring-2"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                />
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                                    {/* Columna Vinculado */}
+                                                    <td className="p-4 text-center">
+                                                        <Badge className={`text-xs px-3 py-1 ${isLinked 
+                                                            ? 'bg-blue-500 text-white' 
+                                                            : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                                                        }`}>
+                                                            {isLinked ? 'Vinculado' : 'No Vinculado'}
+                                                        </Badge>
+                                                    </td>
+
+                                                    {/* Columna Seleccionar */}
+                                                    <td className="p-4 text-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isSelected}
+                                                            onChange={() => handleProductSelection(product.id)}
+                                                            className="w-4 h-4 text-empanada-golden bg-gray-100 border-gray-300 rounded focus:ring-empanada-golden focus:ring-2"
+                                                        />
+                                                    </td>
+
+                                                    {/* Columna Descripción */}
+                                                    <td className="p-4">
+                                                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                                            {product.description || 'Sin descripción'}
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             </div>
                         )}
                     </CardContent>

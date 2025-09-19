@@ -18,6 +18,7 @@ import {
   CheckCircle,
   XCircle,
   RefreshCw,
+  ShoppingCart,
   Package,
   Truck,
   User,
@@ -387,6 +388,7 @@ export function OrderManagement() {
       <SectionHeader
         title="Gestión de Pedidos"
         subtitle="Administra y monitorea todos los pedidos"
+        icon={<ShoppingCart className="w-6 h-6" />}
         actions={headerActions}
       />
 

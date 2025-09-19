@@ -24,6 +24,7 @@ import {
     Edit,
     Trash2,
     Package,
+    CookingPot,
     Eye,
     EyeOff,
     Star,
@@ -605,6 +606,7 @@ export function ProductManagement() {
             <SectionHeader
                 title="Gestión de Productos"
                 subtitle="Administra tu catálogo de empanadas y productos"
+                icon={<CookingPot className="w-6 h-6" />}
                 actions={headerActions}
             />
 

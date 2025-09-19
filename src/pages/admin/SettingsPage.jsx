@@ -36,10 +36,25 @@ import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfService";
 import { toast } from "sonner";
+import { SectionHeader, CustomSelect } from "@/components/branding";
 
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(false);
+  
+  // Opciones para CustomSelect
+  const currencyOptions = [
+    { value: "ARS", label: "Peso Argentino (ARS)" },
+    { value: "USD", label: "Dólar (USD)" },
+    { value: "EUR", label: "Euro (EUR)" }
+  ];
+
+  const timezoneOptions = [
+    { value: "America/Argentina/Buenos_Aires", label: "Buenos Aires (UTC-3)" },
+    { value: "America/Argentina/Cordoba", label: "Córdoba (UTC-3)" },
+    { value: "America/Argentina/Mendoza", label: "Mendoza (UTC-3)" }
+  ];
+
   const [settings, setSettings] = useState({
     general: {
       businessName: "Nonino Empanadas",
@@ -192,6 +207,7 @@ export function SettingsPage() {
     { id: "history", label: "Nuestra Historia", icon: History },
     { id: "notifications", label: "Notificaciones", icon: Bell },
     { id: "payment", label: "Pagos", icon: CreditCard },
+    { id: "export-import", label: "Exportación/Importación", icon: Database },
     { id: "security", label: "Seguridad", icon: Shield }
   ];
 
@@ -203,6 +219,22 @@ export function SettingsPage() {
       toast.success("Configuración guardada correctamente");
     }, 1500);
   };
+
+  // Preparar datos para SectionHeader
+  const headerActions = [
+    {
+      label: loading ? "Guardando..." : "Guardar Cambios",
+      variant: "empanada",
+      onClick: saveSettings,
+      disabled: loading,
+      className: "min-w-[120px]",
+      icon: loading ? (
+        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+      ) : (
+        <Save className="w-4 h-4 mr-2" />
+      )
+    }
+  ];
 
   const updateSetting = (section, key, value) => {
     setSettings(prev => ({
@@ -340,15 +372,12 @@ export function SettingsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Moneda</label>
-              <select
+              <CustomSelect
                 value={settings.general.currency}
-                onChange={(e) => updateSetting("general", "currency", e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-              >
-                <option value="ARS">Peso Argentino (ARS)</option>
-                <option value="USD">Dólar (USD)</option>
-                <option value="EUR">Euro (EUR)</option>
-              </select>
+                onChange={(value) => updateSetting("general", "currency", value)}
+                options={currencyOptions}
+                placeholder="Seleccionar moneda"
+              />
             </div>
           </div>
           
@@ -365,15 +394,12 @@ export function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Zona Horaria</label>
-              <select
+              <CustomSelect
                 value={settings.general.timezone}
-                onChange={(e) => updateSetting("general", "timezone", e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-              >
-                <option value="America/Argentina/Buenos_Aires">Buenos Aires (UTC-3)</option>
-                <option value="America/Argentina/Cordoba">Córdoba (UTC-3)</option>
-                <option value="America/Argentina/Mendoza">Mendoza (UTC-3)</option>
-              </select>
+                onChange={(value) => updateSetting("general", "timezone", value)}
+                options={timezoneOptions}
+                placeholder="Seleccionar zona horaria"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Tasa de IVA (%)</label>
@@ -1179,30 +1205,215 @@ export function SettingsPage() {
     </div>
   );
 
+  const ExportImportSettings = () => (
+    <div className="space-y-6">
+      {/* Exportación de Datos */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Download className="w-5 h-5" />
+            Exportación de Datos
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Exportando productos...");
+                // Aquí se llamaría a la función de exportación de productos
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Productos
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Exportando clientes...");
+                // Aquí se llamaría a la función de exportación de clientes
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Clientes
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Exportando pedidos...");
+                // Aquí se llamaría a la función de exportación de pedidos
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Pedidos
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Exportando inventario...");
+                // Aquí se llamaría a la función de exportación de inventario
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Inventario
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Exportando reportes...");
+                // Aquí se llamaría a la función de exportación de reportes
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Reportes
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                try {
+                  generateSystemConfigReportPDF();
+                  toast.success("Configuración del sistema exportada correctamente");
+                } catch (error) {
+                  console.error('Error generando PDF:', error);
+                  toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Configuración del Sistema
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Importación de Datos */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Upload className="w-5 h-5" />
+            Importación de Datos
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Funcionalidad de importación de productos próximamente");
+              }}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Importar Productos
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Funcionalidad de importación de clientes próximamente");
+              }}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Importar Clientes
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Funcionalidad de importación de pedidos próximamente");
+              }}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Importar Pedidos
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Funcionalidad de importación de inventario próximamente");
+              }}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Importar Inventario
+            </Button>
+          </div>
+          
+          <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-1">
+                  Importante sobre la Importación
+                </h4>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  La funcionalidad de importación está en desarrollo. Los archivos deben estar en formato CSV con las columnas correctas. 
+                  Se recomienda hacer una copia de seguridad antes de importar datos masivos.
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Respaldo y Restauración */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="w-5 h-5" />
+            Respaldo y Restauración
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                toast.info("Creando respaldo completo del sistema...");
+              }}
+            >
+              <Database className="w-4 h-4 mr-2" />
+              Crear Respaldo Completo
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start text-red-500 border-red-200 hover:bg-red-50"
+              onClick={() => {
+                toast.info("Funcionalidad de restauración próximamente");
+              }}
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Restaurar desde Respaldo
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold">Configuración del Sistema</h1>
-          <p className="text-muted-foreground">
-            Administra la configuración general de tu aplicación
-          </p>
-        </div>
-        <Button 
-          variant="empanada" 
-          onClick={saveSettings}
-          disabled={loading}
-          className="min-w-[120px]"
-        >
-          {loading ? (
-            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4 mr-2" />
-          )}
-          {loading ? "Guardando..." : "Guardar Cambios"}
-        </Button>
-      </div>
+      {/* Header usando SectionHeader */}
+      <SectionHeader
+        title="Configuración del Sistema"
+        subtitle="Administra la configuración general de tu aplicación"
+        actions={headerActions}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar de navegación */}
@@ -1241,6 +1452,7 @@ export function SettingsPage() {
             {activeTab === "history" && <HistorySettings />}
             {activeTab === "notifications" && <NotificationSettings />}
             {activeTab === "payment" && <PaymentSettings />}
+            {activeTab === "export-import" && <ExportImportSettings />}
             {activeTab === "security" && <SecuritySettings />}
           </div>
         </div>

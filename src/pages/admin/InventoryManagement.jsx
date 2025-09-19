@@ -25,6 +25,7 @@ import { generateInventoryReportPDF, downloadPDF } from "../../services/pdfServi
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { useUpdateStockModal } from "../../components/common/UpdateStockModal";
 import { Portal } from "../../components/common/Portal";
+import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
 
 export function InventoryManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,6 +37,40 @@ export function InventoryManagement() {
   // Hooks para modales
   const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
   const { openModal: openStockModal, UpdateStockModalComponent } = useUpdateStockModal();
+
+  // Opciones para CustomSelect
+  const categoryFilterOptions = [
+    { value: "all", label: "Todas las categorías" },
+    { value: "Carnes", label: "Carnes" },
+    { value: "Verduras", label: "Verduras" },
+    { value: "Lácteos", label: "Lácteos" },
+    { value: "Harinas", label: "Harinas" },
+    { value: "Condimentos", label: "Condimentos" },
+    { value: "Aceites", label: "Aceites" },
+    { value: "Otros", label: "Otros" }
+  ];
+
+  const categoryOptions = [
+    { value: "", label: "Seleccionar categoría" },
+    { value: "Carnes", label: "Carnes" },
+    { value: "Verduras", label: "Verduras" },
+    { value: "Lácteos", label: "Lácteos" },
+    { value: "Harinas", label: "Harinas" },
+    { value: "Condimentos", label: "Condimentos" },
+    { value: "Aceites", label: "Aceites" },
+    { value: "Otros", label: "Otros" }
+  ];
+
+  const unitOptions = [
+    { value: "", label: "Seleccionar unidad" },
+    { value: "kg", label: "Kilogramos (kg)" },
+    { value: "g", label: "Gramos (g)" },
+    { value: "l", label: "Litros (l)" },
+    { value: "ml", label: "Mililitros (ml)" },
+    { value: "unidades", label: "Unidades" },
+    { value: "cajas", label: "Cajas" },
+    { value: "bolsas", label: "Bolsas" }
+  ];
 
   // Cargar datos mock al inicializar
   useEffect(() => {
@@ -167,6 +202,60 @@ export function InventoryManagement() {
     setShowAddModal(true);
   };
 
+  // Preparar datos para StatsCards - críticas primero, resto neutras
+  const statsData = [
+    // Cards críticas primero (solo si tienen valor > 0)
+    ...(inventory.filter(item => item.status === 'low').length > 0 ? [{
+      id: "stock-bajo",
+      label: "Stock Bajo",
+      value: inventory.filter(item => item.status === 'low').length,
+      color: "red",
+      icon: <AlertTriangle className="w-5 h-5" />
+    }] : []),
+    
+    // Cards neutras después
+    {
+      id: "total-items",
+      label: "Total Items",
+      value: inventory.length,
+      color: "gray",
+      icon: <Package className="w-5 h-5" />
+    },
+    {
+      id: "valor-total",
+      label: "Valor Total",
+      value: formatPrice(inventory.reduce((sum, item) => sum + (item.currentStock * item.cost), 0)),
+      color: "gray",
+      icon: <BarChart className="w-5 h-5" />
+    },
+    {
+      id: "categorias",
+      label: "Categorías",
+      value: new Set(inventory.map(item => item.category)).size,
+      color: "gray",
+      icon: <Filter className="w-5 h-5" />
+    }
+  ];
+
+  // Preparar datos para SectionHeader
+  const headerActions = [
+    {
+      label: "Agregar Item",
+      variant: "empanada",
+      onClick: handleAddItem,
+      icon: <Plus className="w-4 h-4 mr-2" />
+    },
+    {
+      label: "Actualizar",
+      onClick: () => {
+        toast.info("Actualizando inventario...");
+        // Aquí se llamaría a la función de actualización
+      },
+      className: "h-8 px-3 text-xs",
+      icon: <RefreshCcw className="w-3 h-3 mr-1" />
+    }
+  ];
+
   const getStatusClasses = (status) => {
     switch (status) {
       case 'low': return 'status-badge status-badge-danger';
@@ -187,130 +276,17 @@ export function InventoryManagement() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold">Gestión de Inventario</h1>
-          <p className="text-muted-foreground mt-2">
-            Administra el inventario de ingredientes y productos
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => {
-            try {
-              const stats = {
-                totalItems: inventoryItems.length,
-                lowStock: inventoryItems.filter(item => item.currentStock < item.minStock).length,
-                outOfStock: inventoryItems.filter(item => item.currentStock === 0).length,
-                totalValue: inventoryItems.reduce((sum, item) => sum + (item.currentStock * item.price), 0)
-              };
-              
-              const doc = generateInventoryReportPDF(filteredItems, stats);
-              const filename = `reporte-inventario-${new Date().toISOString().split('T')[0]}.pdf`;
-              downloadPDF(doc, filename);
-              
-              toast.success('Reporte de inventario exportado correctamente');
-            } catch (error) {
-              console.error('Error generando PDF:', error);
-              toast.error('Error al generar el PDF. Inténtalo de nuevo.');
-            }
-          }}>
-            <FileDown className="w-4 h-4 mr-2" />
-            Exportar
-          </Button>
-          <Button variant="empanada" onClick={handleAddItem}>
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar Item
-          </Button>
-        </div>
-      </div>
+      {/* Header usando SectionHeader */}
+      <SectionHeader
+        title="Gestión de Inventario"
+        subtitle="Administra el inventario de ingredientes y productos"
+        actions={headerActions}
+      />
 
-      {/* Filtros */}
-      <Card className="">
-        <CardContent className="p-6">
-          <div className="flex gap-4 items-center">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Buscar por nombre, categoría o proveedor..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-            >
-              <option value="all">Todas las categorías</option>
-              <option value="Carnes">Carnes</option>
-              <option value="Verduras">Verduras</option>
-              <option value="Lácteos">Lácteos</option>
-              <option value="Harinas">Harinas</option>
-              <option value="Condimentos">Condimentos</option>
-              <option value="Aceites">Aceites</option>
-              <option value="Otros">Otros</option>
-            </select>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Stats usando StatsCards */}
+      <StatsCards stats={statsData} />
 
-      {/* Resumen de Inventario */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Items</p>
-                <p className="text-2xl font-bold">{inventory.length}</p>
-              </div>
-              <Package className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Stock Bajo</p>
-                <p className="text-2xl font-bold text-red-500">
-                  {inventory.filter(item => item.status === 'low').length}
-                </p>
-              </div>
-              <AlertTriangle className="w-8 h-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
-                <p className="text-2xl font-bold">
-                  {formatPrice(inventory.reduce((sum, item) => sum + (item.currentStock * item.cost), 0))}
-                </p>
-              </div>
-              <BarChart className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Categorías</p>
-                <p className="text-2xl font-bold">
-                  {new Set(inventory.map(item => item.category)).size}
-                </p>
-              </div>
-              <Filter className="w-8 h-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabla de Inventario */}
+      {/* Tabla de Inventario con búsqueda integrada */}
       <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -319,6 +295,29 @@ export function InventoryManagement() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Barra de búsqueda integrada */}
+          <div className="mb-6">
+            <div className="flex gap-4 items-center">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Buscar por nombre, categoría o proveedor..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={categoryFilter}
+                  onChange={setCategoryFilter}
+                  options={categoryFilterOptions}
+                  placeholder="Filtrar por categoría"
+                />
+              </div>
+            </div>
+          </div>
+
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3, 4, 5].map(i => (
@@ -499,39 +498,21 @@ function AddItemModal({ onClose, onSave }) {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Categoría *</label>
-                      <select
+                      <CustomSelect
                         value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                        required
-                      >
-                        <option value="">Seleccionar categoría</option>
-                        <option value="Carnes">Carnes</option>
-                        <option value="Verduras">Verduras</option>
-                        <option value="Lácteos">Lácteos</option>
-                        <option value="Harinas">Harinas</option>
-                        <option value="Condimentos">Condimentos</option>
-                        <option value="Aceites">Aceites</option>
-                        <option value="Otros">Otros</option>
-                      </select>
+                        onChange={(value) => setFormData({ ...formData, category: value })}
+                        options={categoryOptions}
+                        placeholder="Seleccionar categoría"
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Unidad de Medida *</label>
-                      <select
+                      <CustomSelect
                         value={formData.unit}
-                        onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                        required
-                      >
-                        <option value="">Seleccionar unidad</option>
-                        <option value="kg">Kilogramos (kg)</option>
-                        <option value="g">Gramos (g)</option>
-                        <option value="l">Litros (l)</option>
-                        <option value="ml">Mililitros (ml)</option>
-                        <option value="unidades">Unidades</option>
-                        <option value="cajas">Cajas</option>
-                        <option value="bolsas">Bolsas</option>
-                      </select>
+                        onChange={(value) => setFormData({ ...formData, unit: value })}
+                        options={unitOptions}
+                        placeholder="Seleccionar unidad"
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Proveedor</label>

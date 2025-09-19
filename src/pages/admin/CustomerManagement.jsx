@@ -19,7 +19,8 @@ import {
   ShoppingBag,
   CreditCard,
   Bell,
-  BellOff
+  BellOff,
+  RefreshCw
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -31,6 +32,7 @@ import { generateCustomersReportPDF, downloadPDF } from "../../services/pdfServi
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { Portal } from "../../components/common/Portal";
 import { mockCustomers } from "../../lib/mockData";
+import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
 
 export function CustomerManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,6 +43,18 @@ export function CustomerManagement() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  // Opciones para CustomSelect
+  const statusFilterOptions = [
+    { value: "all", label: "Todos los estados" },
+    { value: "active", label: "Activos" },
+    { value: "inactive", label: "Inactivos" }
+  ];
+
+  const customerStatusOptions = [
+    { value: "active", label: "Activo" },
+    { value: "inactive", label: "Inactivo" }
+  ];
 
   // Hook para modal de confirmación
   const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -64,64 +78,6 @@ export function CustomerManagement() {
     document.addEventListener('keydown', handleEscKey);
     return () => document.removeEventListener('keydown', handleEscKey);
   }, [showAddModal, showEditModal, showDetailModal]);
-
-  // Mock data para clientes
-  const mockCustomers = [
-    {
-      id: "CUST-001",
-      name: "María González",
-      email: "maria.gonzalez@email.com",
-      phone: "+54 11 1234-5678",
-      address: "Av. Corrientes 1234, CABA",
-      registrationDate: "2024-01-10T10:30:00Z",
-      status: "active",
-      totalOrders: 15,
-      totalSpent: 45000,
-      lastOrder: "2024-01-15T14:20:00Z",
-      preferences: {
-        notifications: true,
-        promotions: true,
-        newsletter: false
-      },
-      notes: "Cliente frecuente, prefiere empanadas de carne"
-    },
-    {
-      id: "CUST-002",
-      name: "Carlos Rodríguez",
-      email: "carlos.rodriguez@email.com",
-      phone: "+54 11 9876-5432",
-      address: "Av. Santa Fe 5678, CABA",
-      registrationDate: "2024-01-05T16:45:00Z",
-      status: "active",
-      totalOrders: 8,
-      totalSpent: 28000,
-      lastOrder: "2024-01-12T12:15:00Z",
-      preferences: {
-        notifications: false,
-        promotions: true,
-        newsletter: true
-      },
-      notes: "Prefiere pedidos grandes para oficina"
-    },
-    {
-      id: "CUST-003",
-      name: "Ana Martínez",
-      email: "ana.martinez@email.com",
-      phone: "+54 11 5555-1234",
-      address: "Av. Rivadavia 9012, CABA",
-      registrationDate: "2023-12-20T09:15:00Z",
-      status: "inactive",
-      totalOrders: 3,
-      totalSpent: 12000,
-      lastOrder: "2023-12-28T18:30:00Z",
-      preferences: {
-        notifications: true,
-        promotions: false,
-        newsletter: false
-      },
-      notes: "Cliente ocasional"
-    }
-  ];
 
   const filteredCustomers = customers.filter(customer => {
     const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -156,20 +112,52 @@ export function CustomerManagement() {
     setShowAddModal(true);
   };
 
+  // Preparar datos para StatsCards - todas neutras
+  const statsData = [
+    {
+      id: "total-clientes",
+      label: "Total Clientes",
+      value: customers.length,
+      color: "gray",
+      icon: <User className="w-5 h-5" />
+    },
+    {
+      id: "clientes-activos",
+      label: "Clientes Activos",
+      value: customers.filter(customer => customer.status === 'active').length,
+      color: "gray",
+      icon: <Star className="w-5 h-5" />
+    },
+    {
+      id: "ingresos-totales",
+      label: "Ingresos Totales",
+      value: formatPrice(customers.reduce((sum, customer) => sum + customer.totalSpent, 0)),
+      color: "gray",
+      icon: <CreditCard className="w-5 h-5" />
+    },
+    {
+      id: "promedio-cliente",
+      label: "Promedio por Cliente",
+      value: formatPrice(customers.length > 0 ? customers.reduce((sum, customer) => sum + customer.totalSpent, 0) / customers.length : 0),
+      color: "gray",
+      icon: <ShoppingBag className="w-5 h-5" />
+    }
+  ];
+
   const handleExportCustomers = () => {
     try {
       const stats = {
         total: customers.length,
         active: customers.filter(c => c.status === 'active').length,
         newThisMonth: customers.filter(c => {
-          const customerDate = new Date(c.joinDate);
+          const customerDate = new Date(c.registrationDate);
           const now = new Date();
           return customerDate.getMonth() === now.getMonth() && customerDate.getFullYear() === now.getFullYear();
         }).length,
         vip: customers.filter(c => c.totalSpent > 10000).length
       };
       
-      const doc = generateCustomersReportPDF(filteredCustomers, stats);
+      const doc = generateCustomersReportPDF(customers, stats);
       const filename = `reporte-clientes-${new Date().toISOString().split('T')[0]}.pdf`;
       downloadPDF(doc, filename);
       
@@ -179,6 +167,25 @@ export function CustomerManagement() {
       toast.error('Error al generar el PDF. Inténtalo de nuevo.');
     }
   };
+
+  // Preparar datos para SectionHeader
+  const headerActions = [
+    {
+      label: "Nuevo Cliente",
+      variant: "empanada",
+      onClick: handleAddCustomer,
+      icon: <Plus className="w-4 h-4 mr-2" />
+    },
+    {
+      label: "Actualizar",
+      onClick: () => {
+        toast.info("Actualizando clientes...");
+        // Aquí se llamaría a la función de actualización
+      },
+      className: "h-8 px-3 text-xs",
+      icon: <RefreshCw className="w-3 h-3 mr-1" />
+    }
+  ];
 
   const getStatusVariant = (status) => {
     switch (status) {
@@ -198,107 +205,17 @@ export function CustomerManagement() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold">Gestión de Clientes</h1>
-          <p className="text-muted-foreground">
-            Administra tu base de clientes y analiza su comportamiento
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleExportCustomers}>
-            <Download className="w-4 h-4 mr-2" />
-            Exportar
-          </Button>
-          <Button variant="empanada" onClick={handleAddCustomer}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Cliente
-          </Button>
-        </div>
-      </div>
+      {/* Header usando SectionHeader */}
+      <SectionHeader
+        title="Gestión de Clientes"
+        subtitle="Administra tu base de clientes y analiza su comportamiento"
+        actions={headerActions}
+      />
 
-      {/* Filtros */}
-      <Card className="">
-        <CardContent className="p-6">
-          <div className="flex gap-4 items-center">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Buscar por nombre, email o teléfono..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-            >
-              <option value="all">Todos los estados</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-            </select>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Stats usando StatsCards */}
+      <StatsCards stats={statsData} />
 
-      {/* Resumen de Clientes */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Clientes</p>
-                <p className="text-2xl font-bold">{customers.length}</p>
-              </div>
-              <User className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Clientes Activos</p>
-                <p className="text-2xl font-bold text-green-500">
-                  {customers.filter(customer => customer.status === 'active').length}
-                </p>
-              </div>
-              <Star className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
-                <p className="text-2xl font-bold">
-                  {formatPrice(customers.reduce((sum, customer) => sum + customer.totalSpent, 0))}
-                </p>
-              </div>
-              <CreditCard className="w-8 h-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Promedio por Cliente</p>
-                <p className="text-2xl font-bold">
-                  {formatPrice(customers.length > 0 ? customers.reduce((sum, customer) => sum + customer.totalSpent, 0) / customers.length : 0)}
-                </p>
-              </div>
-              <ShoppingBag className="w-8 h-8 text-orange-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabla de Clientes */}
+      {/* Tabla de Clientes con búsqueda integrada */}
       <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -307,6 +224,29 @@ export function CustomerManagement() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Barra de búsqueda integrada */}
+          <div className="mb-6">
+            <div className="flex gap-4 items-center">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Buscar por nombre, email o teléfono..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="w-48">
+                <CustomSelect
+                  value={statusFilter}
+                  onChange={setStatusFilter}
+                  options={statusFilterOptions}
+                  placeholder="Filtrar por estado"
+                />
+              </div>
+            </div>
+          </div>
+
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3, 4, 5].map(i => (
@@ -918,14 +858,12 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
-                      <select
+                      <CustomSelect
                         value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                      >
-                        <option value="active">Activo</option>
-                        <option value="inactive">Inactivo</option>
-                      </select>
+                        onChange={(value) => setFormData({ ...formData, status: value })}
+                        options={customerStatusOptions}
+                        placeholder="Seleccionar estado"
+                      />
                     </div>
                   </div>
                 </CardContent>

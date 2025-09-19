@@ -17,6 +17,7 @@ import { Badge } from "../../../components/ui/badge";
 import { formatPrice } from "../../../lib/utils";
 import { Portal } from "../../../components/common/Portal";
 import { productService } from "../../../services/productService";
+import { CustomSelect } from "../../../components/branding";
 
 // Modal de Nuevo Pedido Manual con Buscador de Productos
 export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
@@ -35,6 +36,15 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
   const [searchLoading, setSearchLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
+
+  // Opciones para CustomSelect
+  const categoryFilterOptions = [
+    { value: "", label: "Todas las categorías" },
+    ...categories.map(category => ({
+      value: category,
+      label: category
+    }))
+  ];
 
   // Cargar categorías al inicializar
   useEffect(() => {
@@ -253,18 +263,14 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
                         className="pl-10 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                       />
                     </div>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                    >
-                      <option value="">Todas las categorías</option>
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="w-48">
+                      <CustomSelect
+                        value={selectedCategory}
+                        onChange={setSelectedCategory}
+                        options={categoryFilterOptions}
+                        placeholder="Filtrar por categoría"
+                      />
+                    </div>
                   </div>
 
                   {/* Resultados de búsqueda */}

@@ -27,6 +27,7 @@ import { Badge } from "../../../components/ui/badge";
 import { formatPrice } from "../../../lib/utils";
 import { toast } from "sonner";
 import { Portal } from "../../../components/common/Portal";
+import { CustomSelect } from "../../../components/branding";
 
 // Datos mock de productos disponibles
 const mockProducts = [
@@ -55,6 +56,27 @@ export function OrderEditModal({ order, onClose, onSave }) {
     deliveryFee: 0,
     total: 0
   });
+
+  // Opciones para CustomSelect
+  const deliveryTypeOptions = [
+    { value: "delivery", label: "Delivery" },
+    { value: "pickup", label: "Retiro" }
+  ];
+
+  const paymentMethodOptions = [
+    { value: "cash", label: "Efectivo" },
+    { value: "card", label: "Tarjeta" },
+    { value: "transfer", label: "Transferencia" }
+  ];
+
+  const orderStatusOptions = [
+    { value: "pending", label: "Pendiente" },
+    { value: "preparing", label: "Preparando" },
+    { value: "ready", label: "Listo" },
+    { value: "completed", label: "Completado" },
+    { value: "delivered", label: "Entregado" },
+    { value: "cancelled", label: "Cancelado" }
+  ];
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showProductSearch, setShowProductSearch] = useState(false);
@@ -282,41 +304,31 @@ export function OrderEditModal({ order, onClose, onSave }) {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Tipo de Entrega</label>
-                      <select
+                      <CustomSelect
                         value={formData.deliveryType}
-                        onChange={(e) => handleInputChange('deliveryType', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                      >
-                        <option value="delivery">Delivery</option>
-                        <option value="pickup">Retiro</option>
-                      </select>
+                        onChange={(value) => handleInputChange('deliveryType', value)}
+                        options={deliveryTypeOptions}
+                        placeholder="Seleccionar tipo"
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Método de Pago</label>
-                      <select
+                      <CustomSelect
                         value={formData.paymentMethod}
-                        onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                      >
-                        <option value="cash">Efectivo</option>
-                        <option value="card">Tarjeta</option>
-                        <option value="transfer">Transferencia</option>
-                      </select>
+                        onChange={(value) => handleInputChange('paymentMethod', value)}
+                        options={paymentMethodOptions}
+                        placeholder="Seleccionar método"
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
-                      <select
+                      <CustomSelect
                         value={formData.status}
-                        onChange={(e) => handleInputChange('status', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                      >
-                        <option value="pending">Pendiente</option>
-                        <option value="preparing">Preparando</option>
-                        <option value="ready">Listo</option>
-                        <option value="completed">Completado</option>
-                        <option value="delivered">Entregado</option>
-                        <option value="cancelled">Cancelado</option>
-                      </select>
+                        onChange={(value) => handleInputChange('status', value)}
+                        options={orderStatusOptions}
+                        placeholder="Seleccionar estado"
+                        variant="status"
+                      />
                     </div>
                   </div>
                   <div className="mt-4">

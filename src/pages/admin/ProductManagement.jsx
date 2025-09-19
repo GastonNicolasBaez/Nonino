@@ -35,7 +35,8 @@ import {
     Download,
     MoreVertical,
     X,
-    Save
+    Save,
+    RefreshCw
 } from "lucide-react";
 
 // PROVIDERS
@@ -45,6 +46,7 @@ import { useSession } from "@/context/SessionProvider";
 // UTILIDADES Y SERVICIOS
 import { formatPrice } from "@/lib/utils";
 import { generateProductsReportPDF, downloadPDF } from "@/services/pdfService";
+import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
 
 // ------------------ IMPORT ------------------ //
 // ------------------ CODE   ------------------ //
@@ -74,6 +76,20 @@ export function ProductManagement() {
         { "id": "2", "name": "Bebidas" },
         { "id": "3", "name": "Promociones" },
     ]
+
+    // Opciones para CustomSelect
+    const categoryOptions = categoriasTodas.map(category => ({
+        value: category.id,
+        label: category.name
+    }));
+
+    const categoryFilterOptions = [
+        { value: "-1", label: "Todo" },
+        ...categories.map(category => ({
+            value: category.id,
+            label: category.name
+        }))
+    ];
 
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -203,6 +219,61 @@ export function ProductManagement() {
         });
     };
 
+    // Preparar datos para StatsCards - críticas primero, resto neutras
+    const statsData = [
+        // Cards críticas primero (solo si tienen valor > 0)
+        ...(productStats.lowStock > 0 ? [{
+            id: "stock-bajo",
+            label: "Stock Bajo",
+            value: productStats.lowStock,
+            color: "red",
+            icon: <BarChart3 className="w-5 h-5" />
+        }] : []),
+        
+        // Cards neutras después
+        {
+            id: "total-productos",
+            label: "Total Productos",
+            value: productStats.total,
+            color: "gray",
+            icon: <Package className="w-5 h-5" />
+        },
+        {
+            id: "disponibles",
+            label: "Disponibles",
+            value: productStats.available,
+            color: "gray",
+            icon: <Eye className="w-5 h-5" />
+        },
+        {
+            id: "ingresos-totales",
+            label: "Ingresos Totales",
+            value: formatPrice(productStats.totalRevenue),
+            color: "gray",
+            icon: <DollarSign className="w-5 h-5" />
+        }
+    ];
+
+    // Preparar datos para SectionHeader
+    const headerActions = [
+        {
+            label: "Nuevo Producto",
+            variant: "empanada",
+            size: "sm",
+            onClick: () => setShowAddModal(true),
+            icon: <Plus className="w-4 h-4 mr-2" />
+        },
+        {
+            label: "Actualizar",
+            onClick: () => {
+                toast.info("Actualizando productos...");
+                // Aquí se llamaría a la función de actualización
+            },
+            className: "h-8 px-3 text-xs",
+            icon: <RefreshCw className="w-3 h-3 mr-1" />
+        }
+    ];
+
     // ProductModal component definition (moved inside the main component)
     const ProductModal = ({ product, onClose }) => {
         const [formData, setFormData] = useState(product || {
@@ -306,17 +377,12 @@ export function ProductManagement() {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Categoría *</label>
-                                                <select
+                                                <CustomSelect
                                                     value={formData.category}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                                                    className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                                                >
-                                                    {categoriasTodas.map(category => (
-                                                        <option key={category.id} value={category.id}>
-                                                            {category.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+                                                    options={categoryOptions}
+                                                    placeholder="Seleccionar categoría"
+                                                />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Precio *</label>
@@ -465,117 +531,51 @@ export function ProductManagement() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-start">
-                <div>
-                    <h1 className="text-3xl font-bold">Gestión de Productos</h1>
-                    <p className="text-muted-foreground">
-                        Administra tu catálogo de empanadas y productos
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handleExportProducts}>
-                        <Download className="w-4 h-4 mr-2" />
-                        Exportar
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={handleImportProducts}>
-                        <Upload className="w-4 h-4 mr-2" />
-                        Importar
-                    </Button>
-                    <Button variant="empanada" size="sm" onClick={() => setShowAddModal(true)}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Nuevo Producto
-                    </Button>
-                </div>
-            </div>
+            {/* Header usando SectionHeader */}
+            <SectionHeader
+                title="Gestión de Productos"
+                subtitle="Administra tu catálogo de empanadas y productos"
+                actions={headerActions}
+            />
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                <Card className="">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-muted-foreground">Total Productos</p>
-                                <p className="text-2xl font-bold">{productStats.total}</p>
-                            </div>
-                            <Package className="w-8 h-8 text-blue-500" />
-                        </div>
-                    </CardContent>
-                </Card>
+            {/* Stats usando StatsCards */}
+            <StatsCards stats={statsData} />
 
-                <Card className="">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-muted-foreground">Disponibles</p>
-                                <p className="text-2xl font-bold text-green-500">{productStats.available}</p>
-                            </div>
-                            <Eye className="w-8 h-8 text-green-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-muted-foreground">Stock Bajo</p>
-                                <p className="text-2xl font-bold text-yellow-500">{productStats.lowStock}</p>
-                            </div>
-                            <BarChart3 className="w-8 h-8 text-yellow-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
-                                <p className="text-2xl font-bold text-empanada-golden">
-                                    {formatPrice(productStats.totalRevenue)}
-                                </p>
-                            </div>
-                            <DollarSign className="w-8 h-8 text-empanada-golden" />
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Filters */}
+            {/* Products List con búsqueda integrada */}
             <Card className="">
-                <CardContent className="p-6">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex-1">
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                <Input
-                                    placeholder="Buscar productos..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-10"
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Package className="w-5 h-5" />
+                        Productos ({filteredProducts.length} productos)
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    {/* Barra de búsqueda integrada */}
+                    <div className="mb-6">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="flex-1">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <Input
+                                        placeholder="Buscar productos..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="pl-10"
+                                    />
+                                </div>
+                            </div>
+                            <div className="w-48">
+                                <CustomSelect
+                                    value={categoryFilter}
+                                    onChange={setCategoryFilter}
+                                    options={categoryFilterOptions}
+                                    placeholder="Filtrar por categoría"
                                 />
                             </div>
                         </div>
-                        <select
-                            value={categoryFilter}
-                            onChange={(e) => setCategoryFilter(e.target.value)}
-                            className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-                        >
-                            <option value='-1'>Todo</option>
-                            {categories.map(category => (
-                                <option key={category.id} value={category.id}>
-                                    {category.name}
-                                </option>
-                            ))}
-                        </select>
                     </div>
-                </CardContent>
-            </Card>
 
-            {/* Products List */}
-            <div className="space-y-3">
-                {loading ? (
+                    {loading ? (
                     Array.from({ length: 8 }).map((_, i) => (
                         <Card key={i} className="animate-pulse">
                             <CardContent className="p-4">
@@ -594,19 +594,17 @@ export function ProductManagement() {
                     filteredProducts.map((product) => {
                         const priority = calculatePriority(product);
                         const getPriorityColor = (priority) => {
-                            if (priority >= 7) return "border-l-red-500 bg-red-50 dark:bg-red-950/20"; // Sin stock + popular
-                            if (priority >= 5) return "border-l-red-400 bg-red-50/50 dark:bg-red-950/10"; // Sin stock
-                            if (priority >= 5) return "border-l-orange-500 bg-orange-50 dark:bg-orange-950/20"; // Stock bajo + popular
-                            if (priority >= 3) return "border-l-orange-400 bg-orange-50/50 dark:bg-orange-950/10"; // Stock bajo
-                            if (priority >= 2) return "border-l-yellow-400 bg-yellow-50 dark:bg-yellow-950/10"; // Solo popular
-                            return "border-l-gray-200 dark:border-l-gray-700"; // Normal
+                            if (priority >= 7) return "border-l-red-500 bg-red-50 dark:bg-red-950/20";
+                            if (priority >= 5) return "border-l-red-400 bg-red-50/50 dark:bg-red-950/10";
+                            if (priority >= 3) return "border-l-orange-400 bg-orange-50/50 dark:bg-orange-950/10";
+                            if (priority >= 2) return "border-l-yellow-400 bg-yellow-50 dark:bg-yellow-950/10";
+                            return "border-l-gray-200 dark:border-l-gray-700";
                         };
 
                         const getPriorityBadge = (priority) => {
                             if (priority >= 7) return { text: "CRÍTICO", color: "bg-red-500 text-white" };
                             if (priority >= 5) return { text: "SIN STOCK", color: "bg-red-400 text-white" };
-                            if (priority >= 5) return { text: "ALTA", color: "bg-orange-500 text-white" };
-                            if (priority >= 3) return { text: "MEDIA", color: "bg-orange-400 text-white" };
+                            if (priority >= 3) return { text: "BAJO", color: "bg-orange-400 text-white" };
                             if (priority >= 2) return { text: "POPULAR", color: "bg-yellow-400 text-black" };
                             return { text: "NORMAL", color: "bg-gray-400 text-white" };
                         };
@@ -616,12 +614,39 @@ export function ProductManagement() {
                         return (
                             <Card 
                                 key={product.id} 
-                                className={`hover:shadow-lg transition-all duration-300 border-l-4 ${getPriorityColor(priority)}`}
+                                className={`hover:shadow-md transition-all duration-200 border-l-4 ${getPriorityColor(priority)}`}
                             >
-                                <CardContent className="p-4">
-                                    <div className="flex items-center gap-4">
-                                        {/* Imagen pequeña */}
-                                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                <CardContent className="p-3">
+                                    <div className="flex items-center gap-3">
+                                        {/* Estados del producto - más a la izquierda */}
+                                        <div className="flex items-center gap-1 flex-shrink-0">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6"
+                                                onClick={() => toggleAvailability(product.id)}
+                                                title={product.isAvailable ? "Producto disponible" : "Producto oculto"}
+                                            >
+                                                {product.isAvailable ?
+                                                    <Eye className="w-3 h-3 text-green-500" /> :
+                                                    <EyeOff className="w-3 h-3 text-red-500" />
+                                                }
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6"
+                                                onClick={() => togglePopular(product.id)}
+                                                title={product.isPopular ? "Producto popular" : "Marcar como popular"}
+                                            >
+                                                <Star
+                                                    className={`w-3 h-3 ${product.isPopular ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`}
+                                                />
+                                            </Button>
+                                        </div>
+
+                                        {/* Imagen compacta */}
+                                        <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
                                             {product.imageUrl ? (
                                                 <img
                                                     src={product.imageUrl}
@@ -630,108 +655,59 @@ export function ProductManagement() {
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
-                                                    <span className="text-2xl">{product.icon || "🥟"}</span>
+                                                    <span className="text-lg">{product.icon || "🥟"}</span>
                                                 </div>
                                             )}
                                         </div>
 
-                                        {/* Información principal */}
+                                        {/* Información principal compacta */}
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between mb-2">
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2 mb-1">
-                                                        <h3 className="font-semibold text-lg truncate">{product.name}</h3>
-                                                        <Badge className={`text-xs px-2 py-1 ${priorityInfo.color}`}>
-                                                            {priorityInfo.text}
-                                                        </Badge>
-                                                    </div>
-                                                    <p className="text-sm text-muted-foreground line-clamp-1 mb-2">
-                                                        {product.description}
-                                                    </p>
-                                                </div>
-                                                <div className="flex items-center gap-2 ml-4">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8"
-                                                        onClick={() => toggleAvailability(product.id)}
-                                                    >
-                                                        {product.isAvailable ?
-                                                            <Eye className="w-4 h-4 text-green-500" /> :
-                                                            <EyeOff className="w-4 h-4 text-red-500" />
-                                                        }
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8"
-                                                        onClick={() => togglePopular(product.id)}
-                                                    >
-                                                        <Star
-                                                            className={`w-4 h-4 ${product.isPopular ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`}
-                                                        />
-                                                    </Button>
-                                                </div>
-                                            </div>
-
-                                            {/* Detalles del producto */}
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                                <div className="flex items-center gap-1">
-                                                    <Badge variant="outline" className="text-xs">
-                                                        {product.categoryName}
+                                            <div className="flex items-center justify-between mb-1">
+                                                <div className="flex items-center gap-2">
+                                                    <h3 className="font-medium text-base truncate">{product.name}</h3>
+                                                    <Badge className={`text-xs px-2 py-0.5 ${priorityInfo.color}`}>
+                                                        {priorityInfo.text}
                                                     </Badge>
                                                 </div>
-                                                <div className="flex items-center gap-1 text-muted-foreground">
-                                                    <Clock className="w-3 h-3" />
-                                                    {product.preparationTime}min
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Package className="w-3 h-3" />
-                                                    <span className={product.stock <= (product.minStock || 10) ? "text-orange-500 font-semibold" : ""}>
-                                                        Stock: {product.stock}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Star className="w-3 h-3" />
-                                                    {product.rating} ({product.reviews})
-                                                </div>
                                             </div>
 
-                                            {/* Precios y acciones */}
-                                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                            {/* Información esencial en una línea */}
+                                            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                                                 <div className="flex items-center gap-4">
-                                                    <span className="text-lg font-bold text-empanada-golden">
+                                                    <span>{product.categoryName}</span>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="font-semibold text-empanada-golden">
                                                         {formatPrice(product.price)}
                                                     </span>
-                                                    <span className="text-sm text-muted-foreground">
-                                                        Costo: {formatPrice(product.cost)}
-                                                    </span>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => setEditingProduct(product)}
-                                                    >
-                                                        <Edit className="w-3 h-3 mr-1" />
-                                                        Editar
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => handleUpdateStock(product.id)}
-                                                    >
-                                                        <Package className="w-3 h-3 mr-1" />
-                                                        Stock
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="text-red-500 hover:text-red-700"
-                                                        onClick={() => deleteProduct(product.id)}
-                                                    >
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </Button>
+                                                    <div className="flex gap-1">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 px-2 text-xs"
+                                                            onClick={() => setEditingProduct(product)}
+                                                        >
+                                                            <Edit className="w-3 h-3 mr-1" />
+                                                            Editar
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 px-2 text-xs"
+                                                            onClick={() => handleUpdateStock(product.id)}
+                                                        >
+                                                            <Package className="w-3 h-3 mr-1" />
+                                                            Stock
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 px-2 text-xs text-red-500 hover:text-red-700"
+                                                            onClick={() => deleteProduct(product.id)}
+                                                        >
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -741,9 +717,10 @@ export function ProductManagement() {
                         );
                     })
                 )}
-            </div>
+            </CardContent>
+        </Card>
 
-            {/* Modals */}
+        {/* Modals */}
             {showAddModal && (
                 <ProductModal
                     onClose={() => setShowAddModal(false)}

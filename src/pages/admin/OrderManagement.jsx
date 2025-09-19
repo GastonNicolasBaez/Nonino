@@ -42,7 +42,8 @@ import { Portal } from "../../components/common/Portal";
 import { NewOrderModal } from "./components/NewOrderModal";
 import { OrderEditModal } from "./components/OrderEditModal";
 import { generateOrdersReportPDF, downloadPDF } from "../../services/pdfService";
-import { mockOrders } from "../../lib/mockData";
+import { useOrders } from "@/context/OrdersContext";
+import { SectionHeader, CustomSelect } from "@/components/branding";
 
 // Función helper para obtener variante de status
 function getStatusVariant(status) {
@@ -245,17 +246,39 @@ export function OrderManagement() {
   const [editingOrder, setEditingOrder] = useState(null);
   const [showNewOrderModal, setShowNewOrderModal] = useState(false);
   const [viewingOrder, setViewingOrder] = useState(null);
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  // Opciones para CustomSelect
+  const statusFilterOptions = [
+    { value: "all", label: "Todos los estados" },
+    { value: "pending", label: "Pendiente" },
+    { value: "preparing", label: "Preparando" },
+    { value: "ready", label: "Listo" },
+    { value: "completed", label: "Completado" },
+    { value: "delivered", label: "Entregado" },
+    { value: "cancelled", label: "Cancelado" }
+  ];
+
+  const orderStatusOptions = [
+    { value: "pending", label: "Pendiente" },
+    { value: "preparing", label: "Preparando" },
+    { value: "ready", label: "Listo" },
+    { value: "completed", label: "Completado" },
+    { value: "delivered", label: "Entregado" },
+    { value: "cancelled", label: "Cancelado" }
+  ];
 
   // Hook para modales de confirmación
   const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
 
-  // Cargar datos mock al inicializar
-  useEffect(() => {
-    setOrders(mockOrders);
-    setLoading(false);
-  }, []);
+  // Usar el contexto de pedidos
+  const { 
+    orders, 
+    loading, 
+    updateOrderStatus, 
+    deleteOrder, 
+    addOrder, 
+    getFilteredOrders 
+  } = useOrders();
 
   // Cerrar modales con ESC
   useEffect(() => {
@@ -271,18 +294,11 @@ export function OrderManagement() {
     return () => document.removeEventListener('keydown', handleEscKey);
   }, [editingOrder, showNewOrderModal, viewingOrder]);
 
-  // Filtrar pedidos
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch = order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  // Filtrar pedidos usando el contexto
+  const filteredOrders = getFilteredOrders(searchTerm, statusFilter);
 
   const handleStatusChange = (order, newStatus) => {
-    setOrders(prev => prev.map(o => 
-      o.id === order.id ? { ...o, status: newStatus } : o
-    ));
+    updateOrderStatus(order.id, newStatus);
     toast.success(`Estado del pedido ${order.id} actualizado a ${getStatusLabel(newStatus)}`);
   };
 
@@ -299,7 +315,7 @@ export function OrderManagement() {
       title: "Eliminar Pedido",
       message: "¿Estás seguro de que quieres eliminar este pedido? Esta acción no se puede deshacer.",
       onConfirm: () => {
-        setOrders(prev => prev.filter(order => order.id !== orderId));
+        deleteOrder(orderId);
         toast.success("Pedido eliminado correctamente");
       }
     });
@@ -344,31 +360,48 @@ export function OrderManagement() {
     setShowNewOrderModal(true);
   };
 
+  // Preparar datos para SectionHeader
+  const headerActions = [
+    {
+      label: "Nuevo Pedido",
+      variant: "empanada",
+      onClick: handleNewOrder,
+      icon: <Plus className="w-4 h-4 mr-2" />
+    },
+    {
+      label: "Actualizar",
+      onClick: () => {
+        toast.info("Actualizando pedidos...");
+        // Aquí se llamaría a la función de actualización
+      },
+      className: "h-8 px-3 text-xs",
+      icon: <RefreshCw className="w-3 h-3 mr-1" />
+    }
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold">Gestión de Pedidos</h1>
-          <p className="text-muted-foreground mt-2">
-            Administra y monitorea todos los pedidos
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={handleExportOrders}>
-            <Download className="w-4 h-4 mr-2" />
-            Exportar
-          </Button>
-          <Button variant="empanada" onClick={handleNewOrder}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Pedido
-          </Button>
-        </div>
-      </div>
+      {/* Header usando SectionHeader */}
+      <SectionHeader
+        title="Gestión de Pedidos"
+        subtitle="Administra y monitorea todos los pedidos"
+        actions={headerActions}
+      />
 
-      {/* Filtros */}
+      {/* Card unificada con búsqueda y tabla */}
       <Card className="">
-        <CardContent className="p-6">
+        {/* Header de la card con título */}
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center justify-between">
+            <span>Lista de Pedidos</span>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{filteredOrders.length} pedidos encontrados</span>
+            </div>
+          </CardTitle>
+        </CardHeader>
+
+        {/* Barra de búsqueda y filtros integrada */}
+        <CardContent className="pt-0 pb-4">
           <div className="flex gap-4 items-center">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -379,35 +412,27 @@ export function OrderManagement() {
                 className="pl-10"
               />
             </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-            >
-              <option value="all">Todos los estados</option>
-              <option value="pending">Pendiente</option>
-              <option value="preparing">Preparando</option>
-              <option value="ready">Listo</option>
-              <option value="completed">Completado</option>
-              <option value="delivered">Entregado</option>
-              <option value="cancelled">Cancelado</option>
-            </select>
+            <div className="w-48">
+              <CustomSelect
+                value={statusFilter}
+                onChange={setStatusFilter}
+                options={statusFilterOptions}
+                placeholder="Filtrar por estado"
+              />
+            </div>
             <Button variant="outline" onClick={handleMoreFilters}>
               <Filter className="w-4 h-4 mr-2" />
               Más Filtros
             </Button>
-
             <Button variant="outline" onClick={handleRefresh}>
               <RefreshCw className="w-4 h-4 mr-2" />
               Actualizar
             </Button>
           </div>
         </CardContent>
-      </Card>
 
-      {/* Lista de pedidos */}
-      <Card className="">
-        <CardContent className="p-0">
+        {/* Tabla integrada */}
+        <CardContent className="pt-0">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -442,18 +467,14 @@ export function OrderManagement() {
                       <span className="text-sm">{formatDateTime(order.orderDate)}</span>
                     </td>
                     <td className="p-4">
-                      <select
+                      <CustomSelect
                         value={order.status}
-                        onChange={(e) => handleStatusChange(order, e.target.value)}
-                        className={`px-3 py-2 rounded-md text-sm font-semibold border-2 transition-all duration-200 cursor-pointer focus:ring-2 focus:ring-offset-1 ${getStatusSelectClasses(order.status)}`}
-                      >
-                        <option value="pending">Pendiente</option>
-                        <option value="preparing">Preparando</option>
-                        <option value="ready">Listo</option>
-                        <option value="completed">Completado</option>
-                        <option value="delivered">Entregado</option>
-                        <option value="cancelled">Cancelado</option>
-                      </select>
+                        onChange={(value) => handleStatusChange(order, value)}
+                        options={orderStatusOptions}
+                        placeholder="Seleccionar estado"
+                        variant="status"
+                        className="min-w-[140px]"
+                      />
                     </td>
                     <td className="p-4">
                       <span className="text-sm">
@@ -503,6 +524,18 @@ export function OrderManagement() {
                 ))}
               </tbody>
             </table>
+            
+            {filteredOrders.length === 0 && (
+              <div className="text-center py-12">
+                <ShoppingBag className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-500 dark:text-gray-400">
+                  {searchTerm || statusFilter !== 'all' 
+                    ? 'No se encontraron pedidos con los filtros aplicados' 
+                    : 'No hay pedidos registrados'
+                  }
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

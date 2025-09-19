@@ -8,8 +8,6 @@ import {
     Package,
     Check,
     X,
-    Link as LinkIcon,
-    Filter,
     RefreshCw,
     AlertCircle,
     CheckCircle2
@@ -21,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { toast } from "sonner";
 import { useSession } from "@/context/SessionProvider";
+import { SectionHeader, StatsCards, EmptyState } from "@/components/branding";
 
 export function ProductosPorSucursal() {
     const {
@@ -36,8 +35,6 @@ export function ProductosPorSucursal() {
 
     const session = useSession();
 
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
-
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -48,24 +45,48 @@ export function ProductosPorSucursal() {
         return matchesSearch;
     });
 
-    const selectedStoreData = stores.find(store => store.id === selectedStore);
-
-    // Efecto para mostrar/ocultar el modal de confirmación
-    useEffect(() => {
-        if (selectedStore && selectedProducts.length > 0) {
-            setShowConfirmModal(true);
-        } else {
-            setShowConfirmModal(false);
+    // Preparar datos para los componentes
+    const headerActions = [
+        {
+            label: "Actualizar",
+            onClick: () => getStoreProducts(selectedStore),
+            disabled: !selectedStore || adminDataLoading,
+            className: "h-8 px-3 text-xs",
+            icon: <RefreshCw className={`w-3 h-3 mr-1 ${adminDataLoading ? 'animate-spin' : ''}`} />
         }
-    }, [selectedStore, selectedProducts.length]);
+    ];
 
-    // Función wrapper para manejar la vinculación y cerrar el modal
-    const handleConfirmUnirProductos = async () => {
-        const success = await handleUnirProductos();
-        if (success) {
-            setShowConfirmModal(false);
+    const statsData = [
+        {
+            id: "sucursales",
+            label: "Sucursales",
+            value: stores.filter(s => s.status === 'active').length,
+            color: "green",
+            icon: <Building2 className="w-5 h-5" />
+        },
+        {
+            id: "seleccionados",
+            label: "Seleccionados",
+            value: selectedProducts.length,
+            color: "empanada-golden",
+            icon: <Package className="w-5 h-5" />
+        },
+        {
+            id: "total-productos",
+            label: "Total Productos",
+            value: products.length,
+            color: "blue",
+            icon: <Package className="w-5 h-5" />
+        },
+        {
+            id: "vinculados",
+            label: "Vinculados",
+            value: productosSucursal.length,
+            color: "purple",
+            icon: <CheckCircle2 className="w-5 h-5" />
         }
-    };
+    ];
+
 
     // Función para manejar la selección de productos
     const handleProductSelection = (productId) => {
@@ -160,103 +181,36 @@ export function ProductosPorSucursal() {
 
     return (
         <div className="space-y-6 pb-24">
-            {/* Header - más compacto */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold flex items-center gap-2">
-                        <Building2 className="w-6 h-6 text-empanada-golden" />
-                        Productos por Sucursal
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                        Gestiona qué productos están disponibles en cada sucursal
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => getStoreProducts(selectedStore)}
-                        disabled={!selectedStore || adminDataLoading}
-                        className="h-8 px-3 text-xs"
-                    >
-                        <RefreshCw className={`w-3 h-3 mr-1 ${adminDataLoading ? 'animate-spin' : ''}`} />
-                        Actualizar
-                    </Button>
-                </div>
-            </div>
+            {/* Header usando SectionHeader */}
+            <SectionHeader
+                title="Productos por Sucursal"
+                subtitle="Gestiona qué productos están disponibles en cada sucursal"
+                icon={<Building2 className="w-6 h-6" />}
+                actions={headerActions}
+            />
 
-            {/* Stats - más compactas */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="border-l-4 border-l-green-500">
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-medium text-muted-foreground">Sucursales</p>
-                                <p className="text-xl font-bold text-green-500">
-                                    {stores.filter(s => s.status === 'active').length}
-                                </p>
-                            </div>
-                            <Building2 className="w-5 h-5 text-green-500" />
-                        </div>
-                    </CardContent>
-                </Card>
+            {/* Stats usando StatsCards */}
+            <StatsCards stats={statsData} />
 
-                <Card className="border-l-4 border-l-empanada-golden">
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-medium text-muted-foreground">Seleccionados</p>
-                                <p className="text-xl font-bold text-empanada-golden">
-                                    {selectedProducts.length}
-                                </p>
-                            </div>
-                            <Package className="w-5 h-5 text-empanada-golden" />
-                        </div>
-                    </CardContent>
-                </Card>
 
-                <Card className="border-l-4 border-l-blue-500">
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-medium text-muted-foreground">Total Productos</p>
-                                <p className="text-xl font-bold text-blue-500">
-                                    {products.length}
-                                </p>
-                            </div>
-                            <Package className="w-5 h-5 text-blue-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-l-4 border-l-purple-500">
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-xs font-medium text-muted-foreground">Vinculados</p>
-                                <p className="text-xl font-bold text-purple-500">
-                                    {productosSucursal.length}
-                                </p>
-                            </div>
-                            <CheckCircle2 className="w-5 h-5 text-purple-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Selector de Sucursal */}
-            <Card>
-                <CardContent className="py-4">
-                    <div className="space-y-4">
-                        
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Búsqueda y Filtros - más compacta */}
+            {/* Card unificada con búsqueda y lista de productos */}
             {selectedStore && (
                 <Card>
-                    <CardContent className="p-4">
+                    {/* Header con título y contador */}
+                    <CardHeader className="pb-4">
+                        <CardTitle className="flex items-center justify-between text-lg">
+                            <span className="flex items-center gap-2">
+                                <Package className="w-4 h-4" />
+                                Productos Disponibles
+                            </span>
+                            <Badge variant="outline" className="text-xs">
+                                {filteredProducts.length} productos
+                            </Badge>
+                        </CardTitle>
+                    </CardHeader>
+
+                    {/* Barra de búsqueda integrada */}
+                    <CardContent className="pt-0 pb-4">
                         <div className="flex flex-col sm:flex-row gap-3">
                             <div className="flex-1">
                                 <div className="relative">
@@ -288,26 +242,32 @@ export function ProductosPorSucursal() {
                                         </>
                                     )}
                                 </Button>
+                                {selectedProducts.length > 0 && (
+                                    <Button
+                                        variant="empanada"
+                                        size="sm"
+                                        onClick={handleUnirProductos}
+                                        disabled={adminDataLoading}
+                                        className="h-9 px-4 font-semibold"
+                                    >
+                                        {adminDataLoading ? (
+                                            <>
+                                                <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                                                Procesando...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                                Confirmar ({selectedProducts.length})
+                                            </>
+                                        )}
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </CardContent>
-                </Card>
-            )}
 
-            {/* Lista de Productos */}
-            {selectedStore && (
-                <Card>
-                    <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-between text-lg">
-                            <span className="flex items-center gap-2">
-                                <Package className="w-4 h-4" />
-                                Productos Disponibles
-                            </span>
-                            <Badge variant="outline" className="text-xs">
-                                {filteredProducts.length} productos
-                            </Badge>
-                        </CardTitle>
-                    </CardHeader>
+                    {/* Lista de productos integrada */}
                     <CardContent className="pt-0">
                         {adminDataLoading ? (
                             <div className="space-y-2">
@@ -363,7 +323,7 @@ export function ProductosPorSucursal() {
                                                                 {product.name}
                                                             </h3>
                                                             {isLinked && (
-                                                                <Badge className="bg-green-500 text-white text-xs px-1 py-0">
+                                                                <Badge className="bg-blue-500 text-white text-xs px-1 py-0">
                                                                     <CheckCircle2 className="w-2 h-2 mr-1" />
                                                                     Vinculado
                                                                 </Badge>
@@ -373,7 +333,6 @@ export function ProductosPorSucursal() {
                                                             <span className="font-semibold text-empanada-golden">
                                                                 ${product.price}
                                                             </span>
-                                                            <span>Stock: {product.stock}</span>
                                                             {product.isAvailable ? (
                                                                 <Badge className="bg-green-500 text-white text-xs px-1 py-0">
                                                                     Disponible
@@ -407,82 +366,13 @@ export function ProductosPorSucursal() {
                 </Card>
             )}
 
-            {/* Botón de Confirmación - más prominente */}
-            {showConfirmModal && (
-                <div className="fixed bottom-6 right-6 z-50">
-                    <Card className="shadow-2xl border-2 border-empanada-golden bg-white dark:bg-gray-800">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-4">
-                                <div className="text-center">
-                                    <div className="w-12 h-12 bg-empanada-golden rounded-full flex items-center justify-center mb-2">
-                                        <Package className="w-6 h-6 text-white" />
-                                    </div>
-                                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        {selectedProducts.length} productos
-                                    </p>
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="font-bold text-base text-gray-900 dark:text-white">
-                                        Confirmar Vinculación
-                                    </h3>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Vincular productos a <span className="font-semibold text-empanada-golden">{selectedStoreData?.name}</span>
-                                    </p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                            setSelectedProducts([]);
-                                            setSearchTerm("");
-                                            setShowConfirmModal(false);
-                                        }}
-                                        disabled={adminDataLoading}
-                                        className="h-9 px-3"
-                                    >
-                                        <X className="w-3 h-3 mr-1" />
-                                        Cancelar
-                                    </Button>
-                                    <Button
-                                        variant="empanada"
-                                        size="sm"
-                                        onClick={handleConfirmUnirProductos}
-                                        disabled={adminDataLoading}
-                                        className="h-9 px-4 font-semibold"
-                                    >
-                                        {adminDataLoading ? (
-                                            <>
-                                                <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
-                                                Procesando...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <CheckCircle2 className="w-3 h-3 mr-1" />
-                                                Confirmar
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
 
-            {/* Mensaje cuando no hay sucursal seleccionada */}
+            {/* Mensaje cuando no hay sucursal seleccionada usando EmptyState */}
             {!selectedStore && (
-                <Card>
-                    <CardContent className="p-12 text-center">
-                        <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                            Selecciona una Sucursal
-                        </h3>
-                        <p className="text-gray-500 dark:text-gray-500">
-                            Elige una sucursal para comenzar a gestionar sus productos
-                        </p>
-                    </CardContent>
-                </Card>
+                <EmptyState
+                    title="Selecciona una Sucursal"
+                    message="Elige una sucursal para comenzar a gestionar sus productos"
+                />
             )}
         </div>
     );

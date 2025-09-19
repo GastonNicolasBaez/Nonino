@@ -3,6 +3,7 @@ import AuthProvider from "@/context/AuthProvider";
 import { PublicDataProvider } from "./context/PublicDataProvider";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { SessionProvider } from "@/context/SessionProvider";
+import { OrdersProvider } from "@/context/OrdersContext";
 import { Toaster } from "sonner";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -93,7 +94,9 @@ function App() {
                                     <AuthProvider allowedRole={'ADMIN'}>
                                         <ThemeProvider>
                                             <AdminDataProvider>
-                                                <AdminLayout />
+                                                <OrdersProvider>
+                                                    <AdminLayout />
+                                                </OrdersProvider>
                                             </AdminDataProvider>
                                         </ThemeProvider>
                                     </AuthProvider>

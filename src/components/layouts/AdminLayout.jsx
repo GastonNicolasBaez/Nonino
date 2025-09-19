@@ -28,6 +28,7 @@ import { Card } from "../ui/card";
 import { useSession } from "@/context/SessionProvider";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
 import { GlobalSearch } from "../common/GlobalSearch";
+import { CustomSelect } from "../branding";
 import { InlineSearch } from "../common/InlineSearch";
 import { NotificationsDropdown } from "../common/NotificationsDropdown";
 import { Avatar } from "../ui/avatar";
@@ -35,6 +36,7 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 import { useTheme } from "@/context/ThemeProvider";
 import { useAdminData } from "@/context/AdminDataProvider";
+import { useOrders } from "@/context/OrdersContext";
 
 const AdminLayout = () => {
     const session = useSession();
@@ -51,8 +53,20 @@ const AdminLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
-    const [pendingOrdersCount, setPendingOrdersCount] = useState(3);
+
+    // Opciones para CustomSelect de sucursales
+    const sucursalOptions = [
+        { 
+            value: "", 
+            label: adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal" 
+        },
+        ...(sucursales?.map(store => ({
+            value: store.id,
+            label: `${store.name} - ${store.address}`
+        })) || [])
+    ];
     const { toggleTheme, isDark } = useTheme();
+    const { pendingOrdersCount } = useOrders();
 
     // Automatically scroll to top when route changes
     useScrollToTop();
@@ -75,21 +89,6 @@ const AdminLayout = () => {
         if (savedState !== null) {
             setSidebarCollapsed(JSON.parse(savedState));
         }
-    }, []);
-
-    // Simular nuevos pedidos pendientes
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setPendingOrdersCount(prev => {
-                // Simular que llegan pedidos nuevos ocasionalmente
-                if (Math.random() < 0.2) {
-                    return prev + 1;
-                }
-                return prev;
-            });
-        }, 45000); // Cada 45 segundos
-
-        return () => clearInterval(interval);
     }, []);
 
     const toggleSidebar = () => {
@@ -207,23 +206,15 @@ const AdminLayout = () => {
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                     
                     {(sucursales.length > 1) ? (                        
-                        <select
+                        <CustomSelect
                             value={sucursalSeleccionada}
-                            onChange={(e) => setSucursalSeleccionada(e.target.value)}
+                            onChange={setSucursalSeleccionada}
+                            options={sucursalOptions}
+                            placeholder="Selecciona una sucursal"
                             disabled={adminDataLoading}
-                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <option value="">
-                                {adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal"}
-                            </option>
-                            {sucursales?.map(store => (
-                                <option key={store.id} value={store.id}>
-                                    {store.name} - {store.address}
-                                </option>
-                            ))}
-                        </select>
+                        />
                     ) : (
-                        <span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
                             {sucursales[0]?.name}
                         </span>
                     )}
@@ -415,23 +406,15 @@ const AdminLayout = () => {
                 {/* Navigation */}
                 <nav className="p-4 space-y-2 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                     {(sucursales.length > 1) ? (
-                        <select
+                        <CustomSelect
                             value={sucursalSeleccionada}
-                            onChange={(e) => setSucursalSeleccionada(e.target.value)}
+                            onChange={setSucursalSeleccionada}
+                            options={sucursalOptions}
+                            placeholder="Selecciona una sucursal"
                             disabled={adminDataLoading}
-                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <option value="">
-                                {adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal"}
-                            </option>
-                            {sucursales?.map(store => (
-                                <option key={store.id} value={store.id}>
-                                    {store.name} - {store.address}
-                                </option>
-                            ))}
-                        </select>
+                        />
                     ) : (
-                        <span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
                             {sucursales[0]?.name}
                         </span>
                     )}

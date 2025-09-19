@@ -200,6 +200,81 @@ export const mockOrders = [
     deliveryAddress: null,
     paymentMethod: "card",
     notes: "Retirar en 30 minutos"
+  },
+  {
+    id: "ORD-003",
+    customerName: "Ana Martínez",
+    customerEmail: "ana.martinez@email.com",
+    customerPhone: "+54 11 3456-7890",
+    items: [
+      { name: "Empanada de Verdura", quantity: 3, price: 150, total: 450 },
+      { name: "Empanada de Humita", quantity: 2, price: 150, total: 300 }
+    ],
+    subtotal: 750,
+    deliveryFee: 500,
+    total: 1250,
+    status: "pending",
+    orderDate: "2024-01-15T16:00:00Z",
+    deliveryType: "delivery",
+    deliveryAddress: "San Martín 456, CABA",
+    paymentMethod: "cash",
+    notes: "Timbre 4B"
+  },
+  {
+    id: "ORD-004",
+    customerName: "Luis Fernández",
+    customerEmail: "luis.fernandez@email.com",
+    customerPhone: "+54 11 4567-8901",
+    items: [
+      { name: "Empanada de Carne", quantity: 4, price: 150, total: 600 }
+    ],
+    subtotal: 600,
+    deliveryFee: 0,
+    total: 600,
+    status: "pending",
+    orderDate: "2024-01-15T16:30:00Z",
+    deliveryType: "pickup",
+    deliveryAddress: null,
+    paymentMethod: "card",
+    notes: "Retirar en 45 minutos"
+  },
+  {
+    id: "ORD-005",
+    customerName: "Patricia López",
+    customerEmail: "patricia.lopez@email.com",
+    customerPhone: "+54 11 5678-9012",
+    items: [
+      { name: "Empanada de Pollo", quantity: 2, price: 150, total: 300 },
+      { name: "Empanada de Jamón y Queso", quantity: 1, price: 150, total: 150 },
+      { name: "Empanada de Verdura", quantity: 1, price: 150, total: 150 }
+    ],
+    subtotal: 600,
+    deliveryFee: 500,
+    total: 1100,
+    status: "pending",
+    orderDate: "2024-01-15T17:00:00Z",
+    deliveryType: "delivery",
+    deliveryAddress: "Rivadavia 2345, CABA",
+    paymentMethod: "cash",
+    notes: "Entregar en oficina"
+  },
+  {
+    id: "ORD-006",
+    customerName: "Roberto Silva",
+    customerEmail: "roberto.silva@email.com",
+    customerPhone: "+54 11 6789-0123",
+    items: [
+      { name: "Empanada de Humita", quantity: 6, price: 150, total: 900 }
+    ],
+    subtotal: 900,
+    deliveryFee: 0,
+    total: 900,
+    status: "pending",
+    orderDate: "2024-01-15T17:15:00Z",
+    deliveryType: "pickup",
+    deliveryAddress: null,
+    paymentMethod: "card",
+    notes: "Para llevar"
   }
 ];
 

@@ -28,11 +28,29 @@ import { SimpleTopProductsChart, SimpleCategorySalesChart, SimpleHourlySalesChar
 import { formatPrice, formatDate } from "../../lib/utils";
 import { toast } from "sonner";
 import { generateReportPDF, downloadPDF } from "../../services/pdfService";
+import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
 
 export function ReportsPage() {
   const [dateRange, setDateRange] = useState("last7days");
   const [reportType, setReportType] = useState("sales");
   const [loading, setLoading] = useState(true);
+
+  // Opciones para el dropdown de período
+  const dateRangeOptions = [
+    { value: "today", label: "Hoy" },
+    { value: "last7days", label: "Últimos 7 días" },
+    { value: "last30days", label: "Últimos 30 días" },
+    { value: "thisMonth", label: "Este mes" },
+    { value: "lastMonth", label: "Mes anterior" },
+    { value: "thisYear", label: "Este año" }
+  ];
+
+  // Opciones para el tipo de reporte
+  const reportTypeOptions = [
+    { value: "sales", label: "Ventas" },
+    { value: "customers", label: "Clientes" },
+    { value: "inventory", label: "Inventario" }
+  ];
 
   // Mock data para reportes
   const salesData = {
@@ -186,77 +204,55 @@ export function ReportsPage() {
     }, 1000);
   };
 
-  const SalesReport = () => (
-    <div className="space-y-6">
-      {/* Métricas principales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Ventas Totales</p>
-                <p className="text-2xl font-bold text-empanada-golden">
-                  {formatPrice(salesData.totalSales)}
-                </p>
-                <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
-                  <TrendingUp className="w-3 h-3" />
-                  +{salesData.growth}% vs mes anterior
-                </p>
-              </div>
-              <DollarSign className="w-8 h-8 text-empanada-golden" />
-            </div>
-          </CardContent>
-        </Card>
+  // Preparar datos para SectionHeader
+  const headerActions = [
+    {
+      label: "Actualizar",
+      onClick: handleRefreshReport,
+      className: "h-8 px-3 text-xs",
+      icon: <RefreshCcw className="w-3 h-3 mr-1" />
+    }
+  ];
 
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Pedidos</p>
-                <p className="text-2xl font-bold">{salesData.totalOrders}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Promedio: {Math.round(salesData.totalOrders / 7)} por día
-                </p>
-              </div>
-              <ShoppingCart className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
+  const SalesReport = () => {
+    // Preparar datos para StatsCards - todas neutras
+    const salesStatsData = [
+      {
+        id: "ventas-totales",
+        label: "Ventas Totales",
+        value: formatPrice(salesData.totalSales),
+        color: "gray",
+        icon: <DollarSign className="w-5 h-5" />
+      },
+      {
+        id: "total-pedidos",
+        label: "Total Pedidos",
+        value: salesData.totalOrders,
+        color: "gray",
+        icon: <ShoppingCart className="w-5 h-5" />
+      },
+      {
+        id: "ticket-promedio",
+        label: "Ticket Promedio",
+        value: formatPrice(salesData.averageOrderValue),
+        color: "gray",
+        icon: <BarChart3 className="w-5 h-5" />
+      },
+      {
+        id: "productos-activos",
+        label: "Productos Activos",
+        value: 25,
+        color: "gray",
+        icon: <Package className="w-5 h-5" />
+      }
+    ];
 
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Ticket Promedio</p>
-                <p className="text-2xl font-bold text-green-500">
-                  {formatPrice(salesData.averageOrderValue)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Por pedido
-                </p>
-              </div>
-              <BarChart3 className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
+    return (
+      <div className="space-y-6">
+        {/* Stats usando StatsCards */}
+        <StatsCards stats={salesStatsData} />
 
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Productos Activos</p>
-                <p className="text-2xl font-bold text-purple-500">25</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  En catálogo
-                </p>
-              </div>
-              <Package className="w-8 h-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Gráfico de ventas diarias */}
+        {/* Gráfico de ventas diarias */}
       <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -311,64 +307,47 @@ export function ReportsPage() {
       </Card>
     </div>
   );
+};
 
-  const CustomerReport = () => (
-    <div className="space-y-6">
-      {/* Métricas de clientes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Clientes</p>
-                <p className="text-2xl font-bold">{customerData.totalCustomers}</p>
-              </div>
-              <Users className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
+  const CustomerReport = () => {
+    // Preparar datos para StatsCards - todas neutras
+    const customerStatsData = [
+      {
+        id: "total-clientes",
+        label: "Total Clientes",
+        value: customerData.totalCustomers,
+        color: "gray",
+        icon: <Users className="w-5 h-5" />
+      },
+      {
+        id: "nuevos-clientes",
+        label: "Nuevos Clientes",
+        value: customerData.newCustomers,
+        color: "gray",
+        icon: <TrendingUp className="w-5 h-5" />
+      },
+      {
+        id: "clientes-recurrentes",
+        label: "Clientes Recurrentes",
+        value: customerData.returningCustomers,
+        color: "gray",
+        icon: <RefreshCcw className="w-5 h-5" />
+      },
+      {
+        id: "retencion",
+        label: "Retención",
+        value: `${customerData.customerRetention}%`,
+        color: "gray",
+        icon: <Activity className="w-5 h-5" />
+      }
+    ];
 
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Nuevos Clientes</p>
-                <p className="text-2xl font-bold text-green-500">{customerData.newCustomers}</p>
-                <p className="text-xs text-muted-foreground mt-1">Este mes</p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
+    return (
+      <div className="space-y-6">
+        {/* Stats usando StatsCards */}
+        <StatsCards stats={customerStatsData} />
 
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Clientes Recurrentes</p>
-                <p className="text-2xl font-bold text-empanada-golden">{customerData.returningCustomers}</p>
-                <p className="text-xs text-muted-foreground mt-1">Este mes</p>
-              </div>
-              <RefreshCcw className="w-8 h-8 text-empanada-golden" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Retención</p>
-                <p className="text-2xl font-bold text-purple-500">{customerData.customerRetention}%</p>
-                <p className="text-xs text-muted-foreground mt-1">Promedio</p>
-              </div>
-              <Activity className="w-8 h-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top clientes */}
         <Card className="">
           <CardHeader>
@@ -415,67 +394,50 @@ export function ReportsPage() {
       </div>
     </div>
   );
+};
 
-  const InventoryReport = () => (
-    <div className="space-y-6">
-      {/* Métricas de inventario */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Productos</p>
-                <p className="text-2xl font-bold">{inventoryData.totalProducts}</p>
-                <p className="text-xs text-muted-foreground mt-1">En catálogo</p>
-              </div>
-              <Package className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
+  const InventoryReport = () => {
+    // Preparar datos para StatsCards - críticas primero, resto neutras
+    const inventoryStatsData = [
+      // Cards críticas primero (solo si tienen valor > 0)
+      ...(inventoryData.outOfStockItems > 0 ? [{
+        id: "sin-stock",
+        label: "Sin Stock",
+        value: inventoryData.outOfStockItems,
+        color: "red",
+        icon: <XCircle className="w-5 h-5" />
+      }] : []),
+      ...(inventoryData.lowStockItems > 0 ? [{
+        id: "stock-bajo",
+        label: "Stock Bajo",
+        value: inventoryData.lowStockItems,
+        color: "red",
+        icon: <AlertTriangle className="w-5 h-5" />
+      }] : []),
+      
+      // Cards neutras después
+      {
+        id: "total-productos",
+        label: "Total Productos",
+        value: inventoryData.totalProducts,
+        color: "gray",
+        icon: <Package className="w-5 h-5" />
+      },
+      {
+        id: "valor-total",
+        label: "Valor Total",
+        value: formatPrice(inventoryData.totalInventoryValue),
+        color: "gray",
+        icon: <DollarSign className="w-5 h-5" />
+      }
+    ];
 
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Stock Bajo</p>
-                <p className="text-2xl font-bold text-yellow-500">{inventoryData.lowStockItems}</p>
-                <p className="text-xs text-muted-foreground mt-1">Requieren atención</p>
-              </div>
-              <AlertTriangle className="w-8 h-8 text-yellow-500" />
-            </div>
-          </CardContent>
-        </Card>
+    return (
+      <div className="space-y-6">
+        {/* Stats usando StatsCards */}
+        <StatsCards stats={inventoryStatsData} />
 
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Sin Stock</p>
-                <p className="text-2xl font-bold text-red-500">{inventoryData.outOfStockItems}</p>
-                <p className="text-xs text-muted-foreground mt-1">Urgente</p>
-              </div>
-              <XCircle className="w-8 h-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
-                <p className="text-2xl font-bold text-green-500">
-                  {formatPrice(inventoryData.totalInventoryValue)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">En inventario</p>
-              </div>
-              <DollarSign className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Alertas de stock bajo */}
+        {/* Alertas de stock bajo */}
       <Card className="">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -635,77 +597,46 @@ export function ReportsPage() {
       </Card>
     </div>
   );
+};
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold">Reportes y Análisis</h1>
-          <p className="text-muted-foreground">
-            Analiza el rendimiento de tu negocio con métricas detalladas
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            className="px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden"
-          >
-            <option value="today">Hoy</option>
-            <option value="last7days">Últimos 7 días</option>
-            <option value="last30days">Últimos 30 días</option>
-            <option value="thisMonth">Este mes</option>
-            <option value="lastMonth">Mes anterior</option>
-            <option value="thisYear">Este año</option>
-          </select>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleExportPDF}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Exportar PDF
-          </Button>
-          <Button 
-            variant="secondary" 
-            size="sm"
-            onClick={handleRefreshReport}
-          >
-            <RefreshCcw className="w-4 h-4 mr-2" />
-            Actualizar
-          </Button>
-        </div>
-      </div>
+      {/* Header usando SectionHeader */}
+      <SectionHeader
+        title="Reportes y Análisis"
+        subtitle="Analiza el rendimiento de tu negocio con métricas detalladas"
+        actions={headerActions}
+      />
 
-      {/* Tabs de reportes */}
+      {/* Filtros de fecha y tipo de reporte */}
       <Card className="">
         <CardContent className="p-6">
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant={reportType === "sales" ? "empanada" : "outline"}
-              size="sm"
-              onClick={() => setReportType("sales")}
-            >
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Ventas
-            </Button>
-            <Button
-              variant={reportType === "customers" ? "empanada" : "outline"}
-              size="sm"
-              onClick={() => setReportType("customers")}
-            >
-              <Users className="w-4 h-4 mr-2" />
-              Clientes
-            </Button>
-            <Button
-              variant={reportType === "inventory" ? "empanada" : "outline"}
-              size="sm"
-              onClick={() => setReportType("inventory")}
-            >
-              <Package className="w-4 h-4 mr-2" />
-              Inventario
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
+            </div>
+            <div className="w-48">
+              <CustomSelect
+                value={dateRange}
+                onChange={setDateRange}
+                options={dateRangeOptions}
+                placeholder="Seleccionar período"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2 ml-0 sm:ml-4">
+              <Filter className="w-4 h-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
+            </div>
+            <div className="w-48">
+              <CustomSelect
+                value={reportType}
+                onChange={setReportType}
+                options={reportTypeOptions}
+                placeholder="Seleccionar tipo"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

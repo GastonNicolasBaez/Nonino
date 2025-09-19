@@ -1,5 +1,23 @@
-import { useState, useEffect } from "react";
-// Removed framer-motion for simpler admin experience
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+
+// CORE
+import { useState } from "react";
+
+// EXTERNO
+import { toast } from "sonner";
+
+// COMPONENTES
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { Portal } from "@/components/common/Portal";
+import { useConfirmModal } from "@/components/common/ConfirmModal";
+import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
+
+// ICONOS
 import {
     Plus,
     Search,
@@ -19,19 +37,17 @@ import {
     X,
     Save
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { ImageUpload } from "@/components/ui/image-upload";
-import { formatPrice } from "@/lib/utils";
-import { toast } from "sonner";
-import { useConfirmModal } from "@/components/common/ConfirmModal";
-import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
-import { Portal } from "@/components/common/Portal";
-import { generateProductsReportPDF, downloadPDF } from "@/services/pdfService";
+
+// PROVIDERS
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
+
+// UTILIDADES Y SERVICIOS
+import { formatPrice } from "@/lib/utils";
+import { generateProductsReportPDF, downloadPDF } from "@/services/pdfService";
+
+// ------------------ IMPORT ------------------ //
+// ------------------ CODE   ------------------ //
 
 export function ProductManagement() {
     const [searchTerm, setSearchTerm] = useState("");

@@ -40,8 +40,6 @@ export function ProductosPorSucursal() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([]);
 
-    console.log(selectedProducts);
-
     // Filtrar productos según el término de búsqueda
     const filteredProducts = products.filter(product => {
         const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -61,9 +61,6 @@ export function MenuPage() {
         }
     ];
 
-    // console.log(products);
-    // console.log(categories);
-
     const filteredProducts = products
         .filter((product) => {
             const matchesSearch = product.name

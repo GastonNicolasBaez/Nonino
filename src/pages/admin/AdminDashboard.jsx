@@ -1,5 +1,19 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+
+// CORE
 import { useState, useEffect } from "react";
-// Removed framer-motion for simpler admin experience
+
+// EXTERNO
+
+// COMPONENTES
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { NumberTicker } from "@/components/ui/number-ticker";
+import { SalesChart, TopProductsChart, OrdersStatusChart, CustomerTrendsChart } from "@/components/charts/DashboardCharts";
+
+// ICONOS
 import { 
   TrendingUp, 
   Users, 
@@ -23,14 +37,17 @@ import {
   Plus,
   Minus
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { NumberTicker } from "../../components/ui/number-ticker";
-import { adminService } from "../../services/api";
-import { mockDashboardData } from "../../lib/mockData";
-import { formatPrice, formatDateTime } from "../../lib/utils";
-import { SalesChart, TopProductsChart, OrdersStatusChart, CustomerTrendsChart } from "../../components/charts/DashboardCharts";
+
+// PROVIDERS
+
+// UTILIDADES Y SERVICIOS
+import { adminService } from "@/services/api";
+import { mockDashboardData } from "@/lib/mockData";
+import { formatPrice, formatDateTime } from "@/lib/utils";
+
+// ------------------ IMPORT ------------------ //
+// ------------------ CODE   ------------------ //
+
 
 export function AdminDashboard() {
   const [metrics, setMetrics] = useState(null);

@@ -1,14 +1,41 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+
+// CORE
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { Eye, EyeOff, Mail, Lock, Shield, Info, AlertTriangle } from "lucide-react";
+
+// EXTERNO
+import { toast } from "sonner";
+
+// COMPONENTES
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+// ICONOS
+import {
+    Eye,
+    EyeOff,
+    Mail,
+    Lock,
+    Shield,
+    Info,
+    AlertTriangle
+} from "lucide-react";
+
+
+// PROVIDERS
+import { useSession } from "@/context/SessionProvider";
+
+// UTILIDADES Y SERVICIOS
 import { validateEmail } from "@/lib/utils";
 import { DEV_CREDENTIALS, DEV_CONFIG, SECURITY_CONFIG, ERROR_MESSAGES } from "@/config/constants";
-import { toast } from "sonner";
-import { useSession } from "@/context/SessionProvider";
-// trolosss
+
+
+// ------------------ IMPORT ------------------ //
+// ------------------ CODE   ------------------ //
+
 export function AdminLogin() {
 
     const session = useSession();

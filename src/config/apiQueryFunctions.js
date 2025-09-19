@@ -155,6 +155,7 @@ export const getAdminStoresQueryFunction = async (_accessToken) => {
 
     const mockStores = [
                 { id: "1", name: "Sucursal Centro", address: "Av. Corrientes 1234", status: "active" },
+                { id: "2", name: "SUC PRUEBA NO USAR", address: "Av. Norte 8282", status: "active" },
             ];
 
     return mockStores;

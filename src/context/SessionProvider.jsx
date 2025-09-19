@@ -9,6 +9,18 @@ import {
 } from "@/config/apiQueryFunctions";
 //import { toast } from "react-toastify";
 
+const sucursalAsignada = {
+    'admin@nonino': '',
+    'admin@nonino1': 1,
+    'email3': 2,
+    'email4': 3,
+    'email5': 4,
+    'email6': 5,
+    'email7': 6,
+    'email8': 7,
+    'email9': 8,
+    'email10': 9,
+}
 
 const SessionContext = createContext();
 
@@ -31,6 +43,7 @@ export const SessionProvider = ({ children }) => {
                 roleName: data.roles[0].name,
                 accessToken: data.accessToken,
                 csrfToken: data.csrfToken,
+                sucursal: sucursalAsignada[data.email],
             }
             setUserData(user);
             setIsAdmin(data.roles[0].name === 'ADMIN');
@@ -51,6 +64,7 @@ export const SessionProvider = ({ children }) => {
                 roleName: data.roles[0].name,
                 accessToken: data.accessToken,
                 csrfToken: data.csrfToken,
+                sucursal: sucursalAsignada[data.email],
             }
             setUserData(user);
             setIsAdmin(data.roles[0].name === 'ADMIN');

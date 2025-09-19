@@ -26,6 +26,8 @@ export const AdminDataProvider = ({ children }) => {
     const [categorias, setCategorias] = useState([]);
     const [sucursales, setSucursales] = useState([]);
 
+    const [sucursalSeleccionada, setSucursalSeleccionada] = useState([]);
+
     const [productosSucursal, setProductosSucursal] = useState([]);
 
     //cargar información de admin al montar la vista de administrador
@@ -33,6 +35,7 @@ export const AdminDataProvider = ({ children }) => {
         if (session.userData?.accessToken) {
             callProductosYCategorias(session.userData.accessToken);
             callSucursales(session.userData.accessToken);
+            setSucursalSeleccionada(session.userData.sucursal);
         }
     }, [session.userData?.accessToken]);
 
@@ -158,7 +161,11 @@ export const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminSucursales'],
         mutationFn: getAdminStoresQueryFunction,
         onSuccess: (data) => {
-            setSucursales(data);
+            if (session.userData.sucursal) {
+                setSucursales(data.filter((s) => s.id == session.userData.sucursal));
+            } else {
+                setSucursales(data);
+            }
         },
         onError: (error) => {
             console.log(error);
@@ -192,6 +199,8 @@ export const AdminDataProvider = ({ children }) => {
             productos,
             categorias,
             sucursales,
+            sucursalSeleccionada,
+            setSucursalSeleccionada,
             productosSucursal,
 
             adminDataLoading,

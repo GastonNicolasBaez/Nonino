@@ -27,6 +27,8 @@ export function ProductosPorSucursal() {
         productos: products,
         sucursales: stores,
         productosSucursal,
+        sucursalSeleccionada: selectedStore,
+
         callProductosYCategoriasSucursal,
         callAsignarASucursal,
         adminDataLoading
@@ -36,7 +38,6 @@ export function ProductosPorSucursal() {
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-    const [selectedStore, setSelectedStore] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -139,55 +140,9 @@ export function ProductosPorSucursal() {
         }
     };
 
-    // Función para desvincular productos de la sucursal
-    const handleDesvincularProductos = async (productIds) => {
-        if (!selectedStore) {
-            toast.error("Por favor selecciona una sucursal");
-            return false;
-        }
-
-        try {
-            const response = await storeService.unlinkProductsFromStore(selectedStore, productIds);
-
-            toast.success(`${productIds.length} productos desvinculados exitosamente`);
-
-            // Actualizar lista de productos de la sucursal
-            await getStoreProducts(selectedStore);
-
-            return true;
-        } catch (error) {
-            console.error('Error al desvincular productos:', error);
-            toast.error(error.response?.data?.message || "Error al desvincular productos. Inténtalo de nuevo.");
-            return false;
-        }
-    };
-
-    // Función para actualizar disponibilidad de un producto en la sucursal
-    const handleUpdateProductAvailability = async (productId, isAvailable) => {
-        if (!selectedStore) {
-            toast.error("Por favor selecciona una sucursal");
-            return false;
-        }
-
-        try {
-            const response = await storeService.updateStoreProductAvailability(selectedStore, productId, isAvailable);
-
-            toast.success(`Disponibilidad del producto actualizada`);
-
-            // Actualizar lista de productos de la sucursal
-            await getStoreProducts(selectedStore);
-
-            return true;
-        } catch (error) {
-            console.error('Error al actualizar disponibilidad:', error);
-            toast.error(error.response?.data?.message || "Error al actualizar disponibilidad. Inténtalo de nuevo.");
-            return false;
-        }
-    };
-
     // Efecto para cargar productos de la sucursal cuando se selecciona una
     useEffect(() => {
-        if (selectedStore) {
+        if (selectedStore && selectedStore != '') {
             getStoreProducts(selectedStore);
             // Limpiar selección cuando cambia la sucursal
             setSelectedProducts([]);
@@ -293,21 +248,7 @@ export function ProductosPorSucursal() {
             <Card>
                 <CardContent className="py-4">
                     <div className="space-y-4">
-                        <select
-                            value={selectedStore}
-                            onChange={(e) => setSelectedStore(e.target.value)}
-                            disabled={adminDataLoading}
-                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-empanada-golden disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <option value="">
-                                {adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal"}
-                            </option>
-                            {stores.map(store => (
-                                <option key={store.id} value={store.id}>
-                                    {store.name} - {store.address}
-                                </option>
-                            ))}
-                        </select>
+                        
                     </div>
                 </CardContent>
             </Card>

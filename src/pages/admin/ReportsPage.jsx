@@ -208,9 +208,10 @@ export function ReportsPage() {
   const headerActions = [
     {
       label: "Actualizar",
+      variant: "outline",
       onClick: handleRefreshReport,
-      className: "h-8 px-3 text-xs",
-      icon: <RefreshCcw className="w-3 h-3 mr-1" />
+      className: "h-9 px-4 text-sm font-medium",
+      icon: <RefreshCcw className="w-4 h-4 mr-2" />
     }
   ];
 

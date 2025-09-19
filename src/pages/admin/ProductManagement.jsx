@@ -58,6 +58,7 @@ export function ProductManagement() {
     //   const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
+    const [productStates, setProductStates] = useState({});
 
     const session = useSession();
     const {
@@ -141,25 +142,93 @@ export function ProductManagement() {
         return a.name.localeCompare(b.name);
     });
 
+    // Función helper para obtener el estado actual de un producto
+    const getProductState = (product) => {
+        const localState = productStates[product.id] || {};
+        return {
+            ...product,
+            isAvailable: localState.isAvailable !== undefined ? localState.isAvailable : product.isAvailable,
+            isPopular: localState.isPopular !== undefined ? localState.isPopular : product.isPopular
+        };
+    };
+
     const productStats = {
         total: products.length,
-        available: products.filter(p => p.isAvailable).length,
-        outOfStock: products.filter(p => !p.isAvailable || (p.stock || 0) <= 0).length,
+        available: products.filter(p => getProductState(p).isAvailable).length,
+        outOfStock: products.filter(p => !getProductState(p).isAvailable || (p.stock || 0) <= 0).length,
         lowStock: products.filter(p => (p.stock || 0) <= (p.minStock || 10) && (p.stock || 0) > 0).length,
-        popular: products.filter(p => p.isPopular).length,
+        popular: products.filter(p => getProductState(p).isPopular).length,
         totalValue: products.reduce((sum, p) => sum + ((p.stock || 0) * (p.price || 0)), 0),
         totalRevenue: products.reduce((sum, p) => sum + ((p.sales || 0) * (p.price || 0)), 0),
         averageRating: products.length > 0 ? products.reduce((sum, p) => sum + (p.rating || 0), 0) / products.length : 0
     };
 
-    const toggleAvailability = (productId) => {
-        // TODO: Implementar llamada al backend para actualizar disponibilidad
-        toast.success("Estado del producto actualizado");
+    const toggleAvailability = async (productId) => {
+        try {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Obtener el estado actual del producto
+            const currentProduct = getProductState(product);
+            const newAvailability = !currentProduct.isAvailable;
+
+            // Actualizar el estado local inmediatamente
+            setProductStates(prev => ({
+                ...prev,
+                [productId]: {
+                    ...prev[productId],
+                    isAvailable: newAvailability
+                }
+            }));
+
+            // TODO: Implementar llamada al backend para actualizar disponibilidad
+            // await callModificarProducto({
+            //     _producto: {
+            //         ...product,
+            //         isAvailable: newAvailability
+            //     },
+            //     _accessToken: session.userData.accessToken,
+            // });
+
+            toast.success(`Producto ${newAvailability ? 'disponible' : 'no disponible'}`);
+        } catch (error) {
+            console.error('Error al actualizar disponibilidad:', error);
+            toast.error("Error al actualizar el estado del producto");
+        }
     };
 
-    const togglePopular = (productId) => {
-        // TODO: Implementar llamada al backend para actualizar popularidad
-        toast.success("Estado de popularidad actualizado");
+    const togglePopular = async (productId) => {
+        try {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Obtener el estado actual del producto
+            const currentProduct = getProductState(product);
+            const newPopularity = !currentProduct.isPopular;
+
+            // Actualizar el estado local inmediatamente
+            setProductStates(prev => ({
+                ...prev,
+                [productId]: {
+                    ...prev[productId],
+                    isPopular: newPopularity
+                }
+            }));
+
+            // TODO: Implementar llamada al backend para actualizar popularidad
+            // await callModificarProducto({
+            //     _producto: {
+            //         ...product,
+            //         isPopular: newPopularity
+            //     },
+            //     _accessToken: session.userData.accessToken,
+            // });
+
+            toast.success(`Producto ${newPopularity ? 'marcado como popular' : 'removido de populares'}`);
+        } catch (error) {
+            console.error('Error al actualizar popularidad:', error);
+            toast.error("Error al actualizar el estado de popularidad");
+        }
     };
 
     // ACTUALIZADO
@@ -259,18 +328,19 @@ export function ProductManagement() {
         {
             label: "Nuevo Producto",
             variant: "empanada",
-            size: "sm",
+            className: "h-9 px-4 text-sm font-medium",
             onClick: () => setShowAddModal(true),
             icon: <Plus className="w-4 h-4 mr-2" />
         },
         {
             label: "Actualizar",
+            variant: "outline",
+            className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
                 toast.info("Actualizando productos...");
                 // Aquí se llamaría a la función de actualización
             },
-            className: "h-8 px-3 text-xs",
-            icon: <RefreshCw className="w-3 h-3 mr-1" />
+            icon: <RefreshCw className="w-4 h-4 mr-2" />
         }
     ];
 
@@ -576,115 +646,154 @@ export function ProductManagement() {
                     </div>
 
                     {loading ? (
-                    Array.from({ length: 8 }).map((_, i) => (
-                        <Card key={i} className="animate-pulse">
-                            <CardContent className="p-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-gray-200 rounded-lg" />
-                                    <div className="flex-1 space-y-2">
-                                        <div className="bg-gray-200 h-4 rounded w-1/3" />
-                                        <div className="bg-gray-200 h-3 rounded w-2/3" />
-                                        <div className="bg-gray-200 h-3 rounded w-1/2" />
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))
-                ) : (
-                    filteredProducts.map((product) => {
-                        const priority = calculatePriority(product);
-                        const getPriorityColor = (priority) => {
-                            if (priority >= 7) return "border-l-red-500 bg-red-50 dark:bg-red-950/20";
-                            if (priority >= 5) return "border-l-red-400 bg-red-50/50 dark:bg-red-950/10";
-                            if (priority >= 3) return "border-l-orange-400 bg-orange-50/50 dark:bg-orange-950/10";
-                            if (priority >= 2) return "border-l-yellow-400 bg-yellow-50 dark:bg-yellow-950/10";
-                            return "border-l-gray-200 dark:border-l-gray-700";
-                        };
-
-                        const getPriorityBadge = (priority) => {
-                            if (priority >= 7) return { text: "CRÍTICO", color: "bg-red-500 text-white" };
-                            if (priority >= 5) return { text: "SIN STOCK", color: "bg-red-400 text-white" };
-                            if (priority >= 3) return { text: "BAJO", color: "bg-orange-400 text-white" };
-                            if (priority >= 2) return { text: "POPULAR", color: "bg-yellow-400 text-black" };
-                            return { text: "NORMAL", color: "bg-gray-400 text-white" };
-                        };
-
-                        const priorityInfo = getPriorityBadge(priority);
-
-                        return (
-                            <Card 
-                                key={product.id} 
-                                className={`hover:shadow-md transition-all duration-200 border-l-4 ${getPriorityColor(priority)}`}
-                            >
-                                <CardContent className="p-3">
-                                    <div className="flex items-center gap-3">
-                                        {/* Estados del producto - más a la izquierda */}
-                                        <div className="flex items-center gap-1 flex-shrink-0">
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-6 w-6"
-                                                onClick={() => toggleAvailability(product.id)}
-                                                title={product.isAvailable ? "Producto disponible" : "Producto oculto"}
-                                            >
-                                                {product.isAvailable ?
-                                                    <Eye className="w-3 h-3 text-green-500" /> :
-                                                    <EyeOff className="w-3 h-3 text-red-500" />
-                                                }
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-6 w-6"
-                                                onClick={() => togglePopular(product.id)}
-                                                title={product.isPopular ? "Producto popular" : "Marcar como popular"}
-                                            >
-                                                <Star
-                                                    className={`w-3 h-3 ${product.isPopular ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`}
-                                                />
-                                            </Button>
-                                        </div>
-
-                                        {/* Imagen compacta */}
-                                        <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
-                                            {product.imageUrl ? (
-                                                <img
-                                                    src={product.imageUrl}
-                                                    alt={product.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
-                                                    <span className="text-lg">{product.icon || "🥟"}</span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Información principal compacta */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between mb-1">
-                                                <div className="flex items-center gap-2">
-                                                    <h3 className="font-medium text-base truncate">{product.name}</h3>
-                                                    <Badge className={`text-xs px-2 py-0.5 ${priorityInfo.color}`}>
-                                                        {priorityInfo.text}
-                                                    </Badge>
-                                                </div>
-                                            </div>
-
-                                            {/* Información esencial en una línea */}
-                                            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                                                <div className="flex items-center gap-4">
-                                                    <span>{product.categoryName}</span>
-                                                </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                    <tr>
+                                        <th className="text-left p-4">Producto</th>
+                                        <th className="text-center p-4">Disponible</th>
+                                        <th className="text-center p-4">Popular</th>
+                                        <th className="text-right p-4">Precio</th>
+                                        <th className="text-center p-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Array.from({ length: 8 }).map((_, i) => (
+                                        <tr key={i} className="border-b border-gray-200 dark:border-gray-700 animate-pulse">
+                                            <td className="p-4">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="font-semibold text-empanada-golden">
+                                                    <div className="w-12 h-12 bg-gray-200 rounded-md" />
+                                                    <div className="space-y-2">
+                                                        <div className="bg-gray-200 h-4 rounded w-32" />
+                                                        <div className="bg-gray-200 h-3 rounded w-20" />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-center">
+                                                <div className="bg-gray-200 h-6 rounded w-16 mx-auto" />
+                                            </td>
+                                            <td className="p-4 text-center">
+                                                <div className="bg-gray-200 h-6 rounded w-16 mx-auto" />
+                                            </td>
+                                            <td className="p-4 text-right">
+                                                <div className="bg-gray-200 h-4 rounded w-20 ml-auto" />
+                                            </td>
+                                            <td className="p-4 text-center">
+                                                <div className="flex gap-2 justify-center">
+                                                    <div className="bg-gray-200 h-8 rounded w-16" />
+                                                    <div className="bg-gray-200 h-8 rounded w-16" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                    <tr>
+                                        <th className="text-left p-4">Producto</th>
+                                        <th className="text-center p-4">Disponible</th>
+                                        <th className="text-center p-4">Popular</th>
+                                        <th className="text-right p-4">Precio</th>
+                                        <th className="text-center p-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredProducts.map((product) => {
+                                        const currentProduct = getProductState(product);
+                                        const priority = calculatePriority(currentProduct);
+                                        const getPriorityColor = (priority) => {
+                                            if (priority >= 7) return "bg-red-50 dark:bg-red-950/20";
+                                            if (priority >= 5) return "bg-red-50/50 dark:bg-red-950/10";
+                                            if (priority >= 3) return "bg-orange-50/50 dark:bg-orange-950/10";
+                                            if (priority >= 2) return "bg-yellow-50 dark:bg-yellow-950/10";
+                                            return "";
+                                        };
+
+                                        return (
+                                            <tr 
+                                                key={product.id} 
+                                                className={`border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${getPriorityColor(priority)}`}
+                                            >
+                                                {/* Columna Producto */}
+                                                <td className="p-4">
+                                                    <div className="flex items-center gap-3">
+                                                        {/* Imagen del producto */}
+                                                        <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+                                                            {product.imageUrl ? (
+                                                                <img
+                                                                    src={product.imageUrl}
+                                                                    alt={product.name}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-full h-full bg-empanada-golden/10 flex items-center justify-center">
+                                                                    <span className="text-lg">{product.icon || "🥟"}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        
+                                                        {/* Información del producto */}
+                                                        <div className="min-w-0">
+                                                            <h3 className="font-medium text-base text-gray-900 dark:text-white truncate">
+                                                                {product.name}
+                                                            </h3>
+                                                            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                                                {product.categoryName}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Columna Disponible */}
+                                                <td className="p-4 text-center">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className={`h-8 w-24 text-xs font-medium rounded-full transition-colors duration-200 ${
+                                                            currentProduct.isAvailable 
+                                                                ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300' 
+                                                                : 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300'
+                                                        }`}
+                                                        onClick={() => toggleAvailability(product.id)}
+                                                    >
+                                                        {currentProduct.isAvailable ? 'Disponible' : 'No Disponible'}
+                                                    </Button>
+                                                </td>
+
+                                                {/* Columna Popular */}
+                                                <td className="p-4 text-center">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className={`h-8 w-20 text-xs font-medium rounded-full transition-colors duration-200 ${
+                                                            currentProduct.isPopular 
+                                                                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300' 
+                                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                                                        }`}
+                                                        onClick={() => togglePopular(product.id)}
+                                                    >
+                                                        {currentProduct.isPopular ? 'Popular' : 'Normal'}
+                                                    </Button>
+                                                </td>
+
+                                                {/* Columna Precio */}
+                                                <td className="p-4 text-right">
+                                                    <span className="font-semibold text-empanada-golden text-base">
                                                         {formatPrice(product.price)}
                                                     </span>
-                                                    <div className="flex gap-1">
+                                                </td>
+
+                                                {/* Columna Acciones */}
+                                                <td className="p-4 text-center">
+                                                    <div className="flex gap-2 justify-center">
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-7 px-2 text-xs"
+                                                            className="h-8 px-3 text-xs"
                                                             onClick={() => setEditingProduct(product)}
                                                         >
                                                             <Edit className="w-3 h-3 mr-1" />
@@ -693,30 +802,21 @@ export function ProductManagement() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-7 px-2 text-xs"
-                                                            onClick={() => handleUpdateStock(product.id)}
-                                                        >
-                                                            <Package className="w-3 h-3 mr-1" />
-                                                            Stock
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 px-2 text-xs text-red-500 hover:text-red-700"
+                                                            className="h-8 px-3 text-xs text-red-500 hover:text-red-700 hover:bg-red-50"
                                                             onClick={() => deleteProduct(product.id)}
                                                         >
-                                                            <Trash2 className="w-3 h-3" />
+                                                            <Trash2 className="w-3 h-3 mr-1" />
+                                                            Borrar
                                                         </Button>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })
-                )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
             </CardContent>
         </Card>
 

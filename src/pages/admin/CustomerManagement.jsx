@@ -173,17 +173,19 @@ export function CustomerManagement() {
     {
       label: "Nuevo Cliente",
       variant: "empanada",
+      className: "h-9 px-4 text-sm font-medium",
       onClick: handleAddCustomer,
       icon: <Plus className="w-4 h-4 mr-2" />
     },
     {
       label: "Actualizar",
+      variant: "outline",
+      className: "h-9 px-4 text-sm font-medium",
       onClick: () => {
         toast.info("Actualizando clientes...");
         // Aquí se llamaría a la función de actualización
       },
-      className: "h-8 px-3 text-xs",
-      icon: <RefreshCw className="w-3 h-3 mr-1" />
+      icon: <RefreshCw className="w-4 h-4 mr-2" />
     }
   ];
 

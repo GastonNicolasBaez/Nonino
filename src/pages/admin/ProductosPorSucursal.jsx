@@ -49,10 +49,11 @@ export function ProductosPorSucursal() {
     const headerActions = [
         {
             label: "Actualizar",
+            variant: "outline",
             onClick: () => getStoreProducts(selectedStore),
             disabled: !selectedStore || adminDataLoading,
-            className: "h-8 px-3 text-xs",
-            icon: <RefreshCw className={`w-3 h-3 mr-1 ${adminDataLoading ? 'animate-spin' : ''}`} />
+            className: "h-9 px-4 text-sm font-medium",
+            icon: <RefreshCw className={`w-4 h-4 mr-2 ${adminDataLoading ? 'animate-spin' : ''}`} />
         }
     ];
 

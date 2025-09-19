@@ -193,12 +193,18 @@ export function AdminLogin() {
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-empanada-dark flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <Card className="shadow-2xl border-0">
-                    <CardHeader className="text-center bg-gradient-to-r from-empanada-golden to-empanada-crust text-white rounded-t-lg">
-                        <div className="flex items-center justify-center mb-4">
-                            <Shield className="w-12 h-12" />
+                    <CardHeader className="text-center bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800 text-white rounded-t-lg relative overflow-hidden">
+                        {/* Efecto de brillo sutil */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full animate-pulse"></div>
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-center mb-4">
+                                <div className="p-3 bg-white/20 rounded-full backdrop-blur-sm">
+                                    <Shield className="w-12 h-12 drop-shadow-lg" />
+                                </div>
+                            </div>
+                            <CardTitle className="text-2xl font-bold drop-shadow-md">Panel de Administración</CardTitle>
+                            <p className="text-white/90 text-lg font-medium drop-shadow-sm">Nonino Empanadas</p>
                         </div>
-                        <CardTitle className="text-2xl font-bold">Panel de Administración</CardTitle>
-                        <p className="text-white/90">Nonino Empanadas</p>
                     </CardHeader>
 
                     <CardContent className="p-8">

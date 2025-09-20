@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useState, useEffect, useContext, createContext } from 'react'
 import { useMutation } from '@tanstack/react-query';
@@ -7,12 +8,15 @@ import {
     postAdminCatalogAddProductQueryFunction,
     deleteAdminCatalogDeleteProductQueryFunction,
     updateAdminCatalogUpdateProductQueryFunction,
-
-    getAdminStoresQueryFunction,
-    getPublicDataQueryFunction,
     postAdminCatalogAsignarASucursalQueryFunction,
-
-} from '@/config/apiQueryFunctions';
+} from '@/config/apiCatalogQueryFunctions';
+import {
+    getAdminStoresQueryFunction,
+    postAdminStoresAddStoreQueryFunction,
+} from '@/config/apiStoresQueryFunctions';
+import {
+    getPublicDataQueryFunction
+} from '@/config/apiPublicQueryFunctions';
 
 import { useSession } from '@/context/SessionProvider';
 
@@ -174,6 +178,10 @@ export const AdminDataProvider = ({ children }) => {
     });
 
     // crear
+    const { mutateAsync: callCrearSucursal, isPending: callCrearSucursalLoading } = useMutation({
+        mutationKey: ['adminCrearSucursal'],
+        mutationFn: postAdminStoresAddStoreQueryFunction,
+    });
 
     // modificar
 
@@ -192,7 +200,8 @@ export const AdminDataProvider = ({ children }) => {
         callModificarProductoLoading ||
         callSucursalesLoading ||
         callProductosYCategoriasSucursalLoading ||
-        callAsignarASucursalLoading;
+        callAsignarASucursalLoading ||
+        callCrearSucursalLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -211,7 +220,8 @@ export const AdminDataProvider = ({ children }) => {
             callModificarProducto,
             callSucursales,
             callProductosYCategoriasSucursal,
-            callAsignarASucursal
+            callAsignarASucursal,
+            callCrearSucursal
         }}>
             {children}
         </AdminDataContext.Provider>

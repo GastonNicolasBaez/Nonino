@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import {
     getLoginQueryFunction,
     getRefreshQueryFunction
-} from "@/config/apiQueryFunctions";
+} from "@/config/apiLoginQueryFunctions";
 //import { toast } from "react-toastify";
 
 const sucursalAsignada = {

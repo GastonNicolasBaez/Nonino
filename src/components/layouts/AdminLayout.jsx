@@ -62,7 +62,7 @@ const AdminLayout = () => {
         },
         ...(sucursales?.map(store => ({
             value: store.id,
-            label: `${store.name} - ${store.address}`
+            label: `${store.name}`
         })) || [])
     ];
     const { toggleTheme, isDark } = useTheme();
@@ -109,8 +109,8 @@ const AdminLayout = () => {
             icon: Package,
             hasDropdown: true,
             dropdownItems: [
-                { name: "Gestión de Productos", href: "/intranet/admin/productos", icon: Package },
-                { name: "Productos por Sucursal", href: "/intranet/admin/productos-sucursal", icon: Building2 }
+                { name: "Gestionar", href: "/intranet/admin/productos", icon: Package },
+                { name: "Menú", href: "/intranet/admin/productos-sucursal", icon: Building2 }
             ]
         },
         { name: "Inventario", href: "/intranet/admin/inventario", icon: Archive },

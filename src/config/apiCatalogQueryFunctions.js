@@ -1,44 +1,7 @@
 import axios from "axios";
 
-// PUBLIC DATA
+const url = 'https://nonino-catalog.fly.dev';
 
-export const getPublicDataQueryFunction = async (_idSucursal) => {
-    const response = await axios.get(`https://nonino-catalog.fly.dev/public/catalog/stores/${_idSucursal}/menu`);
-    return await response.data;
-}
-
-export const getLoginQueryFunction = async (_credentials) => {
-    const axiosSetup = {
-        axiosData: _credentials,
-        axiosConfig: {
-            headers: {
-                "Content-Type": "application/json"
-            },
-            withCredentials: true,
-        }
-    }
-
-    const response = await axios.post(`https://nonino-auth.fly.dev/auth/login`, axiosSetup.axiosData, axiosSetup.axiosConfig);
-    return await response.data;
-}
-
-export const getRefreshQueryFunction = async (_csrfToken) => {
-    const axiosSetup = {
-        axiosData: null,
-        axiosConfig: {
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token": _csrfToken,
-            },
-            withCredentials: true
-        }
-    }
-
-    const response = await axios.post(`https://nonino-auth.fly.dev/auth/refresh`, axiosSetup.axiosData, axiosSetup.axiosConfig);
-    return await response.data;
-}
-
-// ADMIN DATA
 // traer todos los productos
 export const getAdminCatalogProductosYCategoriasQueryFunction = async (_accessToken) => {
     const axiosSetup = {
@@ -51,7 +14,7 @@ export const getAdminCatalogProductosYCategoriasQueryFunction = async (_accessTo
         }
     }
 
-    const response = await axios.get(`https://nonino-catalog.fly.dev/admin/products`, axiosSetup.axiosConfig);
+    const response = await axios.get(`${url}/admin/products`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -67,7 +30,7 @@ export const postAdminCatalogAddProductQueryFunction = async ({_producto, _acces
         }
     }
 
-    const response = await axios.post(`https://nonino-catalog.fly.dev/admin/products`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${url}/admin/products`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -83,7 +46,7 @@ export const deleteAdminCatalogDeleteProductQueryFunction = async ({_id, _access
         }
     }
 
-    const response = await axios.delete(`https://nonino-catalog.fly.dev/admin/products/${_id}`, axiosSetup.axiosConfig);
+    const response = await axios.delete(`${url}/admin/products/${_id}`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -99,7 +62,7 @@ export const deleteAdminCatalogDeleteProductImageQueryFunction = async ({_id, _a
         }
     }
 
-    const response = await axios.delete(`https://nonino-catalog.fly.dev/admin/products/${_id}/image`, axiosSetup.axiosConfig);
+    const response = await axios.delete(`${url}/admin/products/${_id}/image`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -117,7 +80,7 @@ export const postAdminCatalogAddProductImageQueryFunction = async ({_producto, _
         }
     }
 
-    const response = await axios.post(`https://nonino-catalog.fly.dev/admin/products/${_producto.id}/image`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${url}/admin/products/${_producto.id}/image`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -133,34 +96,9 @@ export const updateAdminCatalogUpdateProductQueryFunction = async ({_producto, _
         }
     }
 
-    const response = await axios.put(`https://nonino-catalog.fly.dev/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.put(`${url}/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
-
-// get sucursales
-
-export const getAdminStoresQueryFunction = async (_accessToken) => {
-    const axiosSetup = {
-        axiosData: null,
-        axiosConfig: {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${_accessToken}`,
-            }
-        }
-    }
-
-    // const response = await axios.put(`https://nonino-catalog.fly.dev/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
-    // return await response.data;
-
-    const mockStores = [
-                { id: "1", name: "Sucursal Centro", address: "Av. Corrientes 1234", status: "active" },
-                { id: "2", name: "SUC PRUEBA NO USAR", address: "Av. Norte 8282", status: "active" },
-            ];
-
-    return mockStores;
-}
-
 
 // publicar para sucursal
 export const postAdminCatalogAsignarASucursalQueryFunction = async ({_productosCombos, _idSucursal, _accessToken}) => {
@@ -174,6 +112,6 @@ export const postAdminCatalogAsignarASucursalQueryFunction = async ({_productosC
         }
     }
 
-    const response = await axios.post(`https://nonino-catalog.fly.dev/admin/publish/${_idSucursal}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${url}/admin/publish/${_idSucursal}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }

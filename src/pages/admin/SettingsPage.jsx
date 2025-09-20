@@ -263,7 +263,6 @@ export function SettingsPage() {
 
   const addStore = () => {
     const newStore = {
-      id: Date.now(),
       name: "",
       address: "",
       phone: "",

@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState, useContext, createContext } from 'react'
 import { useQuery } from '@tanstack/react-query';
-import { getPublicDataQueryFunction } from '@/config/apiQueryFunctions';
+import { getPublicDataQueryFunction } from '@/config/apiPublicQueryFunctions';
 
 const PublicDataContext = createContext();
 

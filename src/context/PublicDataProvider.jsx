@@ -33,21 +33,6 @@ export const PublicDataProvider = ({ children }) => {
                     category: categoria.id,
                     price: producto.price,
                     image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
-                    // mockdata
-                    stock: 45,
-                    isPopular: true,
-                    isAvailable: true,
-                    sku: "EMP-CARNE-001",
-                    status: "active",
-                    allergens: ["gluten"],
-                    nutritionalInfo: {
-                        calories: 280,
-                        protein: 12,
-                        carbs: 35,
-                        fat: 8
-                    },
-                    createdAt: "2024-01-01T00:00:00Z",
-                    updatedAt: "2024-01-15T00:00:00Z"
                 })));
 
             setCategorias(gotCategories);

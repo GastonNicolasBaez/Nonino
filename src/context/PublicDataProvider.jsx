@@ -2,8 +2,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useState, useContext, createContext } from 'react'
-import { useQuery } from '@tanstack/react-query';
-import { getPublicDataQueryFunction } from '@/config/apiPublicQueryFunctions';
+import { useMutation } from '@tanstack/react-query';
+import {
+    getPublicCatalogQueryFunction,
+    getPublicStoresQueryFunction,
+} from '@/config/apiPublicQueryFunctions';
 
 const PublicDataContext = createContext();
 
@@ -11,21 +14,32 @@ export const PublicDataProvider = ({ children }) => {
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
-    const [idSucursal, setIdSucursal] = useState(1);
+    const [sucursales, setSucursales] = useState([]);
+    const [sucursalSeleccionada, setSucursalSeleccionada] = useState();
 
-    const { data: publicCatalog, isPending: publicLoading } = useQuery({
-        queryKey: ['publicData', idSucursal],
-        queryFn: () => getPublicDataQueryFunction(idSucursal),
+    // sucursales
+    const { mutateAsync: callPublicStores, isPending: callPublicStoresLoading } = useMutation({
+        mutationKey: ['publicStores'],
+        mutationFn: getPublicStoresQueryFunction,
+        onSuccess: (data) => {
+            setSucursales(data);
+        },
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
-    useEffect(() => {
-        if (publicCatalog && !publicLoading) {
-            const gotCategories = publicCatalog.categories.map((categoria) => ({
+    // catalogo
+    const { mutateAsync: callPublicCatalog, isPending: callPublicCatalogLoading } = useMutation({
+        mutationKey: ['publicCatalog'],
+        mutationFn: getPublicCatalogQueryFunction,
+        onSuccess: (data) => {
+            const gotCategories = data.categories.map((categoria) => ({
                 id: categoria.id,
                 name: categoria.name
             }));
 
-            const gotProducts = publicCatalog.categories.flatMap(categoria =>
+            const gotProducts = data.categories.flatMap(categoria =>
                 categoria.products.map((producto) => ({
                     id: producto.productId,
                     name: producto.name,
@@ -37,12 +51,38 @@ export const PublicDataProvider = ({ children }) => {
 
             setCategorias(gotCategories);
             setProductos(gotProducts);
+        },
+        onError: (error) => {
+            console.log(error);
+            setCategorias([]);
+            setProductos([]);
         }
-    }, [publicCatalog])
+    });
 
+    useEffect(() => {
+        if (sucursalSeleccionada) {
+            callPublicCatalog(sucursalSeleccionada);
+        }
+    }, [sucursalSeleccionada]);
+
+    useEffect(() => {
+        callPublicStores();
+    }, []);
+
+    const publicDataLoading =
+        callPublicCatalogLoading ||
+        callPublicStoresLoading;
 
     return (
-        <PublicDataContext.Provider value={{ productos, categorias, publicLoading }}>
+        <PublicDataContext.Provider value={{
+            productos,
+            categorias,
+            sucursales,
+            sucursalSeleccionada,
+            setSucursalSeleccionada,
+
+            publicDataLoading,
+        }}>
             {children}
         </PublicDataContext.Provider>
     )

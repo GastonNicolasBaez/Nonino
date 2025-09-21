@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const url = 'https://nonino-auth.fly.dev';
+import { ENDPOINTS } from "@/config/apiEndpoints";
 
 export const getLoginQueryFunction = async (_credentials) => {
     const axiosSetup = {
@@ -13,7 +12,7 @@ export const getLoginQueryFunction = async (_credentials) => {
         }
     }
 
-    const response = await axios.post(`${url}/auth/login`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${ENDPOINTS.auth}/auth/login`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -29,6 +28,6 @@ export const getRefreshQueryFunction = async (_csrfToken) => {
         }
     }
 
-    const response = await axios.post(`${url}/auth/refresh`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${ENDPOINTS.auth}/auth/refresh`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }

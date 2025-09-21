@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const url = 'https://nonino-catalog.fly.dev';
+import { ENDPOINTS } from "@/config/apiEndpoints";
 
 // traer todos los productos
 export const getAdminCatalogProductosYCategoriasQueryFunction = async (_accessToken) => {
@@ -14,7 +13,7 @@ export const getAdminCatalogProductosYCategoriasQueryFunction = async (_accessTo
         }
     }
 
-    const response = await axios.get(`${url}/admin/products`, axiosSetup.axiosConfig);
+    const response = await axios.get(`${ENDPOINTS.catalog}/admin/products`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -30,7 +29,7 @@ export const postAdminCatalogAddProductQueryFunction = async ({_producto, _acces
         }
     }
 
-    const response = await axios.post(`${url}/admin/products`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${ENDPOINTS.catalog}/admin/products`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -46,7 +45,7 @@ export const deleteAdminCatalogDeleteProductQueryFunction = async ({_id, _access
         }
     }
 
-    const response = await axios.delete(`${url}/admin/products/${_id}`, axiosSetup.axiosConfig);
+    const response = await axios.delete(`${ENDPOINTS.catalog}/admin/products/${_id}`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -62,7 +61,7 @@ export const deleteAdminCatalogDeleteProductImageQueryFunction = async ({_id, _a
         }
     }
 
-    const response = await axios.delete(`${url}/admin/products/${_id}/image`, axiosSetup.axiosConfig);
+    const response = await axios.delete(`${ENDPOINTS.catalog}/admin/products/${_id}/image`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -80,7 +79,7 @@ export const postAdminCatalogAddProductImageQueryFunction = async ({_producto, _
         }
     }
 
-    const response = await axios.post(`${url}/admin/products/${_producto.id}/image`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${ENDPOINTS.catalog}/admin/products/${_producto.id}/image`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -96,7 +95,7 @@ export const updateAdminCatalogUpdateProductQueryFunction = async ({_producto, _
         }
     }
 
-    const response = await axios.put(`${url}/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.put(`${ENDPOINTS.catalog}/admin/products/${_producto.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -112,6 +111,6 @@ export const postAdminCatalogAsignarASucursalQueryFunction = async ({_productosC
         }
     }
 
-    const response = await axios.post(`${url}/admin/publish/${_idSucursal}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${ENDPOINTS.catalog}/admin/publish/${_idSucursal}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }

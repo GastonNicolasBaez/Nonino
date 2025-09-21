@@ -15,7 +15,7 @@ import {
     postAdminStoresAddStoreQueryFunction,
 } from '@/config/apiStoresQueryFunctions';
 import {
-    getPublicDataQueryFunction
+    getPublicCatalogQueryFunction
 } from '@/config/apiPublicQueryFunctions';
 
 import { useSession } from '@/context/SessionProvider';
@@ -47,7 +47,7 @@ export const AdminDataProvider = ({ children }) => {
     // listar
     const { mutateAsync: callProductosYCategoriasSucursal, isPending: callProductosYCategoriasSucursalLoading } = useMutation({
         mutationKey: ['publicProductosYCategoriasSucursal'],
-        mutationFn: getPublicDataQueryFunction,
+        mutationFn: getPublicCatalogQueryFunction,
         onSuccess: (data) => {
             const gotProducts = data.categories.flatMap(categoria =>
                 categoria.products.map((producto) => ({
@@ -101,20 +101,6 @@ export const AdminDataProvider = ({ children }) => {
                 imageUrl: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
                 isAvailable: producto.active,
                 sku: producto.sku,
-                cost: 0,
-                stock: 45,
-                // mockdata
-                isPopular: true,
-                status: "active",
-                allergens: ["gluten"],
-                nutritionalInfo: {
-                    calories: 280,
-                    protein: 12,
-                    carbs: 35,
-                    fat: 8
-                },
-                createdAt: "2024-01-01T00:00:00Z",
-                updatedAt: "2024-01-15T00:00:00Z"
             }));
 
             const categoryMap = new Map();

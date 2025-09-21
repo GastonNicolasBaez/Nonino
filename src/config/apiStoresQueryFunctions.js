@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const url = 'https://nonino-store.fly.dev';
+import { ENDPOINTS } from "@/config/apiEndpoints";
 
 // get sucursales
 
@@ -15,7 +14,7 @@ export const getAdminStoresQueryFunction = async (_accessToken) => {
         }
     }
 
-    const response = await axios.get(`${url}/admin/stores`, axiosSetup.axiosConfig);
+    const response = await axios.get(`${ENDPOINTS.stores}/admin/stores`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -31,6 +30,8 @@ export const postAdminStoresAddStoreQueryFunction = async ({_store, _accessToken
         }
     }
 
-    const response = await axios.post(`${url}/admin/store`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    console.log(axiosSetup);
+
+    const response = await axios.post(`${ENDPOINTS.stores}/admin/stores`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }

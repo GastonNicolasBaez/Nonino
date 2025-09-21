@@ -205,7 +205,11 @@ const AdminLayout = () => {
                 {/* Desktop Navigation */}
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                     
-                    {(sucursales.length > 1) ? (                        
+                    {(session.userData.sucursalAsignada) ? (          
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
+                            {sucursales[0]?.name}
+                        </span>                        
+                    ) : (
                         <CustomSelect
                             value={sucursalSeleccionada}
                             onChange={setSucursalSeleccionada}
@@ -213,12 +217,7 @@ const AdminLayout = () => {
                             placeholder="Selecciona una sucursal"
                             disabled={adminDataLoading}
                         />
-                    ) : (
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
-                            {sucursales[0]?.name}
-                        </span>
                     )}
-
 
                     {navigationItems.map((item) => (
                         <div key={item.name}>
@@ -405,7 +404,11 @@ const AdminLayout = () => {
 
                 {/* Navigation */}
                 <nav className="p-4 space-y-2 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-                    {(sucursales.length > 1) ? (
+                    {(session.userData.sucursalAsignada) ? (          
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
+                            {sucursales[0]?.name}
+                        </span>                        
+                    ) : (
                         <CustomSelect
                             value={sucursalSeleccionada}
                             onChange={setSucursalSeleccionada}
@@ -413,10 +416,6 @@ const AdminLayout = () => {
                             placeholder="Selecciona una sucursal"
                             disabled={adminDataLoading}
                         />
-                    ) : (
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
-                            {sucursales[0]?.name}
-                        </span>
                     )}
 
                     {navigationItems.map((item) => (

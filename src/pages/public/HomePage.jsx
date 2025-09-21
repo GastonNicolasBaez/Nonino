@@ -16,7 +16,7 @@ import { usePublicData } from "@/context/PublicDataProvider";
 
 export function HomePage() {
 
-    const { productos, publicLoading: loading } = usePublicData();
+    const { productos, publicDataLoading: loading } = usePublicData();
 
     const [promotions, setPromotions] = useState([]);
 

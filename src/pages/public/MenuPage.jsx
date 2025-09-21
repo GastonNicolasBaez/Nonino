@@ -12,7 +12,11 @@ import { usePublicData } from "@/context/PublicDataProvider";
 
 export function MenuPage() {
 
-    const { productos: products, categorias: categories, publicLoading: loading } = usePublicData();
+    const {
+        productos: products,
+        categorias: categories,
+        publicDataLoading: loading
+    } = usePublicData();
 
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");

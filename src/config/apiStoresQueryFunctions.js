@@ -35,3 +35,21 @@ export const postAdminStoresAddStoreQueryFunction = async ({_store, _accessToken
     const response = await axios.post(`${ENDPOINTS.stores}/admin/stores`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
+
+// crear sucursal
+export const putAdminStoresUpdateStoreQueryFunction = async ({_store, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _store,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    console.log(axiosSetup);
+
+    const response = await axios.put(`${ENDPOINTS.stores}/admin/stores`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}

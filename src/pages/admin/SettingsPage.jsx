@@ -38,10 +38,13 @@ import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfSe
 import { toast } from "sonner";
 import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
 import { useAdminData } from "@/context/AdminDataProvider";
+import { AddStoreModal } from "../../components/admin/AddStoreModal";
 
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(false);
+  const [isAddStoreModalOpen, setIsAddStoreModalOpen] = useState(false);
+  const [isAddingStore, setIsAddingStore] = useState(false);
   
   // Obtener datos del AdminDataProvider
   const {
@@ -262,29 +265,61 @@ export function SettingsPage() {
   };
 
   const addStore = () => {
-    const newStore = {
-      name: "",
-      address: "",
-      phone: "",
-      coordinates: { lat: 0, lng: 0 },
-      hours: {
-        monday: { open: "09:00", close: "22:00" },
-        tuesday: { open: "09:00", close: "22:00" },
-        wednesday: { open: "09:00", close: "22:00" },
-        thursday: { open: "09:00", close: "22:00" },
-        friday: { open: "09:00", close: "23:00" },
-        saturday: { open: "10:00", close: "23:00" },
-        sunday: { open: "10:00", close: "21:00" }
-      },
-      deliveryTime: "30-45 min",
-      minOrder: 2000,
-      rating: 4.5,
-      isOpen: true
-    };
-    setSettings(prev => ({
-      ...prev,
-      stores: [...prev.stores, newStore]
-    }));
+    setIsAddStoreModalOpen(true);
+  };
+
+  const handleSaveStore = async (storeData) => {
+    setIsAddingStore(true);
+    
+    try {
+      // Simular llamada a API
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Generar ID único para el nuevo local
+      const newStoreId = Math.max(...settings.stores.map(s => s.id), 0) + 1;
+      
+      const newStore = {
+        id: newStoreId,
+        name: storeData.name,
+        type: storeData.type,
+        address: `${storeData.street} ${storeData.number}, ${storeData.barrio}`,
+        phone: "", // Se puede agregar después
+        coordinates: { 
+          lat: storeData.lat, 
+          lng: storeData.lng 
+        },
+        hours: {
+          monday: { open: "09:00", close: "22:00" },
+          tuesday: { open: "09:00", close: "22:00" },
+          wednesday: { open: "09:00", close: "22:00" },
+          thursday: { open: "09:00", close: "22:00" },
+          friday: { open: "09:00", close: "23:00" },
+          saturday: { open: "10:00", close: "23:00" },
+          sunday: { open: "10:00", close: "21:00" }
+        },
+        deliveryTime: "30-45 min",
+        minOrder: 2000,
+        rating: 4.5,
+        isOpen: true,
+        supportsPickup: storeData.supportsPickup,
+        supportsDelivery: storeData.supportsDelivery,
+        timezone: storeData.timezone
+      };
+      
+      setSettings(prev => ({
+        ...prev,
+        stores: [...prev.stores, newStore]
+      }));
+      
+      toast.success(`Local "${storeData.name}" agregado correctamente`);
+      setIsAddStoreModalOpen(false);
+      
+    } catch (error) {
+      console.error('Error al agregar local:', error);
+      toast.error('Error al agregar el local. Inténtalo de nuevo.');
+    } finally {
+      setIsAddingStore(false);
+    }
   };
 
   const updateStore = (storeId, key, value) => {
@@ -1504,6 +1539,14 @@ export function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal para agregar locales */}
+      <AddStoreModal
+        isOpen={isAddStoreModalOpen}
+        onClose={() => setIsAddStoreModalOpen(false)}
+        onSave={handleSaveStore}
+        isLoading={isAddingStore}
+      />
     </div>
   );
 }

@@ -142,11 +142,11 @@ const AdminLayout = () => {
     const isItemActive = (item) => {
         if (item.hasDropdown) {
             if (item.name === "Productos") {
-                // Para productos: activo si el dropdown está abierto O si estás en una subsección
-                return productsDropdownOpen || location.pathname.includes('/productos');
+                // Para productos: activo solo si el dropdown está abierto
+                return productsDropdownOpen;
             } else if (item.name === "Sucursal") {
-                // Para sucursal: activo si el dropdown está abierto O si estás en una subsección
-                return branchesDropdownOpen || location.pathname.includes('/sucursal');
+                // Para sucursal: activo solo si el dropdown está abierto
+                return branchesDropdownOpen;
             }
         } else {
             // Para otros items: activo si la ruta coincide exactamente
@@ -252,8 +252,10 @@ const AdminLayout = () => {
                                         onClick={() => {
                                             if (item.name === "Productos") {
                                                 setProductsDropdownOpen(!productsDropdownOpen);
+                                                setBranchesDropdownOpen(false); // Cerrar el otro dropdown
                                             } else if (item.name === "Sucursal") {
                                                 setBranchesDropdownOpen(!branchesDropdownOpen);
+                                                setProductsDropdownOpen(false); // Cerrar el otro dropdown
                                             }
                                         }}
                                         className={`w-full flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item)
@@ -317,6 +319,11 @@ const AdminLayout = () => {
                             ) : (
                                 <Link
                                     to={item.href}
+                                    onClick={() => {
+                                        // Cerrar dropdowns cuando hacemos click en otros elementos
+                                        setProductsDropdownOpen(false);
+                                        setBranchesDropdownOpen(false);
+                                    }}
                                     className={`relative flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item) && !shouldDeactivateOthers()
                                         ? "bg-empanada-golden text-white active"
                                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -459,8 +466,10 @@ const AdminLayout = () => {
                                         onClick={() => {
                                             if (item.name === "Productos") {
                                                 setProductsDropdownOpen(!productsDropdownOpen);
+                                                setBranchesDropdownOpen(false); // Cerrar el otro dropdown
                                             } else if (item.name === "Sucursal") {
                                                 setBranchesDropdownOpen(!branchesDropdownOpen);
+                                                setProductsDropdownOpen(false); // Cerrar el otro dropdown
                                             }
                                         }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item)
@@ -515,7 +524,12 @@ const AdminLayout = () => {
                             ) : (
                                 <Link
                                     to={item.href}
-                                    onClick={() => setSidebarOpen(false)}
+                                    onClick={() => {
+                                        setSidebarOpen(false);
+                                        // Cerrar dropdowns cuando hacemos click en otros elementos
+                                        setProductsDropdownOpen(false);
+                                        setBranchesDropdownOpen(false);
+                                    }}
                                     className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item) && !shouldDeactivateOthers()
                                         ? "bg-empanada-golden text-white"
                                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"

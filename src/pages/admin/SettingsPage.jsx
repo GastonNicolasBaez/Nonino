@@ -52,6 +52,7 @@ export function SettingsPage() {
         sucursalSeleccionada: selectedStore,
         adminDataLoading: loading,
         callCrearSucursal,
+        callActualizarSucursal,
         callSucursales,
     } = useAdminData();
 
@@ -119,48 +120,6 @@ export function SettingsPage() {
             ipWhitelist: false,
             auditLogs: true
         },
-        stores: [
-            {
-                id: 1,
-                name: "Nonino Empanadas - Centro",
-                address: "Av. San Martín 123, Centro, CABA",
-                phone: "+54 11 1234-5678",
-                coordinates: { lat: -34.6037, lng: -58.3816 },
-                hours: {
-                    monday: { open: "09:00", close: "22:00" },
-                    tuesday: { open: "09:00", close: "22:00" },
-                    wednesday: { open: "09:00", close: "22:00" },
-                    thursday: { open: "09:00", close: "22:00" },
-                    friday: { open: "09:00", close: "23:00" },
-                    saturday: { open: "10:00", close: "23:00" },
-                    sunday: { open: "10:00", close: "21:00" }
-                },
-                deliveryTime: "30-45 min",
-                minOrder: 2000,
-                rating: 4.8,
-                isOpen: true
-            },
-            {
-                id: 2,
-                name: "Nonino Empanadas - Norte",
-                address: "Av. Santa Fe 456, Palermo, CABA",
-                phone: "+54 11 2345-6789",
-                coordinates: { lat: -34.5889, lng: -58.3974 },
-                hours: {
-                    monday: { open: "09:00", close: "22:00" },
-                    tuesday: { open: "09:00", close: "22:00" },
-                    wednesday: { open: "09:00", close: "22:00" },
-                    thursday: { open: "09:00", close: "22:00" },
-                    friday: { open: "09:00", close: "23:00" },
-                    saturday: { open: "10:00", close: "23:00" },
-                    sunday: { open: "10:00", close: "21:00" }
-                },
-                deliveryTime: "25-40 min",
-                minOrder: 1800,
-                rating: 4.9,
-                isOpen: true
-            }
-        ],
         promotions: [
             {
                 id: 1,
@@ -270,21 +229,6 @@ export function SettingsPage() {
         }
     };
 
-    const updateStore = (storeId, key, value) => {
-        setSettings(prev => ({
-            ...prev,
-            stores: prev.stores.map(store =>
-                store.id === storeId ? { ...store, [key]: value } : store
-            )
-        }));
-    };
-
-    const deleteStore = (storeId) => {
-        setSettings(prev => ({
-            ...prev,
-            stores: prev.stores.filter(store => store.id !== storeId)
-        }));
-    };
 
     const addPromotion = () => {
         const newPromotion = {
@@ -896,7 +840,7 @@ export function SettingsPage() {
         // Si hay una sucursal seleccionada, mostrar solo esa sucursal
         const storesToShow = selectedStore
             ? stores.filter(store => store.id === selectedStore)
-            : settings.stores;
+            : stores;
 
         return (
             <div className="space-y-6">
@@ -930,103 +874,167 @@ export function SettingsPage() {
                             </div>
                         ) : (
                             storesToShow.map((store) => (
-                                <Card key={store.id} className="border-2">
-                                    <CardContent className="p-4">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <h3 className="text-lg font-semibold">{store.name || "Nuevo Local"}</h3>
-                                            <div className="flex gap-2">
-                                                <Button variant="outline" size="sm">
-                                                    <Edit className="w-4 h-4" />
-                                                </Button>
-                                                {!selectedStore && (
-                                                    <Button variant="outline" size="sm" onClick={() => deleteStore(store.id)}>
-                                                        <Trash className="w-4 h-4" />
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium mb-1">Nombre del Local</label>
-                                                <Input
-                                                    value={store.name || ''}
-                                                    onChange={(e) => updateStore(store.id, "name", e.target.value)}
-                                                    placeholder="Ej: Nonino Empanadas - Centro"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-1">Teléfono</label>
-                                                <Input
-                                                    value={store.phone || ''}
-                                                    onChange={(e) => updateStore(store.id, "phone", e.target.value)}
-                                                    placeholder="+54 11 1234-5678"
-                                                />
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium mb-1">Dirección</label>
-                                                <Input
-                                                    value={store.address || ''}
-                                                    onChange={(e) => updateStore(store.id, "address", e.target.value)}
-                                                    placeholder="Dirección completa del local"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-1">Tiempo de Delivery</label>
-                                                <Input
-                                                    value={store.deliveryTime || ''}
-                                                    onChange={(e) => updateStore(store.id, "deliveryTime", e.target.value)}
-                                                    placeholder="30-45 min"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-1">Pedido Mínimo</label>
-                                                <Input
-                                                    type="number"
-                                                    value={store.minOrder || ''}
-                                                    onChange={(e) => updateStore(store.id, "minOrder", Number(e.target.value))}
-                                                    placeholder="2000"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-1">Latitud</label>
-                                                <Input
-                                                    type="number"
-                                                    step="any"
-                                                    value={store.coordinates?.lat || ''}
-                                                    onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lat: Number(e.target.value) })}
-                                                    placeholder="-34.6037"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-1">Longitud</label>
-                                                <Input
-                                                    type="number"
-                                                    step="any"
-                                                    value={store.coordinates?.lng || ''}
-                                                    onChange={(e) => updateStore(store.id, "coordinates", { ...store.coordinates, lng: Number(e.target.value) })}
-                                                    placeholder="-58.3816"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-4">
-                                            <label className="flex items-center gap-2">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={store.isOpen || false}
-                                                    onChange={(e) => updateStore(store.id, "isOpen", e.target.checked)}
-                                                />
-                                                <span className="text-sm">Local abierto</span>
-                                            </label>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                <StoreConfigForm key={store.id} store={store} />
                             ))
                         )}
                     </CardContent>
                 </Card>
             </div>
+        );
+    };
+
+    // Componente separado para el formulario de configuración de cada local
+    const StoreConfigForm = ({ store }) => {
+        const [localStore, setLocalStore] = useState(store);
+        const [isUpdating, setIsUpdating] = useState(false);
+
+        // Actualizar el estado local cuando cambie el store prop
+        useEffect(() => {
+            setLocalStore(store);
+        }, [store]);
+
+        const handleInputChange = (field, value) => {
+            setLocalStore(prev => ({
+                ...prev,
+                [field]: value
+            }));
+        };
+
+        const handleCoordinatesChange = (coord, value) => {
+            setLocalStore(prev => ({
+                ...prev,
+                coordinates: {
+                    ...prev.coordinates,
+                    [coord]: Number(value)
+                }
+            }));
+        };
+
+        // Función para guardar cambios en el servidor
+        const handleSaveChanges = async () => {
+            setIsUpdating(true);
+            try {
+                await callActualizarSucursal({
+                    _store: localStore,
+                    _accessToken: session.userData.accessToken,
+                });
+                toast.success("Cambios guardados correctamente");
+                // Recargar la lista de sucursales
+                await callSucursales(session.userData.accessToken);
+            } catch (error) {
+                console.error('Error al actualizar sucursal:', error);
+                toast.error('Error al guardar los cambios');
+            } finally {
+                setIsUpdating(false);
+            }
+        };
+
+        return (
+            <Card className="border-2">
+                <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-lg font-semibold">{localStore.name || "Nuevo Local"}</h3>
+                        <div className="flex gap-2">
+                            <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={handleSaveChanges}
+                                disabled={isUpdating}
+                            >
+                                {isUpdating ? (
+                                    <RefreshCw className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <Save className="w-4 h-4" />
+                                )}
+                                {isUpdating ? "Guardando..." : "Guardar"}
+                            </Button>
+                            {!selectedStore && (
+                                <Button variant="outline" size="sm" onClick={() => {
+                                    // TODO: Implementar eliminación de sucursal desde AdminDataProvider
+                                    toast.info("Funcionalidad de eliminación próximamente");
+                                }}>
+                                    <Trash className="w-4 h-4" />
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Nombre del Local</label>
+                            <Input
+                                value={localStore.name || ''}
+                                onChange={(e) => handleInputChange("name", e.target.value)}
+                                placeholder="Ej: Nonino Empanadas - Centro"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Teléfono</label>
+                            <Input
+                                value={localStore.phone || ''}
+                                onChange={(e) => handleInputChange("phone", e.target.value)}
+                                placeholder="+54 11 1234-5678"
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium mb-1">Dirección</label>
+                            <Input
+                                value={localStore.address || ''}
+                                onChange={(e) => handleInputChange("address", e.target.value)}
+                                placeholder="Dirección completa del local"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Tiempo de Delivery</label>
+                            <Input
+                                value={localStore.deliveryTime || ''}
+                                onChange={(e) => handleInputChange("deliveryTime", e.target.value)}
+                                placeholder="30-45 min"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Pedido Mínimo</label>
+                            <Input
+                                type="number"
+                                value={localStore.minOrder || ''}
+                                onChange={(e) => handleInputChange("minOrder", Number(e.target.value))}
+                                placeholder="2000"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Latitud</label>
+                            <Input
+                                type="number"
+                                step="any"
+                                value={localStore.coordinates?.lat || ''}
+                                onChange={(e) => handleCoordinatesChange("lat", e.target.value)}
+                                placeholder="-34.6037"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Longitud</label>
+                            <Input
+                                type="number"
+                                step="any"
+                                value={localStore.coordinates?.lng || ''}
+                                onChange={(e) => handleCoordinatesChange("lng", e.target.value)}
+                                placeholder="-58.3816"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mt-4">
+                        <label className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                checked={localStore.isOpen || false}
+                                onChange={(e) => handleInputChange("isOpen", e.target.checked)}
+                            />
+                            <span className="text-sm">Local abierto</span>
+                        </label>
+                    </div>
+                </CardContent>
+            </Card>
         );
     };
 

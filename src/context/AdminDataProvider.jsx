@@ -13,6 +13,7 @@ import {
 import {
     getAdminStoresQueryFunction,
     postAdminStoresAddStoreQueryFunction,
+    putAdminStoresUpdateStoreQueryFunction,
 } from '@/config/apiStoresQueryFunctions';
 import {
     getPublicCatalogQueryFunction
@@ -155,6 +156,10 @@ export const AdminDataProvider = ({ children }) => {
     });
 
     // modificar
+    const { mutateAsync: callActualizarSucursal, isPending: callActualizarSucursalLoading } = useMutation({
+        mutationKey: ['adminActualizarSucursal'],
+        mutationFn: putAdminStoresUpdateStoreQueryFunction,
+    });
 
     // eliminar
 
@@ -172,7 +177,8 @@ export const AdminDataProvider = ({ children }) => {
         callSucursalesLoading ||
         callProductosYCategoriasSucursalLoading ||
         callAsignarASucursalLoading ||
-        callCrearSucursalLoading;
+        callCrearSucursalLoading ||
+        callActualizarSucursalLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -192,7 +198,8 @@ export const AdminDataProvider = ({ children }) => {
             callSucursales,
             callProductosYCategoriasSucursal,
             callAsignarASucursal,
-            callCrearSucursal
+            callCrearSucursal,
+            callActualizarSucursal
         }}>
             {children}
         </AdminDataContext.Provider>

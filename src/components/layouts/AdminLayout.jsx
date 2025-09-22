@@ -58,9 +58,9 @@ const AdminLayout = () => {
 
     // Opciones para CustomSelect de sucursales
     const sucursalOptions = [
-        { 
-            value: "", 
-            label: adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal" 
+        {
+            value: "",
+            label: adminDataLoading ? "Cargando sucursales..." : "Selecciona una sucursal"
         },
         ...(sucursales?.map(store => ({
             value: store.id,
@@ -91,37 +91,66 @@ const AdminLayout = () => {
         localStorage.setItem('admin-sidebar-collapsed', JSON.stringify(!sidebarCollapsed));
     };
 
-    const navigationItems = [
-        { name: "Dashboard", href: "/intranet/admin", icon: Home },
-        {
-            name: "Pedidos",
-            href: "/intranet/admin/pedidos",
-            icon: ShoppingCart,
-            badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
-        },
-        {
-            name: "Productos",
-            icon: Package,
-            hasDropdown: true,
-            dropdownItems: [
-                { name: "Gestionar", href: "/intranet/admin/productos", icon: Package },
-                { name: "Menú", href: "/intranet/admin/productos-sucursal", icon: Building2 }
-            ]
-        },
-        {
-            name: "Sucursal",
-            icon: Building2,
-            hasDropdown: true,
-            dropdownItems: [
-                { name: "Gestión", href: "/intranet/admin/sucursal", icon: Building2 },
-                { name: "Envíos", href: "/intranet/admin/sucursal-envios", icon: Truck }
-            ]
-        },
-        { name: "Inventario", href: "/intranet/admin/inventario", icon: Archive },
-        { name: "Clientes", href: "/intranet/admin/clientes", icon: Users },
-        { name: "Reportes", href: "/intranet/admin/reportes", icon: BarChart3 },
-        { name: "Configuración", href: "/intranet/admin/configuracion", icon: Settings },
-    ];
+
+    const navigationItemsByRole = {
+        "ADMIN": [
+            { name: "Dashboard", href: "/intranet/admin", icon: Home },
+            {
+                name: "Pedidos",
+                href: "/intranet/admin/pedidos",
+                icon: ShoppingCart,
+                badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
+            },
+            {
+                name: "Productos",
+                icon: Package,
+                hasDropdown: true,
+                dropdownItems: [
+                    { name: "Gestionar", href: "/intranet/admin/productos", icon: Package },
+                    { name: "Menú", href: "/intranet/admin/productos-sucursal", icon: Building2 }
+                ]
+            },
+            {
+                name: "Sucursal",
+                icon: Building2,
+                hasDropdown: true,
+                dropdownItems: [
+                    { name: "Gestionar", href: "/intranet/admin/sucursal", icon: Building2 },
+                    { name: "Envíos", href: "/intranet/admin/sucursal-envios", icon: Truck }
+                ]
+            },
+            { name: "Inventario", href: "/intranet/admin/inventario", icon: Archive },
+            { name: "Clientes", href: "/intranet/admin/clientes", icon: Users },
+            { name: "Reportes", href: "/intranet/admin/reportes", icon: BarChart3 },
+            { name: "Configuración", href: "/intranet/admin/configuracion", icon: Settings },
+        ],
+        "LOCAL": [
+            { name: "Dashboard", href: "/intranet/local", icon: Home },
+            {
+                name: "Pedidos",
+                href: "/intranet/local/pedidos",
+                icon: ShoppingCart,
+                badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
+            },
+            {
+                name: "Sucursal",
+                icon: Building2,
+                hasDropdown: true,
+                dropdownItems: [
+                    { name: "Gestionar", href: "/intranet/local/sucursal", icon: Building2 },
+                    { name: "Envíos", href: "/intranet/local/sucursal-envios", icon: Truck }
+                ]
+            },
+            { name: "Inventario", href: "/intranet/local/inventario", icon: Archive },
+            { name: "Reportes", href: "/intranet/local/reportes", icon: BarChart3 },
+        ],
+        "FABRICA": [
+            { name: "Dashboard", href: "/intranet/fabrica", icon: Home },
+            { name: "Inventario", href: "/intranet/fabrica/inventario", icon: Archive },
+        ],
+    }
+
+    const assignedNavigationItems = navigationItemsByRole[session.userData.role];
 
     // Abrir/cerrar dropdowns basado en la ruta actual
     useEffect(() => {
@@ -157,7 +186,7 @@ const AdminLayout = () => {
     // Función para determinar si otras secciones deben estar desactivadas
     const shouldDeactivateOthers = () => {
         return productsDropdownOpen || location.pathname.includes('/productos') ||
-               branchesDropdownOpen || location.pathname.includes('/sucursal');
+            branchesDropdownOpen || location.pathname.includes('/sucursal');
     };
 
     return (
@@ -229,12 +258,8 @@ const AdminLayout = () => {
 
                 {/* Desktop Navigation */}
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-                    
-                    {(session.userData.sucursalAsignada) ? (          
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
-                            {sucursales[0]?.name}
-                        </span>                        
-                    ) : (
+
+                    {(session.userData.isAdmin) ? (
                         <CustomSelect
                             value={sucursalSeleccionada}
                             onChange={setSucursalSeleccionada}
@@ -242,9 +267,13 @@ const AdminLayout = () => {
                             placeholder="Selecciona una sucursal"
                             disabled={adminDataLoading}
                         />
+                    ) : (
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
+                            {sucursales[0]?.name}
+                        </span>
                     )}
 
-                    {navigationItems.map((item) => (
+                    {assignedNavigationItems.map((item) => (
                         <div key={item.name}>
                             {item.hasDropdown ? (
                                 <div className="space-y-1">
@@ -280,8 +309,8 @@ const AdminLayout = () => {
                                                         {item.badge}
                                                     </Badge>
                                                 )}
-                                                {((item.name === "Productos" && productsDropdownOpen) || 
-                                                  (item.name === "Sucursal" && branchesDropdownOpen)) ? (
+                                                {((item.name === "Productos" && productsDropdownOpen) ||
+                                                    (item.name === "Sucursal" && branchesDropdownOpen)) ? (
                                                     <ChevronUp className="w-4 h-4" />
                                                 ) : (
                                                     <ChevronDown className="w-4 h-4" />
@@ -296,25 +325,25 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {!sidebarCollapsed && ((item.name === "Productos" && productsDropdownOpen) || 
-                                                          (item.name === "Sucursal" && branchesDropdownOpen)) && (
-                                        <div className="ml-4 space-y-1">
-                                            {item.dropdownItems.map((subItem) => (
-                                                <NavLink
-                                                    key={subItem.name}
-                                                    to={subItem.href}
-                                                    end
-                                                    className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${isActive
-                                                        ? "bg-empanada-golden/20 text-empanada-golden font-medium"
-                                                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                        }`}
-                                                >
-                                                    <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
-                                                    <span>{subItem.name}</span>
-                                                </NavLink>
-                                            ))}
-                                        </div>
-                                    )}
+                                    {!sidebarCollapsed && ((item.name === "Productos" && productsDropdownOpen) ||
+                                        (item.name === "Sucursal" && branchesDropdownOpen)) && (
+                                            <div className="ml-4 space-y-1">
+                                                {item.dropdownItems.map((subItem) => (
+                                                    <NavLink
+                                                        key={subItem.name}
+                                                        to={subItem.href}
+                                                        end
+                                                        className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${isActive
+                                                            ? "bg-empanada-golden/20 text-empanada-golden font-medium"
+                                                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                            }`}
+                                                    >
+                                                        <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
+                                                        <span>{subItem.name}</span>
+                                                    </NavLink>
+                                                ))}
+                                            </div>
+                                        )}
                                 </div>
                             ) : (
                                 <Link
@@ -444,11 +473,7 @@ const AdminLayout = () => {
 
                 {/* Navigation */}
                 <nav className="p-4 space-y-2 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-                    {(session.userData.sucursalAsignada) ? (          
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
-                            {sucursales[0]?.name}
-                        </span>                        
-                    ) : (
+                    {(session.userData.isAdmin) ? (
                         <CustomSelect
                             value={sucursalSeleccionada}
                             onChange={setSucursalSeleccionada}
@@ -456,9 +481,13 @@ const AdminLayout = () => {
                             placeholder="Selecciona una sucursal"
                             disabled={adminDataLoading}
                         />
+                    ) : (
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
+                            {sucursales[0]?.name}
+                        </span>
                     )}
 
-                    {navigationItems.map((item) => (
+                    {assignedNavigationItems.map((item) => (
                         <div key={item.name}>
                             {item.hasDropdown ? (
                                 <div className="space-y-1">
@@ -490,8 +519,8 @@ const AdminLayout = () => {
                                                     {item.badge}
                                                 </Badge>
                                             )}
-                                            {((item.name === "Productos" && productsDropdownOpen) || 
-                                              (item.name === "Sucursal" && branchesDropdownOpen)) ? (
+                                            {((item.name === "Productos" && productsDropdownOpen) ||
+                                                (item.name === "Sucursal" && branchesDropdownOpen)) ? (
                                                 <ChevronUp className="w-4 h-4" />
                                             ) : (
                                                 <ChevronDown className="w-4 h-4" />
@@ -500,26 +529,26 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {((item.name === "Productos" && productsDropdownOpen) || 
-                                      (item.name === "Sucursal" && branchesDropdownOpen)) && (
-                                        <div className="ml-4 space-y-1">
-                                            {item.dropdownItems.map((subItem) => (
-                                                <NavLink
-                                                    key={subItem.name}
-                                                    to={subItem.href}
-                                                    end
-                                                    onClick={() => setSidebarOpen(false)}
-                                                    className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${isActive
-                                                        ? "bg-empanada-golden/20 text-empanada-golden font-medium"
-                                                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                        }`}
-                                                >
-                                                    <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
-                                                    <span>{subItem.name}</span>
-                                                </NavLink>
-                                            ))}
-                                        </div>
-                                    )}
+                                    {((item.name === "Productos" && productsDropdownOpen) ||
+                                        (item.name === "Sucursal" && branchesDropdownOpen)) && (
+                                            <div className="ml-4 space-y-1">
+                                                {item.dropdownItems.map((subItem) => (
+                                                    <NavLink
+                                                        key={subItem.name}
+                                                        to={subItem.href}
+                                                        end
+                                                        onClick={() => setSidebarOpen(false)}
+                                                        className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${isActive
+                                                            ? "bg-empanada-golden/20 text-empanada-golden font-medium"
+                                                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                            }`}
+                                                    >
+                                                        <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
+                                                        <span>{subItem.name}</span>
+                                                    </NavLink>
+                                                ))}
+                                            </div>
+                                        )}
                                 </div>
                             ) : (
                                 <Link

@@ -47,11 +47,10 @@ export function AdminLogin() {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
-    const [attempts, setAttempts] = useState(0);
 
     //Redirigir si ya está autenticado como admin
     useEffect(() => {
-        if (session.isAuthenticated && session.isAdmin) {
+        if (session.isAuthenticated && session.userData.role == 'ADMIN') {
             navigate('/intranet/admin');
         }
     }, [session.isAuthenticated]);
@@ -85,11 +84,6 @@ export function AdminLogin() {
             newErrors.password = `La contraseña debe tener al menos ${SECURITY_CONFIG.passwordMinLength} caracteres`;
         }
 
-        // Bloquear después de múltiples intentos fallidos
-        if (attempts >= SECURITY_CONFIG.maxLoginAttempts) {
-            newErrors.general = ERROR_MESSAGES.unknown; // Usar mensaje genérico para no revelar límite
-        }
-
         return newErrors;
     };
 
@@ -115,43 +109,6 @@ export function AdminLogin() {
         });
 
     };
-
-
-    // const user = {"id":1,"username":"Martin","email":"admin@noninoempanadas.com","role":"ADMIN","accessToken":"fake"};
-    // session.login(user);
-
-    // // Esperar un momento antes de navegar para asegurar que el estado se actualice
-    // setTimeout(() => {
-    //   navigate("/intranet/admin");
-    // }, 100); 
-
-    // try {
-    //   const result = await login(formData.email.trim(), formData.password);
-
-    //   if (result.success) {
-    //     if (result.user.role === 'admin') {
-    //       toast.success("¡Bienvenido al panel de administración!");
-    //       navigate("/admin");
-    //       setAttempts(0); // Resetear intentos en login exitoso
-    //     } else {
-    //       toast.error("No tienes permisos de administrador");
-    //       setAttempts(prev => prev + 1);
-    //     }
-    //   } else {
-    //     setErrors({ general: result.error });
-    //     setAttempts(prev => prev + 1);
-    //     toast.error(result.error);
-    //   }
-    // } catch (error) {
-    //   console.error('Error en login de admin:', error);
-    //   const errorMessage = 'Error interno del sistema';
-    //   setErrors({ general: errorMessage });
-    //   toast.error(errorMessage);
-    //   setAttempts(prev => prev + 1);
-    // } finally {
-    //   setLoading(false);
-    // }
-
 
     /**
      * Maneja los cambios en los campos del formulario
@@ -327,15 +284,13 @@ export function AdminLogin() {
                                 type="submit"
                                 variant="empanada"
                                 className="w-full py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={session.loading || attempts >= 3}
+                                disabled={session.loading}
                             >
                                 {session.loading ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                         Iniciando sesión...
                                     </div>
-                                ) : attempts >= 3 ? (
-                                    "Bloqueado temporalmente"
                                 ) : (
                                     "Acceder al Panel"
                                 )}

@@ -37,9 +37,12 @@ import { Badge } from "../../components/ui/badge";
 import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfService";
 import { toast } from "sonner";
 import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
+import { useAdminData } from "@/context/AdminDataProvider";
 
 export function SettingsPage() {
     const [activeTab, setActiveTab] = useState("general");
+
+    const {adminDataLoading: loading} = useAdminData();
 
     // Opciones para CustomSelect
     const currencyOptions = [

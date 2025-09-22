@@ -248,7 +248,7 @@ export function ProductosPorSucursal() {
         <div className="space-y-6 pb-24">
             {/* Header usando SectionHeader */}
             <SectionHeader
-                title="Productos por Sucursal"
+                title="Menú de sucursal"
                 subtitle="Gestiona qué productos están disponibles en cada sucursal"
                 icon={<Building2 className="w-6 h-6" />}
                 actions={headerActions}

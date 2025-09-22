@@ -11,44 +11,43 @@ import {
 
 // integrar dependencia con el rol
 
-const sucursalAsignada = {
-    'admin@nonino': '',
-    'admin@nonino1': 1,
-    'email3': 2,
-    'email4': 3,
-    'email5': 4,
-    'email6': 5,
-    'email7': 6,
-    'email8': 7,
-    'email9': 8,
-    'email10': 9,
+const userPrivilegesByEmail = {
+    'admin@nonino': { role: 'ADMIN', sucursal: '' },
+    'fabrica@nonino': { role: 'FABRICA', sucursal: 10 },
+    'local1@nonino': { role: 'LOCAL', sucursal: 1 },
+    'local2@nonino': { role: 'LOCAL', sucursal: 1 },
 }
 
 const SessionContext = createContext();
+
+const userDataTransform = (data) => {
+    const userPrivileges = userPrivilegesByEmail[data.email];
+    const user = {
+        id: data.id,
+        email: data.email,
+        name: data.fullName,
+        role: userPrivileges.role,
+        accessToken: data.accessToken,
+        csrfToken: data.csrfToken,
+        sucursal: userPrivileges.sucursal,
+        isAdmin: userPrivileges.role == 'ADMIN',
+        isLocal: userPrivileges.role == 'LOCAL',
+        isFabrica: userPrivileges.role == 'FABRICA'
+    }
+    return user;
+}
 
 export const SessionProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
     const [componentLoading, setComponentLoading] = useState(true);
 
     const { mutate: callLogin, isPending: callLoginLoading } = useMutation({
         mutationKey: ['login'],
         mutationFn: getLoginQueryFunction,
         onSuccess: (data) => {
-            const user = {
-                id: data.id,
-                email: data.email,
-                name: data.fullName,
-                roleId: data.roles[0].id,
-                roleName: data.roles[0].name,
-                accessToken: data.accessToken,
-                csrfToken: data.csrfToken,
-                sucursal: sucursalAsignada[data.email],
-            }
-            setUserData(user);
-            setIsAdmin(data.roles[0].name === 'ADMIN');
+            setUserData(userDataTransform(data));
             setIsAuthenticated(true);
             localStorage.setItem('noninoSysCsrf', data.csrfToken);
         }
@@ -58,18 +57,7 @@ export const SessionProvider = ({ children }) => {
         mutationKey: ['relogin'],
         mutationFn: getRefreshQueryFunction,
         onSuccess: (data) => {
-            const user = {
-                id: data.id,
-                email: data.email,
-                name: data.fullName,
-                roleId: data.roles[0].id,
-                roleName: data.roles[0].name,
-                accessToken: data.accessToken,
-                csrfToken: data.csrfToken,
-                sucursal: sucursalAsignada[data.email],
-            }
-            setUserData(user);
-            setIsAdmin(data.roles[0].name === 'ADMIN');
+            setUserData(userDataTransform(data));
             setIsAuthenticated(true);
             localStorage.setItem('noninoSysCsrf', data.csrfToken);
         },
@@ -93,7 +81,6 @@ export const SessionProvider = ({ children }) => {
     const logout = () => {
         setUserData(null);
         setIsAuthenticated(false);
-        setIsAdmin(false);
         localStorage.removeItem("noninoSys");
     };
 
@@ -103,7 +90,6 @@ export const SessionProvider = ({ children }) => {
         <SessionContext.Provider value={{
             userData,
             isAuthenticated,
-            isAdmin,
             loading,
             login,
             logout,

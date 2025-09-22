@@ -3,6 +3,7 @@
 
 // CORE
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 // EXTERNO
 import { toast } from "sonner";
@@ -63,6 +64,8 @@ export function AdminDashboard() {
     { id: 9, name: "Empanada de Ricotta", currentStock: 2, minStock: 8 },
     { id: 10, name: "Empanada de Caprese", currentStock: 11, minStock: 15 }
   ]);
+
+  const navigate = useNavigate();
 
   // Usar el contexto de pedidos
   const { pendingOrdersCount } = useOrders();
@@ -223,7 +226,7 @@ export function AdminDashboard() {
                   <Button 
                     variant="empanada"
                     size="sm"
-                    onClick={() => window.location.href = '/intranet/admin/inventario'}
+                    onClick={() => navigate('/intranet/admin/inventario', {replace: true})}
                   >
                     Resolver ahora
                   </Button>
@@ -256,7 +259,7 @@ export function AdminDashboard() {
                   <Button 
                     variant="empanada"
                     size="sm"
-                    onClick={() => window.location.href = '/intranet/admin/pedidos?status=pending'}
+                    onClick={() => navigate('/intranet/admin/pedidos?status=pending', {replace: true})}
                   >
                     Resolver ahora
                   </Button>

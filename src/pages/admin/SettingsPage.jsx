@@ -37,26 +37,9 @@ import { Badge } from "../../components/ui/badge";
 import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfService";
 import { toast } from "sonner";
 import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
-import { useAdminData } from "@/context/AdminDataProvider";
-import { AddStoreModal } from "../../components/admin/AddStoreModal";
-import { useSession } from "@/context/SessionProvider";
 
 export function SettingsPage() {
     const [activeTab, setActiveTab] = useState("general");
-    const [isAddStoreModalOpen, setIsAddStoreModalOpen] = useState(false);
-    const [isAddingStore, setIsAddingStore] = useState(false);
-
-    // Obtener datos del AdminDataProvider
-    const {
-        sucursales: stores,
-        sucursalSeleccionada: selectedStore,
-        adminDataLoading: loading,
-        callCrearSucursal,
-        callActualizarSucursal,
-        callSucursales,
-    } = useAdminData();
-
-    const session = useSession();
 
     // Opciones para CustomSelect
     const currencyOptions = [
@@ -176,7 +159,6 @@ export function SettingsPage() {
     const tabs = [
         { id: "general", label: "General", icon: Settings },
         { id: "store", label: "Tienda", icon: Store },
-        { id: "stores", label: "Locales", icon: Building2 },
         { id: "promotions", label: "Promociones", icon: Tag },
         { id: "history", label: "Nuestra Historia", icon: History },
         { id: "notifications", label: "Notificaciones", icon: Bell },
@@ -192,10 +174,6 @@ export function SettingsPage() {
         }, 1500);
     };
 
-    const addStore = () => {
-        setIsAddStoreModalOpen(true);
-    };
-
     const updateSetting = (section, key, value) => {
         setSettings(prev => ({
             ...prev,
@@ -204,29 +182,6 @@ export function SettingsPage() {
                 [key]: value
             }
         }));
-    };
-
-    // agregar sucursal ACTUALIZADO
-    const handleSaveStore = async (storeData) => {
-
-        setIsAddingStore(true);
-
-        try {
-            await callCrearSucursal({
-                _store: storeData,
-                _accessToken: session.userData.accessToken,
-            });
-
-            toast.success(`Local "${storeData.name}" agregado correctamente`);
-            await callSucursales(session.userData.accessToken);
-            setIsAddStoreModalOpen(false);
-
-        } catch (error) {
-            console.error('Error al agregar local:', error);
-            toast.error('Error al agregar el local. Inténtalo de nuevo.');
-        } finally {
-            setIsAddingStore(false);
-        }
     };
 
 
@@ -281,18 +236,6 @@ export function SettingsPage() {
             label: loading ? "Guardando..." : "Guardar Cambios",
             variant: "empanada",
             onClick: saveSettings,
-            disabled: loading,
-            className: "min-w-[120px]",
-            icon: loading ? (
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-                <Save className="w-4 h-4 mr-2" />
-            )
-        },
-        {
-            label: loading ? "Guardando..." : "Agregar local",
-            variant: "empanada",
-            onClick: addStore,
             disabled: loading,
             className: "min-w-[120px]",
             icon: loading ? (
@@ -836,208 +779,6 @@ export function SettingsPage() {
         </div>
     );
 
-    const StoresSettings = () => {
-        // Si hay una sucursal seleccionada, mostrar solo esa sucursal
-        const storesToShow = selectedStore
-            ? stores.filter(store => store.id === selectedStore)
-            : stores;
-
-        return (
-            <div className="space-y-6">
-                <Card>
-                    <CardHeader>
-                        <div className="flex justify-between items-center">
-                            <CardTitle className="flex items-center gap-2">
-                                <Building2 className="w-5 h-5" />
-                                {selectedStore ? 'Configuración de Local' : 'Gestión de Locales'}
-                            </CardTitle>
-                        </div>
-                        {selectedStore && (
-                            <div className="mt-2 p-2 bg-empanada-golden/10 rounded-md border border-empanada-golden/20">
-                                <p className="text-sm text-empanada-golden font-medium">
-                                    <Building2 className="w-4 h-4 inline mr-1" />
-                                    Configurando: {stores.find(s => s.id === selectedStore)?.name || `Sucursal ${selectedStore}`}
-                                </p>
-                            </div>
-                        )}
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {!selectedStore ? (
-                            <EmptyState
-                                title="Selecciona una Sucursal"
-                                message="Elige una sucursal para comenzar a gestionar su configuración"
-                                icon={<Building2 className="w-12 h-12 text-muted-foreground" />}
-                            />
-                        ) : storesToShow.length === 0 ? (
-                            <div className="text-center py-8 text-muted-foreground">
-                                No se encontró información de esta sucursal
-                            </div>
-                        ) : (
-                            storesToShow.map((store) => (
-                                <StoreConfigForm key={store.id} store={store} />
-                            ))
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    };
-
-    // Componente separado para el formulario de configuración de cada local
-    const StoreConfigForm = ({ store }) => {
-        const [localStore, setLocalStore] = useState(store);
-        const [isUpdating, setIsUpdating] = useState(false);
-
-        // Actualizar el estado local cuando cambie el store prop
-        useEffect(() => {
-            setLocalStore(store);
-        }, [store]);
-
-        const handleInputChange = (field, value) => {
-            setLocalStore(prev => ({
-                ...prev,
-                [field]: value
-            }));
-        };
-
-        const handleCoordinatesChange = (coord, value) => {
-            setLocalStore(prev => ({
-                ...prev,
-                coordinates: {
-                    ...prev.coordinates,
-                    [coord]: Number(value)
-                }
-            }));
-        };
-
-        // Función para guardar cambios en el servidor
-        const handleSaveChanges = async () => {
-            setIsUpdating(true);
-            try {
-                await callActualizarSucursal({
-                    _store: localStore,
-                    _accessToken: session.userData.accessToken,
-                });
-                toast.success("Cambios guardados correctamente");
-                // Recargar la lista de sucursales
-                await callSucursales(session.userData.accessToken);
-            } catch (error) {
-                console.error('Error al actualizar sucursal:', error);
-                toast.error('Error al guardar los cambios');
-            } finally {
-                setIsUpdating(false);
-            }
-        };
-
-        return (
-            <Card className="border-2">
-                <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-lg font-semibold">{localStore.name || "Nuevo Local"}</h3>
-                        <div className="flex gap-2">
-                            <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={handleSaveChanges}
-                                disabled={isUpdating}
-                            >
-                                {isUpdating ? (
-                                    <RefreshCw className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    <Save className="w-4 h-4" />
-                                )}
-                                {isUpdating ? "Guardando..." : "Guardar"}
-                            </Button>
-                            {!selectedStore && (
-                                <Button variant="outline" size="sm" onClick={() => {
-                                    // TODO: Implementar eliminación de sucursal desde AdminDataProvider
-                                    toast.info("Funcionalidad de eliminación próximamente");
-                                }}>
-                                    <Trash className="w-4 h-4" />
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Nombre del Local</label>
-                            <Input
-                                value={localStore.name || ''}
-                                onChange={(e) => handleInputChange("name", e.target.value)}
-                                placeholder="Ej: Nonino Empanadas - Centro"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Teléfono</label>
-                            <Input
-                                value={localStore.phone || ''}
-                                onChange={(e) => handleInputChange("phone", e.target.value)}
-                                placeholder="+54 11 1234-5678"
-                            />
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-1">Dirección</label>
-                            <Input
-                                value={localStore.address || ''}
-                                onChange={(e) => handleInputChange("address", e.target.value)}
-                                placeholder="Dirección completa del local"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Tiempo de Delivery</label>
-                            <Input
-                                value={localStore.deliveryTime || ''}
-                                onChange={(e) => handleInputChange("deliveryTime", e.target.value)}
-                                placeholder="30-45 min"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Pedido Mínimo</label>
-                            <Input
-                                type="number"
-                                value={localStore.minOrder || ''}
-                                onChange={(e) => handleInputChange("minOrder", Number(e.target.value))}
-                                placeholder="2000"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Latitud</label>
-                            <Input
-                                type="number"
-                                step="any"
-                                value={localStore.coordinates?.lat || ''}
-                                onChange={(e) => handleCoordinatesChange("lat", e.target.value)}
-                                placeholder="-34.6037"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Longitud</label>
-                            <Input
-                                type="number"
-                                step="any"
-                                value={localStore.coordinates?.lng || ''}
-                                onChange={(e) => handleCoordinatesChange("lng", e.target.value)}
-                                placeholder="-58.3816"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="mt-4">
-                        <label className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                checked={localStore.isOpen || false}
-                                onChange={(e) => handleInputChange("isOpen", e.target.checked)}
-                            />
-                            <span className="text-sm">Local abierto</span>
-                        </label>
-                    </div>
-                </CardContent>
-            </Card>
-        );
-    };
-
     const PromotionsSettings = () => (
         <div className="space-y-6">
             <Card>
@@ -1506,7 +1247,6 @@ export function SettingsPage() {
                     >
                         {activeTab === "general" && <GeneralSettings />}
                         {activeTab === "store" && <StoreSettings />}
-                        {activeTab === "stores" && <StoresSettings />}
                         {activeTab === "promotions" && <PromotionsSettings />}
                         {activeTab === "history" && <HistorySettings />}
                         {activeTab === "notifications" && <NotificationSettings />}
@@ -1516,14 +1256,6 @@ export function SettingsPage() {
                     </div>
                 </div>
             </div>
-
-            {/* Modal para agregar locales */}
-            <AddStoreModal
-                isOpen={isAddStoreModalOpen}
-                onClose={() => setIsAddStoreModalOpen(false)}
-                onSave={handleSaveStore}
-                isLoading={isAddingStore}
-            />
         </div>
     );
 }

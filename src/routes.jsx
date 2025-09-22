@@ -15,6 +15,7 @@ import { CartPage } from "./pages/public/CartPage";
 import { CheckoutPage } from "./pages/public/CheckoutPage";
 import { OrderTrackingPage } from "./pages/public/OrderTrackingPage";
 import { StoreSelectionPage } from "./pages/public/StoreSelectionPage";
+import { ProfilePage } from "./pages/public/ProfilePage";
 
 // Páginas de administración
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
@@ -22,6 +23,8 @@ import { AdminLogin } from "./pages/admin/AdminLogin";
 import { OrderManagement } from "./pages/admin/OrderManagement";
 import { ProductManagement } from "./pages/admin/ProductManagement";
 import { ProductosPorSucursal } from "./pages/admin/ProductosPorSucursal";
+import { BranchManagement } from "./pages/admin/BranchManagement";
+import { DeliveryManagement } from "./pages/admin/DeliveryManagement";
 import { InventoryManagement } from "./pages/admin/InventoryManagement";
 import { CustomerManagement } from "./pages/admin/CustomerManagement";
 import { ReportsPage } from "./pages/admin/ReportsPage";
@@ -124,6 +127,14 @@ export const router = createBrowserRouter([
       {
         path: "productos-sucursal",
         element: <ProductosPorSucursal />,
+      },
+      {
+        path: "sucursal",
+        element: <BranchManagement />,
+      },
+      {
+        path: "sucursal-envios",
+        element: <DeliveryManagement />,
       },
       {
         path: "inventario",

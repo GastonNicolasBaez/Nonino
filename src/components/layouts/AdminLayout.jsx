@@ -20,7 +20,8 @@ import {
     User,
     ChevronDown,
     ChevronUp,
-    Building2
+    Building2,
+    Truck
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -53,6 +54,7 @@ const AdminLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
+    const [branchesDropdownOpen, setBranchesDropdownOpen] = useState(false);
 
     // Opciones para CustomSelect de sucursales
     const sucursalOptions = [
@@ -75,13 +77,6 @@ const AdminLayout = () => {
         session.logout();
         navigate('/intranet/login');
     };
-
-    // Cerrar dropdown de productos cuando cambias de ruta (excepto subsecciones de productos)
-    useEffect(() => {
-        if (!location.pathname.includes('/productos')) {
-            setProductsDropdownOpen(false);
-        }
-    }, [location.pathname]);
 
     // Persistir estado del sidebar en localStorage
     useEffect(() => {
@@ -113,17 +108,46 @@ const AdminLayout = () => {
                 { name: "Menú", href: "/intranet/admin/productos-sucursal", icon: Building2 }
             ]
         },
+        {
+            name: "Sucursal",
+            icon: Building2,
+            hasDropdown: true,
+            dropdownItems: [
+                { name: "Gestión", href: "/intranet/admin/sucursal", icon: Building2 },
+                { name: "Envíos", href: "/intranet/admin/sucursal-envios", icon: Truck }
+            ]
+        },
         { name: "Inventario", href: "/intranet/admin/inventario", icon: Archive },
         { name: "Clientes", href: "/intranet/admin/clientes", icon: Users },
         { name: "Reportes", href: "/intranet/admin/reportes", icon: BarChart3 },
         { name: "Configuración", href: "/intranet/admin/configuracion", icon: Settings },
     ];
 
+    // Abrir/cerrar dropdowns basado en la ruta actual
+    useEffect(() => {
+        if (location.pathname.includes('/productos')) {
+            setProductsDropdownOpen(true);
+        } else {
+            setProductsDropdownOpen(false);
+        }
+
+        if (location.pathname.includes('/sucursal')) {
+            setBranchesDropdownOpen(true);
+        } else {
+            setBranchesDropdownOpen(false);
+        }
+    }, [location.pathname]);
+
     // Función simplificada para determinar si un item está activo
     const isItemActive = (item) => {
         if (item.hasDropdown) {
-            // Para productos: activo si el dropdown está abierto O si estás en una subsección
-            return productsDropdownOpen || location.pathname.includes('/productos');
+            if (item.name === "Productos") {
+                // Para productos: activo si el dropdown está abierto O si estás en una subsección
+                return productsDropdownOpen || location.pathname.includes('/productos');
+            } else if (item.name === "Sucursal") {
+                // Para sucursal: activo si el dropdown está abierto O si estás en una subsección
+                return branchesDropdownOpen || location.pathname.includes('/sucursal');
+            }
         } else {
             // Para otros items: activo si la ruta coincide exactamente
             return location.pathname === item.href;
@@ -132,7 +156,8 @@ const AdminLayout = () => {
 
     // Función para determinar si otras secciones deben estar desactivadas
     const shouldDeactivateOthers = () => {
-        return productsDropdownOpen || location.pathname.includes('/productos');
+        return productsDropdownOpen || location.pathname.includes('/productos') ||
+               branchesDropdownOpen || location.pathname.includes('/sucursal');
     };
 
     return (
@@ -224,7 +249,13 @@ const AdminLayout = () => {
                             {item.hasDropdown ? (
                                 <div className="space-y-1">
                                     <button
-                                        onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
+                                        onClick={() => {
+                                            if (item.name === "Productos") {
+                                                setProductsDropdownOpen(!productsDropdownOpen);
+                                            } else if (item.name === "Sucursal") {
+                                                setBranchesDropdownOpen(!branchesDropdownOpen);
+                                            }
+                                        }}
                                         className={`w-full flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item)
                                             ? "bg-empanada-golden text-white active"
                                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -247,7 +278,8 @@ const AdminLayout = () => {
                                                         {item.badge}
                                                     </Badge>
                                                 )}
-                                                {productsDropdownOpen ? (
+                                                {((item.name === "Productos" && productsDropdownOpen) || 
+                                                  (item.name === "Sucursal" && branchesDropdownOpen)) ? (
                                                     <ChevronUp className="w-4 h-4" />
                                                 ) : (
                                                     <ChevronDown className="w-4 h-4" />
@@ -262,7 +294,8 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {!sidebarCollapsed && productsDropdownOpen && (
+                                    {!sidebarCollapsed && ((item.name === "Productos" && productsDropdownOpen) || 
+                                                          (item.name === "Sucursal" && branchesDropdownOpen)) && (
                                         <div className="ml-4 space-y-1">
                                             {item.dropdownItems.map((subItem) => (
                                                 <NavLink
@@ -423,7 +456,13 @@ const AdminLayout = () => {
                             {item.hasDropdown ? (
                                 <div className="space-y-1">
                                     <button
-                                        onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
+                                        onClick={() => {
+                                            if (item.name === "Productos") {
+                                                setProductsDropdownOpen(!productsDropdownOpen);
+                                            } else if (item.name === "Sucursal") {
+                                                setBranchesDropdownOpen(!branchesDropdownOpen);
+                                            }
+                                        }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item)
                                             ? "bg-empanada-golden text-white"
                                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -442,7 +481,8 @@ const AdminLayout = () => {
                                                     {item.badge}
                                                 </Badge>
                                             )}
-                                            {productsDropdownOpen ? (
+                                            {((item.name === "Productos" && productsDropdownOpen) || 
+                                              (item.name === "Sucursal" && branchesDropdownOpen)) ? (
                                                 <ChevronUp className="w-4 h-4" />
                                             ) : (
                                                 <ChevronDown className="w-4 h-4" />
@@ -451,7 +491,8 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {productsDropdownOpen && (
+                                    {((item.name === "Productos" && productsDropdownOpen) || 
+                                      (item.name === "Sucursal" && branchesDropdownOpen)) && (
                                         <div className="ml-4 space-y-1">
                                             {item.dropdownItems.map((subItem) => (
                                                 <NavLink

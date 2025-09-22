@@ -44,6 +44,8 @@ import { CustomerManagement } from "@/pages/admin/CustomerManagement";
 import { ReportsPage } from "@/pages/admin/ReportsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
 import { ProductosPorSucursal } from "@/pages/admin/ProductosPorSucursal";
+import { BranchManagement } from "@/pages/admin/BranchManagement";
+import { DeliveryManagement } from "@/pages/admin/DeliveryManagement";
 import { AdminDataProvider } from "./context/AdminDataProvider";
 
 // Crear cliente de React Query
@@ -106,6 +108,8 @@ function App() {
                                 <Route path="pedidos" element={<OrderManagement />} />
                                 <Route path="productos" element={<ProductManagement />} />
                                 <Route path="productos-sucursal" element={<ProductosPorSucursal />} />
+                                <Route path="sucursal" element={<BranchManagement />} />
+                                <Route path="sucursal-envios" element={<DeliveryManagement />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
                                 <Route path="clientes" element={<CustomerManagement />} />
                                 <Route path="reportes" element={<ReportsPage />} />

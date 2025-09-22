@@ -115,6 +115,46 @@ function App() {
                                 <Route path="reportes" element={<ReportsPage />} />
                                 <Route path="configuracion" element={<SettingsPage />} />
                             </Route>
+
+                            {/* LOCAL */}
+                            <Route path="local"
+                                element={
+                                    <AuthProvider allowedRole={'LOCAL'}>
+                                        <ThemeProvider>
+                                            <AdminDataProvider>
+                                                <OrdersProvider>
+                                                    <AdminLayout />
+                                                </OrdersProvider>
+                                            </AdminDataProvider>
+                                        </ThemeProvider>
+                                    </AuthProvider>
+                                }
+                            >
+                                <Route index element={<AdminDashboard />} />
+                                <Route path="pedidos" element={<OrderManagement />} />
+                                <Route path="sucursal" element={<BranchManagement />} />
+                                <Route path="sucursal-envios" element={<DeliveryManagement />} />
+                                <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="reportes" element={<ReportsPage />} />
+                            </Route>
+
+                            {/* FABRICA */}
+                            <Route path="fabrica"
+                                element={
+                                    <AuthProvider allowedRole={'FABRICA'}>
+                                        <ThemeProvider>
+                                            <AdminDataProvider>
+                                                <OrdersProvider>
+                                                    <AdminLayout />
+                                                </OrdersProvider>
+                                            </AdminDataProvider>
+                                        </ThemeProvider>
+                                    </AuthProvider>
+                                }
+                            >
+                                <Route index element={<AdminDashboard />} />
+                                <Route path="inventario" element={<InventoryManagement />} />
+                            </Route>
                         </Route>
 
                         {/* FALLBACK */}

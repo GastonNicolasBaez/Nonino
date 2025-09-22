@@ -92,12 +92,12 @@ export function BranchManagement() {
     const StoreConfigForm = ({ store }) => {
         const [localStore, setLocalStore] = useState({
             name: store.name || '',
-            type: store.type || 'local',
+            type: store.code || 'local',
             street: store.street || '',
             number: store.number || '',
             barrio: store.barrio || '',
-            lat: store.coordinates?.lat || '',
-            lng: store.coordinates?.lng || '',
+            lat: store.lat || '',
+            lng: store.lng || '',
             supportsPickup: store.supportsPickup || true,
             supportsDelivery: store.supportsDelivery || true,
             phone: store.phone || '',
@@ -105,18 +105,17 @@ export function BranchManagement() {
             minOrder: store.minOrder || '',
             isOpen: store.isOpen || false
         });
-        const [isUpdating, setIsUpdating] = useState(false);
 
         // Actualizar el estado local cuando cambie el store prop
         useEffect(() => {
             setLocalStore({
                 name: store.name || '',
-                type: store.type || 'local',
+                type: store.code || 'local',
                 street: store.street || '',
                 number: store.number || '',
                 barrio: store.barrio || '',
-                lat: store.coordinates?.lat || '',
-                lng: store.coordinates?.lng || '',
+                lat: store.lat || '',
+                lng: store.lng || '',
                 supportsPickup: store.supportsPickup || true,
                 supportsDelivery: store.supportsDelivery || true,
                 phone: store.phone || '',
@@ -141,12 +140,11 @@ export function BranchManagement() {
 
         // Función para guardar cambios en el servidor
         const handleSaveChanges = async () => {
-            setIsUpdating(true);
             try {
                 const storeData = {
                     id: store.id,
                     name: localStore.name.trim(),
-                    type: localStore.type,
+                    code: localStore.type,
                     street: localStore.street.trim(),
                     number: localStore.number.trim(),
                     barrio: localStore.barrio.trim(),
@@ -155,13 +153,14 @@ export function BranchManagement() {
                     supportsPickup: localStore.supportsPickup,
                     supportsDelivery: localStore.supportsDelivery,
                     phone: localStore.phone.trim(),
-                    deliveryTime: localStore.deliveryTime.trim(),
-                    minOrder: Number(localStore.minOrder),
-                    isOpen: localStore.isOpen,
-                    coordinates: {
-                        lat: Number(localStore.lat),
-                        lng: Number(localStore.lng)
-                    }
+                    timezone: 'America/Argentina/Buenos_Aires',
+                    // deliveryTime: localStore.deliveryTime.trim(),
+                    // minOrder: Number(localStore.minOrder),
+                    // isOpen: localStore.isOpen,
+                    // coordinates: {
+                    //     lat: Number(localStore.lat),
+                    //     lng: Number(localStore.lng)
+                    // }
                 };
 
                 await callActualizarSucursal({
@@ -174,8 +173,6 @@ export function BranchManagement() {
             } catch (error) {
                 console.error('Error al actualizar sucursal:', error);
                 toast.error('Error al guardar los cambios');
-            } finally {
-                setIsUpdating(false);
             }
         };
 
@@ -204,14 +201,14 @@ export function BranchManagement() {
                                 variant="outline" 
                                 size="sm"
                                 onClick={handleSaveChanges}
-                                disabled={isUpdating}
+                                disabled={loading}
                             >
-                                {isUpdating ? (
+                                {loading ? (
                                     <RefreshCw className="w-4 h-4 animate-spin" />
                                 ) : (
                                     <Save className="w-4 h-4" />
                                 )}
-                                {isUpdating ? "Guardando..." : "Guardar"}
+                                {loading ? "Guardando..." : "Guardar"}
                             </Button>
                             {!selectedStore && (
                                 <Button variant="outline" size="sm" onClick={() => {

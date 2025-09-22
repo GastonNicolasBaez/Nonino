@@ -48,8 +48,6 @@ export const putAdminStoresUpdateStoreQueryFunction = async ({_store, _accessTok
         }
     }
 
-    console.log(axiosSetup);
-
-    const response = await axios.put(`${ENDPOINTS.stores}/admin/stores`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.put(`${ENDPOINTS.stores}/admin/stores/${_store.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }

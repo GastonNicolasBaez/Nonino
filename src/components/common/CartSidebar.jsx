@@ -227,19 +227,39 @@ export function CartSidebar() {
                 </div>
 
                 {/* Store Selection */}
-                <div className="space-y-3">
-                  <div className="text-sm font-medium">Sucursal para el pedido:</div>
-                  <StoreSelector
-                    selectedStore={selectedStore}
-                    onStoreSelect={updateStore}
-                    className="w-full"
-                  />
-                  {selectedStore && selectedStore.minOrder && subtotal < selectedStore.minOrder && (
-                    <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
-                      ⚠️ Pedido mínimo: {formatPrice(selectedStore.minOrder)}
+                {selectedStore ? (
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Sucursal para el pedido:</div>
+                    <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-green-600 text-sm">✓</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-sm text-green-800">{selectedStore.name}</div>
+                          <div className="text-xs text-green-600">{selectedStore.address}</div>
+                          <div className="text-xs text-green-700 mt-1 font-medium">
+                            {selectedStore.deliveryTime} • Min: {formatPrice(selectedStore.minOrder)}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
+                    {selectedStore.minOrder && subtotal < selectedStore.minOrder && (
+                      <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
+                        ⚠️ Pedido mínimo: {formatPrice(selectedStore.minOrder)}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Sucursal para el pedido:</div>
+                    <StoreSelector
+                      selectedStore={selectedStore}
+                      onStoreSelect={updateStore}
+                      className="w-full"
+                    />
+                  </div>
+                )}
 
                 {/* Actions */}
                 <div className="space-y-3">

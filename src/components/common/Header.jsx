@@ -87,11 +87,10 @@ export function Header() {
       <motion.header
         className={cn(
           "fixed top-0 left-0 right-0 z-20 transition-all duration-300",
-          isStaticPage
-            ? "bg-white/95 backdrop-blur-md shadow-lg border-b"
-            : scrolled
-            ? "bg-white/20 backdrop-blur-sm shadow-lg"
-            : "bg-white/95 backdrop-blur-md shadow-lg border-b"
+          // En móvil siempre sólido, en desktop con transparencias
+          "bg-white shadow-lg border-b",
+          "lg:bg-white/95 lg:backdrop-blur-md",
+          !isStaticPage && scrolled && "lg:bg-white/20 lg:backdrop-blur-sm"
         )}
         initial={{ y: isStaticPage ? 0 : -100 }}
         animate={{ y: 0 }}
@@ -296,7 +295,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-30 lg:hidden"
+            className="fixed inset-0 z-50 lg:hidden"
           >
             <div
               className="fixed inset-0 bg-black/50 backdrop-blur-sm"

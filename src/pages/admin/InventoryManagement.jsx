@@ -26,6 +26,7 @@ import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { useUpdateStockModal } from "../../components/common/UpdateStockModal";
 import { Portal } from "../../components/common/Portal";
 import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
+import { toast } from "sonner";
 
 export function InventoryManagement() {
   const [searchTerm, setSearchTerm] = useState("");

@@ -50,8 +50,20 @@ export function AdminLogin() {
 
     //Redirigir si ya está autenticado como admin
     useEffect(() => {
-        if (session.isAuthenticated && session.userData.role == 'ADMIN') {
-            navigate('/intranet/admin');
+        if (session.isAuthenticated) {
+            switch (session.userData.role) {
+                case 'ADMIN':
+                    navigate('/intranet/admin');
+                    break;
+                case 'LOCAL':
+                    navigate('/intranet/local');
+                    break;
+                case 'FABRICA':
+                    navigate('/intranet/fabrica');
+                    break;
+                default:
+                    session.logout();
+            }
         }
     }, [session.isAuthenticated]);
 

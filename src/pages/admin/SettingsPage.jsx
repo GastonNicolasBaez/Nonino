@@ -1,40 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 // Removed framer-motion for simpler admin experience
 import {
     Settings,
     Store,
     Bell,
-    Users,
     Mail,
     Smartphone,
     CreditCard,
     Shield,
-    Eye,
-    EyeOff,
     Save,
     RefreshCw,
     Upload,
     Download,
     Clock,
-    MapPin,
-    Phone,
-    Globe,
-    Palette,
     Database,
     Trash2,
     AlertTriangle,
-    Building2,
     Tag,
     History,
     Plus,
     Edit,
     Trash
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { generateSystemConfigReportPDF, downloadPDF } from "../../services/pdfService";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { generateSystemConfigReportPDF, downloadPDF } from "@/services/pdfService";
 import { toast } from "sonner";
 import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
 import { useAdminData } from "@/context/AdminDataProvider";

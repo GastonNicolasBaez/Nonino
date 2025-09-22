@@ -32,7 +32,8 @@ const userDataTransform = (data) => {
         sucursal: userPrivileges.sucursal,
         isAdmin: userPrivileges.role == 'ADMIN',
         isLocal: userPrivileges.role == 'LOCAL',
-        isFabrica: userPrivileges.role == 'FABRICA'
+        isFabrica: userPrivileges.role == 'FABRICA',
+        isUser: userPrivileges.role == 'USER'
     }
     return user;
 }

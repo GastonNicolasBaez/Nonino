@@ -36,46 +36,27 @@ export function DeliveryManagement() {
         sucursales: stores,
         sucursalSeleccionada: selectedStore,
         adminDataLoading: loading,
+        deliverySucursal: deliveryZones,
+
+        callDeliveryZones,
+        callCrearDeliveryZone,
+        callActualizarDeliveryZone,
+        callBorrarDeliveryZone
     } = useAdminData();
 
     const session = useSession();
 
-    // Datos mock para las zonas de delivery
-    const [deliveryZones, setDeliveryZones] = useState([
-        {
-            id: 1,
-            storeId: 1,
-            storeName: "Nonino Empanadas - Centro",
-            neighborhood: "Centro",
-            deliveryTime: "30-45 min",
-            deliveryFee: 500,
-            minOrderAmount: 2000,
-            isActive: true,
-            coverageRadius: 5
-        },
-        {
-            id: 2,
-            storeId: 1,
-            storeName: "Nonino Empanadas - Centro",
-            neighborhood: "Palermo",
-            deliveryTime: "45-60 min",
-            deliveryFee: 800,
-            minOrderAmount: 2500,
-            isActive: true,
-            coverageRadius: 8
-        },
-        {
-            id: 3,
-            storeId: 2,
-            storeName: "Nonino Empanadas - Norte",
-            neighborhood: "Villa Crespo",
-            deliveryTime: "35-50 min",
-            deliveryFee: 600,
-            minOrderAmount: 2200,
-            isActive: false,
-            coverageRadius: 6
-        }
-    ]);
+    // {
+    //         id: 3,
+    //         storeId: 2,
+    //         storeName: "Nonino Empanadas - Norte",
+    //         neighborhood: "Villa Crespo",
+    //         delayMinutes: "35-50 min",
+    //         deliveryFee: 600,
+    //         minOrderAmount: 2200,
+    //         isActive: false,
+    //         coverageRadius: 6
+    //     }
 
     // Opciones para CustomSelect
     const storeOptions = [
@@ -98,35 +79,41 @@ export function DeliveryManagement() {
     ];
 
     const filteredZones = deliveryZones.filter(zone => {
-        const matchesSearch = zone.neighborhood.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            zone.storeName.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStore = storeFilter === '-1' || zone.storeId == storeFilter;
-        const matchesNeighborhood = neighborhoodFilter === '-1' || zone.neighborhood === neighborhoodFilter;
-        return matchesSearch && matchesStore && matchesNeighborhood;
+        const matchesSearch = zone.barrioName.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesNeighborhood = neighborhoodFilter === '-1' || zone.barrioName === neighborhoodFilter;
+        return matchesSearch && matchesNeighborhood;
     });
 
     const deliveryStats = {
         total: deliveryZones.length,
-        active: deliveryZones.filter(z => z.isActive).length,
-        inactive: deliveryZones.filter(z => !z.isActive).length,
-        averageDeliveryTime: Math.round(deliveryZones.reduce((sum, z) => {
-            const time = parseInt(z.deliveryTime.split('-')[0]);
+        // active: deliveryZones.filter(z => z.isActive).length,
+        // inactive: deliveryZones.filter(z => !z.isActive).length,
+        averagedelayMinutes: Math.round(deliveryZones.reduce((sum, z) => {
+            const time = parseInt(z.delayMinutes);
             return sum + time;
         }, 0) / deliveryZones.length),
         averageFee: Math.round(deliveryZones.reduce((sum, z) => sum + z.deliveryFee, 0) / deliveryZones.length)
     };
 
-    const toggleZoneStatus = async (zoneId) => {
-        setDeliveryZones(prev => prev.map(zone => 
-            zone.id === zoneId ? { ...zone, isActive: !zone.isActive } : zone
-        ));
-        toast.success("Estado de zona actualizado");
-    };
+    // const toggleZoneStatus = async (zoneId) => {
+    //     setDeliveryZones(prev => prev.map(zone => 
+    //         zone.id === zoneId ? { ...zone, isActive: !zone.isActive } : zone
+    //     ));
+    //     toast.success("Estado de zona actualizado");
+    // };
 
-    const deleteZone = (zoneId) => {
+    const deleteZone = async (zoneId) => {
         const zone = deliveryZones.find(z => z.id === zoneId);
-        if (confirm(`¿Estás seguro de que quieres eliminar la zona de delivery para ${zone?.neighborhood}?`)) {
-            setDeliveryZones(prev => prev.filter(z => z.id !== zoneId));
+        if (confirm(`¿Estás seguro de que quieres eliminar la zona de delivery para ${zone?.barrioName}?`)) {
+            await callBorrarDeliveryZone({
+                _storeId: selectedStore,
+                _deliveryZoneId: zoneId,
+                _accessToken: session.userData.accessToken
+            })
+            await callDeliveryZones({
+                _storeId: selectedStore,
+                _accessToken: session.userData.accessToken
+            })
             toast.success("Zona de delivery eliminada");
         }
     };
@@ -157,7 +144,7 @@ export function DeliveryManagement() {
         {
             id: "tiempo-promedio",
             label: "Tiempo Promedio",
-            value: `${deliveryStats.averageDeliveryTime} min`,
+            value: `${deliveryStats.averagedelayMinutes} min`,
             color: "blue",
             icon: <Clock className="w-5 h-5" />
         }
@@ -186,31 +173,47 @@ export function DeliveryManagement() {
     // Componente para el modal de agregar/editar zona
     const DeliveryZoneModal = ({ zone, onClose }) => {
         const [formData, setFormData] = useState(zone || {
-            storeId: selectedStore || "",
-            neighborhood: "",
-            deliveryTime: "",
+            barrioCode: "",
+            barrioName: "",
             deliveryFee: 0,
-            minOrderAmount: 0,
-            isActive: true,
-            coverageRadius: 5
+            delayMinutes: 0
         });
+
+        const handleInputChange = (field, value) => {
+            setFormData(prev => ({
+                ...prev,
+                [field]: value
+            }));
+        };
 
         const handleSave = async () => {
             try {
                 if (zone) {
                     // Editar existente
-                    setDeliveryZones(prev => prev.map(z => 
-                        z.id === zone.id ? { ...z, ...formData } : z
-                    ));
+                    const updZone = formData;
+                    updZone.id = zone.id;
+                    await callActualizarDeliveryZone({
+                        _storeId: selectedStore,
+                        _deliveryZone: updZone,
+                        _accessToken: session.userData.accessToken
+                    })
+                    await callDeliveryZones({
+                        _storeId: selectedStore,
+                        _accessToken: session.userData.accessToken
+                    })
                     toast.success("Zona de delivery actualizada correctamente");
                 } else {
                     // Crear nueva
-                    const newZone = {
-                        id: Date.now(),
-                        ...formData,
-                        storeName: stores.find(s => s.id == formData.storeId)?.name || "Local desconocido"
-                    };
-                    setDeliveryZones(prev => [...prev, newZone]);
+                    const newZone = formData;
+                    await callCrearDeliveryZone({
+                        _storeId: selectedStore,
+                        _deliveryZone: newZone,
+                        _accessToken: session.userData.accessToken
+                    })
+                    await callDeliveryZones({
+                        _storeId: selectedStore,
+                        _accessToken: session.userData.accessToken
+                    })
                     toast.success("Zona de delivery creada correctamente");
                 }
                 onClose();
@@ -244,25 +247,25 @@ export function DeliveryManagement() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                                        Local *
+                                        Código *
                                     </label>
-                                    <CustomSelect
-                                        value={formData.storeId}
-                                        onChange={(value) => setFormData(prev => ({ ...prev, storeId: value }))}
-                                        options={storeOptions.filter(opt => opt.value !== "-1")}
-                                        placeholder="Seleccionar local"
+                                    <Input
+                                        value={formData.barrioCode}
+                                        onChange={(e) => handleInputChange("barrioCode", String(e.target.value).toUpperCase())}
+                                        placeholder="ONC"
+                                        className="admin-input"
                                     />
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                                        Barrio *
+                                        Nombre *
                                     </label>
-                                    <CustomSelect
-                                        value={formData.neighborhood}
-                                        onChange={(value) => setFormData(prev => ({ ...prev, neighborhood: value }))}
-                                        options={neighborhoodOptions.filter(opt => opt.value !== "-1")}
+                                    <Input
+                                        value={formData.barrioName}
+                                        onChange={(e) => handleInputChange("barrioName", e.target.value)}
                                         placeholder="Seleccionar barrio"
+                                        className="admin-input"
                                     />
                                 </div>
 
@@ -271,8 +274,8 @@ export function DeliveryManagement() {
                                         Tiempo de Delivery
                                     </label>
                                     <Input
-                                        value={formData.deliveryTime}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                                        value={formData.delayMinutes}
+                                        onChange={(e) => handleInputChange("delayMinutes", e.target.value)}
                                         placeholder="30-45 min"
                                         className="admin-input"
                                     />
@@ -285,13 +288,13 @@ export function DeliveryManagement() {
                                     <Input
                                         type="number"
                                         value={formData.deliveryFee}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, deliveryFee: Number(e.target.value) }))}
+                                        onChange={(e) => handleInputChange("deliveryFee", e.target.value)}
                                         placeholder="500"
                                         className="admin-input"
                                     />
                                 </div>
 
-                                <div>
+                                {/* <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                                         Pedido Mínimo
                                     </label>
@@ -315,10 +318,10 @@ export function DeliveryManagement() {
                                         placeholder="5"
                                         className="admin-input"
                                     />
-                                </div>
+                                </div> */}
                             </div>
 
-                            <div className="mt-4">
+                            {/* <div className="mt-4">
                                 <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                                     <input
                                         type="checkbox"
@@ -328,7 +331,7 @@ export function DeliveryManagement() {
                                     />
                                     Zona activa
                                 </label>
-                            </div>
+                            </div> */}
                         </CardContent>
 
                         <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
@@ -370,12 +373,11 @@ export function DeliveryManagement() {
                                         {stat.value}
                                     </p>
                                 </div>
-                                <div className={`p-2 rounded-lg ${
-                                    stat.color === 'green' ? 'bg-green-100 dark:bg-green-900/30' :
+                                <div className={`p-2 rounded-lg ${stat.color === 'green' ? 'bg-green-100 dark:bg-green-900/30' :
                                     stat.color === 'red' ? 'bg-red-100 dark:bg-red-900/30' :
-                                    stat.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900/30' :
-                                    'bg-gray-100 dark:bg-gray-800'
-                                }`}>
+                                        stat.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                                            'bg-gray-100 dark:bg-gray-800'
+                                    }`}>
                                     {stat.icon}
                                 </div>
                             </div>
@@ -470,17 +472,17 @@ export function DeliveryManagement() {
                                                 </div>
                                                 <div>
                                                     <h3 className="font-semibold text-gray-900 dark:text-white">
-                                                        {zone.neighborhood}
+                                                        {zone.barrioName}
                                                     </h3>
                                                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                        {zone.storeName}
+                                                        {zone.barrioCode}
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <Badge variant={zone.isActive ? "empanada" : "secondary"}>
+                                                {/* <Badge variant={zone.isActive ? "empanada" : "secondary"}>
                                                     {zone.isActive ? "Activa" : "Inactiva"}
-                                                </Badge>
+                                                </Badge> */}
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
@@ -488,13 +490,13 @@ export function DeliveryManagement() {
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                 </Button>
-                                                <Button
+                                                {/* <Button
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => toggleZoneStatus(zone.id)}
                                                 >
                                                     {zone.isActive ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
-                                                </Button>
+                                                </Button> */}
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
@@ -510,7 +512,7 @@ export function DeliveryManagement() {
                                             <div className="flex items-center gap-2">
                                                 <Clock className="w-4 h-4 text-gray-400" />
                                                 <span className="text-gray-600 dark:text-gray-400">
-                                                    {zone.deliveryTime}
+                                                    {zone.delayMinutes}
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">
@@ -519,7 +521,7 @@ export function DeliveryManagement() {
                                                     ${zone.deliveryFee}
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-2">
+                                            {/* <div className="flex items-center gap-2">
                                                 <Building2 className="w-4 h-4 text-gray-400" />
                                                 <span className="text-gray-600 dark:text-gray-400">
                                                     Min: ${zone.minOrderAmount}
@@ -530,7 +532,7 @@ export function DeliveryManagement() {
                                                 <span className="text-gray-600 dark:text-gray-400">
                                                     {zone.coverageRadius} km
                                                 </span>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </CardContent>
                                 </Card>

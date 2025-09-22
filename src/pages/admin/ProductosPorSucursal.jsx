@@ -114,7 +114,7 @@ export function ProductosPorSucursal() {
         {
             label: "Actualizar",
             variant: "outline",
-            onClick: () => getStoreProducts(selectedStore),
+            // onClick: () => getStoreProducts(selectedStore),
             disabled: !selectedStore || adminDataLoading,
             className: "h-9 px-4 text-sm font-medium",
             icon: <RefreshCw className={`w-4 h-4 mr-2 ${adminDataLoading ? 'animate-spin' : ''}`} />
@@ -203,7 +203,7 @@ export function ProductosPorSucursal() {
             setSearchTerm("");
 
             // Actualizar lista de productos de la sucursal
-            await getStoreProducts(selectedStore);
+            await callProductosYCategoriasSucursal(selectedStore);
 
             return true;
         } catch (error) {
@@ -212,28 +212,6 @@ export function ProductosPorSucursal() {
             return false;
         }
     };
-
-    // Función para obtener productos ya vinculados a la sucursal
-    const getStoreProducts = async (storeId) => {
-        if (!storeId) return;
-
-        try {
-            // Llamada real al backend
-            await callProductosYCategoriasSucursal(storeId);
-        } catch (error) {
-            console.error('Error al obtener productos de la sucursal:', error);
-            toast.error("Error al cargar productos de la sucursal");
-        }
-    };
-
-    // Efecto para cargar productos de la sucursal cuando se selecciona una
-    useEffect(() => {
-        if (selectedStore && selectedStore != '') {
-            getStoreProducts(selectedStore);
-            // Limpiar selección cuando cambia la sucursal
-            setSelectedProducts([]);
-        }
-    }, [selectedStore]);
 
     // Efecto para marcar automáticamente los productos ya vinculados cuando se cargan
     useEffect(() => {

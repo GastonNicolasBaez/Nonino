@@ -14,6 +14,11 @@ import {
     getAdminStoresQueryFunction,
     postAdminStoresAddStoreQueryFunction,
     putAdminStoresUpdateStoreQueryFunction,
+
+    getAdminStoresDeliveryZonesQueryFunction,
+    postAdminStoresAddDeliveryZoneQueryFunction,
+    putAdminStoresUpdateDeliveryZoneQueryFunction,
+    deleteAdminStoresDeleteDeliveryZoneQueryFunction,
 } from '@/config/apiStoresQueryFunctions';
 import {
     getPublicCatalogQueryFunction
@@ -34,6 +39,7 @@ export const AdminDataProvider = ({ children }) => {
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState([]);
 
     const [productosSucursal, setProductosSucursal] = useState([]);
+    const [deliverySucursal, setDeliverySucursal] = useState([]);
 
     //cargar información de admin al montar la vista de administrador
     useEffect(() => {
@@ -43,6 +49,21 @@ export const AdminDataProvider = ({ children }) => {
             setSucursalSeleccionada(session.userData.sucursal);
         }
     }, [session.userData?.accessToken]);
+
+    //cargar información de sucursal cuando cambie
+    useEffect(() => {
+        if (sucursalSeleccionada && session.userData) {
+            // zonas de delivery
+            callDeliveryZones({
+                _storeId: sucursalSeleccionada,
+                _accessToken: session.userData.accessToken,
+            });
+
+            // productos de sucursal
+            callProductosYCategoriasSucursal(sucursalSeleccionada);
+        }
+    }, [sucursalSeleccionada]);
+
 
     // ---------- PRODUCTOS Y CATEGORIAS PÚBLICO
     // listar
@@ -161,8 +182,36 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: putAdminStoresUpdateStoreQueryFunction,
     });
 
-    // eliminar
+    // listar zonas de entrega
+    const { mutateAsync: callDeliveryZones, isPending: callDeliveryZonesLoading } = useMutation({
+        mutationKey: ['adminDeliveryZones'],
+        mutationFn: getAdminStoresDeliveryZonesQueryFunction,
+        onSuccess: (data) => {
+            setDeliverySucursal(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setDeliverySucursal([]);
+        }
+    });
 
+    // crear zona de entrega
+    const { mutateAsync: callCrearDeliveryZone, isPending: callCrearDeliveryZoneLoading } = useMutation({
+        mutationKey: ['adminCrearDeliveryZone'],
+        mutationFn: postAdminStoresAddDeliveryZoneQueryFunction,
+    });
+
+    // modificar zona de entrega
+    const { mutateAsync: callActualizarDeliveryZone, isPending: callActualizarDeliveryZoneLoading } = useMutation({
+        mutationKey: ['adminActualizarDeliveryZone'],
+        mutationFn: putAdminStoresUpdateDeliveryZoneQueryFunction,
+    });
+
+    // eliminar zona de entrega   
+    const { mutateAsync: callBorrarDeliveryZone, isPending: callBorrarDeliveryZoneLoading } = useMutation({
+        mutationKey: ['adminBorrarDeliveryZone'],
+        mutationFn: deleteAdminStoresDeleteDeliveryZoneQueryFunction,
+    });
 
 
 
@@ -178,7 +227,11 @@ export const AdminDataProvider = ({ children }) => {
         callProductosYCategoriasSucursalLoading ||
         callAsignarASucursalLoading ||
         callCrearSucursalLoading ||
-        callActualizarSucursalLoading;
+        callActualizarSucursalLoading ||
+        callDeliveryZonesLoading ||
+        callCrearDeliveryZoneLoading ||
+        callActualizarDeliveryZoneLoading || 
+        callBorrarDeliveryZoneLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -188,6 +241,7 @@ export const AdminDataProvider = ({ children }) => {
             sucursalSeleccionada,
             setSucursalSeleccionada,
             productosSucursal,
+            deliverySucursal,
 
             adminDataLoading,
 
@@ -199,7 +253,12 @@ export const AdminDataProvider = ({ children }) => {
             callProductosYCategoriasSucursal,
             callAsignarASucursal,
             callCrearSucursal,
-            callActualizarSucursal
+            callActualizarSucursal,
+
+            callDeliveryZones,
+            callCrearDeliveryZone,
+            callActualizarDeliveryZone,
+            callBorrarDeliveryZone
         }}>
             {children}
         </AdminDataContext.Provider>

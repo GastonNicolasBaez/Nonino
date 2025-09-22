@@ -9,6 +9,8 @@ import {
 } from "@/config/apiLoginQueryFunctions";
 //import { toast } from "react-toastify";
 
+// integrar dependencia con el rol
+
 const sucursalAsignada = {
     'admin@nonino': '',
     'admin@nonino1': 1,

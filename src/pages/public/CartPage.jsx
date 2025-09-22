@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 import { Badge } from "../../components/ui/badge";
 import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
-
+//asd
 export function CartPage() {
   const {
     items,

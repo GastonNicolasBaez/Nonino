@@ -87,79 +87,94 @@ export function CartPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-col sm:flex-row gap-4">
+                <Card className="shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-empanada-golden/30">
+                  <CardContent className="p-5 sm:p-6">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                      {/* Imagen del producto */}
+                      <div className="flex-shrink-0">
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-full sm:w-20 lg:w-24 h-32 sm:h-20 lg:h-24 object-cover rounded-lg"
+                          className="w-full sm:w-24 lg:w-28 h-40 sm:h-24 lg:h-28 object-cover rounded-xl shadow-sm"
                         />
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-base sm:text-lg leading-tight mb-1">{item.name}</h3>
-                          <p className="text-gray-600 text-sm mb-2">
-                            {formatPrice(item.price)} c/u
-                          </p>
-                          {item.customizations &&
-                            Object.keys(item.customizations).length > 0 && (
-                              <div className="flex flex-wrap gap-1 mb-3">
-                                {Object.entries(item.customizations).map(([key, value]) => (
-                                  <Badge key={key} variant="outline" className="text-xs">
-                                    {key}: {value}
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
-                        </div>
                       </div>
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 sm:h-9 sm:w-9"
-                            onClick={() =>
-                              updateQuantity(
-                                item.id,
-                                item.customizations,
-                                item.quantity - 1
-                              )
-                            }
-                          >
-                            <Minus className="w-3 h-3" />
-                          </Button>
-                          <span className="font-medium w-8 text-center text-sm sm:text-base">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 sm:h-9 sm:w-9"
-                            onClick={() =>
-                              updateQuantity(
-                                item.id,
-                                item.customizations,
-                                item.quantity + 1
-                              )
-                            }
-                          >
-                            <Plus className="w-3 h-3" />
-                          </Button>
+                      {/* Información del producto */}
+                      <div className="flex-1 min-w-0 space-y-3">
+                        <div>
+                          <h3 className="font-bold text-lg sm:text-xl text-gray-900 leading-tight mb-1">
+                            {item.name}
+                          </h3>
+                          <p className="text-empanada-rich font-medium text-base">
+                            {formatPrice(item.price)} <span className="text-gray-500 font-normal text-sm">por unidad</span>
+                          </p>
                         </div>
-                        <div className="flex items-center gap-2 sm:gap-4">
-                          <span className="font-bold text-base sm:text-lg text-empanada-golden">
-                            {formatPrice(item.price * item.quantity)}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-500 hover:text-red-700 h-8 w-8 sm:h-9 sm:w-9"
-                            onClick={() => removeItem(item.id, item.customizations)}
-                          >
-                            <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                          </Button>
+
+                        {/* Personalizaciones */}
+                        {item.customizations && Object.keys(item.customizations).length > 0 && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {Object.entries(item.customizations).map(([key, value]) => (
+                              <Badge key={key} variant="secondary" className="text-xs bg-empanada-light text-empanada-rich border-empanada-golden/20">
+                                {key}: {value}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Controles de cantidad y precio */}
+                        <div className="flex items-center justify-between pt-2">
+                          <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-white hover:shadow-sm"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.id,
+                                  item.customizations,
+                                  item.quantity - 1
+                                )
+                              }
+                            >
+                              <Minus className="w-4 h-4" />
+                            </Button>
+                            <span className="font-bold text-lg px-3 py-1 bg-white rounded-md min-w-[2.5rem] text-center shadow-sm">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-white hover:shadow-sm"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.id,
+                                  item.customizations,
+                                  item.quantity + 1
+                                )
+                              }
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <div className="font-bold text-xl text-empanada-golden">
+                                {formatPrice(item.price * item.quantity)}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Total del ítem
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 rounded-lg"
+                              onClick={() => removeItem(item.id, item.customizations)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>

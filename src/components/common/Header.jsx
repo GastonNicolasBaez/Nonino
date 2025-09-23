@@ -23,6 +23,7 @@ import { cn } from "../../lib/utils";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
   const location = useLocation();
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const session = useSession();
@@ -33,18 +34,15 @@ export function Header() {
   // Detectar si estamos en páginas que no deben tener animaciones
   const isStaticPage = ['/pedir', '/promociones', '/locales', '/nosotros', '/contacto', '/menu'].includes(location.pathname);
 
-  // Hero logo effect - moves from hero section to navbar center
-  const heroLogoY = useTransform(scrollY, [0, 400], [400, -20]); // Moves from below viewport to navbar
-  const heroLogoOpacity = useTransform(scrollY, [0, 100], [0, 1]); // Fades in as it approaches
+  // Hero logo effect - commented out as not currently used
+  // const heroLogoY = useTransform(scrollY, [0, 400], [400, -20]); // Moves from below viewport to navbar
+  // const heroLogoOpacity = useTransform(scrollY, [0, 100], [0, 1]); // Fades in as it approaches
 
-  // Logo section movement - movimiento sutil como antes
-  const logoSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, -15]);
+  // Logo section movement - mover más a la izquierda para dar espacio
+  const logoSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, -25]);
 
-  // Left navigation movement - navegación central izquierda (Inicio, Pedir Ya, Promociones)
-  const leftNavX = useTransform(scrollY, [0, 300], isStaticPage ? [80, 80] : [80, -20]);
-
-  // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
-  const rightNavX = useTransform(scrollY, [0, 300], isStaticPage ? [-80, -80] : [-80, -55]);
+  // Left navigation movement - será definido después de getResponsivePosition
+  // Right navigation movement - será definido después de getResponsivePosition
 
   // Icons section movement - movimiento sutil como antes
   const iconsSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, 8]);
@@ -65,6 +63,14 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const leftNavigation = [
     { name: "Inicio", href: "/" },
     { name: "Pedir Ya", href: "/pedir" },
@@ -79,6 +85,26 @@ export function Header() {
 
   // Combinar navegaciones para el menú móvil
   const navigation = [...leftNavigation, ...rightNavigation];
+
+  // Función para calcular posiciones responsivas
+  const getResponsivePosition = (xlPosition, customPosition, lgPosition) => {
+    if (windowWidth >= 1536) return xlPosition; // xl breakpoint (≥1536px)
+    if (windowWidth >= 1280) return customPosition; // custom breakpoint (1280px-1535px)
+    if (windowWidth >= 1024) return lgPosition; // lg breakpoint (1024px-1279px)
+    return xlPosition; // fallback
+  };
+
+  // Left navigation movement - navegación central izquierda (Inicio, Pedir Ya, Promociones)
+  // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
+  const leftNavInitial = getResponsivePosition(60, 30, 20); // Progresivo: 60 → 30 → 20
+  const leftNavEnd = getResponsivePosition(-30, -30, -15); // Progresivo: -30 → -20 → -15
+  const leftNavX = useTransform(scrollY, [0, 300], isStaticPage ? [leftNavInitial, leftNavInitial] : [leftNavInitial, leftNavEnd]);
+
+  // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
+  // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
+  const rightNavInitial = getResponsivePosition(-115, -60, -40); // Progresivo: -80 → -60 → -40
+  const rightNavEnd = getResponsivePosition(-55, -45, 40); // Progresivo: -55 → -45 → 40
+  const rightNavX = useTransform(scrollY, [0, 300], isStaticPage ? [rightNavInitial, rightNavInitial] : [rightNavInitial, rightNavEnd]);
 
   const isActive = (href) => location.pathname === href;
 
@@ -118,7 +144,7 @@ export function Header() {
                   <AnimatedGradientText className="text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-tight text-empanada-golden">
                     NONINO
                   </AnimatedGradientText>
-                  <span className="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-empanada-golden/80">
+                  <span className="hidden xl:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-empanada-golden/80">
                     EMPANADAS
                   </span>
                 </div>
@@ -128,7 +154,7 @@ export function Header() {
             {/* Left Navigation Section */}
             <motion.nav
               style={{ x: leftNavX }}
-              className="hidden lg:flex items-center space-x-6 xl:space-x-8 mr-4 xl:mr-6"
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8 mr-6 xl:mr-8"
             >
                 {leftNavigation.map((item) => (
                   <Link
@@ -156,7 +182,7 @@ export function Header() {
             {/* Right Navigation Section */}
             <motion.nav
               style={{ x: rightNavX }}
-              className="hidden lg:flex items-center space-x-6 xl:space-x-8 ml-4 xl:ml-6"
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8 ml-6 xl:ml-8"
             >
                 {rightNavigation.map((item) => (
                   <Link

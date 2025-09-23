@@ -2,29 +2,24 @@ import { useState, useEffect } from "react";
 import {
     Building2,
     MapPin,
-    Phone,
-    Clock,
     Save,
     RefreshCw,
     Plus,
-    Edit,
     Trash,
-    Eye,
-    EyeOff,
     Settings,
     Store,
     X
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
 import { useAdminData } from "@/context/AdminDataProvider";
-import { AddStoreModal } from "../../components/admin/AddStoreModal";
-import { ScheduleConfiguration } from "../../components/admin/ScheduleConfiguration";
-import { Portal } from "../../components/common/Portal";
+import { AddStoreModal } from "@/components/admin/AddStoreModal";
+import { ScheduleConfiguration } from "@/components/admin/ScheduleConfiguration";
+import { Portal } from "@/components/common/Portal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "@/context/SessionProvider";
 
@@ -106,7 +101,8 @@ export function BranchManagement() {
             lng: store.lng || '',
             supportsPickup: store.supportsPickup || true,
             supportsDelivery: store.supportsDelivery || true,
-            phone: store.phone || '',
+            tel1: store.tel1 || '',
+            tel2: store.tel2 || '',
             deliveryTime: store.deliveryTime || '',
             minOrder: store.minOrder || '',
             isOpen: store.isOpen || false
@@ -124,7 +120,8 @@ export function BranchManagement() {
                 lng: store.lng || '',
                 supportsPickup: store.supportsPickup || true,
                 supportsDelivery: store.supportsDelivery || true,
-                phone: store.phone || '',
+                tel1: store.tel1 || '',
+                tel2: store.tel2 || '',
                 deliveryTime: store.deliveryTime || '',
                 minOrder: store.minOrder || '',
                 isOpen: store.isOpen || false
@@ -158,7 +155,8 @@ export function BranchManagement() {
                     lng: Number(localStore.lng),
                     supportsPickup: localStore.supportsPickup,
                     supportsDelivery: localStore.supportsDelivery,
-                    phone: localStore.phone.trim(),
+                    tel1: localStore.tel1.trim(),
+                    tel2: localStore.tel2.trim(),
                     timezone: 'America/Argentina/Buenos_Aires',
                     // deliveryTime: localStore.deliveryTime.trim(),
                     // minOrder: Number(localStore.minOrder),
@@ -203,8 +201,8 @@ export function BranchManagement() {
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <Button 
-                                variant="outline" 
+                            <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={handleSaveChanges}
                                 disabled={loading}
@@ -229,7 +227,7 @@ export function BranchManagement() {
 
                     {/* Grid principal con 3 columnas como en el modal */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        
+
                         {/* Columna 1: Información Básica */}
                         <div className="space-y-3">
                             <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
@@ -266,8 +264,20 @@ export function BranchManagement() {
                                     Teléfono
                                 </label>
                                 <Input
-                                    value={localStore.phone}
-                                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                                    value={localStore.tel1}
+                                    onChange={(e) => handleInputChange("tel1", e.target.value)}
+                                    placeholder="+54 11 1234-5678"
+                                    className="admin-input text-sm"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                    WhatsApp
+                                </label>
+                                <Input
+                                    value={localStore.tel2}
+                                    onChange={(e) => handleInputChange("tel2", e.target.value)}
                                     placeholder="+54 11 1234-5678"
                                     className="admin-input text-sm"
                                 />

@@ -9,10 +9,7 @@ import {
     Check,
     X,
     RefreshCw,
-    AlertCircle,
     CheckCircle2,
-    Edit,
-    Trash2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,7 +19,6 @@ import { useAdminData } from "@/context/AdminDataProvider";
 import { toast } from "sonner";
 import { useSession } from "@/context/SessionProvider";
 import { SectionHeader, StatsCards, EmptyState } from "@/components/branding";
-import { formatPrice } from "@/lib/utils";
 
 export function ProductosPorSucursal() {
     const {

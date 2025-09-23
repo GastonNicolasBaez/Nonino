@@ -45,6 +45,82 @@ import { OrderEditModal } from "./components/OrderEditModal";
 import { generateOrdersReportPDF, downloadPDF } from "../../services/pdfService";
 import { useOrders } from "@/context/OrdersContext";
 import { SectionHeader, CustomSelect } from "@/components/branding";
+import { TicketPreview } from "../../components/common/TicketPreview";
+
+// Función para generar HTML de la comanda básica
+function generateTicketHTML(order) {
+  const orderTime = new Date(order.time || order.orderDate || Date.now());
+
+  return `
+    <div style="width: 384px; font-family: monospace; font-size: 14px; line-height: 1.4; color: #000; background-color: #fff;">
+      <!-- Header -->
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 16px; font-weight: bold;">COMANDA DE COCINA</div>
+        <div style="font-size: 12px;">NONINO EMPANADAS</div>
+        <div style="border-bottom: 1px solid #000; margin: 8px 0;"></div>
+      </div>
+
+      <!-- Información del pedido -->
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 8px;">
+          PEDIDO: ${order.id}
+        </div>
+        <div style="text-align: center; margin-bottom: 8px;">
+          ${orderTime.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+        </div>
+        ${order.deliveryType === 'delivery' ? `
+        <div style="text-align: center; font-weight: bold;">
+          *** DELIVERY ***
+        </div>` : ''}
+      </div>
+
+      <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; margin: 16px 0; padding: 8px 0;"></div>
+
+      <!-- Items -->
+      <div style="margin-bottom: 16px;">
+        ${order.items && order.items.map((item, index) => `
+          <div style="margin-bottom: 12px;">
+            <div style="font-size: 16px; font-weight: bold;">
+              ${item.qty || item.quantity || 1}x ${item.name}
+            </div>
+            ${item.notes ? `
+            <div style="font-size: 13px; margin-left: 16px; font-style: italic;">
+              - ${item.notes}
+            </div>` : ''}
+          </div>
+        `).join('') || ''}
+      </div>
+
+      <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; margin: 16px 0; padding: 8px 0;"></div>
+
+      <!-- Total -->
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 16px; font-weight: bold;">
+          TOTAL: ${order.items ? order.items.reduce((total, item) => total + (item.qty || item.quantity || 1), 0) : 0} items
+        </div>
+      </div>
+
+      <!-- Notas especiales del pedido -->
+      ${order.notes ? `
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 14px; font-weight: bold;">Notas:</div>
+        <div style="font-size: 13px;">${order.notes}</div>
+      </div>` : ''}
+
+      <!-- Control -->
+      <div style="border-top: 1px dashed #000; padding-top: 12px;">
+        <div style="font-size: 12px;">
+          <div style="margin-bottom: 4px;">PREPARADO: _____________</div>
+          <div style="margin-bottom: 4px;">REVISADO:  _____________</div>
+          <div style="margin-bottom: 4px;">ENTREGADO: _____________</div>
+        </div>
+      </div>
+
+      <!-- Espacio para corte -->
+      <div style="height: 24px;"></div>
+    </div>
+  `;
+}
 
 // Función helper para obtener variante de status
 function getStatusVariant(status) {
@@ -99,7 +175,7 @@ function OrderViewModal({ order, onClose }) {
     <Portal>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
         <div
-          className="w-full max-w-6xl h-[95vh] flex flex-col"
+          className="w-full max-w-7xl h-[95vh] flex flex-col"
         >
           <Card className="shadow-2xl h-full flex flex-col ">
             <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -129,100 +205,120 @@ function OrderViewModal({ order, onClose }) {
               </div>
             </CardHeader>
 
-            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
-              {/* Información del Cliente */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
-                    <User className="w-4 h-4" />
-                    Información del Cliente
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Nombre:</strong> {order.customerName}</p>
-                    {order.customerEmail && (
-                      <p className="flex items-center gap-2 text-gray-900 dark:text-white">
-                        <Mail className="w-3 h-3" />
-                        {order.customerEmail}
-                      </p>
-                    )}
-                    {order.customerPhone && (
-                      <p className="flex items-center gap-2 text-gray-900 dark:text-white">
-                        <Phone className="w-3 h-3" />
-                        {order.customerPhone}
-                      </p>
-                    )}
-                    {order.deliveryAddress && (
-                      <p className="flex items-center gap-2 text-gray-900 dark:text-white">
-                        <MapPin className="w-3 h-3" />
-                        {order.deliveryAddress}
-                      </p>
-                    )}
-                  </div>
-                </div>
+            <CardContent className="flex-1 overflow-y-auto px-6 py-6">
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full">
+                {/* Columna izquierda y central: Información del pedido */}
+                <div className="xl:col-span-2 space-y-6">
+                  {/* Información del Cliente */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+                        <User className="w-4 h-4" />
+                        Información del Cliente
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Nombre:</strong> {order.customerName}</p>
+                        {order.customerEmail && (
+                          <p className="flex items-center gap-2 text-gray-900 dark:text-white">
+                            <Mail className="w-3 h-3" />
+                            {order.customerEmail}
+                          </p>
+                        )}
+                        {order.customerPhone && (
+                          <p className="flex items-center gap-2 text-gray-900 dark:text-white">
+                            <Phone className="w-3 h-3" />
+                            {order.customerPhone}
+                          </p>
+                        )}
+                        {order.deliveryAddress && (
+                          <p className="flex items-center gap-2 text-gray-900 dark:text-white">
+                            <MapPin className="w-3 h-3" />
+                            {order.deliveryAddress}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
-                <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
-                    <Package className="w-4 h-4" />
-                    Detalles del Pedido
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Tipo:</strong> {order.deliveryType === 'delivery' ? 'Delivery' : 'Retiro'}</p>
-                    <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Pago:</strong> {order.paymentMethod || 'Efectivo'}</p>
-                    <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Items:</strong> {Array.isArray(order.items) ? order.items.length : 0} productos</p>
-                    {order.notes && <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Notas:</strong> {order.notes}</p>}
+                    <div className="space-y-4">
+                      <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+                        <Package className="w-4 h-4" />
+                        Detalles del Pedido
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Tipo:</strong> {order.deliveryType === 'delivery' ? 'Delivery' : 'Retiro'}</p>
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Pago:</strong> {order.paymentMethod || 'Efectivo'}</p>
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Items:</strong> {Array.isArray(order.items) ? order.items.length : 0} productos</p>
+                        {order.notes && <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Notas:</strong> {order.notes}</p>}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Items del Pedido */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white">Productos</h3>
-                <div className="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
-                      <tr>
-                        <th className="text-left p-3 text-gray-700 dark:text-gray-300">Producto</th>
-                        <th className="text-center p-3 text-gray-700 dark:text-gray-300">Cantidad</th>
-                        <th className="text-right p-3 text-gray-700 dark:text-gray-300">Precio Unit.</th>
-                        <th className="text-right p-3 text-gray-700 dark:text-gray-300">Subtotal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Array.isArray(order.items) ? (
-                        order.items.map((item, index) => (
-                          <tr key={index} className="border-t border-gray-200 dark:border-gray-700">
-                            <td className="p-3 text-gray-900 dark:text-white">{item.name}</td>
-                            <td className="text-center p-3 text-gray-900 dark:text-white">{item.quantity}</td>
-                            <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.price)}</td>
-                            <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.total || item.quantity * item.price)}</td>
+                  {/* Items del Pedido */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Productos</h3>
+                    <div className="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                      <table className="w-full">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
+                          <tr>
+                            <th className="text-left p-3 text-gray-700 dark:text-gray-300">Producto</th>
+                            <th className="text-center p-3 text-gray-700 dark:text-gray-300">Cantidad</th>
+                            <th className="text-right p-3 text-gray-700 dark:text-gray-300">Precio Unit.</th>
+                            <th className="text-right p-3 text-gray-700 dark:text-gray-300">Subtotal</th>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="4" className="text-center p-6 text-gray-500 dark:text-gray-400">
-                            No hay productos en este pedido
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                        </thead>
+                        <tbody>
+                          {Array.isArray(order.items) ? (
+                            order.items.map((item, index) => (
+                              <tr key={index} className="border-t border-gray-200 dark:border-gray-700">
+                                <td className="p-3 text-gray-900 dark:text-white">{item.name}</td>
+                                <td className="text-center p-3 text-gray-900 dark:text-white">{item.quantity}</td>
+                                <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.price)}</td>
+                                <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.total || item.quantity * item.price)}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="4" className="text-center p-6 text-gray-500 dark:text-gray-400">
+                                No hay productos en este pedido
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
-              {/* Total */}
-              <div className="flex justify-end">
-                <div className="text-right space-y-1">
-                  {order.subtotal && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Subtotal: {formatPrice(order.subtotal)}</p>
-                  )}
-                  {order.deliveryFee && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Envío: {formatPrice(order.deliveryFee)}</p>
-                  )}
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    Total: {formatPrice(order.total)}
-                  </p>
+                  {/* Total */}
+                  <div className="flex justify-end">
+                    <div className="text-right space-y-1">
+                      {order.subtotal && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Subtotal: {formatPrice(order.subtotal)}</p>
+                      )}
+                      {order.deliveryFee && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Envío: {formatPrice(order.deliveryFee)}</p>
+                      )}
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">
+                        Total: {formatPrice(order.total)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+
+                {/* Columna derecha: Preview del ticket */}
+                <div className="xl:col-span-1">
+                  <div className="sticky top-0">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                      <Printer className="w-4 h-4" />
+                      Preview de Impresión
+                    </h3>
+                    <TicketPreview
+                      order={order}
+                      showPreview={true}
+                      mode={process.env.NODE_ENV === 'development' ? 'dev' : 'prod'}
+                    />
+                  </div>
+                </div>
+            </div>
             </CardContent>
 
             {/* Footer */}
@@ -322,8 +418,61 @@ export function OrderManagement() {
     });
   };
 
-  const handlePrintOrder = (order) => {
-    toast.info("Función de impresión próximamente");
+  const handlePrintOrder = async (order) => {
+    try {
+      // Crear un componente temporal para la impresión
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.width = '384px';
+      tempDiv.style.fontFamily = 'monospace';
+      tempDiv.style.fontSize = '12px';
+      tempDiv.style.lineHeight = '1.4';
+      tempDiv.style.color = '#000';
+      tempDiv.style.backgroundColor = '#fff';
+
+      // Convertir orden al formato esperado por el sistema de impresión
+      const printableOrder = {
+        id: order.id,
+        table: order.table || `Cliente: ${order.customerName}`,
+        waiter: order.waiter || 'Sistema',
+        time: order.orderDate || order.date || new Date().toISOString(),
+        items: Array.isArray(order.items) ? order.items.map(item => ({
+          qty: item.quantity || item.qty || 1,
+          name: item.name,
+          notes: item.notes || ''
+        })) : [],
+        subtotal: order.subtotal,
+        tax: order.tax,
+        total: order.total,
+        payment: order.paymentMethod || 'Efectivo'
+      };
+
+      // Generar HTML del ticket
+      const ticketHTML = generateTicketHTML(printableOrder);
+      tempDiv.innerHTML = ticketHTML;
+      document.body.appendChild(tempDiv);
+
+      // Crear referencia para el elemento
+      const elementRef = { current: tempDiv };
+
+      const { printOrder } = await import("../../services/printerSender");
+      const mode = process.env.NODE_ENV === 'development' ? 'dev' : 'prod';
+
+      await printOrder(printableOrder, { mode, elementRef });
+
+      // Limpiar elemento temporal
+      document.body.removeChild(tempDiv);
+
+      if (mode === 'dev') {
+        toast.success("PDF del ticket descargado correctamente");
+      } else {
+        toast.success("Ticket enviado a impresora");
+      }
+    } catch (error) {
+      console.error('Error al imprimir:', error);
+      toast.error("Error al procesar la impresión");
+    }
   };
 
   const handleRefresh = () => {

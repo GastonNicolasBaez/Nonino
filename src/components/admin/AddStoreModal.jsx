@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, MapPin, Building2, Clock, Check, AlertTriangle } from 'lucide-react';
+import { X, MapPin, Building2, Clock, Check, AlertTriangle, ChevronLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -7,6 +7,7 @@ import { CustomSelect } from '../branding';
 import { Portal } from '../common/Portal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { ScheduleConfiguration } from './ScheduleConfiguration';
 
 /**
  * Modal para agregar nuevos locales
@@ -28,10 +29,12 @@ export function AddStoreModal({
         lng: '',
         supportsPickup: true,
         supportsDelivery: true,
-        timezone: 'America/Argentina/Buenos_Aires'
+        timezone: 'America/Argentina/Buenos_Aires',
+        schedule: null
     });
 
     const [errors, setErrors] = useState({});
+    const [currentView, setCurrentView] = useState('general'); // 'general' | 'schedule'
 
     // Opciones de tipo de local
     const storeTypeOptions = [
@@ -124,6 +127,7 @@ export function AddStoreModal({
             supportsPickup: formData.supportsPickup,
             supportsDelivery: formData.supportsDelivery,
             timezone: 'America/Argentina/Buenos_Aires',
+            schedule: formData.schedule
         };
 
         onSave(storeData);
@@ -141,9 +145,11 @@ export function AddStoreModal({
             lng: '',
             supportsPickup: true,
             supportsDelivery: true,
-            timezone: 'America/Argentina/Buenos_Aires'
+            timezone: 'America/Argentina/Buenos_Aires',
+            schedule: null
         });
         setErrors({});
+        setCurrentView('general');
         onClose();
     };
 
@@ -173,15 +179,33 @@ export function AddStoreModal({
                             <CardHeader className="pb-4">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
+                                        {currentView === 'schedule' && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setCurrentView('general')}
+                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 mr-2"
+                                                disabled={isLoading}
+                                            >
+                                                <ChevronLeft className="w-4 h-4" />
+                                            </Button>
+                                        )}
                                         <div className="w-12 h-12 rounded-full flex items-center justify-center bg-empanada-golden/10">
-                                            <Building2 className="w-6 h-6 text-empanada-golden" />
+                                            {currentView === 'general' ? (
+                                                <Building2 className="w-6 h-6 text-empanada-golden" />
+                                            ) : (
+                                                <Clock className="w-6 h-6 text-empanada-golden" />
+                                            )}
                                         </div>
                                         <div>
                                             <CardTitle className="text-lg text-gray-800 dark:text-gray-200">
-                                                Agregar Nuevo Local
+                                                {currentView === 'general' ? 'Agregar Nuevo Local' : 'Configurar Horarios'}
                                             </CardTitle>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                Completa la información del local
+                                                {currentView === 'general'
+                                                    ? 'Completa la información del local'
+                                                    : 'Define horarios regulares y excepciones'
+                                                }
                                             </p>
                                         </div>
                                     </div>
@@ -198,8 +222,10 @@ export function AddStoreModal({
                             </CardHeader>
 
                             <CardContent className="space-y-4">
-                                {/* Grid principal con 3 columnas */}
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                {currentView === 'general' ? (
+                                    <>
+                                        {/* Grid principal con 3 columnas */}
+                                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                                     {/* Columna 1: Información Básica */}
                                     <div className="space-y-3">
@@ -415,6 +441,19 @@ export function AddStoreModal({
                                                 </label>
                                             </div>
                                         </div>
+
+                                        {/* Botón de Horarios */}
+                                        <div className="mt-4">
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => setCurrentView('schedule')}
+                                                disabled={isLoading}
+                                                className="flex items-center gap-2 text-sm border-empanada-golden/30 hover:bg-empanada-golden/10"
+                                            >
+                                                <Clock className="w-4 h-4" />
+                                                Configurar Horarios
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -447,6 +486,58 @@ export function AddStoreModal({
                                         )}
                                     </Button>
                                 </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* Vista de configuración de horarios */}
+                                        <ScheduleConfiguration
+                                            schedule={formData.schedule}
+                                            onScheduleChange={(schedule) => handleInputChange('schedule', schedule)}
+                                            className="max-h-[60vh] overflow-y-auto"
+                                        />
+
+                                        {/* Botones de Acción para horarios */}
+                                        <div className="flex justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => setCurrentView('general')}
+                                                disabled={isLoading}
+                                                className="flex items-center gap-2 text-sm"
+                                            >
+                                                <ChevronLeft className="w-4 h-4" />
+                                                Volver a Información General
+                                            </Button>
+                                            <div className="flex gap-3">
+                                                <Button
+                                                    variant="outline"
+                                                    onClick={handleClose}
+                                                    disabled={isLoading}
+                                                    className="min-w-[80px] text-sm"
+                                                >
+                                                    Cancelar
+                                                </Button>
+                                                <Button
+                                                    variant="empanada"
+                                                    onClick={handleSave}
+                                                    disabled={isLoading}
+                                                    className="min-w-[100px] text-sm"
+                                                >
+                                                    {isLoading ? (
+                                                        <>
+                                                            <div className="w-3 h-3 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                                            Guardando...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Check className="w-3 h-3 mr-2" />
+                                                            Guardar Local
+                                                        </>
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </CardContent>
                         </Card>
                     </motion.div>

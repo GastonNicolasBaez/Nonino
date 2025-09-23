@@ -12,7 +12,8 @@ import {
     Eye,
     EyeOff,
     Settings,
-    Store
+    Store,
+    X
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -22,12 +23,17 @@ import { toast } from "sonner";
 import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { AddStoreModal } from "../../components/admin/AddStoreModal";
+import { ScheduleConfiguration } from "../../components/admin/ScheduleConfiguration";
+import { Portal } from "../../components/common/Portal";
+import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "@/context/SessionProvider";
 
 export function BranchManagement() {
     const [isAddStoreModalOpen, setIsAddStoreModalOpen] = useState(false);
     const [isAddingStore, setIsAddingStore] = useState(false);
     const [editingStore, setEditingStore] = useState(null);
+    const [scheduleModalStore, setScheduleModalStore] = useState(null);
+    const [storeSchedule, setStoreSchedule] = useState(null);
 
     // Obtener datos del AdminDataProvider
     const {
@@ -419,6 +425,22 @@ export function BranchManagement() {
                                     </span>
                                 </label>
                             </div>
+
+                            {/* Botón de configuración de horarios */}
+                            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        setScheduleModalStore(store);
+                                        setStoreSchedule(store.schedule || null);
+                                    }}
+                                    className="flex items-center gap-2 text-sm border-empanada-golden/30 hover:bg-empanada-golden/10"
+                                >
+                                    <Clock className="w-4 h-4" />
+                                    Configurar Horarios
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </CardContent>
@@ -479,6 +501,106 @@ export function BranchManagement() {
                 onSave={handleSaveStore}
                 isLoading={isAddingStore}
             />
+
+            {/* Modal de configuración de horarios */}
+            {scheduleModalStore && (
+                <Portal>
+                    <AnimatePresence>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[999999] flex items-center justify-center p-4"
+                        >
+                            {/* Backdrop */}
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setScheduleModalStore(null)} />
+
+                            {/* Modal */}
+                            <motion.div
+                                initial={{ scale: 0.96, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.96, opacity: 0 }}
+                                transition={{ duration: 0.15, ease: "easeOut" }}
+                                className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                            >
+                                <Card className="shadow-xl border-2 border-empanada-golden/20">
+                                    <CardHeader className="pb-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <div className="w-12 h-12 rounded-full flex items-center justify-center bg-empanada-golden/10">
+                                                    <Clock className="w-6 h-6 text-empanada-golden" />
+                                                </div>
+                                                <div>
+                                                    <CardTitle className="text-lg text-gray-800 dark:text-gray-200">
+                                                        Configurar Horarios
+                                                    </CardTitle>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                        {scheduleModalStore.name} - Horarios y excepciones
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setScheduleModalStore(null)}
+                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </CardHeader>
+
+                                    <CardContent className="space-y-4">
+                                        <ScheduleConfiguration
+                                            schedule={storeSchedule}
+                                            onScheduleChange={setStoreSchedule}
+                                            className="max-h-[60vh] overflow-y-auto"
+                                        />
+
+                                        {/* Botones de acción */}
+                                        <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => setScheduleModalStore(null)}
+                                                className="min-w-[80px] text-sm"
+                                            >
+                                                Cancelar
+                                            </Button>
+                                            <Button
+                                                variant="empanada"
+                                                onClick={async () => {
+                                                    try {
+                                                        const updatedStore = {
+                                                            ...scheduleModalStore,
+                                                            schedule: storeSchedule
+                                                        };
+
+                                                        await callActualizarSucursal({
+                                                            _store: updatedStore,
+                                                            _accessToken: session.userData.accessToken,
+                                                        });
+
+                                                        toast.success("Horarios guardados correctamente");
+                                                        await callSucursales(session.userData.accessToken);
+                                                        setScheduleModalStore(null);
+                                                    } catch (error) {
+                                                        console.error('Error al guardar horarios:', error);
+                                                        toast.error('Error al guardar los horarios');
+                                                    }
+                                                }}
+                                                className="min-w-[100px] text-sm"
+                                            >
+                                                <Save className="w-3 h-3 mr-2" />
+                                                Guardar Horarios
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        </motion.div>
+                    </AnimatePresence>
+                </Portal>
+            )}
         </div>
     );
 }

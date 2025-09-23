@@ -141,6 +141,10 @@ export const router = createBrowserRouter([
         element: <InventoryManagement />,
       },
       {
+        path: "inventario-receta",
+        element: <InventoryManagement />, // Temporalmente usa el mismo componente, se puede crear uno específico después
+      },
+      {
         path: "clientes",
         element: <CustomerManagement />,
       },
@@ -151,6 +155,78 @@ export const router = createBrowserRouter([
       {
         path: "configuracion",
         element: <SettingsPage />,
+      },
+    ],
+  },
+
+  // Rutas de administración LOCAL
+  {
+    path: "/intranet/local/login",
+    element: <AdminLogin />,
+  },
+  {
+    path: "/intranet/local",
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <AdminDashboard />,
+      },
+      {
+        path: "pedidos",
+        element: <OrderManagement />,
+      },
+      {
+        path: "sucursal",
+        element: <BranchManagement />,
+      },
+      {
+        path: "sucursal-envios",
+        element: <DeliveryManagement />,
+      },
+      {
+        path: "inventario",
+        element: <InventoryManagement />,
+      },
+      {
+        path: "inventario-receta",
+        element: <InventoryManagement />,
+      },
+      {
+        path: "reportes",
+        element: <ReportsPage />,
+      },
+    ],
+  },
+
+  // Rutas de administración FABRICA
+  {
+    path: "/intranet/fabrica/login",
+    element: <AdminLogin />,
+  },
+  {
+    path: "/intranet/fabrica",
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <AdminDashboard />,
+      },
+      {
+        path: "inventario",
+        element: <InventoryManagement />,
+      },
+      {
+        path: "inventario-receta",
+        element: <InventoryManagement />,
       },
     ],
   },

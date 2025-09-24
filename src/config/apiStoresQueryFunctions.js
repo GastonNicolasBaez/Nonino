@@ -116,3 +116,37 @@ export const deleteAdminStoresDeleteDeliveryZoneQueryFunction = async ({_storeId
     const response = await axios.delete(`${ENDPOINTS.stores}/admin/stores/${_storeId}/neighborhoods/${_deliveryZoneId}`, axiosSetup.axiosConfig);
     return await response.data;
 }
+
+// schedule
+
+// listar
+export const getAdminStoresScheduleQueryFunction = async ({_storeId, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.get(`${ENDPOINTS.stores}/admin/stores/${_storeId}/opening-hours`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// modificar
+export const putAdminStoresUpdateScheduleZoneQueryFunction = async ({_storeId, _schedule, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _schedule,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.put(`${ENDPOINTS.stores}/admin/stores/${_storeId}/opening-hours`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}

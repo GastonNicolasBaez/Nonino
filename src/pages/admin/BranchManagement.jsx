@@ -27,18 +27,20 @@ import { useSession } from "@/context/SessionProvider";
 export function BranchManagement() {
     const [isAddStoreModalOpen, setIsAddStoreModalOpen] = useState(false);
     const [isAddingStore, setIsAddingStore] = useState(false);
-    const [editingStore, setEditingStore] = useState(null);
     const [scheduleModalStore, setScheduleModalStore] = useState(null);
-    const [storeSchedule, setStoreSchedule] = useState(null);
+    const [newStoreSchedule, setNewStoreSchedule] = useState(null);
 
     // Obtener datos del AdminDataProvider
     const {
         sucursales: stores,
         sucursalSeleccionada: selectedStore,
         adminDataLoading: loading,
+        horariosSucursal: schedule,
         callCrearSucursal,
         callActualizarSucursal,
         callSucursales,
+        callSchedule,
+        callUpdateSchedule,
     } = useAdminData();
 
     const session = useSession();
@@ -283,31 +285,6 @@ export function BranchManagement() {
                                     className="admin-input text-sm"
                                 />
                             </div>
-
-                            <div>
-                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                    Tiempo de Delivery
-                                </label>
-                                <Input
-                                    value={localStore.deliveryTime}
-                                    onChange={(e) => handleInputChange("deliveryTime", e.target.value)}
-                                    placeholder="30-45 min"
-                                    className="admin-input text-sm"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                    Pedido Mínimo
-                                </label>
-                                <Input
-                                    type="number"
-                                    value={localStore.minOrder}
-                                    onChange={(e) => handleInputChange("minOrder", e.target.value)}
-                                    placeholder="2000"
-                                    className="admin-input text-sm"
-                                />
-                            </div>
                         </div>
 
                         {/* Columna 2: Ubicación */}
@@ -423,7 +400,7 @@ export function BranchManagement() {
                                 </div>
                             </div>
 
-                            <div className="mt-4">
+                            {/* <div className="mt-4">
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="checkbox"
@@ -435,7 +412,7 @@ export function BranchManagement() {
                                         Local abierto
                                     </span>
                                 </label>
-                            </div>
+                            </div> */}
 
                             {/* Botón de configuración de horarios */}
                             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -444,7 +421,6 @@ export function BranchManagement() {
                                     size="sm"
                                     onClick={() => {
                                         setScheduleModalStore(store);
-                                        setStoreSchedule(store.schedule || null);
                                     }}
                                     className="flex items-center gap-2 text-sm border-empanada-golden/30 hover:bg-empanada-golden/10"
                                 >
@@ -563,8 +539,8 @@ export function BranchManagement() {
 
                                     <CardContent className="space-y-4">
                                         <ScheduleConfiguration
-                                            schedule={storeSchedule}
-                                            onScheduleChange={setStoreSchedule}
+                                            schedule={schedule}
+                                            onScheduleChange={setNewStoreSchedule}
                                             className="max-h-[60vh] overflow-y-auto"
                                         />
 
@@ -581,19 +557,19 @@ export function BranchManagement() {
                                                 variant="empanada"
                                                 onClick={async () => {
                                                     try {
-                                                        const updatedStore = {
-                                                            ...scheduleModalStore,
-                                                            schedule: storeSchedule
-                                                        };
+                                                        setScheduleModalStore(null);
 
-                                                        await callActualizarSucursal({
-                                                            _store: updatedStore,
-                                                            _accessToken: session.userData.accessToken,
+                                                        await callUpdateSchedule({
+                                                            _storeId: selectedStore,
+                                                            _schedule: newStoreSchedule,
+                                                            _accessToken:session.userData.accessToken,
                                                         });
 
                                                         toast.success("Horarios guardados correctamente");
-                                                        await callSucursales(session.userData.accessToken);
-                                                        setScheduleModalStore(null);
+                                                        await callSchedule({
+                                                            _storeId: selectedStore,
+                                                            _accessToken: session.userData.accessToken,
+                                                        });                                                        
                                                     } catch (error) {
                                                         console.error('Error al guardar horarios:', error);
                                                         toast.error('Error al guardar los horarios');

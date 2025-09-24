@@ -19,6 +19,8 @@ import {
     postAdminStoresAddDeliveryZoneQueryFunction,
     putAdminStoresUpdateDeliveryZoneQueryFunction,
     deleteAdminStoresDeleteDeliveryZoneQueryFunction,
+    putAdminStoresUpdateScheduleZoneQueryFunction,
+    getAdminStoresScheduleQueryFunction,
 } from '@/config/apiStoresQueryFunctions';
 import {
     getPublicCatalogQueryFunction
@@ -36,10 +38,11 @@ export const AdminDataProvider = ({ children }) => {
     const [categorias, setCategorias] = useState([]);
     const [sucursales, setSucursales] = useState([]);
 
-    const [sucursalSeleccionada, setSucursalSeleccionada] = useState([]);
+    const [sucursalSeleccionada, setSucursalSeleccionada] = useState();
 
     const [productosSucursal, setProductosSucursal] = useState([]);
     const [deliverySucursal, setDeliverySucursal] = useState([]);
+    const [horariosSucursal, setHorariosSucursal] = useState([]);
 
     //cargar información de admin al montar la vista de administrador
     useEffect(() => {
@@ -53,6 +56,7 @@ export const AdminDataProvider = ({ children }) => {
     //cargar información de sucursal cuando cambie
     useEffect(() => {
         if (sucursalSeleccionada && session.userData) {
+            console.log(sucursalSeleccionada);
             // zonas de delivery
             callDeliveryZones({
                 _storeId: sucursalSeleccionada,
@@ -61,6 +65,12 @@ export const AdminDataProvider = ({ children }) => {
 
             // productos de sucursal
             callProductosYCategoriasSucursal(sucursalSeleccionada);
+
+            // horarios
+            callSchedule({
+                _storeId: sucursalSeleccionada,
+                _accessToken: session.userData.accessToken,
+            })
         }
     }, [sucursalSeleccionada]);
 
@@ -182,6 +192,25 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: putAdminStoresUpdateStoreQueryFunction,
     });
 
+    // listar horarios
+    const { mutateAsync: callSchedule, isPending: callScheduleLoading } = useMutation({
+        mutationKey: ['adminSchedule'],
+        mutationFn: getAdminStoresScheduleQueryFunction,
+        onSuccess: (data) => {
+            setHorariosSucursal(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setHorariosSucursal([]);
+        }
+    });
+
+    // modificar horarios
+    const { mutateAsync: callUpdateSchedule, isPending: callUpdateScheduleLoading } = useMutation({
+        mutationKey: ['adminUpdateSchedule'],
+        mutationFn: putAdminStoresUpdateScheduleZoneQueryFunction,
+    });
+
     // listar zonas de entrega
     const { mutateAsync: callDeliveryZones, isPending: callDeliveryZonesLoading } = useMutation({
         mutationKey: ['adminDeliveryZones'],
@@ -231,7 +260,9 @@ export const AdminDataProvider = ({ children }) => {
         callDeliveryZonesLoading ||
         callCrearDeliveryZoneLoading ||
         callActualizarDeliveryZoneLoading || 
-        callBorrarDeliveryZoneLoading;
+        callBorrarDeliveryZoneLoading ||
+        callScheduleLoading ||
+        callUpdateScheduleLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -242,6 +273,7 @@ export const AdminDataProvider = ({ children }) => {
             setSucursalSeleccionada,
             productosSucursal,
             deliverySucursal,
+            horariosSucursal,
 
             adminDataLoading,
 
@@ -258,7 +290,10 @@ export const AdminDataProvider = ({ children }) => {
             callDeliveryZones,
             callCrearDeliveryZone,
             callActualizarDeliveryZone,
-            callBorrarDeliveryZone
+            callBorrarDeliveryZone,
+
+            callSchedule,
+            callUpdateSchedule,
         }}>
             {children}
         </AdminDataContext.Provider>

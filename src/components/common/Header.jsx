@@ -23,6 +23,7 @@ import { cn } from "../../lib/utils";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
   const location = useLocation();
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const session = useSession();
@@ -33,18 +34,15 @@ export function Header() {
   // Detectar si estamos en páginas que no deben tener animaciones
   const isStaticPage = ['/pedir', '/promociones', '/locales', '/nosotros', '/contacto', '/menu'].includes(location.pathname);
 
-  // Hero logo effect - moves from hero section to navbar center
-  const heroLogoY = useTransform(scrollY, [0, 400], [400, -20]); // Moves from below viewport to navbar
-  const heroLogoOpacity = useTransform(scrollY, [0, 100], [0, 1]); // Fades in as it approaches
+  // Hero logo effect - commented out as not currently used
+  // const heroLogoY = useTransform(scrollY, [0, 400], [400, -20]); // Moves from below viewport to navbar
+  // const heroLogoOpacity = useTransform(scrollY, [0, 100], [0, 1]); // Fades in as it approaches
 
-  // Logo section movement - movimiento sutil como antes
-  const logoSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, -15]);
+  // Logo section movement - mover más a la izquierda para dar espacio
+  const logoSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, -25]);
 
-  // Left navigation movement - navegación central izquierda (Inicio, Pedir Ya, Promociones)
-  const leftNavX = useTransform(scrollY, [0, 300], isStaticPage ? [80, 80] : [80, -20]);
-
-  // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
-  const rightNavX = useTransform(scrollY, [0, 300], isStaticPage ? [-80, -80] : [-80, -55]);
+  // Left navigation movement - será definido después de getResponsivePosition
+  // Right navigation movement - será definido después de getResponsivePosition
 
   // Icons section movement - movimiento sutil como antes
   const iconsSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, 8]);
@@ -65,6 +63,14 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const leftNavigation = [
     { name: "Inicio", href: "/" },
     { name: "Pedir Ya", href: "/pedir" },
@@ -80,6 +86,26 @@ export function Header() {
   // Combinar navegaciones para el menú móvil
   const navigation = [...leftNavigation, ...rightNavigation];
 
+  // Función para calcular posiciones responsivas
+  const getResponsivePosition = (xlPosition, customPosition, lgPosition) => {
+    if (windowWidth >= 1536) return xlPosition; // xl breakpoint (≥1536px)
+    if (windowWidth >= 1280) return customPosition; // custom breakpoint (1280px-1535px)
+    if (windowWidth >= 1024) return lgPosition; // lg breakpoint (1024px-1279px)
+    return xlPosition; // fallback
+  };
+
+  // Left navigation movement - navegación central izquierda (Inicio, Pedir Ya, Promociones)
+  // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
+  const leftNavInitial = getResponsivePosition(60, 30, 20); // Progresivo: 60 → 30 → 20
+  const leftNavEnd = getResponsivePosition(-30, -30, -15); // Progresivo: -30 → -20 → -15
+  const leftNavX = useTransform(scrollY, [0, 300], isStaticPage ? [leftNavInitial, leftNavInitial] : [leftNavInitial, leftNavEnd]);
+
+  // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
+  // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
+  const rightNavInitial = getResponsivePosition(-115, -60, -40); // Progresivo: -80 → -60 → -40
+  const rightNavEnd = getResponsivePosition(-55, -45, 40); // Progresivo: -55 → -45 → 40
+  const rightNavX = useTransform(scrollY, [0, 300], isStaticPage ? [rightNavInitial, rightNavInitial] : [rightNavInitial, rightNavEnd]);
+
   const isActive = (href) => location.pathname === href;
 
   return (
@@ -87,11 +113,10 @@ export function Header() {
       <motion.header
         className={cn(
           "fixed top-0 left-0 right-0 z-20 transition-all duration-300",
-          isStaticPage
-            ? "bg-white/95 backdrop-blur-md shadow-lg border-b"
-            : scrolled
-            ? "bg-white/20 backdrop-blur-sm shadow-lg"
-            : "bg-white/95 backdrop-blur-md shadow-lg border-b"
+          // En móvil siempre sólido, en desktop con transparencias
+          "bg-white shadow-lg border-b",
+          "lg:bg-white/95 lg:backdrop-blur-md",
+          !isStaticPage && scrolled && "lg:bg-white/20 lg:backdrop-blur-sm"
         )}
         initial={{ y: isStaticPage ? 0 : -100 }}
         animate={{ y: 0 }}
@@ -100,7 +125,7 @@ export function Header() {
 
         {/* Main Header */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-hidden gap-4 lg:gap-8">
+          <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-visible gap-4 lg:gap-8">
             {/* Logo Section */}
             <motion.div
               style={{
@@ -119,7 +144,7 @@ export function Header() {
                   <AnimatedGradientText className="text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-tight text-empanada-golden">
                     NONINO
                   </AnimatedGradientText>
-                  <span className="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-empanada-golden/80">
+                  <span className="hidden xl:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-empanada-golden/80">
                     EMPANADAS
                   </span>
                 </div>
@@ -129,7 +154,7 @@ export function Header() {
             {/* Left Navigation Section */}
             <motion.nav
               style={{ x: leftNavX }}
-              className="hidden lg:flex items-center space-x-6 xl:space-x-8 mr-4 xl:mr-6"
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8 mr-6 xl:mr-8"
             >
                 {leftNavigation.map((item) => (
                   <Link
@@ -157,7 +182,7 @@ export function Header() {
             {/* Right Navigation Section */}
             <motion.nav
               style={{ x: rightNavX }}
-              className="hidden lg:flex items-center space-x-6 xl:space-x-8 ml-4 xl:ml-6"
+              className="hidden lg:flex items-center space-x-6 xl:space-x-8 ml-6 xl:ml-8"
             >
                 {rightNavigation.map((item) => (
                   <Link
@@ -228,31 +253,11 @@ export function Header() {
 
               {/* User */}
               <motion.div style={{ x: userIconX }}>
-              {session.isAuthenticated ? (
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <span className={cn(
-                    "text-xs sm:text-sm hidden md:block font-medium",
-                    "text-gray-900"
-                  )}>
-                    Hola, {session.userData.name.split(' ')[0]}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={session.logout}
-                    className={cn(
-                      "h-10 w-10 sm:h-11 sm:w-11",
-                      "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
-                    )}
-                  >
-                    <User className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </Button>
-                </div>
-              ) : (
                 <div className="relative group">
                   <Button
                     variant="ghost"
                     size="icon"
+                    onClick={session.isAuthenticated ? session.logout : undefined}
                     className={cn(
                       "h-10 w-10 sm:h-11 sm:w-11",
                       "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
@@ -261,12 +266,13 @@ export function Header() {
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
                   {/* Tooltip hacia abajo - Hidden on mobile */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block">
-                    Próximamente
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                  </div>
+                  {!session.isAuthenticated && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block z-[999]">
+                      Próximamente
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                    </div>
+                  )}
                 </div>
-              )}
               </motion.div>
 
               {/* Mobile Menu Button */}
@@ -296,7 +302,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-30 lg:hidden"
+            className="fixed inset-0 z-50 lg:hidden"
           >
             <div
               className="fixed inset-0 bg-black/50 backdrop-blur-sm"
@@ -392,22 +398,6 @@ export function Header() {
                   </div>
                 </div>
 
-                {/* User Section */}
-                {session.isAuthenticated && (
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Hola, {session.username.split(' ')[0]}
-                        </p>
-                        <p className="text-xs text-gray-500">Usuario registrado</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </nav>
             </motion.div>
           </motion.div>

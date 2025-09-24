@@ -1,24 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router";
-import { ChevronRight, Star, Clock, Truck, Shield, Award } from "lucide-react";
+import { ChevronRight, Clock, Truck, Shield, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { TextAnimate } from "@/components/ui/text-animate";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { NumberTicker } from "@/components/ui/number-ticker";
-import { ProductCardDisplay } from "@/components/common/ProductCardDisplay";
+import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
-import { productService, promotionService } from "@/services/api";
-import { formatPrice } from "@/lib/utils";
 import { usePublicData } from "@/context/PublicDataProvider";
 
 export function HomePage() {
 
     const { productos, publicDataLoading: loading } = usePublicData();
 
-    const [promotions, setPromotions] = useState([]);
+    const [promotions] = useState([]);
 
     // Parallax scroll effect
     const { scrollY } = useScroll();
@@ -143,152 +140,27 @@ export function HomePage() {
                 </div>
             </section>
 
-            {/* Popular Products */}
-            <section className="min-h-[70vh] bg-empanada-dark relative">
-                {/* Decoración superior */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-empanada-golden/30 to-transparent"></div>
-                
-                {/* Split Layout */}
-                <div className="relative h-[70vh]">
-                    {/* Background Image - Full width on mobile, half on desktop */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="absolute inset-0 lg:w-1/2 lg:left-0"
-                    >
-                        <div className="relative h-full overflow-hidden">
-                            <img
-                                src="/src/assets/images/SanMartin2.jpg"
-                                alt="Empanadas artesanales de Nonino"
-                                className="w-full h-full object-cover"
-                            />
-                            {/* Overlay - stronger on mobile for better text readability */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-empanada-dark/95 via-empanada-dark/40 to-empanada-dark/20 lg:bg-gradient-to-t lg:from-empanada-dark/90 lg:via-empanada-dark/20 lg:to-transparent" />
-                        </div>
-                    </motion.div>
-
-                    {/* Product List - Overlay on mobile, right side on desktop */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.4 }}
-                        className="relative z-10 flex flex-col h-full lg:ml-auto lg:w-1/2"
-                    >
-                        {/* Header */}
-                        <div className="p-6 sm:p-8">
-                            <div className="text-center lg:text-left mb-6">
-                                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-wide mb-2">
-                                    EMPANADAS POPULARES
-                                </h3>
-                                <div className="w-16 h-px bg-empanada-golden mx-auto lg:mx-0"></div>
-                            </div>
-                        </div>
-
-                        {/* Product Slider */}
-                        <div className="flex-1 px-6 sm:px-8 pb-6 sm:pb-8">
-                            <div className="relative h-full">
-                                {/* Slider Container */}
-                                <div className="overflow-hidden h-full">
-                                    <div className="space-y-3 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-empanada-golden/30 scrollbar-track-transparent">
-                                        {loading ? (
-                                            <div className="space-y-4">
-                                                {[1, 2, 3, 4, 5].map((i) => (
-                                                    <div key={i} className="animate-pulse">
-                                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-empanada-rich/5">
-                                                            <div className="w-16 h-16 bg-empanada-rich/30 rounded-full"></div>
-                                                            <div className="flex-1">
-                                                                <div className="bg-empanada-rich/30 h-4 rounded mb-2"></div>
-                                                                <div className="bg-empanada-rich/20 h-3 rounded w-2/3"></div>
-                                                            </div>
-                                                            <div className="bg-empanada-rich/30 h-4 w-12 rounded"></div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-2">
-                                                {(productos && productos.length > 0 ? productos : [
-                                                    { id: 1, name: "Empanada de Carne", description: "Carne molida con cebolla y especias", price: 450, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
-                                                    { id: 2, name: "Empanada de Pollo", description: "Pollo desmenuzado con verduras", price: 420, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
-                                                    { id: 3, name: "Empanada de Jamón y Queso", description: "Jamón cocido y queso mozzarella", price: 400, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
-                                                    { id: 4, name: "Empanada de Verdura", description: "Espinaca, acelga y queso", price: 380, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
-                                                    { id: 5, name: "Empanada de Humita", description: "Choclo cremoso con especias", price: 390, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
-                                                    { id: 6, name: "Empanada de Caprese", description: "Tomate, mozzarella y albahaca", price: 410, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
-                                                    { id: 7, name: "Empanada de Atún", description: "Atún con cebolla y huevo", price: 430, image: "/src/assets/images/SanMartin.jpg", isPopular: true },
-                                                    { id: 8, name: "Empanada de Choclo", description: "Choclo dulce con crema", price: 395, image: "/src/assets/images/SanMartin.jpg", isPopular: true }
-                                                ]).map((product, index) => (
-                                                    <motion.div
-                                                        key={product.id}
-                                                        initial={{ opacity: 0, y: 20 }}
-                                                        whileInView={{ opacity: 1, y: 0 }}
-                                                        viewport={{ once: true }}
-                                                        transition={{ delay: 0.6 + index * 0.1 }}
-                                                        className="group cursor-pointer"
-                                                    >
-                                                        <div className="flex items-center gap-3 p-3 rounded-lg bg-empanada-rich/5 hover:bg-empanada-rich/10 transition-all duration-300 border border-empanada-rich/10 hover:border-empanada-golden/30">
-                                                            {/* Product Image */}
-                                                            <div className="relative w-14 h-12 rounded-[20px] overflow-hidden flex-shrink-0 ring-1 ring-empanada-golden/20 group-hover:ring-empanada-golden/50 transition-all duration-300 shadow-lg">
-                                                                <img
-                                                                    src={product.image}
-                                                                    alt={product.name}
-                                                                    className="w-full h-full object-cover"
-                                                                />
-                                                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-empanada-golden rounded-full flex items-center justify-center shadow-lg">
-                                                                    <span className="text-xs font-bold text-white">★</span>
-                                                                </div>
-                                                            </div>
-
-                                                            {/* Product Info */}
-                                                            <div className="flex-1 min-w-0">
-                                                                <h4 className="text-sm font-semibold text-white group-hover:text-empanada-golden transition-colors duration-300">
-                                                                    {product.name.toUpperCase()}
-                                                                </h4>
-                                                                <p className="text-xs text-empanada-cream/80 line-clamp-1">
-                                                                    {product.description}
-                                                                </p>
-                                                            </div>
-
-                                                            {/* Price */}
-                                                            <div className="text-right flex-shrink-0">
-                                                                <span className="text-lg font-bold text-empanada-golden">
-                                                                    ${product.price}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Scroll Indicator */}
-                                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col items-center space-y-2">
-                                    <div className="w-1 h-8 bg-empanada-golden/20 rounded-full overflow-hidden">
-                                        <div className="w-full h-4 bg-empanada-golden/60 rounded-full animate-pulse"></div>
-                                    </div>
-                                    <div className="text-empanada-golden/60 text-xs font-medium">Scroll</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Footer Actions */}
-                        <div className="p-4 sm:p-6 pt-0">
-                            <div className="flex justify-center">
-                                <Link
-                                    to="/pedir"
-                                    className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-8 py-3 rounded-xl font-semibold text-center hover:from-empanada-warm hover:to-empanada-rich transition-all duration-300 shadow-lg hover:shadow-empanada-golden/20"
-                                >
-                                    Ver Menú Completo →
-                                </Link>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
+            {/* Products Carousel Section */}
+            {!loading && (
+                <ProductsFocusCarousel
+                    products={productos && productos.length > 0 ? productos.slice(0, 12) : [
+                        { id: 1, name: "Empanada de Carne", description: "Carne molida con cebolla y especias", price: 450, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Carnes" },
+                        { id: 2, name: "Empanada de Pollo", description: "Pollo desmenuzado con verduras", price: 420, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Carnes" },
+                        { id: 3, name: "Empanada de Jamón y Queso", description: "Jamón cocido y queso mozzarella", price: 400, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Quesos" },
+                        { id: 4, name: "Empanada de Verdura", description: "Espinaca, acelga y queso", price: 380, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Vegetales" },
+                        { id: 5, name: "Empanada de Humita", description: "Choclo cremoso con especias", price: 390, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Especiales" },
+                        { id: 6, name: "Empanada de Caprese", description: "Tomate, mozzarella y albahaca", price: 410, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Especiales" },
+                        { id: 7, name: "Empanada de Atún", description: "Atún con cebolla y huevo", price: 430, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Especiales" },
+                        { id: 8, name: "Empanada de Choclo", description: "Choclo dulce con crema", price: 395, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Dulces" },
+                        { id: 9, name: "Empanada de Carne Picante", description: "Carne molida con ají y especias", price: 470, image: "/src/assets/images/SanMartin.jpg", isPopular: false, category: "Carnes" },
+                        { id: 10, name: "Empanada de Pescado", description: "Pescado fresco con verduras", price: 480, image: "/src/assets/images/SanMartin.jpg", isPopular: false, category: "Especiales" },
+                        { id: 11, name: "Empanada de Ricota", description: "Ricota cremosa con espinaca", price: 390, image: "/src/assets/images/SanMartin.jpg", isPopular: false, category: "Vegetales" },
+                        { id: 12, name: "Empanada Dulce", description: "Dulce de leche casero", price: 420, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Dulces" }
+                    ]}
+                    title="Nuestras Empanadas Más Populares"
+                    className=""
+                />
+            )}
 
             {/* Separador simple entre secciones */}
             <div className="relative py-8 bg-gradient-to-b from-empanada-dark via-empanada-dark/90 to-empanada-dark/70">

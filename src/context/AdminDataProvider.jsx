@@ -56,7 +56,6 @@ export const AdminDataProvider = ({ children }) => {
     //cargar información de sucursal cuando cambie
     useEffect(() => {
         if (sucursalSeleccionada && session.userData) {
-            console.log(sucursalSeleccionada);
             // zonas de delivery
             callDeliveryZones({
                 _storeId: sucursalSeleccionada,

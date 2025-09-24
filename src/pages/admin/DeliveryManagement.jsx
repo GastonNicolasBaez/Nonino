@@ -391,42 +391,12 @@ export function DeliveryManagement() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <MapPin className="w-5 h-5" />
-                        Zonas de Delivery ({filteredZones.length} zonas)
+                        Zonas de Delivery
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     {/* Barra de búsqueda y filtros */}
-                    <div className="mb-6">
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <div className="flex-1">
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                    <Input
-                                        placeholder="Buscar por barrio o local..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10"
-                                    />
-                                </div>
-                            </div>
-                            <div className="w-48">
-                                <CustomSelect
-                                    value={storeFilter}
-                                    onChange={setStoreFilter}
-                                    options={storeOptions}
-                                    placeholder="Filtrar por local"
-                                />
-                            </div>
-                            <div className="w-48">
-                                <CustomSelect
-                                    value={neighborhoodFilter}
-                                    onChange={setNeighborhoodFilter}
-                                    options={neighborhoodOptions}
-                                    placeholder="Filtrar por barrio"
-                                />
-                            </div>
-                        </div>
-                    </div>
+
 
                     {!selectedStore ? (
                         <EmptyState
@@ -435,25 +405,50 @@ export function DeliveryManagement() {
                             icon={<Truck className="w-12 h-12 text-muted-foreground" />}
                         />
                     ) : loading ? (
-                        <div className="space-y-4">
-                            {Array.from({ length: 3 }).map((_, i) => (
-                                <div key={i} className="border-2 rounded-lg p-4 animate-pulse">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 bg-gray-200 rounded-lg" />
-                                            <div className="space-y-2">
-                                                <div className="bg-gray-200 h-4 rounded w-32" />
-                                                <div className="bg-gray-200 h-3 rounded w-24" />
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <div className="bg-gray-200 h-8 rounded w-16" />
-                                            <div className="bg-gray-200 h-8 rounded w-16" />
+                        <>
+                            <div className="mb-6">
+                                <div className="flex flex-col sm:flex-row gap-4">
+                                    <div className="flex-1">
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                            <Input
+                                                placeholder="Buscar por barrio..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="pl-10"
+                                            />
                                         </div>
                                     </div>
+                                    <div className="w-48">
+                                        <CustomSelect
+                                            value={neighborhoodFilter}
+                                            onChange={setNeighborhoodFilter}
+                                            options={neighborhoodOptions}
+                                            placeholder="Filtrar por barrio"
+                                        />
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                            <div className="space-y-4">
+                                {Array.from({ length: 3 }).map((_, i) => (
+                                    <div key={i} className="border-2 rounded-lg p-4 animate-pulse">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 bg-gray-200 rounded-lg" />
+                                                <div className="space-y-2">
+                                                    <div className="bg-gray-200 h-4 rounded w-32" />
+                                                    <div className="bg-gray-200 h-3 rounded w-24" />
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <div className="bg-gray-200 h-8 rounded w-16" />
+                                                <div className="bg-gray-200 h-8 rounded w-16" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     ) : filteredZones.length === 0 ? (
                         <EmptyState
                             title="No hay zonas de delivery"

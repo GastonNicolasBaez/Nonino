@@ -24,6 +24,28 @@ import { Portal } from "@/components/common/Portal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "@/context/SessionProvider";
 
+// función de adaptación para mandar a backend
+function transformSchedule(data, timezone = "America/Argentina/Buenos_Aires") {
+    // Group by dayOfWeek
+    const grouped = data.reduce((acc, item) => {
+        const { dayOfWeek, slotIndex, openAt, closeAt } = item;
+        if (!acc[dayOfWeek]) {
+            acc[dayOfWeek] = [];
+        }
+        acc[dayOfWeek].push({ slotIndex, openAt, closeAt });
+        return acc;
+    }, {});
+
+    // Build the target structure
+    return {
+        timezone,
+        days: Object.entries(grouped).map(([dayOfWeek, slots]) => ({
+            dayOfWeek: Number(dayOfWeek),
+            slots
+        }))
+    };
+}
+
 export function BranchManagement() {
     const [isAddStoreModalOpen, setIsAddStoreModalOpen] = useState(false);
     const [isAddingStore, setIsAddingStore] = useState(false);
@@ -75,6 +97,35 @@ export function BranchManagement() {
             setIsAddingStore(false);
         }
     };
+
+    const handleUpdateSchedule = async () => {
+        try {
+            setScheduleModalStore(null);
+
+            if (newStoreSchedule) {
+                const adaptedSchedule = transformSchedule(newStoreSchedule);
+
+                console.log(adaptedSchedule);
+
+                await callUpdateSchedule({
+                    _storeId: selectedStore,
+                    _schedule: adaptedSchedule,
+                    _accessToken: session.userData.accessToken,
+                });
+            }
+
+            toast.success("Horarios guardados correctamente");
+            await callSchedule({
+                _storeId: selectedStore,
+                _accessToken: session.userData.accessToken,
+            });
+        } catch (error) {
+            console.error('Error al guardar horarios:', error);
+            toast.error('Error al guardar los horarios');
+        } finally {
+            setNewStoreSchedule(null);
+        }
+    }
 
     // Preparar datos para SectionHeader
     const headerActions = [
@@ -141,7 +192,8 @@ export function BranchManagement() {
         // Opciones de tipo de local
         const storeTypeOptions = [
             { value: "local", label: "Local" },
-            { value: "franquicia", label: "Franquicia" }
+            { value: "franquicia", label: "Franquicia" },
+            { value: "fabrica", label: "Fábrica" }
         ];
 
         // Función para guardar cambios en el servidor
@@ -453,14 +505,6 @@ export function BranchManagement() {
                             {selectedStore ? 'Configuración de Local' : 'Gestión de Locales'}
                         </CardTitle>
                     </div>
-                    {selectedStore && (
-                        <div className="mt-2 p-2 bg-empanada-golden/10 rounded-md border border-empanada-golden/20">
-                            <p className="text-sm text-empanada-golden font-medium">
-                                <Building2 className="w-4 h-4 inline mr-1" />
-                                Configurando: {stores.find(s => s.id === selectedStore)?.name || `Sucursal ${selectedStore}`}
-                            </p>
-                        </div>
-                    )}
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {!selectedStore ? (
@@ -555,26 +599,7 @@ export function BranchManagement() {
                                             </Button>
                                             <Button
                                                 variant="empanada"
-                                                onClick={async () => {
-                                                    try {
-                                                        setScheduleModalStore(null);
-
-                                                        await callUpdateSchedule({
-                                                            _storeId: selectedStore,
-                                                            _schedule: newStoreSchedule,
-                                                            _accessToken:session.userData.accessToken,
-                                                        });
-
-                                                        toast.success("Horarios guardados correctamente");
-                                                        await callSchedule({
-                                                            _storeId: selectedStore,
-                                                            _accessToken: session.userData.accessToken,
-                                                        });                                                        
-                                                    } catch (error) {
-                                                        console.error('Error al guardar horarios:', error);
-                                                        toast.error('Error al guardar los horarios');
-                                                    }
-                                                }}
+                                                onClick={handleUpdateSchedule}
                                                 className="min-w-[100px] text-sm"
                                             >
                                                 <Save className="w-3 h-3 mr-2" />

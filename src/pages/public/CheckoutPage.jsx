@@ -7,12 +7,11 @@ import { Input } from "../../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { useCart } from "../../context/CartProvider";
 import { useSession } from "../../context/SessionProvider";
-import { StoreSelector } from "../../components/common/StoreSelector";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
 
 export function CheckoutPage() {
-  const { items, total, subtotal, discount, deliveryFee, createOrder, selectedStore, updateStore } = useCart();
+  const { items, total, subtotal, discount, deliveryFee, createOrder, selectedStore } = useCart();
   const session = useSession();
   const user = session?.userData; // Opcional - si hay usuario, pre-llenar datos
   const navigate = useNavigate();
@@ -132,29 +131,40 @@ export function CheckoutPage() {
             {/* Checkout Form */}
             <div className="lg:col-span-2 space-y-6">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Store Selection */}
+                {/* Store Information */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Store className="w-5 h-5" />
-                      Sucursal
+                      Sucursal para el pedido
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <StoreSelector
-                      selectedStore={selectedStore}
-                      onStoreSelect={updateStore}
-                      className="w-full"
-                    />
-                    {selectedStore && (
-                      <div className="mt-3 p-3 bg-empanada-golden/10 rounded-lg">
-                        <div className="text-sm text-empanada-golden">
-                          <p className="font-medium">✓ Sucursal seleccionada</p>
-                          <p className="text-xs mt-1">
-                            Tiempo estimado: {selectedStore.deliveryTime} • 
-                            Pedido mínimo: {formatPrice(selectedStore.minOrder)}
-                          </p>
+                    {selectedStore ? (
+                      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-green-600">✓</span>
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-semibold text-green-800">{selectedStore.name}</div>
+                            <div className="text-sm text-green-600 mb-2">{selectedStore.address}</div>
+                            <div className="text-sm text-green-700">
+                              <div className="flex items-center gap-4">
+                                <span>📞 {selectedStore.phone || "Ver en sucursal"}</span>
+                              </div>
+                              <div className="flex items-center gap-4 mt-1">
+                                <span>⏱️ {selectedStore.deliveryTime}</span>
+                                <span>💰 Min: {formatPrice(selectedStore.minOrder)}</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
+                      </div>
+                    ) : (
+                      <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
+                        <p className="text-red-800 font-medium">No hay sucursal seleccionada</p>
+                        <p className="text-red-600 text-sm mt-1">Debes seleccionar una sucursal antes de continuar</p>
                       </div>
                     )}
                   </CardContent>

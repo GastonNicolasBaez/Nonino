@@ -1,11 +1,42 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Heart, Award, Users, Clock } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 import { TextAnimate } from "../../components/ui/text-animate";
 import { Card, CardContent } from "../../components/ui/card";
-import { NumberTicker } from "../../components/ui/number-ticker";
 import { FloatingOrderButton } from "../../components/common/FloatingOrderButton";
+import { AnimatedTestimonials } from "../../components/ui/animated-testimonials";
+import { ZoomParallax } from "../../components/ui/zoom-parallax";
+import { AnimatedGradientText } from "../../components/ui/animated-gradient-text";
+import { WordPullUp } from "../../components/ui/word-pull-up";
 
 export function AboutPage() {
+  const parallaxRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: parallaxRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Transformaciones para el efecto sticky del título
+  const titleY = useTransform(scrollYProgress, [0, 0.3, 0.75, 0.9], [200, 0, 0, -200]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.2, 0.7, 0.8], [0, 1, 1, 0]);
+
+  // Control de animación WordPullUp basado en scroll
+  const [shouldAnimateTitle, setShouldAnimateTitle] = useState(false);
+  const [shouldAnimateSubtitle, setShouldAnimateSubtitle] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (value) => {
+      if (value >= 0.25 && !shouldAnimateTitle) {
+        setShouldAnimateTitle(true);
+      }
+      if (value >= 0.35 && !shouldAnimateSubtitle) {
+        setShouldAnimateSubtitle(true);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [scrollYProgress, shouldAnimateTitle, shouldAnimateSubtitle]);
+
   const values = [
     {
       icon: Heart,
@@ -37,40 +68,100 @@ export function AboutPage() {
     { year: "2024", event: "25 Años de Tradición", description: "Celebramos nuestro aniversario con nuevas recetas" },
   ];
 
-  const stats = [
-    { value: 29, label: "Años de Experiencia" },
-    { value: 15000, label: "Clientes Felices", suffix: "+" },
-    { value: 100000, label: "Empanadas Vendidas", suffix: "+" },
-    { value: 4.8, label: "Calificación Promedio", decimals: 1 },
+  const parallaxImages = [
+    {
+      src: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?q=80&w=1974&auto=format&fit=crop',
+      alt: 'Empanadas doradas y crujientes - Index 0',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop',
+      alt: 'Local principal de Nonino Empanadas - Index 1',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=1974&auto=format&fit=crop',
+      alt: 'Ingredientes frescos y naturales - Index 2',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?q=80&w=2070&auto=format&fit=crop',
+      alt: 'Cocina tradicional argentina - Index 3',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop',
+      alt: 'Ambiente familiar y acogedor - Index 4',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop',
+      alt: 'Tradición culinaria argentina - Index 5',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=2070&auto=format&fit=crop',
+      alt: 'Cocina profesional argentina - Index 6',
+    },
   ];
+
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 lg:py-20 bg-empanada-dark text-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-empanada-golden/20 via-empanada-warm/15 to-empanada-rich/20"></div>
-        <div className="relative container mx-auto px-4 text-center">
-          <TextAnimate
-            animation="slideUp"
-            by="word"
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2"
-          >
-            Nuestra Historia
-          </TextAnimate>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-2"
-          >
-            Una tradición familiar que comenzó hace más de 25 años con el sueño de 
-            compartir el auténtico sabor de las empanadas argentinas
-          </motion.p>
-        </div>
+      {/* Hero Section with Zoom Parallax */}
+      <section ref={parallaxRef} className="relative -mb-1">
+        {/* Zoom Parallax Component */}
+        <ZoomParallax images={parallaxImages} />
       </section>
 
+      {/* Título sticky que aparece durante el parallax */}
+      <motion.div
+        className="fixed left-0 right-0 z-50 flex items-center justify-center pointer-events-none"
+        style={{
+          top: '35vh',
+          transform: 'translateY(-50%)',
+          y: titleY,
+          opacity: titleOpacity
+        }}
+      >
+        <div className="text-center max-w-4xl mx-auto px-8">
+          <div className="mb-4">
+            <WordPullUp
+              words="NUESTRA HISTORIA"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-empanada-dark leading-tight"
+              shouldAnimate={shouldAnimateTitle}
+              wrapperFramerProps={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+              framerProps={{
+                hidden: { y: 20, opacity: 0 },
+                show: { y: 0, opacity: 1 },
+              }}
+            />
+          </div>
+          <WordPullUp
+            words="Una tradición familiar que comenzó hace más de 25 años con el sueño de compartir el auténtico sabor de las empanadas argentinas"
+            className="text-xl md:text-2xl text-empanada-dark/80 font-medium leading-relaxed"
+            shouldAnimate={shouldAnimateSubtitle}
+            wrapperFramerProps={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.08,
+                },
+              },
+            }}
+            framerProps={{
+              hidden: { y: 15, opacity: 0 },
+              show: { y: 0, opacity: 1 },
+            }}
+          />
+        </div>
+      </motion.div>
+
       {/* Story Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+      <section className="py-8 sm:py-12 lg:py-16 bg-empanada-cream -mt-1">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -78,7 +169,7 @@ export function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-white">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-empanada-dark">
                 La Historia de Don Carlos
               </h2>
               <div className="space-y-4 text-empanada-rich leading-relaxed">
@@ -122,8 +213,27 @@ export function AboutPage() {
         </div>
       </section>
 
+      {/* Separator Section - Story to Values */}
+      <section className="py-4 bg-empanada-cream relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-4">
+              <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-empanada-golden/50"></div>
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-empanada-golden/60 rounded-full"></div>
+                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse delay-500"></div>
+              </div>
+              <div className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-empanada-golden/50"></div>
+            </div>
+          </div>
+        </div>
+        {/* Degradado decorativo de fondo */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-full bg-gradient-to-b from-empanada-golden/5 via-empanada-golden/8 to-empanada-golden/5 blur-3xl"></div>
+      </section>
+
       {/* Values Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-empanada-cream">
+      <section className="py-8 sm:py-12 lg:py-16 bg-empanada-cream relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -163,16 +273,37 @@ export function AboutPage() {
             ))}
           </div>
         </div>
+        {/* Degradado de transición hacia la siguiente sección */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-empanada-cream"></div>
+      </section>
+
+      {/* Separator Section - Values to Timeline */}
+      <section className="py-4 bg-empanada-cream relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-4">
+              <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-empanada-golden/50"></div>
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-empanada-golden/60 rounded-full"></div>
+                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse delay-500"></div>
+              </div>
+              <div className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-empanada-golden/50"></div>
+            </div>
+          </div>
+        </div>
+        {/* Degradado decorativo de fondo */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-full bg-gradient-to-b from-empanada-golden/5 via-empanada-golden/8 to-empanada-golden/5 blur-3xl"></div>
       </section>
 
       {/* Timeline Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+      <section className="py-6 sm:py-8 lg:py-10 bg-empanada-cream">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Nuestra Trayectoria
@@ -182,32 +313,64 @@ export function AboutPage() {
             </p>
           </motion.div>
 
-          <div className="relative max-w-4xl mx-auto">
-            {/* Timeline Line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-empanada-golden/20" />
-            
-            {milestones.map((milestone, index) => (
-              <motion.div
-                key={milestone.year}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className={`relative flex items-center mb-12 ${
-                  index % 2 === 0 ? 'justify-start' : 'justify-end'
-                }`}
-              >
-                {/* Timeline Dot */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-empanada-golden rounded-full border-4 border-white shadow-lg z-10" />
-                
-                {/* Content */}
-                <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
+          <div className="relative max-w-6xl mx-auto">
+            {/* Timeline Line - Horizontal */}
+            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-empanada-golden/20 transform -translate-y-1/2" />
+
+            {/* Timeline Items - Alternating Layout */}
+            <div className="hidden md:grid md:grid-cols-5 gap-4 relative">
+              {milestones.map((milestone, index) => (
+                <div key={milestone.year} className="relative flex flex-col items-center">
+                  {/* Timeline Dot */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-empanada-golden rounded-full border-4 border-white shadow-lg z-10" />
+
+                  {/* Content positioned above or below the line */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`w-full ${
+                      index % 2 === 0
+                        ? 'pb-48 flex flex-col justify-end' // Above the line (even indices)
+                        : 'pt-48 flex flex-col justify-start' // Below the line (odd indices)
+                    }`}
+                  >
+                    <Card className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-xl font-bold text-empanada-golden mb-2">
+                          {milestone.year}
+                        </div>
+                        <h3 className="text-sm font-semibold mb-2">
+                          {milestone.event}
+                        </h3>
+                        <p className="text-gray-600 text-xs">
+                          {milestone.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile Layout - Vertical */}
+            <div className="md:hidden space-y-6">
+              {milestones.map((milestone, index) => (
+                <motion.div
+                  key={milestone.year}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative"
+                >
                   <Card className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
+                    <CardContent className="p-4 text-center">
                       <div className="text-2xl font-bold text-empanada-golden mb-2">
                         {milestone.year}
                       </div>
-                      <h3 className="text-lg font-semibold mb-2">
+                      <h3 className="text-base font-semibold mb-2">
                         {milestone.event}
                       </h3>
                       <p className="text-gray-600 text-sm">
@@ -215,56 +378,34 @@ export function AboutPage() {
                       </p>
                     </CardContent>
                   </Card>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-empanada-dark">
+      {/* Separator Section */}
+      <section className="py-4 bg-empanada-cream relative overflow-hidden">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Números que nos Respaldan
-            </h2>
-            <p className="text-lg text-gray-600">
-              El crecimiento y la confianza de nuestros clientes
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="text-4xl md:text-5xl font-bold text-empanada-golden mb-2">
-                  <NumberTicker
-                    value={stat.value}
-                    decimalPlaces={stat.decimals || 0}
-                  />
-                  {stat.suffix}
-                </div>
-                <p className="text-gray-600 font-medium">{stat.label}</p>
-              </motion.div>
-            ))}
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-4">
+              <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-empanada-golden/50"></div>
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-empanada-golden/60 rounded-full"></div>
+                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse delay-500"></div>
+              </div>
+              <div className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-empanada-golden/50"></div>
+            </div>
           </div>
         </div>
+        {/* Degradado decorativo de fondo */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-full bg-gradient-to-b from-empanada-golden/5 via-empanada-golden/8 to-empanada-golden/5 blur-3xl"></div>
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-white">
+      <section className="py-6 sm:py-8 lg:py-12 bg-empanada-cream relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -280,31 +421,7 @@ export function AboutPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { name: "Carlos Nonino", role: "Fundador y Chef Principal", icon: "👨‍🍳" },
-              { name: "María Nonino", role: "Gerente General", icon: "👩‍💼" },
-              { name: "José Martínez", role: "Chef de Producción", icon: "👨‍🍳" },
-            ].map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-32 h-32 rounded-full mx-auto mb-4 bg-empanada-golden/10 flex items-center justify-center">
-                      <span className="text-6xl">{member.icon}</span>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
-                    <p className="text-empanada-golden font-medium">{member.role}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+          <AnimatedTestimonials autoplay={true} />
         </div>
       </section>
 

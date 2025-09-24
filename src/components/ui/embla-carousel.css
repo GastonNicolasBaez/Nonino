@@ -1,0 +1,42 @@
+.embla {
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .embla__container {
+    gap: 1.5rem;
+  }
+}
+
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .embla__slide {
+    flex: 0 0 50%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .embla__slide {
+    flex: 0 0 33.333333%;
+  }
+}
+
+/* Smooth scrolling behavior */
+.embla__container {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Prevent dragging issues */
+.embla__slide > * {
+  user-select: none;
+  -webkit-user-drag: none;
+}

@@ -47,6 +47,8 @@ import { SettingsPage } from "@/pages/admin/SettingsPage";
 import { ProductosPorSucursal } from "@/pages/admin/ProductosPorSucursal";
 import { BranchManagement } from "@/pages/admin/BranchManagement";
 import { DeliveryManagement } from "@/pages/admin/DeliveryManagement";
+import { ProductStockManagement } from "@/pages/admin/ProductStockManagement";
+import { ComboManagement } from "@/pages/admin/ComboManagement";
 import { AdminDataProvider } from "./context/AdminDataProvider";
 
 // Crear cliente de React Query
@@ -108,10 +110,12 @@ function App() {
                                 <Route index element={<AdminDashboard />} />
                                 <Route path="pedidos" element={<OrderManagement />} />
                                 <Route path="productos" element={<ProductManagement />} />
+                                <Route path="productos-combos" element={<ComboManagement />} />
                                 <Route path="productos-sucursal" element={<ProductosPorSucursal />} />
                                 <Route path="sucursal" element={<BranchManagement />} />
                                 <Route path="sucursal-envios" element={<DeliveryManagement />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="inventario-productos" element={<ProductStockManagement />} />
                                 <Route path="inventario-receta" element={<RecipeManagement />} />
                                 <Route path="clientes" element={<CustomerManagement />} />
                                 <Route path="reportes" element={<ReportsPage />} />
@@ -137,6 +141,7 @@ function App() {
                                 <Route path="sucursal" element={<BranchManagement />} />
                                 <Route path="sucursal-envios" element={<DeliveryManagement />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="inventario-productos" element={<ProductStockManagement />} />
                                 <Route path="inventario-receta" element={<RecipeManagement />} />
                                 <Route path="reportes" element={<ReportsPage />} />
                             </Route>
@@ -157,6 +162,7 @@ function App() {
                             >
                                 <Route index element={<AdminDashboard />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="inventario-productos" element={<ProductStockManagement />} />
                                 <Route path="inventario-receta" element={<RecipeManagement />} />
                             </Route>
                         </Route>

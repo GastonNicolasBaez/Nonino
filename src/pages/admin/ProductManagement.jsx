@@ -48,7 +48,7 @@ import { useSession } from "@/context/SessionProvider";
 // UTILIDADES Y SERVICIOS
 import { formatPrice } from "@/lib/utils";
 import { generateProductsReportPDF, downloadPDF } from "@/services/pdfService";
-import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
+import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 
 // ------------------ IMPORT ------------------ //
 // ------------------ CODE   ------------------ //
@@ -436,31 +436,28 @@ export function ProductManagement() {
         };
 
         return (
-            <Portal>
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-                    <div className="w-full max-w-7xl h-[95vh] flex flex-col">
-                        <Card className="shadow-2xl h-full flex flex-col ">
-                            {/* Header */}
-                            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                                            {product ? "Editar Producto" : "Nuevo Producto"}
-                                        </CardTitle>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                            {product ? "Modifica los detalles del producto" : "Agrega un nuevo producto al catálogo"}
-                                        </p>
-                                    </div>
-                                    <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                                        <X className="w-5 h-5" />
-                                    </Button>
-                                </div>
-                            </CardHeader>
-
-                            {/* Content */}
-                            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
-                                {/* Información Básica */}
-                                <Card className="">
+            <BrandedModal
+                isOpen={true}
+                onClose={onClose}
+                title={product ? "Editar Producto" : "Nuevo Producto"}
+                subtitle={product ? "Modifica los detalles del producto" : "Agrega un nuevo producto al catálogo"}
+                icon={<Package className="w-5 h-5" />}
+                maxWidth="max-w-7xl"
+                maxHeight="max-h-[95vh]"
+                footer={
+                    <BrandedModalFooter
+                        onCancel={onClose}
+                        onConfirm={handleSave}
+                        cancelText="Cancelar"
+                        confirmText={product ? "Actualizar Producto" : "Crear Producto"}
+                        confirmIcon={<Save className="w-4 h-4" />}
+                        isConfirmDisabled={!formData.name.trim()}
+                    />
+                }
+            >
+                <div className="space-y-6">
+                    {/* Información Básica */}
+                    <Card className="">
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                                             <Package className="w-5 h-5" />
@@ -611,24 +608,9 @@ export function ProductManagement() {
                                         </div>
                                     </CardContent>
                                 </Card>
-                            </CardContent>
 
-                            {/* Footer */}
-                            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-                                <div className="flex justify-end gap-3">
-                                    <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                                        Cancelar
-                                    </Button>
-                                    <Button variant="empanada" onClick={handleSave}>
-                                        <Save className="w-4 h-4 mr-2" />
-                                        {product ? "Actualizar" : "Crear"} Producto
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
                 </div>
-            </Portal>
+            </BrandedModal>
         );
     };
 
@@ -861,6 +843,14 @@ export function ProductManagement() {
                 onSave={handleSaveProduct}
                 categories={categories}
             />
+
+            {/* ProductModal para editar */}
+            {editingProduct && (
+                <ProductModal
+                    product={editingProduct}
+                    onClose={() => setEditingProduct(null)}
+                />
+            )}
 
             {/* Modal Components */}
             <ConfirmModalComponent />

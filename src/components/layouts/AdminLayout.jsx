@@ -123,6 +123,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Gestionar", href: "/intranet/admin/productos", icon: Package },
+                    { name: "Combos", href: "/intranet/admin/productos-combos", icon: ShoppingCart },
                     { name: "Menú", href: "/intranet/admin/productos-sucursal", icon: Building2 }
                 ]
             },
@@ -141,6 +142,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Gestión", href: "/intranet/admin/inventario", icon: Archive },
+                    { name: "Productos", href: "/intranet/admin/inventario-productos", icon: ShoppingCart },
                     { name: "Receta", href: "/intranet/admin/inventario-receta", icon: Package }
                 ]
             },
@@ -171,6 +173,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Gestión", href: "/intranet/local/inventario", icon: Archive },
+                    { name: "Productos", href: "/intranet/local/inventario-productos", icon: ShoppingCart },
                     { name: "Receta", href: "/intranet/local/inventario-receta", icon: Package }
                 ]
             },
@@ -184,6 +187,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Gestión", href: "/intranet/fabrica/inventario", icon: Archive },
+                    { name: "Productos", href: "/intranet/fabrica/inventario-productos", icon: ShoppingCart },
                     { name: "Receta", href: "/intranet/fabrica/inventario-receta", icon: Package }
                 ]
             },

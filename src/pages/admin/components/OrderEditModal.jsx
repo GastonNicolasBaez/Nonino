@@ -26,8 +26,7 @@ import { Input } from "../../../components/ui/input";
 import { Badge } from "../../../components/ui/badge";
 import { formatPrice } from "../../../lib/utils";
 import { toast } from "sonner";
-import { Portal } from "../../../components/common/Portal";
-import { CustomSelect } from "../../../components/branding";
+import { CustomSelect, BrandedModal, BrandedModalFooter } from "../../../components/branding";
 
 // Datos mock de productos disponibles
 const mockProducts = [
@@ -213,44 +212,37 @@ export function OrderEditModal({ order, onClose, onSave }) {
   if (!order) return null;
 
   return (
-    <Portal>
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="w-full max-w-6xl h-[95vh] flex flex-col"
-        >
-          <Card className="shadow-2xl h-full flex flex-col bg-white dark:bg-gray-900">
-            {/* Header */}
-            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Editar Pedido #{order.id}
-                  </CardTitle>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Modifica los detalles del pedido
-                  </p>
-                </div>
-                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-            </CardHeader>
+    <BrandedModal
+      isOpen={!!order}
+      onClose={onClose}
+      title={`Editar Pedido #${order?.id}`}
+      subtitle="Modifica los detalles del pedido"
+      icon={<ShoppingBag className="w-5 h-5" />}
+      maxWidth="max-w-6xl"
+      maxHeight="max-h-[95vh]"
+      footer={
+        <BrandedModalFooter
+          onCancel={onClose}
+          onConfirm={handleSave}
+          cancelText="Cancelar"
+          confirmText="Guardar Cambios"
+          confirmIcon={<Save className="w-4 h-4" />}
+          isConfirmDisabled={!formData.customerName.trim() || formData.items.length === 0}
+        />
+      }
+    >
 
-            {/* Content */}
-            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
-              {/* Información del Cliente */}
-              <Card className="bg-gray-50 dark:bg-gray-800">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                    <User className="w-5 h-5" />
-                    Información del Cliente
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-6">
+        {/* Información del Cliente */}
+        <Card className="bg-gray-50 dark:bg-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+              <User className="w-5 h-5" />
+              Información del Cliente
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre *</label>
                       <Input
@@ -486,23 +478,8 @@ export function OrderEditModal({ order, onClose, onSave }) {
                   </div>
                 </CardContent>
               </Card>
-            </CardContent>
-
-            {/* Footer */}
-            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                  Cancelar
-                </Button>
-                <Button variant="empanada" onClick={handleSave}>
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Cambios
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
       </div>
-    </Portal>
+
+    </BrandedModal>
   );
 }

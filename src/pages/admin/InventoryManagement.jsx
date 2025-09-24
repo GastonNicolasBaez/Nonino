@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 // Removed framer-motion for simpler admin experience
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  AlertTriangle, 
-  Package, 
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  AlertTriangle,
+  Package,
   TrendingDown,
   TrendingUp,
   RefreshCcw,
@@ -14,7 +14,7 @@ import {
   Filter,
   X,
   Save,
-  BarChart
+  BarChart,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -160,6 +160,66 @@ export function InventoryManagement() {
     }
   ];
 
+  // Mock data para productos
+  const mockProducts = [
+    {
+      id: "prod-001",
+      name: "Empanada de Carne",
+      category: "Empanadas",
+      currentStock: 45,
+      minStock: 10,
+      maxStock: 100,
+      unit: "unidades",
+      cost: 800,
+      price: 1200,
+      lastUpdated: "2024-01-15T14:30:00Z",
+      status: "good",
+      image: null
+    },
+    {
+      id: "prod-002",
+      name: "Empanada de Pollo",
+      category: "Empanadas",
+      currentStock: 8,
+      minStock: 15,
+      maxStock: 80,
+      unit: "unidades",
+      cost: 750,
+      price: 1100,
+      lastUpdated: "2024-01-15T12:15:00Z",
+      status: "low",
+      image: null
+    },
+    {
+      id: "prod-003",
+      name: "Empanada de Jamón y Queso",
+      category: "Empanadas",
+      currentStock: 25,
+      minStock: 10,
+      maxStock: 60,
+      unit: "unidades",
+      cost: 700,
+      price: 1000,
+      lastUpdated: "2024-01-15T10:45:00Z",
+      status: "good",
+      image: null
+    },
+    {
+      id: "prod-004",
+      name: "Empanada Vegetariana",
+      category: "Empanadas",
+      currentStock: 3,
+      minStock: 8,
+      maxStock: 40,
+      unit: "unidades",
+      cost: 650,
+      price: 950,
+      lastUpdated: "2024-01-14T16:20:00Z",
+      status: "low",
+      image: null
+    }
+  ];
+
   const filteredInventory = inventory.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -213,7 +273,7 @@ export function InventoryManagement() {
       color: "red",
       icon: <AlertTriangle className="w-5 h-5" />
     }] : []),
-    
+
     // Cards neutras después
     {
       id: "total-items",
@@ -441,6 +501,30 @@ function AddItemModal({ onClose, onSave }) {
     cost: 0,
     notes: ''
   });
+
+  // Opciones de categorías locales para el modal
+  const categoryOptions = [
+    { value: "", label: "Seleccionar categoría" },
+    { value: "Carnes", label: "Carnes" },
+    { value: "Verduras", label: "Verduras" },
+    { value: "Lácteos", label: "Lácteos" },
+    { value: "Harinas", label: "Harinas" },
+    { value: "Condimentos", label: "Condimentos" },
+    { value: "Aceites", label: "Aceites" },
+    { value: "Otros", label: "Otros" }
+  ];
+
+  // Opciones de unidades locales para el modal
+  const unitOptions = [
+    { value: "", label: "Seleccionar unidad" },
+    { value: "kg", label: "Kilogramos (kg)" },
+    { value: "g", label: "Gramos (g)" },
+    { value: "l", label: "Litros (l)" },
+    { value: "ml", label: "Mililitros (ml)" },
+    { value: "unidades", label: "Unidades" },
+    { value: "cajas", label: "Cajas" },
+    { value: "bolsas", label: "Bolsas" }
+  ];
 
   const handleSave = () => {
     const newItem = {

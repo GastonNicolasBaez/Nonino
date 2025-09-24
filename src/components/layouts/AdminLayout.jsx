@@ -56,6 +56,7 @@ const AdminLayout = () => {
     const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
     const [branchesDropdownOpen, setBranchesDropdownOpen] = useState(false);
     const [inventoryDropdownOpen, setInventoryDropdownOpen] = useState(false);
+    const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
     // Opciones para CustomSelect de sucursales
     const sucursalOptions = [
@@ -86,6 +87,20 @@ const AdminLayout = () => {
             setSidebarCollapsed(JSON.parse(savedState));
         }
     }, []);
+
+    // Cerrar dropdown cuando se hace click fuera
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (userDropdownOpen && !event.target.closest('.user-dropdown-container')) {
+                setUserDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [userDropdownOpen]);
 
     const toggleSidebar = () => {
         setSidebarCollapsed(!sidebarCollapsed);
@@ -428,61 +443,6 @@ const AdminLayout = () => {
                     ))}
                 </nav>
 
-                {/* Desktop User Info */}
-                <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                    {sidebarCollapsed ? (
-                        <div className="flex flex-col items-center space-y-3">
-                            <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
-                                <User className="w-5 h-5 text-white" />
-                            </div>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={handleLogout}
-                                className="w-10 h-10 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                title="Cerrar sesión"
-                            >
-                                <LogOut className="w-5 h-5" />
-                            </Button>
-                        </div>
-                    ) : (
-                        <Card className="p-4 admin-user-card">
-                            <div className="flex items-center space-x-3 mb-3">
-                                <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
-                                    <User className="w-5 h-5 text-white" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                        {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
-                                    </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                        {session.userData?.email || 'EMAIL NO ENCONTRADO'}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={toggleTheme}
-                                    className="flex-1"
-                                >
-                                    {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                                    {isDark ? "Claro" : "Oscuro"}
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleLogout}
-                                    className="flex-1"
-                                >
-                                    <LogOut className="w-4 h-4 mr-2" />
-                                    Salir
-                                </Button>
-                            </div>
-                        </Card>
-                    )}
-                </div>
             </aside>
 
             {/* Mobile Sidebar */}
@@ -635,44 +595,6 @@ const AdminLayout = () => {
                     ))}
                 </nav>
 
-                {/* User Info */}
-                <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
-                    <Card className="p-4 admin-user-card">
-                        <div className="flex items-center space-x-3 mb-3">
-                            <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
-                                <User className="w-5 h-5 text-white" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                    {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                    {session.userData?.email || 'EMAIL NO ENCONTRADO'}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={toggleTheme}
-                                className="flex-1"
-                            >
-                                {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                                {isDark ? "Claro" : "Oscuro"}
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleLogout}
-                                className="flex-1"
-                            >
-                                <LogOut className="w-4 h-4 mr-2" />
-                                Salir
-                            </Button>
-                        </div>
-                    </Card>
-                </div>
             </aside>
 
             {/* Main Content */}
@@ -703,13 +625,9 @@ const AdminLayout = () => {
                                     <NotificationsDropdown />
                                 </div>
 
-                                {/* Theme Toggle */}
-                                <Button variant="ghost" size="icon" onClick={toggleTheme} className="flex-shrink-0">
-                                    {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                                </Button>
 
                                 {/* User Menu */}
-                                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                                <div className="relative flex items-center gap-2 sm:gap-3 flex-shrink-0 user-dropdown-container">
                                     <div className="text-right hidden md:block">
                                         <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[120px] lg:max-w-none">
                                             {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
@@ -718,9 +636,61 @@ const AdminLayout = () => {
                                             {session.userData?.email || 'EMAIL NO ENCONTRADO'}
                                         </p>
                                     </div>
-                                    <div className="w-8 h-8 bg-empanada-golden rounded-full flex items-center justify-center flex-shrink-0">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                                        className="w-8 h-8 bg-empanada-golden rounded-full hover:bg-empanada-golden/80 flex-shrink-0"
+                                    >
                                         <User className="w-4 h-4 text-white" />
-                                    </div>
+                                    </Button>
+
+                                    {/* User Dropdown */}
+                                    {userDropdownOpen && (
+                                        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                                            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                                                <div className="flex items-center space-x-3 mb-2">
+                                                    <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
+                                                        <User className="w-5 h-5 text-white" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                            {session.userData?.name || 'NOMBRE NO ENCONTRADO'}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                            {session.userData?.email || 'EMAIL NO ENCONTRADO'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="p-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        toggleTheme();
+                                                        setUserDropdownOpen(false);
+                                                    }}
+                                                    className="w-full justify-start mb-1"
+                                                >
+                                                    {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                                                    {isDark ? "Modo Claro" : "Modo Oscuro"}
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        handleLogout();
+                                                        setUserDropdownOpen(false);
+                                                    }}
+                                                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20"
+                                                >
+                                                    <LogOut className="w-4 h-4 mr-2" />
+                                                    Cerrar Sesión
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

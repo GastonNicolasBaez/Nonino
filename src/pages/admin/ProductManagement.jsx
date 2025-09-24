@@ -16,6 +16,7 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { Portal } from "@/components/common/Portal";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
+import { AddProductModal } from "@/components/admin/AddProductModal";
 
 // ICONOS
 import {
@@ -252,6 +253,37 @@ export function ProductManagement() {
     const updateStock = (productId, newStock) => {
         // TODO: Implementar llamada al backend para actualizar stock
         toast.success("Stock actualizado correctamente");
+    };
+
+    // Función para manejar el guardado del nuevo producto desde el modal de pasos
+    const handleSaveProduct = async (productData) => {
+        try {
+            const adaptedProduct = {
+                "sku": productData.sku || `SKU-${Date.now()}`,
+                "name": productData.name,
+                "description": productData.description,
+                "basePrice": productData.price,
+                "active": productData.isAvailable,
+                "categoryId": productData.category,
+                "imageBase64": productData.imageUrl,
+                // Campos adicionales del modal de pasos
+                "recipe": productData.recipe,
+                "preparationTime": productData.preparationTime,
+                "minStock": productData.minStock
+            };
+
+            await callProductoNuevo({
+                _producto: adaptedProduct,
+                _accessToken: session.userData.accessToken
+            });
+
+            toast.success("Producto creado correctamente");
+            callProductosYCategorias(session.userData.accessToken);
+            setShowAddModal(false);
+        } catch (error) {
+            console.error('Error al crear producto:', error);
+            toast.error(error.message || "Error al crear el producto");
+        }
     };
 
     const handleExportProducts = () => {
@@ -823,17 +855,12 @@ export function ProductManagement() {
         </Card>
 
         {/* Modals */}
-            {showAddModal && (
-                <ProductModal
-                    onClose={() => setShowAddModal(false)}
-                />
-            )}
-            {editingProduct && (
-                <ProductModal
-                    product={editingProduct}
-                    onClose={() => setEditingProduct(null)}
-                />
-            )}
+            <AddProductModal
+                isOpen={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                onSave={handleSaveProduct}
+                categories={categories}
+            />
 
             {/* Modal Components */}
             <ConfirmModalComponent />

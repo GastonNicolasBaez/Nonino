@@ -40,6 +40,7 @@ import { AdminLogin } from "@/pages/admin/AdminLogin";
 import { OrderManagement } from "@/pages/admin/OrderManagement";
 import { ProductManagement } from "@/pages/admin/ProductManagement";
 import { InventoryManagement } from "@/pages/admin/InventoryManagement";
+import { RecipeManagement } from "@/pages/admin/RecipeManagement";
 import { CustomerManagement } from "@/pages/admin/CustomerManagement";
 import { ReportsPage } from "@/pages/admin/ReportsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
@@ -111,6 +112,7 @@ function App() {
                                 <Route path="sucursal" element={<BranchManagement />} />
                                 <Route path="sucursal-envios" element={<DeliveryManagement />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="inventario-receta" element={<RecipeManagement />} />
                                 <Route path="clientes" element={<CustomerManagement />} />
                                 <Route path="reportes" element={<ReportsPage />} />
                                 <Route path="configuracion" element={<SettingsPage />} />
@@ -135,6 +137,7 @@ function App() {
                                 <Route path="sucursal" element={<BranchManagement />} />
                                 <Route path="sucursal-envios" element={<DeliveryManagement />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="inventario-receta" element={<RecipeManagement />} />
                                 <Route path="reportes" element={<ReportsPage />} />
                             </Route>
 
@@ -154,6 +157,7 @@ function App() {
                             >
                                 <Route index element={<AdminDashboard />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
+                                <Route path="inventario-receta" element={<RecipeManagement />} />
                             </Route>
                         </Route>
 

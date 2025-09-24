@@ -17,13 +17,9 @@ export function ImageUpload({
   const [isEditing, setIsEditing] = useState(false);
   const [isImageEdited, setIsImageEdited] = useState(false); // Nueva: track si la imagen ha sido editada
   const [editSettings, setEditSettings] = useState({
-    zoom: 100, // Cambio a porcentaje (100% = 1x)
-    rotation: 0,
+    zoom: 100,
     x: 0,
-    y: 0,
-    brightness: 100,
-    contrast: 100,
-    cropArea: { x: 0, y: 0, width: 100, height: 100 }
+    y: 0
   });
   const [isDraggingImage, setIsDraggingImage] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -60,12 +56,8 @@ export function ImageUpload({
     // Resetear ajustes cuando se cambia la imagen
     setEditSettings({
       zoom: 100,
-      rotation: 0,
       x: 0,
-      y: 0,
-      brightness: 100,
-      contrast: 100,
-      cropArea: { x: 0, y: 0, width: 100, height: 100 }
+      y: 0
     });
 
     const reader = new FileReader();
@@ -135,29 +127,11 @@ export function ImageUpload({
     }));
   };
 
-  const handleRotateLeft = () => {
-    setEditSettings(prev => ({
-      ...prev,
-      rotation: (prev.rotation - 90 + 360) % 360
-    }));
-  };
-
-  const handleRotateRight = () => {
-    setEditSettings(prev => ({
-      ...prev,
-      rotation: (prev.rotation + 90) % 360
-    }));
-  };
-
   const resetSettings = () => {
     setEditSettings({
       zoom: 100,
-      rotation: 0,
       x: 0,
-      y: 0,
-      brightness: 100,
-      contrast: 100,
-      cropArea: { x: 0, y: 0, width: 100, height: 100 }
+      y: 0
     });
   };
 
@@ -260,26 +234,17 @@ export function ImageUpload({
     ctx.fillStyle = '#f9fafb'; // bg-gray-50
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Aplicar filtros
-    ctx.filter = `brightness(${editSettings.brightness}%) contrast(${editSettings.contrast}%)`;
-
-    // Aplicar las mismas transformaciones que en el CSS del preview
-    // CSS order: scale → rotate → translate
-    // Canvas debe aplicarlas en ORDEN INVERSO: translate → rotate → scale
+    // Aplicar transformaciones simplificadas (solo zoom y posición)
     ctx.save();
-    
+
     // Centro del canvas (ahora es cuadrado)
     ctx.translate(canvasSize / 2, canvasSize / 2);
-    
-    // Aplicar transformaciones en ORDEN INVERSO al CSS
-    // 1. Zoom (scale - último en CSS)
+
+    // 1. Zoom (scale)
     const zoomFactor = editSettings.zoom / 100;
     ctx.scale(zoomFactor, zoomFactor);
-    
-    // 2. Rotación (rotate - medio en CSS)
-    ctx.rotate((editSettings.rotation * Math.PI) / 180);
-    
-    // 3. Posición (translate - primero en CSS)
+
+    // 2. Posición (translate)
     ctx.translate(editSettings.x, editSettings.y);
 
      // Dibujar la imagen exactamente como se ve en el preview
@@ -321,56 +286,14 @@ export function ImageUpload({
 
   if (isEditing && preview) {
     return (
-      <div className="w-full flex justify-center">
-        {/* Layout principal: Zoom izquierda + Preview centro + Efectos derecha */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start max-w-6xl">
-          
-          {/* Controles de Zoom - Izquierda */}
-          <div className="flex flex-col items-center gap-3">
-            
-            {/* Botón + */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleSliderChange('zoom', Math.min(300, editSettings.zoom + 25))}
-              className="h-10 w-10 p-0 text-lg text-gray-400 hover:text-empanada-golden"
-              title="Aumentar zoom"
-            >
-              +
-            </Button>
-            
-            {/* Slider Vertical */}
-            <div className="flex items-center justify-center h-40 w-12">
-              <input
-                type="range"
-                min="25"
-                max="300"
-                value={editSettings.zoom}
-                onChange={(e) => handleSliderChange('zoom', parseInt(e.target.value))}
-                className="w-32 slider-empanada"
-                style={{
-                  transform: 'rotate(-90deg)',
-                  transformOrigin: 'center center'
-                }}
-              />
-            </div>
-            
-            {/* Botón - */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleSliderChange('zoom', Math.max(25, editSettings.zoom - 25))}
-              className="h-10 w-10 p-0 text-lg text-gray-400 hover:text-empanada-golden"
-              title="Reducir zoom"
-            >
-              -
-            </Button>
-          </div>
+      <div className="w-full flex justify-center max-h-[50vh] overflow-y-auto">
+        {/* Layout simplificado y centrado */}
+        <div className="flex flex-col items-center gap-4 max-w-lg">
 
           {/* Preview como Card de Producto - Centro */}
-          <div className="flex-shrink-0">
+          <div className="relative">
             <div className="w-64 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div 
+              <div
                 ref={previewRef}
                 className="aspect-square relative overflow-hidden cursor-move select-none bg-gray-50 dark:bg-gray-700"
                 onMouseDown={handleMouseDown}
@@ -382,168 +305,109 @@ export function ImageUpload({
                    className={`absolute inset-0 w-full h-full ${isImageEdited ? 'object-cover' : 'object-contain'}`}
                    style={{
                      transform: `
-                       scale(${editSettings.zoom / 100}) 
-                       rotate(${editSettings.rotation}deg) 
+                       scale(${editSettings.zoom / 100})
                        translate(${editSettings.x}px, ${editSettings.y}px)
                      `,
-                     filter: `brightness(${editSettings.brightness}%) contrast(${editSettings.contrast}%)`,
                      transformOrigin: 'center center'
                    }}
                    draggable={false}
                  />
-                
-                {/* Indicadores de control - muy discretos */}
-                <div className="absolute bottom-2 right-2 opacity-30 hover:opacity-70 transition-opacity">
-                  <div className="text-white text-xs bg-black/40 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-2">
+
+                {/* Barra de zoom minimalista sobre la imagen */}
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/20 backdrop-blur-md rounded-full p-2 opacity-80 hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-2 text-white">
+                    <button
+                      onClick={() => handleSliderChange('zoom', Math.max(25, editSettings.zoom - 25))}
+                      className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-sm font-bold shrink-0"
+                      title="Reducir zoom"
+                    >
+                      -
+                    </button>
+
+                    <input
+                      type="range"
+                      min="25"
+                      max="300"
+                      value={editSettings.zoom}
+                      onChange={(e) => handleSliderChange('zoom', parseInt(e.target.value))}
+                      className="w-24 h-1 bg-white/30 rounded-full appearance-none cursor-pointer zoom-slider"
+                    />
+
+                    <button
+                      onClick={() => handleSliderChange('zoom', Math.min(300, editSettings.zoom + 25))}
+                      className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-sm font-bold shrink-0"
+                      title="Aumentar zoom"
+                    >
+                      +
+                    </button>
+
+                    <span className="text-xs font-medium bg-white/20 px-2 py-1 rounded-full min-w-[45px] text-center shrink-0">
+                      {editSettings.zoom}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Indicador de arrastrar - discreto */}
+                <div className="absolute bottom-4 right-4 opacity-40 hover:opacity-70 transition-opacity">
+                  <div className="text-white text-xs bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm flex items-center gap-2">
                     <Move className="w-3 h-3" />
-                    <span className="text-xs">⚬</span>
+                    <span className="text-xs">Arrastra para mover</span>
                   </div>
                 </div>
               </div>
-              
-              {/* Información del producto simulada */}
-              <div className="p-3">
-                <h3 className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">Empanada de Carne</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
-                  Carne picada, cebolla, huevo duro, aceitunas y condimentos
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-empanada-golden">$450</span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-yellow-500 text-xs">★</span>
-                    <span className="text-xs text-gray-600 dark:text-gray-300">4.8</span>
-                  </div>
+
+              {/* Información del producto simplificada */}
+              <div className="p-2 bg-gray-50 dark:bg-gray-700/50">
+                <div className="text-center">
+                  <h3 className="font-medium text-xs text-gray-900 dark:text-white mb-0.5">Vista previa</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Ajusta zoom y posición
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Controles de Efectos - Derecha */}
-          <div className="w-full max-w-xs">
-            <div className="space-y-4">
-              {/* Rotación - Solo botones */}
-              <div className="flex flex-col items-center gap-2">
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Rotación</div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRotateLeft}
-                    className="h-8 w-8 p-0 border-gray-300 hover:border-empanada-golden hover:bg-empanada-golden/10"
-                    title="Rotar 90° izquierda"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                  </Button>
-                  <span className="text-xs font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded min-w-[40px] text-center">
-                    {editSettings.rotation}°
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRotateRight}
-                    className="h-8 w-8 p-0 border-gray-300 hover:border-empanada-golden hover:bg-empanada-golden/10"
-                    title="Rotar 90° derecha"
-                  >
-                    <RotateCw className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Efectos */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 text-center">Efectos</h3>
-                
-                {/* Brillo */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Brillo</label>
-                    <span className="text-xs font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded">
-                      {editSettings.brightness}%
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6">50%</span>
-                    <input
-                      type="range"
-                      min="50"
-                      max="200"
-                      value={editSettings.brightness}
-                      onChange={(e) => handleSliderChange('brightness', parseInt(e.target.value))}
-                      className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-empanada"
-                    />
-                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6 text-right">200%</span>
-                  </div>
-                </div>
-
-                {/* Contraste */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Contraste</label>
-                    <span className="text-xs font-semibold text-empanada-golden bg-empanada-golden/10 px-2 py-1 rounded">
-                      {editSettings.contrast}%
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6">50%</span>
-                    <input
-                      type="range"
-                      min="50"
-                      max="200"
-                      value={editSettings.contrast}
-                      onChange={(e) => handleSliderChange('contrast', parseInt(e.target.value))}
-                      className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-empanada"
-                    />
-                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6 text-right">200%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Botones de acción - Alineados horizontalmente */}
-              <div className="flex flex-wrap gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={resetSettings}
-                  className="flex items-center justify-center gap-1 text-xs h-8 border-gray-300 hover:border-empanada-golden hover:bg-empanada-golden/10 flex-1 min-w-0"
-                >
-                  <RotateCcw className="w-3 h-3" />
-                  Reset
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center justify-center gap-1 text-xs h-8 border-gray-300 hover:border-empanada-golden hover:bg-empanada-golden/10 flex-1 min-w-0"
-                >
-                  <Upload className="w-3 h-3" />
-                  Cambiar
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    // Al cancelar, volver a mostrar la imagen anterior
-                    if (processedImage) {
-                      setPreview(processedImage); // Si hay imagen procesada, mostrarla
-                      setIsImageEdited(true); // Marcar como editada
-                    } else {
-                      setPreview(originalImage); // Si no, mostrar original
-                      setIsImageEdited(false); // Marcar como no editada
-                    }
-                    setIsEditing(false);
-                  }}
-                  className="flex items-center justify-center gap-1 text-xs h-8 border-gray-300 hover:border-red-500 hover:bg-red-50 flex-1 min-w-0"
-                >
-                  <X className="w-3 h-3" />
-                  Cancelar
-                </Button>
-                <Button
-                  variant="empanada"
-                  onClick={handleSaveEdit}
-                  className="flex items-center justify-center gap-1 text-xs h-8 flex-1 min-w-0"
-                >
-                  <Crop className="w-3 h-3" />
-                  Aplicar
-                </Button>
-              </div>
-            </div>
+          {/* Botones de acción - Responsivos */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            <Button
+              variant="outline"
+              onClick={resetSettings}
+              className="px-3 py-2 text-sm border-gray-300 hover:border-empanada-golden hover:bg-empanada-golden/10 flex-shrink-0"
+            >
+              Restablecer
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              className="px-3 py-2 text-sm border-gray-300 hover:border-empanada-golden hover:bg-empanada-golden/10 flex-shrink-0"
+            >
+              <Upload className="w-3 h-3 mr-1" />
+              Cambiar
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Al cancelar, volver a mostrar la imagen anterior
+                if (processedImage) {
+                  setPreview(processedImage); // Si hay imagen procesada, mostrarla
+                  setIsImageEdited(true); // Marcar como editada
+                } else {
+                  setPreview(originalImage); // Si no, mostrar original
+                  setIsImageEdited(false); // Marcar como no editada
+                }
+                setIsEditing(false);
+              }}
+              className="px-3 py-2 text-sm border-gray-300 hover:border-red-500 hover:bg-red-50 text-red-600 flex-shrink-0"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleSaveEdit}
+              className="px-4 py-2 text-sm bg-empanada-golden hover:bg-empanada-golden-dark text-white flex-shrink-0"
+            >
+              Guardar
+            </Button>
           </div>
         </div>
 
@@ -662,6 +526,44 @@ export function ImageUpload({
           </div>
         </div>
       )}
+
+      {/* Estilos para la barra de zoom */}
+      <style jsx>{`
+        .zoom-slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: white;
+          border: 2px solid rgba(255, 255, 255, 0.5);
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .zoom-slider::-moz-range-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: white;
+          border: 2px solid rgba(255, 255, 255, 0.5);
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .zoom-slider::-webkit-slider-track {
+          background: rgba(255, 255, 255, 0.3);
+          height: 4px;
+          border-radius: 2px;
+        }
+
+        .zoom-slider::-moz-range-track {
+          background: rgba(255, 255, 255, 0.3);
+          height: 4px;
+          border-radius: 2px;
+          border: none;
+        }
+      `}</style>
     </div>
   );
 }

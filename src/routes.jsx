@@ -26,6 +26,7 @@ import { ProductosPorSucursal } from "./pages/admin/ProductosPorSucursal";
 import { BranchManagement } from "./pages/admin/BranchManagement";
 import { DeliveryManagement } from "./pages/admin/DeliveryManagement";
 import { InventoryManagement } from "./pages/admin/InventoryManagement";
+import { RecipeManagement } from "./pages/admin/RecipeManagement";
 import { CustomerManagement } from "./pages/admin/CustomerManagement";
 import { ReportsPage } from "./pages/admin/ReportsPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
@@ -142,7 +143,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "inventario-receta",
-        element: <InventoryManagement />, // Temporalmente usa el mismo componente, se puede crear uno específico después
+        element: <InventoryManagement />,
       },
       {
         path: "clientes",

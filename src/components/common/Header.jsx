@@ -125,7 +125,7 @@ export function Header() {
 
         {/* Main Header */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-hidden gap-4 lg:gap-8">
+          <div className="flex items-center justify-between h-16 lg:h-20 relative overflow-visible gap-4 lg:gap-8">
             {/* Logo Section */}
             <motion.div
               style={{
@@ -253,31 +253,11 @@ export function Header() {
 
               {/* User */}
               <motion.div style={{ x: userIconX }}>
-              {session.isAuthenticated ? (
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <span className={cn(
-                    "text-xs sm:text-sm hidden md:block font-medium",
-                    "text-gray-900"
-                  )}>
-                    Hola, {session.userData.name.split(' ')[0]}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={session.logout}
-                    className={cn(
-                      "h-10 w-10 sm:h-11 sm:w-11",
-                      "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
-                    )}
-                  >
-                    <User className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </Button>
-                </div>
-              ) : (
                 <div className="relative group">
                   <Button
                     variant="ghost"
                     size="icon"
+                    onClick={session.isAuthenticated ? session.logout : undefined}
                     className={cn(
                       "h-10 w-10 sm:h-11 sm:w-11",
                       "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
@@ -286,12 +266,13 @@ export function Header() {
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
                   {/* Tooltip hacia abajo - Hidden on mobile */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block">
-                    Próximamente
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                  </div>
+                  {!session.isAuthenticated && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block z-[999]">
+                      Próximamente
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                    </div>
+                  )}
                 </div>
-              )}
               </motion.div>
 
               {/* Mobile Menu Button */}
@@ -417,22 +398,6 @@ export function Header() {
                   </div>
                 </div>
 
-                {/* User Section */}
-                {session.isAuthenticated && (
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Hola, {session.username.split(' ')[0]}
-                        </p>
-                        <p className="text-xs text-gray-500">Usuario registrado</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </nav>
             </motion.div>
           </motion.div>

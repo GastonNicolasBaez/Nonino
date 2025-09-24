@@ -132,16 +132,16 @@ export function ProductsCarousel({ products = [], className = '', title = 'Nuest
         {/* Parallax Carousel Container */}
         <div className="relative">
           {/* Left fade gradient - Only on desktop */}
-          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-16 md:w-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to right, rgb(26, 26, 26), transparent)' }}></div>
+          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-16 md:w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, rgb(26, 26, 26), transparent)' }}></div>
 
           {/* Right fade gradient - Only on desktop */}
-          <div className="hidden md:block absolute right-0 top-0 bottom-0 w-16 md:w-24 z-20 pointer-events-none" style={{ background: 'linear-gradient(to left, rgb(26, 26, 26), transparent)' }}></div>
+          <div className="hidden md:block absolute right-0 top-0 bottom-0 w-16 md:w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, rgb(26, 26, 26), transparent)' }}></div>
 
           {/* Navigation Buttons - Only on desktop */}
           <Button
             variant="outline"
             size="icon"
-            className="hidden md:flex absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+            className="hidden md:flex absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
             onClick={onPrevButtonClick}
           >
             <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
@@ -150,7 +150,7 @@ export function ProductsCarousel({ products = [], className = '', title = 'Nuest
           <Button
             variant="outline"
             size="icon"
-            className="hidden md:flex absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+            className="hidden md:flex absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
             onClick={onNextButtonClick}
           >
             <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />

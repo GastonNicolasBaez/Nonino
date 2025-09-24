@@ -250,11 +250,12 @@ export function ImageUpload({
     const ctx = canvas.getContext('2d');
     const img = imageRef.current;
 
-    // Usar exactamente las mismas dimensiones que el contenedor del preview
-    // w-64 = 256px de ancho, aspect-square = 256px de alto (cuadrado)
-    const canvasSize = 256;
-    canvas.width = canvasSize;
-    canvas.height = canvasSize;
+    // Usar formato rectangular 4:3 para mejor visualización en carruseles
+    // Este formato es más natural para fotos de productos
+    const canvasWidth = 320;  // Ancho base
+    const canvasHeight = 240; // Alto base (ratio 4:3)
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
     // Limpiar canvas con fondo gris (igual que el preview)
     ctx.fillStyle = '#f9fafb'; // bg-gray-50
@@ -267,9 +268,9 @@ export function ImageUpload({
     // CSS order: scale → rotate → translate
     // Canvas debe aplicarlas en ORDEN INVERSO: translate → rotate → scale
     ctx.save();
-    
-    // Centro del canvas (ahora es cuadrado)
-    ctx.translate(canvasSize / 2, canvasSize / 2);
+
+    // Centro del canvas (ahora es rectangular 4:3)
+    ctx.translate(canvasWidth / 2, canvasHeight / 2);
     
     // Aplicar transformaciones en ORDEN INVERSO al CSS
     // 1. Zoom (scale - último en CSS)
@@ -283,28 +284,29 @@ export function ImageUpload({
     ctx.translate(editSettings.x, editSettings.y);
 
      // Dibujar la imagen exactamente como se ve en el preview
-     // El preview usa object-contain cuando está en modo edición (!isImageEdited)
+     // Adaptar para el nuevo formato rectangular 4:3
      const imgAspect = img.naturalWidth / img.naturalHeight;
-     
-     // Usar object-contain logic (mismo que el preview CSS)
-     // Esto hace que la imagen se ajuste completamente dentro del contenedor
+     const canvasAspect = canvasWidth / canvasHeight;
+
+     // Usar object-cover por defecto para llenar mejor el canvas
+     // Esto da mejores resultados visuales en el carrusel
      let baseWidth, baseHeight;
-     if (imgAspect > 1) {
-       // Imagen más ancha que alta - limitar por ancho
-       baseWidth = canvasSize;
-       baseHeight = canvasSize / imgAspect;
+     if (imgAspect > canvasAspect) {
+       // Imagen más ancha que el canvas - limitar por altura
+       baseHeight = canvasHeight;
+       baseWidth = canvasHeight * imgAspect;
      } else {
-       // Imagen más alta que ancha - limitar por altura
-       baseHeight = canvasSize;
-       baseWidth = canvasSize * imgAspect;
+       // Imagen más alta que el canvas - limitar por ancho
+       baseWidth = canvasWidth;
+       baseHeight = canvasWidth / imgAspect;
      }
 
-     // Dibujar imagen centrada con el tamaño base (object-contain behavior)
+     // Dibujar imagen centrada con el tamaño base (object-cover behavior mejorado)
      ctx.drawImage(img, -baseWidth / 2, -baseHeight / 2, baseWidth, baseHeight);
     
     ctx.restore();
 
-    // Convertir a blob y actualizar
+    // Convertir a blob y actualizar con mejor calidad
     canvas.toBlob((blob) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -316,7 +318,7 @@ export function ImageUpload({
         onChange?.(editedImageUrl); // SOLO aquí llamar onChange con la imagen final
       };
       reader.readAsDataURL(blob);
-    }, 'image/jpeg', 0.95);
+    }, 'image/jpeg', 0.92); // Calidad ligeramente mejorada para mejor visualización
   };
 
   if (isEditing && preview) {
@@ -551,8 +553,8 @@ export function ImageUpload({
         <canvas
           ref={canvasRef}
           className="hidden"
-          width="256"
-          height="256"
+          width="320"
+          height="240"
         />
       </div>
     );

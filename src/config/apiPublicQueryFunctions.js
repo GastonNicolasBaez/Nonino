@@ -13,6 +13,11 @@ export const getPublicStoresQueryFunction = async () => {
 }
 
 export const getPublicProductosQueryFunction = async () => {
-    const response = await axios.get(`${ENDPOINTS.stores}/public/stores`);
+    const response = await axios.get(`${ENDPOINTS.catalog}/public/catalog/products`);
+    return await response.data;
+}
+
+export const getPublicCombosQueryFunction = async () => {
+    const response = await axios.get(`${ENDPOINTS.catalog}/public/catalog/combos`);
     return await response.data;
 }

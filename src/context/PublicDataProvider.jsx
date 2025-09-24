@@ -7,6 +7,7 @@ import {
     getPublicCatalogQueryFunction,
     getPublicStoresQueryFunction,
     getPublicProductosQueryFunction,
+    getPublicCombosQueryFunction,
 } from '@/config/apiPublicQueryFunctions';
 
 const PublicDataContext = createContext();
@@ -14,6 +15,7 @@ const PublicDataContext = createContext();
 export const PublicDataProvider = ({ children }) => {
 
     const [productosTodos, setProductosTodos] = useState([]);
+    const [combosTodos, setCombosTodos] = useState([]);
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -67,7 +69,18 @@ export const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicProductos'],
         mutationFn: getPublicProductosQueryFunction,
         onSuccess: (data) => {
-            setSucursales(data);
+            setProductosTodos(data);
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
+    const { mutateAsync: callPublicCombos, isPending: callPublicCombosLoading } = useMutation({
+        mutationKey: ['publicCombos'],
+        mutationFn: getPublicCombosQueryFunction,
+        onSuccess: (data) => {
+            setCombosTodos(data);
         },
         onError: (error) => {
             console.log(error);
@@ -82,11 +95,15 @@ export const PublicDataProvider = ({ children }) => {
 
     useEffect(() => {
         callPublicStores();
+        callPublicProductos();
+        callPublicCombos();
     }, []);
 
     const publicDataLoading =
         callPublicCatalogLoading ||
-        callPublicStoresLoading;
+        callPublicStoresLoading ||
+        callPublicProductosLoading ||
+        callPublicCombosLoading;
 
     return (
         <PublicDataContext.Provider value={{
@@ -94,6 +111,8 @@ export const PublicDataProvider = ({ children }) => {
             categorias,
             sucursales,
             sucursalSeleccionada,
+            productosTodos,
+            combosTodos,
             setSucursalSeleccionada,
 
             publicDataLoading,

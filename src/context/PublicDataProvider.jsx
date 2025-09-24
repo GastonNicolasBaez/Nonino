@@ -6,11 +6,14 @@ import { useMutation } from '@tanstack/react-query';
 import {
     getPublicCatalogQueryFunction,
     getPublicStoresQueryFunction,
+    getPublicProductosQueryFunction,
 } from '@/config/apiPublicQueryFunctions';
 
 const PublicDataContext = createContext();
 
 export const PublicDataProvider = ({ children }) => {
+
+    const [productosTodos, setProductosTodos] = useState([]);
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -56,6 +59,18 @@ export const PublicDataProvider = ({ children }) => {
             console.log(error);
             setCategorias([]);
             setProductos([]);
+        }
+    });
+
+    // sucursales
+    const { mutateAsync: callPublicProductos, isPending: callPublicProductosLoading } = useMutation({
+        mutationKey: ['publicProductos'],
+        mutationFn: getPublicProductosQueryFunction,
+        onSuccess: (data) => {
+            setSucursales(data);
+        },
+        onError: (error) => {
+            console.log(error);
         }
     });
 

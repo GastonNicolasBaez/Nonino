@@ -238,18 +238,11 @@ export function ImageUpload({
     // Aplicar transformaciones simplificadas (solo zoom y posición)
     ctx.save();
 
-<<<<<<< HEAD
-    // Centro del canvas (ahora es cuadrado)
-    ctx.translate(canvasSize / 2, canvasSize / 2);
-
-    // 1. Zoom (scale)
-=======
     // Centro del canvas (ahora es rectangular 4:3)
     ctx.translate(canvasWidth / 2, canvasHeight / 2);
     
     // Aplicar transformaciones en ORDEN INVERSO al CSS
     // 1. Zoom (scale - último en CSS)
->>>>>>> origin/feature-public
     const zoomFactor = editSettings.zoom / 100;
     ctx.scale(zoomFactor, zoomFactor);
 

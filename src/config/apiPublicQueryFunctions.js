@@ -11,3 +11,8 @@ export const getPublicStoresQueryFunction = async () => {
     const response = await axios.get(`${ENDPOINTS.stores}/public/stores`);
     return await response.data;
 }
+
+export const getPublicProductosQueryFunction = async () => {
+    const response = await axios.get(`${ENDPOINTS.stores}/public/stores`);
+    return await response.data;
+}

@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TextAnimate } from "@/components/ui/text-animate";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { NumberTicker } from "@/components/ui/number-ticker";
-import { ProductsCarousel } from "@/components/ui/products-carousel";
+import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
 
@@ -142,8 +142,8 @@ export function HomePage() {
 
             {/* Products Carousel Section */}
             {!loading && (
-                <ProductsCarousel
-                    products={productos && productos.length > 0 ? productos.slice(0, 8) : [
+                <ProductsFocusCarousel
+                    products={productos && productos.length > 0 ? productos.slice(0, 12) : [
                         { id: 1, name: "Empanada de Carne", description: "Carne molida con cebolla y especias", price: 450, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Carnes" },
                         { id: 2, name: "Empanada de Pollo", description: "Pollo desmenuzado con verduras", price: 420, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Carnes" },
                         { id: 3, name: "Empanada de Jamón y Queso", description: "Jamón cocido y queso mozzarella", price: 400, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Quesos" },
@@ -151,7 +151,11 @@ export function HomePage() {
                         { id: 5, name: "Empanada de Humita", description: "Choclo cremoso con especias", price: 390, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Especiales" },
                         { id: 6, name: "Empanada de Caprese", description: "Tomate, mozzarella y albahaca", price: 410, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Especiales" },
                         { id: 7, name: "Empanada de Atún", description: "Atún con cebolla y huevo", price: 430, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Especiales" },
-                        { id: 8, name: "Empanada de Choclo", description: "Choclo dulce con crema", price: 395, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Dulces" }
+                        { id: 8, name: "Empanada de Choclo", description: "Choclo dulce con crema", price: 395, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Dulces" },
+                        { id: 9, name: "Empanada de Carne Picante", description: "Carne molida con ají y especias", price: 470, image: "/src/assets/images/SanMartin.jpg", isPopular: false, category: "Carnes" },
+                        { id: 10, name: "Empanada de Pescado", description: "Pescado fresco con verduras", price: 480, image: "/src/assets/images/SanMartin.jpg", isPopular: false, category: "Especiales" },
+                        { id: 11, name: "Empanada de Ricota", description: "Ricota cremosa con espinaca", price: 390, image: "/src/assets/images/SanMartin.jpg", isPopular: false, category: "Vegetales" },
+                        { id: 12, name: "Empanada Dulce", description: "Dulce de leche casero", price: 420, image: "/src/assets/images/SanMartin.jpg", isPopular: true, category: "Dulces" }
                     ]}
                     title="Nuestras Empanadas Más Populares"
                     className=""

@@ -224,7 +224,7 @@ export function DeliveryManagement() {
         };
 
         return (
-            <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
+            <div className="modal-overlay bg-black/60 backdrop-blur-sm flex items-center justify-center" style={{padding: '1rem'}}>
                 <div className="w-full max-w-2xl">
                     <Card className="shadow-2xl">
                         <CardHeader className="pb-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">

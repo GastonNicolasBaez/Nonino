@@ -150,6 +150,8 @@ export function ProductStockManagement() {
     openConfirmModal({
       title: "Eliminar Producto",
       message: "¿Estás seguro de que quieres eliminar este producto del inventario?",
+      type: "danger",
+      confirmText: "Eliminar",
       onConfirm: () => {
         setProducts(prev => prev.filter(item => item.id !== productId));
         toast.success("Producto eliminado correctamente");
@@ -312,7 +314,7 @@ export function ProductStockManagement() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead>
                   <tr className="border-b">
                     <th className="text-left p-4 font-medium">Producto</th>
@@ -323,7 +325,7 @@ export function ProductStockManagement() {
                     <th className="text-left p-4 font-medium">Precio</th>
                     <th className="text-left p-4 font-medium">Margen</th>
                     <th className="text-left p-4 font-medium">Estado</th>
-                    <th className="text-left p-4 font-medium">Acciones</th>
+                    <th className="text-left p-2 font-medium w-24 min-w-24">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -385,20 +387,21 @@ export function ProductStockManagement() {
                             {getStatusText(item.status)}
                           </div>
                         </td>
-                        <td className="p-4">
-                          <div className="flex gap-2">
+                        <td className="p-2 w-24 min-w-24">
+                          <div className="flex gap-1">
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleUpdateProductStock(item.id, item.currentStock)}
+                              className="p-2 min-w-8 h-8"
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
                             <Button
-                              variant="outline"
+                              variant="destructive"
                               size="sm"
                               onClick={() => handleDeleteProduct(item.id)}
-                              className="text-red-600 hover:text-red-700"
+                              className="p-2 min-w-8 h-8"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>

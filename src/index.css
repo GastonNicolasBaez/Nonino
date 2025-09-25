@@ -58,6 +58,14 @@
     -ms-overflow-style: none; /* Internet Explorer 10+ */
   }
 
+  /* Ensure full viewport coverage for fixed positioned elements */
+  html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   /* Ocultar scrollbar en WebKit browsers (Chrome, Safari, Edge) */
   body::-webkit-scrollbar {
     display: none;
@@ -196,6 +204,22 @@
 
 .animate-bounce-subtle {
   animation: bounce 2s infinite;
+}
+
+/* Modal overlay utilities */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+  z-index: 999999 !important;
+  margin: 0 !important;
+  padding: 0;
 }
 
 /* Glassmorphism utilities */

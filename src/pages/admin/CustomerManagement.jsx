@@ -33,7 +33,7 @@ import { generateCustomersReportPDF, downloadPDF } from "../../services/pdfServi
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { Portal } from "../../components/common/Portal";
 import { mockCustomers } from "../../lib/mockData";
-import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
+import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 
 export function CustomerManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -92,6 +92,8 @@ export function CustomerManagement() {
     openConfirmModal({
       title: "Eliminar Cliente",
       message: "¿Estás seguro de que quieres eliminar este cliente? Esta acción no se puede deshacer.",
+      type: "danger",
+      confirmText: "Eliminar",
       onConfirm: () => {
         setCustomers(prev => prev.filter(customer => customer.id !== customerId));
         toast.success("Cliente eliminado correctamente");
@@ -331,10 +333,9 @@ export function CustomerManagement() {
                             <Edit className="w-4 h-4" />
                           </Button>
                           <Button
-                            variant="outline"
+                            variant="destructive"
                             size="sm"
                             onClick={() => handleDeleteCustomer(customer.id)}
-                            className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -399,7 +400,7 @@ export function CustomerManagement() {
 function CustomerDetailModal({ customer, onClose }) {
   return (
     <Portal>
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
         <div
           className="w-full max-w-6xl h-[95vh] flex flex-col"
         >
@@ -590,31 +591,26 @@ function NewCustomerModal({ onClose, onSave }) {
   const isFormValid = formData.name && formData.email && formData.phone;
 
   return (
-    <Portal>
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <div
-          className="w-full max-w-6xl h-[95vh] flex flex-col"
-        >
-          <Card className="shadow-2xl h-full flex flex-col ">
-            {/* Header */}
-            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Nuevo Cliente
-                  </CardTitle>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Agrega un nuevo cliente al sistema
-                  </p>
-                </div>
-                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-            </CardHeader>
-
-            {/* Content */}
-            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
+    <BrandedModal
+      isOpen={true}
+      onClose={onClose}
+      title="Nuevo Cliente"
+      subtitle="Agrega un nuevo cliente al sistema"
+      icon={<User className="w-6 h-6" />}
+      maxWidth="max-w-6xl"
+      maxHeight="max-h-[95vh]"
+      footer={
+        <BrandedModalFooter
+          onCancel={onClose}
+          onConfirm={handleSave}
+          cancelText="Cancelar"
+          confirmText="Crear Cliente"
+          confirmIcon={<Save className="w-4 h-4" />}
+          isConfirmDisabled={!isFormValid}
+        />
+      }
+    >
+      <div className="space-y-6">
               {/* Información Básica */}
               <Card className="">
                 <CardHeader>
@@ -735,28 +731,8 @@ function NewCustomerModal({ onClose, onSave }) {
                   />
                 </CardContent>
               </Card>
-            </CardContent>
-
-            {/* Footer */}
-            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                  Cancelar
-                </Button>
-                <Button 
-                  variant="empanada" 
-                  onClick={handleSave}
-                  disabled={!isFormValid}
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Crear Cliente
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
       </div>
-    </Portal>
+    </BrandedModal>
   );
 }
 
@@ -772,6 +748,12 @@ function EditCustomerModal({ customer, onClose, onSave }) {
     notes: customer.notes
   });
 
+  // Opciones de estado para el modal
+  const customerStatusOptions = [
+    { value: "active", label: "Activo" },
+    { value: "inactive", label: "Inactivo" }
+  ];
+
   const handleSave = () => {
     const updatedCustomer = {
       ...customer,
@@ -783,31 +765,26 @@ function EditCustomerModal({ customer, onClose, onSave }) {
   const isFormValid = formData.name && formData.email && formData.phone;
 
   return (
-    <Portal>
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
-        <div
-          className="w-full max-w-6xl h-[95vh] flex flex-col"
-        >
-          <Card className="shadow-2xl h-full flex flex-col ">
-            {/* Header */}
-            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Editar Cliente
-                  </CardTitle>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Modifica la información del cliente
-                  </p>
-                </div>
-                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-            </CardHeader>
-
-            {/* Content */}
-            <CardContent className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
+    <BrandedModal
+      isOpen={true}
+      onClose={onClose}
+      title="Editar Cliente"
+      subtitle="Modifica la información del cliente"
+      icon={<User className="w-6 h-6" />}
+      maxWidth="max-w-6xl"
+      maxHeight="max-h-[95vh]"
+      footer={
+        <BrandedModalFooter
+          onCancel={onClose}
+          onConfirm={handleSave}
+          cancelText="Cancelar"
+          confirmText="Actualizar Cliente"
+          confirmIcon={<Save className="w-4 h-4" />}
+          isConfirmDisabled={!isFormValid}
+        />
+      }
+    >
+      <div className="space-y-6">
               {/* Información Básica */}
               <Card className="">
                 <CardHeader>
@@ -937,27 +914,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                   />
                 </CardContent>
               </Card>
-            </CardContent>
-
-            {/* Footer */}
-            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
-                  Cancelar
-                </Button>
-                <Button 
-                  variant="empanada" 
-                  onClick={handleSave}
-                  disabled={!isFormValid}
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Cambios
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
       </div>
-    </Portal>
+    </BrandedModal>
   );
 }

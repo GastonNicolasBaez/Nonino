@@ -173,7 +173,7 @@ function OrderViewModal({ order, onClose }) {
 
   return (
     <Portal>
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
         <div
           className="w-full max-w-7xl h-[95vh] flex flex-col"
         >
@@ -411,6 +411,8 @@ export function OrderManagement() {
     openConfirmModal({
       title: "Eliminar Pedido",
       message: "¿Estás seguro de que quieres eliminar este pedido? Esta acción no se puede deshacer.",
+      type: "danger",
+      confirmText: "Eliminar",
       onConfirm: () => {
         deleteOrder(orderId);
         toast.success("Pedido eliminado correctamente");

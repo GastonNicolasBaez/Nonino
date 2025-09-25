@@ -1,25 +1,97 @@
 import PropTypes from 'prop-types';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { X, RefreshCw } from 'lucide-react';
+import { BrandedModal, BrandedModalFooter } from './BrandedModal';
+import { AlertTriangle, Trash2, Info, HelpCircle } from 'lucide-react';
 
 /**
- * ConfirmModal - Componente reutilizable para modales de confirmación flotantes
- * 
- * @param {Object} props
- * @param {boolean} props.isOpen - Estado de apertura del modal
- * @param {string} props.title - Título del modal
- * @param {string} props.message - Mensaje descriptivo
- * @param {string} props.confirmLabel - Texto del botón de confirmación
- * @param {string} props.cancelLabel - Texto del botón de cancelación
- * @param {function} props.onConfirm - Función a ejecutar al confirmar
- * @param {function} props.onCancel - Función a ejecutar al cancelar
- * @param {boolean} props.isLoading - Estado de carga
- * @param {React.ReactNode} props.icon - Icono del modal
- * @param {string} props.count - Contador o información adicional
- * @param {string} props.className - Clases CSS adicionales
+ * ConfirmModal - Componente de confirmación usando BrandedModal
+ * Se mantiene compatible con la API original pero usa el sistema de branding
  */
 export function ConfirmModal({
+    isOpen,
+    title,
+    message,
+    confirmLabel = "Confirmar",
+    cancelLabel = "Cancelar",
+    onConfirm,
+    onCancel,
+    isLoading = false,
+    icon,
+    type = "warning", // warning, danger, info, question
+    maxWidth = "max-w-md"
+}) {
+    // Definir iconos y estilos según el tipo
+    const getTypeConfig = () => {
+        switch (type) {
+            case 'danger':
+                return {
+                    icon: icon || <Trash2 className="w-5 h-5" />,
+                    confirmVariant: 'destructive'
+                };
+            case 'info':
+                return {
+                    icon: icon || <Info className="w-5 h-5" />,
+                    confirmVariant: 'default'
+                };
+            case 'question':
+                return {
+                    icon: icon || <HelpCircle className="w-5 h-5" />,
+                    confirmVariant: 'default'
+                };
+            case 'warning':
+            default:
+                return {
+                    icon: icon || <AlertTriangle className="w-5 h-5" />,
+                    confirmVariant: 'default'
+                };
+        }
+    };
+
+    const typeConfig = getTypeConfig();
+
+    return (
+        <BrandedModal
+            isOpen={isOpen}
+            onClose={onCancel}
+            title={title}
+            subtitle={message}
+            icon={typeConfig.icon}
+            maxWidth={maxWidth}
+            footer={
+                <BrandedModalFooter
+                    onCancel={onCancel}
+                    onConfirm={onConfirm}
+                    cancelText={cancelLabel}
+                    confirmText={confirmLabel}
+                    isLoading={isLoading}
+                    // Usar estilo personalizado para botón de confirmación según tipo
+                    confirmButtonClass={type === 'danger' ? 'bg-red-600 hover:bg-red-700' : undefined}
+                />
+            }
+        >
+            {/* El mensaje ya se muestra como subtitle, pero podemos agregar contenido extra aquí si es necesario */}
+        </BrandedModal>
+    );
+}
+
+ConfirmModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    title: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired,
+    confirmLabel: PropTypes.string,
+    cancelLabel: PropTypes.string,
+    onConfirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    isLoading: PropTypes.bool,
+    icon: PropTypes.node,
+    type: PropTypes.oneOf(['warning', 'danger', 'info', 'question']),
+    maxWidth: PropTypes.string
+};
+
+/**
+ * ConfirmModal flotante (estilo toast) - Mantiene la funcionalidad original
+ * Para casos donde se necesita el comportamiento de toast flotante
+ */
+export function FloatingConfirmModal({
     isOpen,
     title,
     message,
@@ -36,8 +108,8 @@ export function ConfirmModal({
 
     return (
         <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
-            <Card className="shadow-2xl border-2 border-empanada-golden bg-white dark:bg-gray-800">
-                <CardContent className="p-4">
+            <div className="shadow-2xl border-2 border-empanada-golden bg-white dark:bg-gray-800 rounded-lg">
+                <div className="p-4">
                     <div className="flex items-center gap-4">
                         {icon && (
                             <div className="text-center">
@@ -60,51 +132,25 @@ export function ConfirmModal({
                             </p>
                         </div>
                         <div className="flex gap-2">
-                            <Button
-                                variant="outline"
-                                size="sm"
+                            <button
                                 onClick={onCancel}
                                 disabled={isLoading}
-                                className="h-9 px-3"
+                                className="h-9 px-3 border border-gray-300 bg-white text-gray-700 rounded-md hover:bg-gray-50 flex items-center gap-1 text-sm"
                             >
-                                <X className="w-3 h-3 mr-1" />
                                 {cancelLabel}
-                            </Button>
-                            <Button
-                                variant="empanada"
-                                size="sm"
+                            </button>
+                            <button
                                 onClick={onConfirm}
                                 disabled={isLoading}
-                                className="h-9 px-4 font-semibold"
+                                className="h-9 px-4 bg-empanada-golden text-white rounded-md hover:bg-empanada-golden/90 flex items-center gap-1 text-sm font-semibold"
                             >
-                                {isLoading ? (
-                                    <>
-                                        <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
-                                        Procesando...
-                                    </>
-                                ) : (
-                                    confirmLabel
-                                )}
-                            </Button>
+                                {isLoading ? "Procesando..." : confirmLabel}
+                            </button>
                         </div>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
     );
 }
-
-ConfirmModal.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    title: PropTypes.string.isRequired,
-    message: PropTypes.string.isRequired,
-    confirmLabel: PropTypes.string,
-    cancelLabel: PropTypes.string,
-    onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool,
-    icon: PropTypes.node,
-    count: PropTypes.string,
-    className: PropTypes.string
-};
 

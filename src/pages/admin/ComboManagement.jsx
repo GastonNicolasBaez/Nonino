@@ -142,6 +142,8 @@ export function ComboManagement() {
     openConfirmModal({
       title: "Eliminar Combo",
       message: "¿Estás seguro de que quieres eliminar este combo?",
+      type: "danger",
+      confirmText: "Eliminar",
       onConfirm: () => {
         setCombos(prev => prev.filter(combo => combo.id !== comboId));
         toast.success("Combo eliminado correctamente");
@@ -562,10 +564,9 @@ export function ComboManagement() {
                           Editar
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="destructive"
                           size="sm"
                           onClick={() => handleDeleteCombo(combo.id)}
-                          className="text-red-600 hover:text-red-700"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Eliminar
@@ -634,6 +635,19 @@ export function ComboManagement() {
                         max="50"
                         placeholder="15"
                       />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Precio Final</label>
+                      <Input
+                        type="number"
+                        value={comboForm.price}
+                        onChange={(e) => setComboForm(prev => ({...prev, price: parseFloat(e.target.value) || 0}))}
+                        min="0"
+                        placeholder="Precio personalizado del combo"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Puedes ajustar manualmente el precio final del combo
+                      </p>
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">Estado</label>
@@ -741,49 +755,33 @@ export function ComboManagement() {
                         </div>
                       ) : (
                         comboForm.products.map((product, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-white dark:bg-gray-900">
+                          <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-gray-700/50 dark:bg-gray-700/50">
                             <div className="flex-1">
-                              <select
-                                value={product.id || ''}
-                                onChange={(e) => handleProductChange(index, 'id', e.target.value)}
-                                className="w-full p-2 border rounded-md bg-background text-sm"
-                              >
-                                <option value="" disabled>Seleccionar producto</option>
-                                {productos?.map(prod => (
-                                  <option key={prod.id} value={prod.id}>
-                                    {prod.nombre}
-                                  </option>
-                                ))}
-                              </select>
+                              <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                {product.name}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {formatPrice(product.price)}
+                              </div>
                             </div>
                             <div className="w-20">
-                            <Input
-                              type="number"
-                              value={product.quantity}
-                              onChange={(e) => handleProductChange(index, 'quantity', parseInt(e.target.value) || 1)}
-                              min="1"
-                              className="text-center text-sm"
-                              placeholder="Cant."
-                            />
-                          </div>
-                          <div className="w-24">
-                            <Input
-                              type="number"
-                              value={product.price}
-                              onChange={(e) => handleProductChange(index, 'price', parseFloat(e.target.value) || 0)}
-                              min="0"
-                              className="text-center text-sm"
-                              placeholder="Precio"
-                            />
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveProductFromCombo(index)}
-                            className="text-red-500 hover:text-red-700 shrink-0"
-                          >
-                            <Minus className="w-4 h-4" />
-                          </Button>
+                              <Input
+                                type="number"
+                                value={product.quantity}
+                                onChange={(e) => handleProductChange(index, 'quantity', parseInt(e.target.value) || 1)}
+                                min="1"
+                                className="text-center text-sm"
+                                placeholder="Cant."
+                              />
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveProductFromCombo(index)}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 shrink-0"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
                         ))
                       )}

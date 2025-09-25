@@ -816,9 +816,9 @@ export function ProductManagement() {
                                                             Editar
                                                         </Button>
                                                         <Button
-                                                            variant="outline"
+                                                            variant="destructive"
                                                             size="sm"
-                                                            className="h-8 px-3 text-xs text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                            className="h-8 px-3 text-xs"
                                                             onClick={() => deleteProduct(product.id)}
                                                         >
                                                             <Trash2 className="w-3 h-3 mr-1" />

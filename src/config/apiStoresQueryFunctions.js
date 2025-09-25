@@ -29,8 +29,6 @@ export const postAdminStoresAddStoreQueryFunction = async ({_store, _accessToken
         }
     }
 
-    console.log(axiosSetup);
-
     const response = await axios.post(`${ENDPOINTS.stores}/admin/stores`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
@@ -78,8 +76,6 @@ export const postAdminStoresAddDeliveryZoneQueryFunction = async ({_storeId, _de
             }
         }
     }
-
-    console.log(axiosSetup);
 
     const response = await axios.post(`${ENDPOINTS.stores}/admin/stores/${_storeId}/neighborhoods`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;

@@ -105,8 +105,6 @@ export function BranchManagement() {
             if (newStoreSchedule) {
                 const adaptedSchedule = transformSchedule(newStoreSchedule);
 
-                console.log(adaptedSchedule);
-
                 await callUpdateSchedule({
                     _storeId: selectedStore,
                     _schedule: adaptedSchedule,

@@ -44,12 +44,14 @@ export function ZoomParallax({ images }) {
                             key={index}
                             style={{ scale }}
                             className={`absolute top-0 flex h-full w-full items-center justify-center
-                                ${index === 1 ?
-                                    'md:[&>div]:!-top-[30vh] md:[&>div]:!left-[5vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[35vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
+                                ${index === 0 ?
+                                    'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[11vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[55vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
+                                } ${index === 1 ?
+                                    'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[11vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[55vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
                                 } ${index === 2 ?
-                                    'md:[&>div]:!-top-[10vh] md:[&>div]:!-left-[25vw] md:[&>div]:!h-[45vh] md:[&>div]:!w-[20vw] [&>div]:!-top-[8vh] [&>div]:!-left-[40vw] [&>div]:!h-[40vh] [&>div]:!w-[35vw]' : ''
+                                    'md:[&>div]:!-top-[20vh] md:[&>div]:!-left-[37vw] md:[&>div]:!h-[55vh] md:[&>div]:!w-[40vw] [&>div]:!-top-[8vh] [&>div]:!-left-[40vw] [&>div]:!h-[40vh] [&>div]:!w-[35vw]' : ''
                                 } ${index === 3 ?
-                                    'md:[&>div]:!-top-[1vh] md:[&>div]:!left-[27.5vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[25vw] [&>div]:!top-[-39vh] [&>div]:!left-[-30vw] [&>div]:!h-[20vh] [&>div]:!w-[35vw]' : ''
+                                    'md:[&>div]:!-top-[3vh] md:[&>div]:!left-[33vw] md:[&>div]:!h-[32vh] md:[&>div]:!w-[35vw] [&>div]:!top-[-39vh] [&>div]:!left-[-30vw] [&>div]:!h-[20vh] [&>div]:!w-[35vw]' : ''
                                 } ${index === 4 ?
                                     'md:[&>div]:!top-[27.5vh] md:[&>div]:!left-[5vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[20vw] [&>div]:!top-[33vh] [&>div]:!left-[24vw] [&>div]:!h-[30vh] [&>div]:!w-[40vw]' : ''
                                 } ${index === 5 ?

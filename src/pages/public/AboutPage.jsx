@@ -103,7 +103,7 @@ export function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Zoom Parallax */}
-      <section ref={parallaxRef} className="relative -mb-1">
+      <section ref={parallaxRef} className="relative -mb-1" style={{ marginTop: '-80px' }}>
         {/* Zoom Parallax Component */}
         <ZoomParallax images={parallaxImages} />
       </section>
@@ -160,8 +160,11 @@ export function AboutPage() {
         </div>
       </motion.div>
 
+      {/* Anchor point for end of parallax */}
+      <div id="end-parallax" className="absolute" style={{ top: '200vh' }}></div>
+
       {/* Story Section */}
-      <section className="py-8 sm:py-12 lg:py-16 bg-empanada-cream -mt-1">
+      <section id="historia" className="py-8 sm:py-12 lg:py-16 bg-empanada-cream -mt-1">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -233,7 +236,7 @@ export function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section className="py-8 sm:py-12 lg:py-16 bg-empanada-cream relative">
+      <section id="valores" className="py-8 sm:py-12 lg:py-16 bg-empanada-cream relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -297,7 +300,7 @@ export function AboutPage() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-6 sm:py-8 lg:py-10 bg-empanada-cream">
+      <section id="trayectoria" className="py-6 sm:py-8 lg:py-10 bg-empanada-cream">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -405,7 +408,7 @@ export function AboutPage() {
       </section>
 
       {/* Team Section */}
-      <section className="py-6 sm:py-8 lg:py-12 bg-empanada-cream relative">
+      <section id="equipo" className="py-6 sm:py-8 lg:py-12 bg-empanada-cream relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

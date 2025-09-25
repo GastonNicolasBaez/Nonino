@@ -8,6 +8,23 @@ export function ZoomParallax({ images }) {
         offset: ['start start', 'end end'],
     });
 
+    // Títulos y navegación para las imágenes interactivas
+    const imageNavigation = {
+        0: { title: "Conocenos", targetId: "end-parallax" },
+        1: { title: "La Historia de Don Carlos", targetId: "historia" },
+        2: { title: "Nuestros Valores", targetId: "valores" },
+        4: { title: "Nuestra Trayectoria", targetId: "trayectoria" },
+        6: { title: "Nuestro Equipo", targetId: "equipo" }
+    };
+
+    // Función para navegar a una sección específica
+    const navigateToSection = (targetId) => {
+        const element = document.getElementById(targetId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
     const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
     const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
@@ -35,7 +52,7 @@ export function ZoomParallax({ images }) {
             />
             {/* Degradado de transición para el final */}
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-empanada-cream to-transparent"></div>
-            <div className="sticky top-0 h-screen overflow-hidden relative">
+            <div className="sticky top-0 h-screen overflow-hidden relative" style={{ transform: 'translateY(0)' }}>
                 {images.map(({ src, alt }, index) => {
                     const scale = scales[index % scales.length];
 
@@ -45,36 +62,50 @@ export function ZoomParallax({ images }) {
                             style={{ scale }}
                             className={`absolute top-0 flex h-full w-full items-center justify-center
                                 ${index === 0 ?
-                                    'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[11vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[55vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
+                                    'md:[&>div]:!-top-[0vh] md:[&>div]:!left-[0vw] md:[&>div]:!h-[35vh] md:[&>div]:!w-[35vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
                                 } ${index === 1 ?
-                                    'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[11vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[55vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
+                                    'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[15vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[65vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
                                 } ${index === 2 ?
-                                    'md:[&>div]:!-top-[20vh] md:[&>div]:!-left-[37vw] md:[&>div]:!h-[55vh] md:[&>div]:!w-[40vw] [&>div]:!-top-[8vh] [&>div]:!-left-[40vw] [&>div]:!h-[40vh] [&>div]:!w-[35vw]' : ''
+                                    'md:[&>div]:!-top-[20vh] md:[&>div]:!-left-[39vw] md:[&>div]:!h-[55vh] md:[&>div]:!w-[40vw] [&>div]:!-top-[8vh] [&>div]:!-left-[40vw] [&>div]:!h-[40vh] [&>div]:!w-[35vw]' : ''
                                 } ${index === 3 ?
-                                    'md:[&>div]:!-top-[3vh] md:[&>div]:!left-[33vw] md:[&>div]:!h-[32vh] md:[&>div]:!w-[35vw] [&>div]:!top-[-39vh] [&>div]:!left-[-30vw] [&>div]:!h-[20vh] [&>div]:!w-[35vw]' : ''
+                                    'md:[&>div]:!-top-[2vh] md:[&>div]:!left-[37vw] md:[&>div]:!h-[32vh] md:[&>div]:!w-[35vw] [&>div]:!top-[-39vh] [&>div]:!left-[-30vw] [&>div]:!h-[20vh] [&>div]:!w-[35vw]' : ''
                                 } ${index === 4 ?
-                                    'md:[&>div]:!top-[27.5vh] md:[&>div]:!left-[5vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[20vw] [&>div]:!top-[33vh] [&>div]:!left-[24vw] [&>div]:!h-[30vh] [&>div]:!w-[40vw]' : ''
+                                    'md:[&>div]:!top-[31vh] md:[&>div]:!left-[9vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[50vw] [&>div]:!top-[33vh] [&>div]:!left-[24vw] [&>div]:!h-[30vh] [&>div]:!w-[40vw]' : ''
                                 } ${index === 5 ?
-                                    'md:[&>div]:!top-[27.5vh] md:[&>div]:!-left-[22.5vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[30vw] [&>div]:!top-[32vh] [&>div]:!-left-[24vw] [&>div]:!h-[35vh] [&>div]:!w-[45vw]' : ''
+                                    'md:[&>div]:!top-[30vh] md:[&>div]:!-left-[33vw] md:[&>div]:!h-[40vh] md:[&>div]:!w-[30vw] [&>div]:!top-[32vh] [&>div]:!-left-[24vw] [&>div]:!h-[35vh] [&>div]:!w-[45vw]' : ''
                                 } ${index === 6 ?
-                                    'md:[&>div]:!top-[22.5vh] md:[&>div]:!left-[25vw] md:[&>div]:!h-[15vh] md:[&>div]:!w-[15vw] [&>div]:!top-[3vh] [&>div]:!left-[38vw] [&>div]:!h-[25vh] [&>div]:!w-[35vw]' : ''
+                                    'md:[&>div]:!top-[26vh] md:[&>div]:!left-[43vw] md:[&>div]:!h-[20vh] md:[&>div]:!w-[15vw] [&>div]:!top-[3vh] [&>div]:!left-[38vw] [&>div]:!h-[25vh] [&>div]:!w-[35vw]' : ''
                                 }`}
                         >
                             <motion.div
-                                className="relative h-[25vh] w-[35vw] md:h-[25vh] md:w-[25vw]"
+                                className={`relative h-[25vh] w-[35vw] md:h-[25vh] md:w-[25vw] group ${imageNavigation[index] ? 'cursor-pointer z-10' : 'z-0'}`}
                                 style={{
                                     filter: imageBlur
                                 }}
+                                onClick={imageNavigation[index] ? () => navigateToSection(imageNavigation[index].targetId) : undefined}
                             >
                                 <img
                                     src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
                                     alt={alt || `Imagen ${index + 1}`}
-                                    className="h-full w-full object-cover rounded-lg"
+                                    className="h-full w-full object-cover rounded-lg transition-all duration-300 group-hover:brightness-75"
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1);
                                     }}
                                 />
+                                {/* Overlay con título al hover */}
+                                {imageNavigation[index] && (
+                                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex items-center justify-center z-20 backdrop-blur-sm">
+                                        <div className="text-center text-white px-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                            <h3 className="text-xs md:text-base lg:text-lg font-bold mb-1 md:mb-2 text-empanada-golden">
+                                                {imageNavigation[index].title}
+                                            </h3>
+                                            <p className="text-[10px] md:text-xs lg:text-sm opacity-90">
+                                                Click para navegar
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </motion.div>
                         </motion.div>
                     );

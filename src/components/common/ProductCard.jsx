@@ -4,6 +4,7 @@ import { Heart, Plus, Star, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import { ProductModal } from "../ui/ProductModal";
 import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
@@ -11,12 +12,14 @@ import { toast } from "sonner";
 export function ProductCard({ product, className }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { addItem } = useCart();
 
   /**
    * Maneja la adición de productos al carrito
    */
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     addItem(product);
     // El toast se maneja en el contexto CartContext
   };
@@ -24,20 +27,35 @@ export function ProductCard({ product, className }) {
   /**
    * Maneja el toggle de favoritos
    */
-  const handleLike = () => {
+  const handleLike = (e) => {
+    e.stopPropagation();
     setIsLiked(!isLiked);
     toast.success(isLiked ? "Removido de favoritos" : "Agregado a favoritos");
   };
 
+  /**
+   * Maneja la apertura del modal en mobile
+   */
+  const handleCardClick = () => {
+    // Solo abrir modal en dispositivos móviles
+    if (window.innerWidth < 768) {
+      setShowModal(true);
+    }
+  };
+
   return (
-    <motion.div
-      className={'h-full'}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.2 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-    >
-      <Card className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col">
+    <>
+      <motion.div
+        className={'h-full'}
+        whileHover={{ y: -5 }}
+        transition={{ duration: 0.2 }}
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+      >
+        <Card
+          className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col"
+          onClick={handleCardClick}
+        >
         <div>
         <div className="relative">
           <div className="aspect-[4/3] overflow-hidden">
@@ -152,7 +170,15 @@ export function ProductCard({ product, className }) {
             {product.isAvailable ? "Agregar al Carrito" : "No Disponible"}
           </Button>
         </CardFooter>
-      </Card>
-    </motion.div>
+        </Card>
+      </motion.div>
+
+      {/* Product Modal */}
+      <ProductModal
+        product={product}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+      />
+    </>
   );
 }

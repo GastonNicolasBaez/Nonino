@@ -108,6 +108,19 @@ export function Header() {
 
   const isActive = (href) => location.pathname === href;
 
+  // Función para manejar clicks en navegación
+  const handleNavClick = (e, href) => {
+    // Si ya estamos en la página y hacemos click en el mismo enlace
+    if (location.pathname === href) {
+      e.preventDefault();
+      // Scroll to top with smooth behavior
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <>
       <motion.header
@@ -160,6 +173,7 @@ export function Header() {
                   <Link
                     key={item.name}
                     to={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className={cn(
                       "text-xs lg:text-sm xl:text-sm 2xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-1 lg:px-2 py-1 whitespace-nowrap header-nav-item",
                       isActive(item.href)
@@ -188,6 +202,7 @@ export function Header() {
                   <Link
                     key={item.name}
                     to={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className={cn(
                       "text-xs lg:text-sm xl:text-sm 2xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-1 lg:px-2 py-1 whitespace-nowrap header-nav-item",
                       isActive(item.href)
@@ -352,7 +367,10 @@ export function Header() {
                     >
                       <Link
                         to={item.href}
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={(e) => {
+                          handleNavClick(e, item.href);
+                          setIsMenuOpen(false);
+                        }}
                         className={cn(
                           "flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all duration-200 hover:bg-empanada-golden/10 group",
                           isActive(item.href)

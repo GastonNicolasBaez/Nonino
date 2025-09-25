@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, Clock, Truck, Star, Flame, MapPin, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProductCard } from "@/components/common/ProductCard";
+import { ProductModal } from "@/components/ui/ProductModal";
 import { useCart } from "@/context/CartProvider";
 
 export function MenuMobile({
@@ -17,6 +18,8 @@ export function MenuMobile({
     selectedStore = null
 }) {
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     const { addItem } = useCart();
 
     const filteredProducts = products.filter((product) => {
@@ -26,6 +29,19 @@ export function MenuMobile({
             product.description.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSearch;
     });
+
+    const handleProductClick = (product) => {
+        setSelectedProduct(product);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        // Delay para que la animación de salida termine antes de limpiar el producto
+        setTimeout(() => {
+            setSelectedProduct(null);
+        }, 300);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 ">
@@ -89,7 +105,9 @@ export function MenuMobile({
             </div>
 
             {/* Contenido principal */}
-            <div className="pb-20">
+            <div className="pb-20 relative">
+                {/* Secciones por defecto - Siempre presentes pero pueden estar ocultas */}
+                <div className={`transition-all duration-300 ${searchTerm ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 {/* Los elegidos de hoy */}
                 <section className="py-6 bg-white mb-4">
                     <div className="px-4">
@@ -102,7 +120,10 @@ export function MenuMobile({
                         <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                             {todaysPicks.map((product) => (
                                 <div key={product.id} className="flex-none w-44">
-                                    <Card className="overflow-hidden hover:shadow-md transition-shadow h-[200px] flex flex-col">
+                                    <Card
+                                        className="overflow-hidden hover:shadow-md transition-shadow h-[200px] flex flex-col cursor-pointer"
+                                        onClick={() => handleProductClick(product)}
+                                    >
                                         <div className="h-24 bg-gray-200 relative flex-shrink-0">
                                             <img
                                                 src={product.image || "/api/placeholder/150/100"}
@@ -128,7 +149,10 @@ export function MenuMobile({
                                                     size="icon"
                                                     variant="empanada"
                                                     className="h-8 w-8 rounded-full flex-shrink-0 shadow-md"
-                                                    onClick={() => addItem(product, 1)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        addItem(product, 1);
+                                                    }}
                                                 >
                                                     <Plus className="h-4 w-4" />
                                                 </Button>
@@ -180,7 +204,11 @@ export function MenuMobile({
 
                         <div className="space-y-4">
                             {combos.map((combo) => (
-                                <Card key={combo.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                                <Card
+                                    key={combo.id}
+                                    className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                                    onClick={() => handleProductClick(combo)}
+                                >
                                     <div className="flex">
                                         <div className="w-24 h-24 bg-gray-200 flex-shrink-0">
                                             <img
@@ -201,7 +229,10 @@ export function MenuMobile({
                                                     size="sm"
                                                     variant="empanada"
                                                     className="text-xs px-3 py-1"
-                                                    onClick={() => addItem(combo, 1)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        addItem(combo, 1);
+                                                    }}
                                                 >
                                                     Agregar
                                                 </Button>
@@ -213,49 +244,97 @@ export function MenuMobile({
                         </div>
                     </div>
                 </section>
+                </div>
 
-                {/* Todos los productos */}
+                {/* Sección de búsqueda - Se superpone cuando hay searchTerm */}
+                <AnimatePresence>
+                {searchTerm && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="absolute inset-0 bg-gray-50 z-10"
+                    >
+                        <section className="bg-white py-6">
+                            <div className="px-4">
+                                <div className="mb-6">
+                                    <h2 className="text-xl font-bold text-gray-900">
+                                        Resultados de búsqueda
+                                    </h2>
+                                    <p className="text-gray-600 text-sm">
+                                        {filteredProducts.length} productos encontrados para "{searchTerm}"
+                                    </p>
+                                </div>
+
+                                {filteredProducts.length === 0 ? (
+                                    <motion.div className="text-center py-12">
+                                        <div className="text-4xl mb-4">🔍</div>
+                                        <h3 className="text-xl font-semibold mb-3">No encontramos empanadas</h3>
+                                        <p className="text-gray-600 mb-6">Intenta con otros términos de búsqueda</p>
+                                        <Button
+                                            onClick={() => setSearchTerm("")}
+                                            variant="empanada"
+                                        >
+                                            Ver Todas las Empanadas
+                                        </Button>
+                                    </motion.div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {filteredProducts.map((product) => (
+                                            <motion.div
+                                                key={product.id}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                            >
+                                                <ProductCard product={product} />
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    </motion.div>
+                )}
+                </AnimatePresence>
+
+                {/* Todos los productos - Solo cuando no hay búsqueda */}
+                {!searchTerm && (
                 <section className="bg-white">
                     <div className="px-4 py-6">
                         <div className="mb-6">
                             <h2 className="text-xl font-bold text-gray-900">
-                                {searchTerm ? "Resultados de búsqueda" : "Todas las Empanadas"}
+                                Todas las Empanadas
                             </h2>
                             <p className="text-gray-600 text-sm">
-                                {filteredProducts.length} productos encontrados
-                                {searchTerm && ` para "${searchTerm}"`}
+                                {products.length} productos disponibles
                             </p>
                         </div>
 
-                        {filteredProducts.length === 0 ? (
-                            <motion.div className="text-center py-12">
-                                <div className="text-4xl mb-4">🔍</div>
-                                <h3 className="text-xl font-semibold mb-3">No encontramos empanadas</h3>
-                                <p className="text-gray-600 mb-6">Intenta con otros términos de búsqueda</p>
-                                <Button
-                                    onClick={() => setSearchTerm("")}
-                                    variant="empanada"
+                        <div className="grid grid-cols-2 gap-3">
+                            {products.map((product) => (
+                                <motion.div
+                                    key={product.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3 }}
                                 >
-                                    Ver Todas las Empanadas
-                                </Button>
-                            </motion.div>
-                        ) : (
-                            <div className="grid grid-cols-2 gap-3">
-                                {filteredProducts.map((product) => (
-                                    <motion.div
-                                        key={product.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <ProductCard product={product} />
-                                    </motion.div>
-                                ))}
-                            </div>
-                        )}
+                                    <ProductCard product={product} />
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </section>
+                )}
             </div>
+
+            {/* Product Modal */}
+            <ProductModal
+                product={selectedProduct}
+                isOpen={showModal}
+                onClose={handleCloseModal}
+            />
         </div>
     );
 }

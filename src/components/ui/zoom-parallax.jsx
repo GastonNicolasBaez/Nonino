@@ -21,7 +21,13 @@ export function ZoomParallax({ images }) {
     const navigateToSection = (targetId) => {
         const element = document.getElementById(targetId);
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const headerHeight = 80; // Altura del navbar fijo (16/20 = 64px/80px)
+            const elementPosition = element.offsetTop - headerHeight;
+
+            window.scrollTo({
+                top: elementPosition,
+                behavior: 'smooth'
+            });
         }
     };
 

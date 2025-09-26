@@ -90,13 +90,14 @@ export function CartSidebar() {
                   <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                     ¡Agrega algunas deliciosas empanadas!
                   </p>
-                  <Button
-                    onClick={() => setIsOpen(false)}
-                    variant="empanada"
-                    className="w-full py-3 sm:py-4 text-sm sm:text-base"
-                  >
-                    Explorar Menú
-                  </Button>
+                  <Link to="/pedir" onClick={() => setIsOpen(false)}>
+                    <Button
+                      variant="empanada"
+                      className="w-full py-3 sm:py-4 text-sm sm:text-base"
+                    >
+                      Explorar Menú
+                    </Button>
+                  </Link>
                 </div>
               ) : (
                 <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">

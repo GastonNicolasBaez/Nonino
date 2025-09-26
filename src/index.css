@@ -66,6 +66,20 @@
     padding: 0;
   }
 
+  /* Restringir solo scroll horizontal en mobile para vistas públicas */
+  @media (max-width: 768px) {
+    html, body {
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
+      touch-action: manipulation;
+    }
+
+    /* Prevenir scroll lateral en áreas sin contenido */
+    * {
+      overscroll-behavior-x: none;
+    }
+  }
+
   /* Ocultar scrollbar en WebKit browsers (Chrome, Safari, Edge) */
   body::-webkit-scrollbar {
     display: none;

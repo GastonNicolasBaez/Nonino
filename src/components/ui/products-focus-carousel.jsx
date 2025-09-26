@@ -4,10 +4,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartProvider';
-import { Star, Plus, Clock, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, Plus, Clock, Heart, ChevronLeft, ChevronRight, X, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PARALLAX_FACTOR = 0.4;
 
@@ -102,17 +103,166 @@ const OptimizedProductImage = React.memo(({ product, onImageLoad }) => {
 
 OptimizedProductImage.displayName = "OptimizedProductImage";
 
+// Modal informativo de detalles del producto
+const ProductDetailModal = ({ product, isOpen, onClose }) => {
+    const navigate = useNavigate();
+
+    const handleViewMenu = () => {
+        navigate('/pedir');
+        onClose();
+    };
+
+    const modalVariants = {
+        hidden: { opacity: 0, scale: 0.8, y: 50 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                damping: 25,
+                stiffness: 300,
+                duration: 0.3
+            }
+        },
+        exit: {
+            opacity: 0,
+            scale: 0.8,
+            y: 50,
+            transition: {
+                duration: 0.2
+            }
+        }
+    };
+
+    const overlayVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+        exit: { opacity: 0 }
+    };
+
+    if (!product) return null;
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:hidden">
+                    {/* Overlay */}
+                    <motion.div
+                        variants={overlayVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        onClick={onClose}
+                    />
+
+                    {/* Modal */}
+                    <motion.div
+                        variants={modalVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Close Button */}
+                        <button
+                            onClick={onClose}
+                            className="absolute top-4 right-4 z-10 w-8 h-8 bg-black/20 hover:bg-black/40 rounded-full flex items-center justify-center transition-colors"
+                        >
+                            <X className="w-4 h-4 text-white" />
+                        </button>
+
+                        {/* Product Image */}
+                        <div className="h-64 relative overflow-hidden">
+                            <OptimizedProductImage product={product} />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
+                            {/* Product badges */}
+                            <div className="absolute top-4 left-4 flex flex-col gap-2">
+                                {product.isPopular && (
+                                    <Badge variant="empanada" className="text-xs shadow-lg">
+                                        <Star className="w-3 h-3 mr-1 fill-current" />
+                                        Popular
+                                    </Badge>
+                                )}
+                                {!product.isAvailable && (
+                                    <Badge variant="destructive" className="text-xs shadow-lg">
+                                        Agotado
+                                    </Badge>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Product Details */}
+                        <div className="p-6">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                                {product.name}
+                            </h2>
+
+                            <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                                {product.description}
+                            </p>
+
+                            {/* Product Stats */}
+                            <div className="flex items-center gap-4 mb-6 text-sm text-gray-500">
+                                <div className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4" />
+                                    <span>{product.preparationTime || 15} min</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                    <span>{product.rating || 4.8}</span>
+                                </div>
+                            </div>
+
+                            {/* Price Display */}
+                            <div className="text-center mb-6">
+                                <p className="text-3xl font-bold text-empanada-golden">
+                                    {formatPrice(product.basePrice)}
+                                </p>
+                                <p className="text-sm text-gray-500 mt-1">Precio unitario</p>
+                            </div>
+
+                            {/* View Menu Button */}
+                            <Button
+                                onClick={handleViewMenu}
+                                className="w-full py-3 text-base font-semibold"
+                                variant="empanada"
+                                size="lg"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <ShoppingCart className="w-4 h-4" />
+                                    Ver en el Menú
+                                </div>
+                            </Button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
+    );
+};
+
 // Componente de tarjeta individual con efecto focus
 const ProductFocusCard = React.memo(({
     product,
     index,
     hovered,
     setHovered,
-    globalIndex
+    globalIndex,
+    onProductClick
 }) => (
     <div
         onMouseEnter={() => setHovered(globalIndex)}
         onMouseLeave={() => setHovered(null)}
+        onClick={(e) => {
+            // Solo abrir modal en dispositivos móviles
+            if (window.innerWidth < 768) {
+                onProductClick(product);
+            }
+        }}
         className={cn(
             "relative overflow-hidden rounded-xl h-60 sm:h-48 md:h-64 group cursor-pointer bg-gray-100 transition-all duration-300 ease-out",
             hovered !== null && hovered !== globalIndex && "blur-sm scale-[0.98]"
@@ -177,6 +327,8 @@ ProductFocusCard.displayName = "ProductFocusCard";
 export function ProductsFocusCarousel({ products = [], className = '', title = 'Nuestros Productos' }) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [hovered, setHovered] = useState(null);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [emblaMainRef, emblaMainApi] = useEmblaCarousel({
         loop: true,
@@ -191,6 +343,16 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
         containScroll: 'keepSnaps',
         dragFree: true
     });
+
+    const handleProductClick = useCallback((product) => {
+        setSelectedProduct(product);
+        setIsModalOpen(true);
+    }, []);
+
+    const handleCloseModal = useCallback(() => {
+        setIsModalOpen(false);
+        setSelectedProduct(null);
+    }, []);
 
     if (!products || products.length === 0) {
         return null;
@@ -340,7 +502,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                             {columns.map((column, columnIndex) => (
                                 <div
                                     key={columnIndex}
-                                    className="relative flex-[0_0_33.333%] min-w-0 px-2"
+                                    className="relative flex-[0_0_50%] md:flex-[0_0_33.333%] min-w-0 px-2"
                                 >
                                     {/* Columna con 2 productos apilados */}
                                     <div className="space-y-3">
@@ -351,6 +513,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                                             hovered={hovered}
                                             setHovered={setHovered}
                                             globalIndex={columnIndex * 2}
+                                            onProductClick={handleProductClick}
                                         />
 
                                         {/* Producto inferior (si existe) */}
@@ -361,6 +524,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                                                 hovered={hovered}
                                                 setHovered={setHovered}
                                                 globalIndex={columnIndex * 2 + 1}
+                                                onProductClick={handleProductClick}
                                             />
                                         )}
                                     </div>
@@ -388,6 +552,13 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                     </div>
                 </div>
             </div>
+
+            {/* Modal de detalles del producto */}
+            <ProductDetailModal
+                product={selectedProduct}
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+            />
         </section>
     );
 }

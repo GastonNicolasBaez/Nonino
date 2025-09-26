@@ -46,7 +46,7 @@ export function CartSidebar() {
             animate="open"
             exit="closed"
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 md:hidden"
           />
 
           {/* Sidebar */}
@@ -56,7 +56,7 @@ export function CartSidebar() {
             animate="open"
             exit="closed"
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-white shadow-2xl z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-white shadow-2xl z-50 flex flex-col md:hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-cream to-empanada-wheat">
@@ -90,13 +90,14 @@ export function CartSidebar() {
                   <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                     ¡Agrega algunas deliciosas empanadas!
                   </p>
-                  <Button
-                    onClick={() => setIsOpen(false)}
-                    variant="empanada"
-                    className="w-full py-3 sm:py-4 text-sm sm:text-base"
-                  >
-                    Explorar Menú
-                  </Button>
+                  <Link to="/pedir" onClick={() => setIsOpen(false)}>
+                    <Button
+                      variant="empanada"
+                      className="w-full py-3 sm:py-4 text-sm sm:text-base"
+                    >
+                      Explorar Menú
+                    </Button>
+                  </Link>
                 </div>
               ) : (
                 <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">

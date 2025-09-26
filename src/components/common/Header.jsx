@@ -19,11 +19,13 @@ import { AnimatedGradientText } from "../ui/animated-gradient-text";
 import { useCart } from "../../context/CartProvider";
 import { useSession } from "@/context/SessionProvider";
 import { cn } from "../../lib/utils";
+import { CartDropdown } from "./CartDropdown";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
+  const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
   const location = useLocation();
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const session = useSession();
@@ -108,6 +110,17 @@ export function Header() {
 
   const isActive = (href) => location.pathname === href;
 
+  // Función para manejar click del carrito
+  const handleCartClick = () => {
+    if (windowWidth >= 1024) {
+      // Desktop: usar dropdown
+      setIsCartDropdownOpen(!isCartDropdownOpen);
+    } else {
+      // Mobile: usar sidebar
+      setCartOpen(true);
+    }
+  };
+
   // Función para manejar clicks en navegación
   const handleNavClick = (e, href) => {
     // Si ya estamos en la página y hacemos click en el mismo enlace
@@ -120,6 +133,7 @@ export function Header() {
       });
     }
   };
+
 
   return (
     <>
@@ -240,14 +254,22 @@ export function Header() {
                 >
                   <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
+
+                {/* Desktop Cart Dropdown */}
+                <div className="hidden lg:block">
+                  <CartDropdown
+                    isOpen={isCartDropdownOpen}
+                    onClose={() => setIsCartDropdownOpen(false)}
+                  />
+                </div>
               </motion.div>
 
               {/* Cart */}
-              <motion.div style={{ x: cartIconX }}>
+              <motion.div style={{ x: cartIconX }} className="relative">
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setCartOpen(true)}
+                  onClick={handleCartClick}
                   className={cn(
                     "relative h-10 w-10 sm:h-11 sm:w-11",
                     "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
@@ -264,6 +286,7 @@ export function Header() {
                     </Badge>
                   )}
                 </Button>
+
               </motion.div>
 
               {/* User */}

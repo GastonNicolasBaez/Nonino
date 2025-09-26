@@ -1,14 +1,15 @@
 import { useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CreditCard, MapPin, Clock, Phone, User, Store,
   Check, ChevronRight, ChevronLeft, ShoppingBag,
   AlertCircle, Truck, Home, Edit2, ArrowRight,
-  Shield, Package
+  Shield, Package, ArrowLeft, Star, Info
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { Badge } from "../../components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { useCart } from "../../context/CartProvider";
 import { useSession } from "../../context/SessionProvider";
@@ -27,6 +28,7 @@ export function CheckoutPage() {
   const [completedSteps, setCompletedSteps] = useState(new Set());
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+
   // Steps definition - memoized to prevent dependency changes
   const steps = useMemo(() => [
     { id: 1, title: "Entrega", icon: selectedStore ? Home : Truck, required: true },
@@ -105,7 +107,7 @@ export function CheckoutPage() {
         selectedStore
       };
       const order = await createOrder(orderWithStore);
-      
+
       // Si el método de pago es MercadoPago, aquí el backend se encargará
       // de generar el link de pago y redirigir al usuario
       if (orderData.paymentMethod === "mercadopago") {
@@ -115,7 +117,7 @@ export function CheckoutPage() {
       } else {
         toast.success("¡Pedido realizado exitosamente!");
       }
-      
+
       navigate(`/tracking/${order.id}`);
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
@@ -198,59 +200,92 @@ export function CheckoutPage() {
     }
   }, [currentStep]);
 
-  // Step components - Memoized to prevent unnecessary re-renders
+  // Step components - Compactos
   const DeliveryStep = useMemo(() => (
     <div className="space-y-4">
-      {/* Store Selection - Compact */}
+      {/* Store Selection */}
       {selectedStore ? (
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <div className="flex items-center gap-3">
-            <Check className="w-5 h-5 text-green-600" />
-            <div>
-              <p className="font-medium text-green-800">{selectedStore.name}</p>
-              <p className="text-sm text-green-600">{selectedStore.address}</p>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <Check className="w-4 h-4 text-green-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-green-900 text-sm mb-1">{selectedStore.name}</h3>
+              <p className="text-green-700 text-xs">{selectedStore.address}</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
-          <AlertCircle className="w-5 h-5 text-red-500 mx-auto mb-2" />
-          <p className="text-red-800 font-medium">Selecciona una sucursal para continuar</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+          <h3 className="font-semibold text-red-900 text-sm mb-1">Selecciona una sucursal</h3>
+          <p className="text-red-700 text-xs">Necesitas elegir una sucursal para continuar</p>
         </div>
       )}
 
-      {/* Delivery Type - Compact */}
-      <div>
-        <label className="block text-sm font-medium mb-3 text-empanada-dark">Tipo de Entrega</label>
-        <div className="grid grid-cols-2 gap-3">
+      {/* Delivery Type */}
+      <div className="space-y-3">
+        <h3 className="text-base font-semibold text-gray-900">¿Cómo quieres recibir tu pedido?</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => setOrderData(prev => ({ ...prev, deliveryType: "delivery" }))}
             className={cn(
-              "p-3 rounded-lg border text-center transition-colors",
+              "p-4 rounded-lg border-2 text-left transition-all",
               orderData.deliveryType === "delivery"
-                ? "border-empanada-golden bg-empanada-golden/10 text-empanada-dark"
+                ? "border-empanada-golden bg-empanada-golden/5"
                 : "border-gray-200 hover:border-empanada-golden/50"
             )}
           >
-            <Truck className="w-5 h-5 mx-auto mb-1 text-empanada-golden" />
-            <div className="text-sm font-medium">Delivery</div>
-            <div className="text-xs text-gray-600">30-45 min</div>
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                "w-8 h-8 rounded-full flex items-center justify-center",
+                orderData.deliveryType === "delivery"
+                  ? "bg-empanada-golden text-white"
+                  : "bg-gray-100 text-gray-600"
+              )}>
+                <Truck className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 text-sm mb-1">Delivery a domicilio</h4>
+                <p className="text-xs text-gray-600 mb-1">Recibe tu pedido en casa</p>
+                <div className="flex items-center gap-1 text-xs text-empanada-golden">
+                  <Clock className="w-3 h-3" />
+                  <span>30-45 min</span>
+                </div>
+              </div>
+            </div>
           </button>
 
           <button
             type="button"
             onClick={() => setOrderData(prev => ({ ...prev, deliveryType: "pickup" }))}
             className={cn(
-              "p-3 rounded-lg border text-center transition-colors",
+              "p-4 rounded-lg border-2 text-left transition-all",
               orderData.deliveryType === "pickup"
-                ? "border-empanada-golden bg-empanada-golden/10 text-empanada-dark"
+                ? "border-empanada-golden bg-empanada-golden/5"
                 : "border-gray-200 hover:border-empanada-golden/50"
             )}
           >
-            <Home className="w-5 h-5 mx-auto mb-1 text-empanada-golden" />
-            <div className="text-sm font-medium">Retiro</div>
-            <div className="text-xs text-gray-600">15-20 min</div>
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                "w-8 h-8 rounded-full flex items-center justify-center",
+                orderData.deliveryType === "pickup"
+                  ? "bg-empanada-golden text-white"
+                  : "bg-gray-100 text-gray-600"
+              )}>
+                <Home className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 text-sm mb-1">Retirar en sucursal</h4>
+                <p className="text-xs text-gray-600 mb-1">Pasa a buscar tu pedido</p>
+                <div className="flex items-center gap-1 text-xs text-empanada-golden">
+                  <Clock className="w-3 h-3" />
+                  <span>15-20 min</span>
+                </div>
+              </div>
+            </div>
           </button>
         </div>
       </div>
@@ -259,16 +294,19 @@ export function CheckoutPage() {
 
   const CustomerInfoStep = useMemo(() => (
     <div className="space-y-4">
-      {/* Customer Info - Compact */}
-      <div>
-        <h3 className="text-sm font-medium mb-3 text-empanada-dark flex items-center gap-2">
-          <User className="w-4 h-4 text-empanada-golden" />
-          Información de Contacto
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-medium mb-1 text-gray-700">
-              Nombre <span className="text-red-500">*</span>
+      {/* Customer Info */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
+            <User className="w-4 h-4 text-empanada-golden" />
+          </div>
+          <h3 className="text-base font-semibold text-gray-900">Información de contacto</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-gray-700">
+              Nombre completo <span className="text-red-500">*</span>
             </label>
             <Input
               value={orderData.customerInfo.name}
@@ -277,16 +315,17 @@ export function CheckoutPage() {
                 "h-9 text-sm",
                 errors['customerInfo.name']
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-200 focus:border-empanada-golden"
+                  : "border-gray-300 focus:border-empanada-golden"
               )}
-              placeholder="Tu nombre completo"
+              placeholder="Tu nombre y apellido"
             />
             {errors['customerInfo.name'] && (
-              <p className="text-red-500 text-xs mt-1">{errors['customerInfo.name']}</p>
+              <p className="text-red-500 text-xs">{errors['customerInfo.name']}</p>
             )}
           </div>
-          <div>
-            <label className="block text-xs font-medium mb-1 text-gray-700">
+
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-gray-700">
               Teléfono <span className="text-red-500">*</span>
             </label>
             <Input
@@ -296,22 +335,23 @@ export function CheckoutPage() {
                 "h-9 text-sm",
                 errors['customerInfo.phone']
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-200 focus:border-empanada-golden"
+                  : "border-gray-300 focus:border-empanada-golden"
               )}
               placeholder="11 1234 5678"
             />
             {errors['customerInfo.phone'] && (
-              <p className="text-red-500 text-xs mt-1">{errors['customerInfo.phone']}</p>
+              <p className="text-red-500 text-xs">{errors['customerInfo.phone']}</p>
             )}
           </div>
         </div>
-        <div className="mt-3">
-          <label className="block text-xs font-medium mb-1 text-gray-700">Email</label>
+
+        <div className="space-y-1">
+          <label className="block text-xs font-medium text-gray-700">Email (opcional)</label>
           <Input
             type="email"
             value={orderData.customerInfo.email}
             onChange={(e) => handleInputChange("customerInfo", "email", e.target.value)}
-            className="h-9 text-sm border-gray-200 focus:border-empanada-golden"
+            className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
             placeholder="tu@email.com"
           />
         </div>
@@ -323,91 +363,98 @@ export function CheckoutPage() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
+          className="space-y-3"
         >
-          <div>
-            <h3 className="text-sm font-medium mb-3 text-empanada-dark flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
               <MapPin className="w-4 h-4 text-empanada-golden" />
-              Dirección de Entrega
-            </h3>
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div className="col-span-2">
-                <label className="block text-xs font-medium mb-1 text-gray-700">
-                  Calle <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  value={orderData.address.street}
-                  onChange={(e) => handleInputChange("address", "street", e.target.value)}
-                  className={cn(
-                    "h-9 text-sm",
-                    errors['address.street']
-                      ? "border-red-300 focus:border-red-500"
-                      : "border-gray-200 focus:border-empanada-golden"
-                  )}
-                  placeholder="Av. Corrientes"
-                />
-                {errors['address.street'] && (
-                  <p className="text-red-500 text-xs mt-1">{errors['address.street']}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-xs font-medium mb-1 text-gray-700">
-                  Número <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  value={orderData.address.number}
-                  onChange={(e) => handleInputChange("address", "number", e.target.value)}
-                  className={cn(
-                    "h-9 text-sm",
-                    errors['address.number']
-                      ? "border-red-300 focus:border-red-500"
-                      : "border-gray-200 focus:border-empanada-golden"
-                  )}
-                  placeholder="1234"
-                />
-                {errors['address.number'] && (
-                  <p className="text-red-500 text-xs mt-1">{errors['address.number']}</p>
-                )}
-              </div>
             </div>
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div>
-                <label className="block text-xs font-medium mb-1 text-gray-700">Piso</label>
-                <Input
-                  value={orderData.address.floor}
-                  onChange={(e) => handleInputChange("address", "floor", e.target.value)}
-                  className="h-9 text-sm border-gray-200 focus:border-empanada-golden"
-                  placeholder="5"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium mb-1 text-gray-700">Depto</label>
-                <Input
-                  value={orderData.address.apartment}
-                  onChange={(e) => handleInputChange("address", "apartment", e.target.value)}
-                  className="h-9 text-sm border-gray-200 focus:border-empanada-golden"
-                  placeholder="A"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium mb-1 text-gray-700">Barrio</label>
-                <Input
-                  value={orderData.address.neighborhood}
-                  onChange={(e) => handleInputChange("address", "neighborhood", e.target.value)}
-                  className="h-9 text-sm border-gray-200 focus:border-empanada-golden"
-                  placeholder="Balvanera"
-                />
-              </div>
+            <h3 className="text-base font-semibold text-gray-900">Dirección de entrega</h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2 space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                Calle <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={orderData.address.street}
+                onChange={(e) => handleInputChange("address", "street", e.target.value)}
+                className={cn(
+                  "h-9 text-sm",
+                  errors['address.street']
+                    ? "border-red-300 focus:border-red-500"
+                    : "border-gray-300 focus:border-empanada-golden"
+                )}
+                placeholder="Av. Corrientes"
+              />
+              {errors['address.street'] && (
+                <p className="text-red-500 text-xs">{errors['address.street']}</p>
+              )}
             </div>
-            <div>
-              <label className="block text-xs font-medium mb-1 text-gray-700">Referencias</label>
-              <textarea
-                value={orderData.address.references}
-                onChange={(e) => handleInputChange("address", "references", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 focus:border-empanada-golden rounded-md text-sm transition-colors"
-                rows={2}
-                placeholder="Ej: Casa con portón verde, timbre 2A"
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                Número <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={orderData.address.number}
+                onChange={(e) => handleInputChange("address", "number", e.target.value)}
+                className={cn(
+                  "h-9 text-sm",
+                  errors['address.number']
+                    ? "border-red-300 focus:border-red-500"
+                    : "border-gray-300 focus:border-empanada-golden"
+                )}
+                placeholder="1234"
+              />
+              {errors['address.number'] && (
+                <p className="text-red-500 text-xs">{errors['address.number']}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">Piso</label>
+              <Input
+                value={orderData.address.floor}
+                onChange={(e) => handleInputChange("address", "floor", e.target.value)}
+                className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
+                placeholder="5"
               />
             </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">Depto</label>
+              <Input
+                value={orderData.address.apartment}
+                onChange={(e) => handleInputChange("address", "apartment", e.target.value)}
+                className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
+                placeholder="A"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">Barrio</label>
+              <Input
+                value={orderData.address.neighborhood}
+                onChange={(e) => handleInputChange("address", "neighborhood", e.target.value)}
+                className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
+                placeholder="Balvanera"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-gray-700">Referencias</label>
+            <textarea
+              value={orderData.address.references}
+              onChange={(e) => handleInputChange("address", "references", e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+              rows={2}
+              placeholder="Ej: Casa con portón verde, timbre 2A"
+            />
           </div>
         </motion.div>
       )}
@@ -416,66 +463,81 @@ export function CheckoutPage() {
 
   const PaymentStep = useMemo(() => (
     <div className="space-y-4">
-      {/* Payment Method - Compact */}
-      <div>
-        <h3 className="text-sm font-medium mb-3 text-empanada-dark flex items-center gap-2">
-          <CreditCard className="w-4 h-4 text-empanada-golden" />
-          Método de Pago
-        </h3>
+      {/* Payment Method */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
+            <CreditCard className="w-4 h-4 text-empanada-golden" />
+          </div>
+          <h3 className="text-base font-semibold text-gray-900">Método de pago</h3>
+        </div>
+
         <div className="space-y-2">
-          <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+          <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
             <input
               type="radio"
               name="paymentMethod"
               value="mercadopago"
               checked={orderData.paymentMethod === "mercadopago"}
               onChange={(e) => setOrderData(prev => ({ ...prev, paymentMethod: e.target.value }))}
-              className="mr-3 w-4 h-4 text-empanada-golden"
+              className="mt-0.5 w-4 h-4 text-empanada-golden"
             />
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <CreditCard className="w-4 h-4 text-blue-600" />
-              </div>
-              <div>
-                <div className="font-medium text-sm text-empanada-dark">Mercado Pago</div>
-                <div className="text-xs text-gray-600">Tarjetas, transferencias y más</div>
+            <div className="ml-3 flex-1">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CreditCard className="w-4 h-4 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900 text-sm mb-1">Mercado Pago</h4>
+                  <p className="text-xs text-gray-600 mb-2">Tarjetas, transferencias y billeteras digitales</p>
+                  <div className="flex items-center gap-1">
+                    <Shield className="w-3 h-3 text-green-600" />
+                    <span className="text-xs text-green-600 font-medium">Pago seguro</span>
+                  </div>
+                </div>
               </div>
             </div>
           </label>
 
-          <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+          <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
             <input
               type="radio"
               name="paymentMethod"
               value="cash"
               checked={orderData.paymentMethod === "cash"}
               onChange={(e) => setOrderData(prev => ({ ...prev, paymentMethod: e.target.value }))}
-              className="mr-3 w-4 h-4 text-empanada-golden"
+              className="mt-0.5 w-4 h-4 text-empanada-golden"
             />
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <div className="text-lg">💵</div>
-              </div>
-              <div>
-                <div className="font-medium text-sm text-empanada-dark">Efectivo</div>
-                <div className="text-xs text-gray-600">Pago contra entrega</div>
+            <div className="ml-3 flex-1">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="text-lg">💵</div>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900 text-sm mb-1">Efectivo</h4>
+                  <p className="text-xs text-gray-600 mb-2">Paga en efectivo al recibir</p>
+                  <div className="flex items-center gap-1">
+                    <Info className="w-3 h-3 text-gray-500" />
+                    <span className="text-xs text-gray-500">Monto exacto preparado</span>
+                  </div>
+                </div>
               </div>
             </div>
           </label>
         </div>
       </div>
 
-      {/* Notes - Compact */}
-      <div>
-        <label className="block text-xs font-medium mb-1 text-gray-700">
-          Observaciones
+      {/* Notes */}
+      <div className="space-y-1">
+        <label className="block text-xs font-medium text-gray-700">
+          Observaciones para tu pedido
         </label>
         <textarea
           value={orderData.notes}
           onChange={(e) => setOrderData(prev => ({ ...prev, notes: e.target.value }))}
-          className="w-full px-3 py-2 border border-gray-200 focus:border-empanada-golden rounded-md text-sm transition-colors"
-          rows={2}
-          placeholder="Instrucciones especiales para tu pedido..."
+          className="w-full px-3 py-2 border border-gray-300 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+          rows={3}
+          placeholder="Instrucciones especiales, alergias, etc."
         />
       </div>
     </div>
@@ -483,120 +545,302 @@ export function CheckoutPage() {
 
   const ConfirmStep = useMemo(() => (
     <div className="space-y-4">
-      {/* Order Summary Details - Compact */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-sm font-medium mb-3 text-empanada-dark">Resumen del Pedido</h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-600">Tipo:</span>
-            <span>{orderData.deliveryType === "delivery" ? "🚚 Delivery" : "🏪 Retiro"}</span>
+      {/* Unified Order Summary */}
+      <div className="bg-gray-50 rounded-lg p-6">
+        <h4 className="font-semibold text-gray-900 mb-6 flex items-center gap-2 text-lg">
+          <ShoppingBag className="w-5 h-5 text-empanada-golden" />
+          Resumen de tu pedido
+        </h4>
+
+        {/* 1. Contact Information - Quién recibe */}
+        <div className="mb-4">
+          <h5 className="font-medium text-gray-700 text-sm mb-2">Contacto</h5>
+          <p className="text-sm text-gray-900 font-medium">{orderData.customerInfo.name}</p>
+          <p className="text-sm text-gray-600">{orderData.customerInfo.phone}</p>
+        </div>
+
+        {/* 2. Delivery Details - Cómo y dónde se entrega */}
+        <div className="mb-4">
+          <h5 className="font-medium text-gray-700 text-sm mb-2">Entrega</h5>
+          <div className="flex items-center gap-2 text-sm text-gray-900 mb-1">
+            {orderData.deliveryType === "delivery" ? (
+              <>
+                <Truck className="w-4 h-4 text-empanada-golden" />
+                <span>Delivery a domicilio</span>
+              </>
+            ) : (
+              <>
+                <Home className="w-4 h-4 text-empanada-golden" />
+                <span>Retiro en sucursal</span>
+              </>
+            )}
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Cliente:</span>
-            <span>{orderData.customerInfo.name}</span>
+          <p className="text-xs text-gray-600">
+            Tiempo estimado: {orderData.deliveryType === "delivery" ? "30-45" : "15-20"} min
+          </p>
+        </div>
+
+        {/* Address (if delivery) - Parte de los detalles de entrega */}
+        {orderData.deliveryType === "delivery" && orderData.address.street && (
+          <div className="mb-4">
+            <h5 className="font-medium text-gray-700 text-sm mb-2">Dirección de entrega</h5>
+            <p className="text-sm text-gray-900">
+              {orderData.address.street} {orderData.address.number}
+              {orderData.address.floor && `, Piso ${orderData.address.floor}`}
+              {orderData.address.apartment && `, Depto ${orderData.address.apartment}`}
+            </p>
+            {orderData.address.neighborhood && (
+              <p className="text-sm text-gray-600">{orderData.address.neighborhood}</p>
+            )}
+            {orderData.address.references && (
+              <p className="text-xs text-gray-600 mt-1">Ref: {orderData.address.references}</p>
+            )}
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Teléfono:</span>
-            <span>{orderData.customerInfo.phone}</span>
+        )}
+
+        {/* Store Info (if pickup) - Parte de los detalles de entrega */}
+        {orderData.deliveryType === "pickup" && selectedStore && (
+          <div className="mb-4">
+            <h5 className="font-medium text-gray-700 text-sm mb-2">Sucursal para retiro</h5>
+            <p className="text-sm text-gray-900 font-medium">{selectedStore.name}</p>
+            <p className="text-sm text-gray-600">{selectedStore.address}</p>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Pago:</span>
-            <span>{orderData.paymentMethod === "mercadopago" ? "💳 Mercado Pago" : "💵 Efectivo"}</span>
-          </div>
-          {orderData.deliveryType === "delivery" && orderData.address.street && (
-            <div className="flex justify-between">
-              <span className="text-gray-600">Dirección:</span>
-              <span className="text-right">{orderData.address.street} {orderData.address.number}</span>
-            </div>
-          )}
-          <div className="flex items-center justify-center gap-2 text-empanada-golden pt-2 border-t">
-            <Clock className="w-4 h-4" />
-            <span className="text-sm font-medium">
-              Tiempo estimado: {orderData.deliveryType === "delivery" ? "30-45" : "15-20"} min
+        )}
+
+        {/* 3. Payment Method - Cómo paga */}
+        <div className="mb-4">
+          <h5 className="font-medium text-gray-700 text-sm mb-2">Método de pago</h5>
+          <div className="flex items-center gap-2 text-sm text-gray-900">
+            <CreditCard className="w-4 h-4 text-empanada-golden" />
+            <span>
+              {orderData.paymentMethod === "mercadopago" ? "Mercado Pago" : "Efectivo"}
             </span>
+          </div>
+        </div>
+
+        {/* 4. Additional Information - Información extra */}
+        {orderData.notes && (
+          <div className="mb-6">
+            <h5 className="font-medium text-gray-700 text-sm mb-2">Observaciones</h5>
+            <p className="text-sm text-gray-900">{orderData.notes}</p>
+          </div>
+        )}
+
+        {/* 5. FINAL: Products & Pricing - Confirmación final de lo que va a pagar */}
+        <div className="mb-0 pt-4 border-t border-gray-300">
+          <h5 className="font-medium text-gray-700 text-sm mb-3">Productos</h5>
+          <div className="space-y-3">
+            {items.map((item, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <div className="relative flex-shrink-0">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-10 h-10 object-cover rounded-lg"
+                  />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-empanada-golden text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {item.quantity}
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h6 className="font-medium text-gray-900 text-sm truncate">{item.name}</h6>
+                  <p className="text-xs text-empanada-golden">{formatPrice(item.price)} c/u</p>
+                  {item.customizations && Object.keys(item.customizations).length > 0 && (
+                    <p className="text-xs text-gray-600 truncate">
+                      {Object.values(item.customizations).join(", ")}
+                    </p>
+                  )}
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="font-semibold text-empanada-golden text-sm">
+                    {formatPrice(item.price * item.quantity)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Price Summary - Confirmación final */}
+          <div className="mt-4 pt-4 border-t border-gray-300 space-y-2">
+            <div className="flex justify-between text-sm text-gray-700">
+              <span>Subtotal</span>
+              <span className="font-medium">{formatPrice(subtotal)}</span>
+            </div>
+            {discount > 0 && (
+              <div className="flex justify-between text-sm text-green-600">
+                <span>Descuento</span>
+                <span className="font-medium">-{formatPrice(discount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-sm text-gray-700">
+              <span>Envío</span>
+              <span className={cn("font-medium", deliveryFee === 0 && "text-green-600")}>
+                {deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}
+              </span>
+            </div>
+            <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-300">
+              <span>Total</span>
+              <span className="text-empanada-golden">{formatPrice(total)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Final confirmation */}
+      <div className="bg-empanada-golden/5 border border-empanada-golden/20 rounded-lg p-4">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 bg-empanada-golden/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <Check className="w-4 h-4 text-empanada-golden" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-empanada-dark text-sm mb-1">¡Casi listo!</h4>
+            <p className="text-xs text-gray-700">
+              Al confirmar recibirás una notificación con el estado de tu pedido.
+              {orderData.paymentMethod === "mercadopago" && " Serás redirigido a Mercado Pago."}
+            </p>
           </div>
         </div>
       </div>
     </div>
-  ), [orderData]);
+  ), [orderData, items, subtotal, discount, deliveryFee, total, selectedStore, formatPrice]);
 
-  const StepIndicator = useMemo(() => (
-    <div className="bg-white border border-gray-200 rounded-lg p-3 mb-4 sticky top-20 z-10">
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex items-center flex-1">
-            <button
-              onClick={() => goToStep(step.id)}
-              className={cn(
-                "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors",
-                currentStep === step.id
-                  ? "bg-empanada-golden text-white border-empanada-golden"
-                  : completedSteps.has(step.id)
-                  ? "bg-green-500 text-white border-green-500"
-                  : "bg-white text-gray-400 border-gray-200"
-              )}
-            >
-              {completedSteps.has(step.id) ? (
-                <Check className="w-4 h-4" />
-              ) : (
-                <step.icon className="w-4 h-4" />
-              )}
-            </button>
-
-            {/* Step title - always visible but smaller */}
-            <div className="ml-2 flex-1">
-              <div className={cn(
-                "text-xs font-medium transition-colors",
-                currentStep === step.id
-                  ? "text-empanada-golden"
-                  : completedSteps.has(step.id)
-                  ? "text-green-600"
-                  : "text-gray-500"
-              )}>
-                {step.title}
-              </div>
-            </div>
-
-            {/* Connector line */}
-            {index < steps.length - 1 && (
-              <div className={cn(
-                "h-0.5 w-6 mx-2 transition-colors duration-300",
-                completedSteps.has(step.id)
-                  ? "bg-green-500"
-                  : currentStep > step.id
-                  ? "bg-empanada-golden"
-                  : "bg-gray-200"
-              )} />
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  ), [steps, currentStep, completedSteps, goToStep]);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header - Compact */}
-          <div className="text-center mb-4">
-            <h1 className="text-xl font-bold text-empanada-dark mb-1">Finalizar Pedido</h1>
-            <p className="text-gray-600 text-sm">Completa tu información para continuar</p>
+      {/* DESKTOP HEADER - Compacto */}
+      <div className="hidden md:block bg-white border-b">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between mb-2">
+            <Link to="/carrito" className="flex items-center gap-2 text-gray-600 hover:text-empanada-golden transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Volver al carrito</span>
+            </Link>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <Shield className="w-3 h-3" />
+              Checkout seguro
+            </div>
           </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">Finalizar pedido</h1>
+            <p className="text-gray-600 text-sm">Completa tu información para procesar tu pedido</p>
+          </div>
+        </div>
+      </div>
 
-          {StepIndicator}
+      {/* MOBILE HEADER */}
+      <div className="md:hidden bg-white border-b sticky top-16 z-40">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Link to="/carrito">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          </Link>
+          <div className="text-center">
+            <h1 className="font-semibold text-gray-900 text-sm">{steps[currentStep - 1].title}</h1>
+            <p className="text-xs text-gray-500">Paso {currentStep} de {steps.length}</p>
+          </div>
+          {/* Indicador visual del progreso */}
+          <div className="w-10 flex justify-center">
+            <div className="w-6 h-6 rounded-full bg-empanada-golden/10 flex items-center justify-center">
+              <span className="text-xs font-bold text-empanada-golden">{currentStep}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          {/* Main Content - Single Row Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Steps Content */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg p-4 mb-4">
+      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid gap-6 grid-cols-1">
+            {/* Main Content - Ocupa todo el ancho */}
+            <div className="w-full">
+              <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 shadow-sm mb-4">
+                {/* Progress Indicator - Optimizado para mobile */}
+                <div className="mb-6 pb-4 border-b border-gray-100">
+                  {/* Mobile Progress - Optimizado */}
+                  <div className="md:hidden">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "flex items-center justify-center w-10 h-10 rounded-full border-2",
+                          "bg-empanada-golden text-white border-empanada-golden shadow-sm"
+                        )}>
+                          {(() => {
+                            const IconComponent = steps[currentStep - 1].icon;
+                            return <IconComponent className="w-5 h-5" />;
+                          })()}
+                        </div>
+                        <div>
+                          <div className="text-base font-semibold text-empanada-golden">
+                            {steps[currentStep - 1].title}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            Paso {currentStep} de {steps.length}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-gray-700">
+                          {Math.round(currentStep / steps.length * 100)}%
+                        </div>
+                        <div className="text-xs text-gray-500">completo</div>
+                      </div>
+                    </div>
+
+                    {/* Barra de progreso mobile - simplificada */}
+                    <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                      <div
+                        className="bg-gradient-to-r from-empanada-golden to-empanada-wheat h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
+                        style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Desktop Progress - Completo */}
+                  <div className="hidden md:flex items-center justify-between">
+                    {steps.map((step, index) => (
+                      <div key={step.id} className="flex items-center flex-1">
+                        <button
+                          onClick={() => goToStep(step.id)}
+                          className={cn(
+                            "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all",
+                            currentStep === step.id
+                              ? "bg-empanada-golden text-white border-empanada-golden"
+                              : completedSteps.has(step.id)
+                              ? "bg-green-500 text-white border-green-500"
+                              : "bg-white text-gray-400 border-gray-300"
+                          )}
+                        >
+                          {completedSteps.has(step.id) ? (
+                            <Check className="w-4 h-4" />
+                          ) : (
+                            <step.icon className="w-4 h-4" />
+                          )}
+                        </button>
+                        <div className="ml-2 flex-1">
+                          <div className={cn(
+                            "text-xs font-medium",
+                            currentStep === step.id ? "text-empanada-golden" :
+                            completedSteps.has(step.id) ? "text-green-600" : "text-gray-500"
+                          )}>
+                            {step.title}
+                          </div>
+                        </div>
+                        {index < steps.length - 1 && (
+                          <div className={cn(
+                            "h-0.5 w-12 mx-2 rounded-full",
+                            completedSteps.has(step.id) || currentStep > step.id ? "bg-empanada-golden" : "bg-gray-200"
+                          )} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentStep}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.2 }}
                   >
                     {currentStep === 1 && DeliveryStep}
@@ -605,133 +849,51 @@ export function CheckoutPage() {
                     {currentStep === 4 && ConfirmStep}
                   </motion.div>
                 </AnimatePresence>
-              </div>
 
-              {/* Navigation Buttons - Compact */}
-              <div className="flex justify-between items-center bg-white rounded-lg p-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={prevStep}
-                  disabled={currentStep === 1}
-                  className="flex items-center gap-1"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  Anterior
-                </Button>
-
-                {currentStep < steps.length ? (
+                {/* Navigation Buttons - Integrados */}
+                <div className="flex justify-between items-center pt-6 mt-6 border-t border-gray-100">
                   <Button
                     type="button"
-                    variant="empanada"
-                    size="sm"
-                    onClick={nextStep}
-                    className="flex items-center gap-1"
+                    variant="outline"
+                    onClick={prevStep}
+                    disabled={currentStep === 1}
+                    className="flex items-center gap-2 px-4 py-2"
                   >
-                    Siguiente
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronLeft className="w-4 h-4" />
+                    Anterior
                   </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    variant="empanada"
-                    size="sm"
-                    disabled={loading}
-                    onClick={handleSubmit}
-                    className="flex items-center gap-1"
-                  >
-                    {loading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent" />
-                        Procesando...
-                      </>
-                    ) : (
-                      <>
-                        <Shield className="w-4 h-4" />
-                        Confirmar
-                      </>
-                    )}
-                  </Button>
-                )}
-              </div>
-            </div>
 
-            {/* Order Summary Sidebar - Compact */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg p-4 sticky top-4">
-                <h3 className="font-medium text-empanada-dark mb-3 flex items-center gap-2">
-                  <ShoppingBag className="w-4 h-4 text-empanada-golden" />
-                  Tu Pedido
-                </h3>
-
-                {/* Items List - Compact */}
-                <div className="space-y-2 mb-4">
-                  {items.length > 0 ? (
-                    items.slice(0, 3).map((item, index) => (
-                      <div key={index} className="flex justify-between text-sm">
-                        <div className="flex-1 truncate">
-                          <span className="font-medium">{item.quantity}x</span> {item.name}
-                        </div>
-                        <span className="font-semibold text-empanada-golden ml-2">
-                          {formatPrice(item.price * item.quantity)}
-                        </span>
-                      </div>
-                    ))
+                  {currentStep < steps.length ? (
+                    <Button
+                      type="button"
+                      variant="empanada"
+                      onClick={nextStep}
+                      className="flex items-center gap-2 px-6 py-2 font-semibold"
+                    >
+                      Siguiente
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
                   ) : (
-                    <div className="text-center py-4 text-gray-500">
-                      <ShoppingBag className="w-6 h-6 mx-auto mb-2 opacity-50" />
-                      <p className="text-xs">Carrito vacío</p>
-                    </div>
+                    <Button
+                      type="submit"
+                      variant="empanada"
+                      disabled={loading}
+                      onClick={handleSubmit}
+                      className="flex items-center gap-2 px-6 py-2 font-semibold"
+                    >
+                      {loading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                          Procesando...
+                        </>
+                      ) : (
+                        <>
+                          <Shield className="w-4 h-4" />
+                          Confirmar Pedido
+                        </>
+                      )}
+                    </Button>
                   )}
-                  {items.length > 3 && (
-                    <div className="text-xs text-gray-500 text-center">
-                      y {items.length - 3} artículos más
-                    </div>
-                  )}
-                </div>
-
-                {/* Price Breakdown - Compact */}
-                {items.length > 0 && (
-                  <div className="border-t pt-3 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Subtotal</span>
-                      <span>{formatPrice(subtotal)}</span>
-                    </div>
-                    {discount > 0 && (
-                      <div className="flex justify-between text-sm text-green-600">
-                        <span>Descuento</span>
-                        <span>-{formatPrice(discount)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm">
-                      <span>Envío</span>
-                      <span className={deliveryFee === 0 ? "text-green-600" : ""}>
-                        {deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}
-                      </span>
-                    </div>
-                    <div className="border-t pt-2">
-                      <div className="flex justify-between font-bold">
-                        <span>Total</span>
-                        <span className="text-empanada-golden">
-                          {formatPrice(total)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Estimated Time - Compact */}
-                <div className="bg-empanada-golden/10 p-3 rounded-lg mt-4">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-empanada-golden" />
-                    <div>
-                      <div className="text-xs font-medium text-empanada-dark">Tiempo estimado</div>
-                      <div className="text-xs text-empanada-golden font-semibold">
-                        {orderData.deliveryType === "delivery" ? "30-45" : "15-20"} min
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

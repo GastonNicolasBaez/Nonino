@@ -9,6 +9,13 @@ import { ZoomParallax } from "../../components/ui/zoom-parallax";
 import { AnimatedGradientText } from "../../components/ui/animated-gradient-text";
 import { WordPullUp } from "../../components/ui/word-pull-up";
 
+// Importar imágenes locales del parallax
+import parallax0 from "../../assets/images/parallax0.jpg";
+import parallax1 from "../../assets/images/parallax1.JPG";
+import parallax2 from "../../assets/images/parallax2.jpg";
+import parallax3 from "../../assets/images/parallax3.jpg";
+import parallax4 from "../../assets/images/parallax4.jpg";
+
 export function AboutPage() {
   const parallaxRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -70,23 +77,23 @@ export function AboutPage() {
 
   const parallaxImages = [
     {
-      src: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?q=80&w=1974&auto=format&fit=crop',
+      src: parallax0,
       alt: 'Empanadas doradas y crujientes - Index 0',
     },
     {
-      src: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop',
+      src: parallax1,
       alt: 'Local principal de Nonino Empanadas - Index 1',
     },
     {
-      src: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=1974&auto=format&fit=crop',
+      src: parallax2,
       alt: 'Ingredientes frescos y naturales - Index 2',
     },
     {
-      src: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?q=80&w=2070&auto=format&fit=crop',
+      src: parallax3,
       alt: 'Cocina tradicional argentina - Index 3',
     },
     {
-      src: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop',
+      src: parallax4,
       alt: 'Ambiente familiar y acogedor - Index 4',
     },
     {

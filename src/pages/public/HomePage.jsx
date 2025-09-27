@@ -10,6 +10,7 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
+import sanMartin2 from "@/assets/images/SanMartin2.jpg";
 
 export function HomePage() {
 
@@ -42,6 +43,9 @@ export function HomePage() {
         container: isMobile ? { current: document.body } : undefined
     });
     const y = useTransform(scrollY, [0, 800], [0, -200]);
+    const featuresParallaxY = useTransform(scrollY,
+        value => value * (isMobile ? -0.15 : -0.3)
+    );
 
     const features = [
         {
@@ -131,9 +135,9 @@ export function HomePage() {
                         <TextAnimate
                             animation="slideUp"
                             by="word"
-                            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-4 sm:mb-6 px-2"
+                            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                         >
-                            Las Mejores Empanadas de la Ciudad
+                            Las Mejores Empanadas del Sur
                         </TextAnimate>
 
                         <motion.p
@@ -208,19 +212,32 @@ export function HomePage() {
             </div>
 
             {/* Features Section */}
-            <section className="py-12 sm:py-16 lg:py-20 bg-white">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
+                {/* Background Image with Parallax Effect */}
+                <motion.div
+                    className={`absolute inset-0 w-full ${isMobile ? 'h-[220%] -top-[25%]' : 'h-[300%] -top-[40%]'}`}
+                    style={{
+                        backgroundImage: `url(${sanMartin2})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center bottom",
+                        backgroundRepeat: "no-repeat",
+                        y: featuresParallaxY
+                    }}
+                />
+
+
+                <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="text-center mb-8 sm:mb-12 lg:mb-16"
                     >
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-white drop-shadow-lg">
                             ¿Por qué elegir{" "}
                             <AnimatedGradientText>Nonino Empanadas</AnimatedGradientText>?
                         </h2>
-                        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
+                        <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto px-2 drop-shadow-md">
                             Descubre lo que nos hace únicos y por qué miles de clientes confían en nosotros
                         </p>
                     </motion.div>
@@ -235,7 +252,7 @@ export function HomePage() {
                                 transition={{ delay: index * 0.1 }}
                                 className="h-full"
                             >
-                                <Card className="text-center hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
+                                <Card className="text-center hover:shadow-lg transition-all duration-300 group h-full flex flex-col bg-white/25 backdrop-blur-lg border-white/40 shadow-2xl backdrop-brightness-110">
                                     <CardContent className="p-4 sm:p-6 flex flex-col flex-1">
                                         <div className="mb-3 sm:mb-4 flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-empanada-golden/10 rounded-full group-hover:bg-empanada-golden/20 transition-colors mx-auto">
                                             <feature.icon className="w-6 h-6 sm:w-8 sm:h-8 text-empanada-golden" />

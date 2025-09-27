@@ -18,9 +18,30 @@ import parallax4 from "../../assets/images/parallax4.jpg";
 
 export function AboutPage() {
   const parallaxRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
+
+  // Detectar si es dispositivo móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: parallaxRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+    // En móvil, usar document.body como fuente de scroll
+    container: isMobile ? { current: document.body } : undefined
   });
 
   // Transformaciones para el efecto sticky del título

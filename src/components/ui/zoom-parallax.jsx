@@ -8,6 +8,8 @@ export function ZoomParallax({ images }) {
     const { scrollYProgress } = useScroll({
         target: container,
         offset: ['start start', 'end end'],
+        // En móvil, usar document.body como fuente de scroll
+        container: isMobile ? { current: document.body } : undefined
     });
 
     // Detectar si es dispositivo móvil
@@ -69,20 +71,23 @@ export function ZoomParallax({ images }) {
         return imageNavigation[index] !== undefined; // Todas las navegables en desktop
     };
 
-    const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
-    const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
-    const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
-    const scale8 = useTransform(scrollYProgress, [0, 1], [1, 8]);
-    const scale9 = useTransform(scrollYProgress, [0, 1], [1, 9]);
+    // Escalas más conservadoras en móvil para mejor performance
+    const scale4 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 3] : [1, 4]);
+    const scale5 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 3.5] : [1, 5]);
+    const scale6 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 4] : [1, 6]);
+    const scale8 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 5] : [1, 8]);
+    const scale9 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 5.5] : [1, 9]);
 
     // Transformación del degradado según el scroll
     const gradientOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 0.6, 0.3]);
 
-    // Transformación del difuminado de las imágenes según el zoom
+    // Transformación del difuminado de las imágenes según el zoom (solo desktop)
     const imageBlur = useTransform(
         scrollYProgress,
         [0, 0.3, 0.8, 1],
-        ["blur(0px)", "blur(0px)", "blur(2px)", "blur(3px)"]
+        isMobile ?
+            ["blur(0px)", "blur(0px)", "blur(0px)", "blur(0px)"] : // Sin blur en móvil
+            ["blur(0px)", "blur(0px)", "blur(2px)", "blur(3px)"]   // Blur en desktop
     );
 
     const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
@@ -103,7 +108,15 @@ export function ZoomParallax({ images }) {
                     return (
                         <motion.div
                             key={index}
-                            style={{ scale }}
+                            style={{
+                                scale,
+                                // Optimizaciones para móvil
+                                ...(isMobile && {
+                                    willChange: 'transform',
+                                    backfaceVisibility: 'hidden',
+                                    perspective: 1000
+                                })
+                            }}
                             className={`absolute top-0 flex h-full w-full items-center justify-center
                                 ${index === 0 ?
                                     'md:[&>div]:!-top-[0vh] md:[&>div]:!left-[0vw] md:[&>div]:!h-[35vh] md:[&>div]:!w-[35vw] [&>div]:!-top-[0vh] [&>div]:!left-[0vw] [&>div]:!h-[27vh] [&>div]:!w-[38vw]' : ''
@@ -137,7 +150,20 @@ export function ZoomParallax({ images }) {
                                 <img
                                     src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
                                     alt={alt || `Imagen ${index + 1}`}
-                                    className="h-full w-full object-cover rounded-lg transition-all duration-300 group-hover:brightness-75"
+                                    className={`h-full w-full object-cover rounded-lg ${
+                                        isMobile ?
+                                            "transition-none" : // Sin transiciones en móvil
+                                            "transition-all duration-300 group-hover:brightness-75"
+                                    }`}
+                                    loading="lazy"
+                                    decoding="async"
+                                    style={{
+                                        // Optimizaciones adicionales para móvil
+                                        ...(isMobile && {
+                                            willChange: 'auto',
+                                            transform: 'translateZ(0)' // Force hardware acceleration
+                                        })
+                                    }}
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1);

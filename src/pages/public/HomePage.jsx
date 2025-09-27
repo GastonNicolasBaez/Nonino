@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router";
 import { ChevronRight, Clock, Truck, Shield, Award } from "lucide-react";
@@ -16,9 +16,31 @@ export function HomePage() {
     const { productosTodos: productos, publicDataLoading: loading } = usePublicData();
 
     const [promotions] = useState([]);
+    const [isMobile, setIsMobile] = useState(() => {
+        // Inicializar inmediatamente si estamos en el browser
+        if (typeof window !== 'undefined') {
+            return window.innerWidth < 768;
+        }
+        return false;
+    });
 
-    // Parallax scroll effect
-    const { scrollY } = useScroll();
+    // Detectar si es dispositivo móvil
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Parallax scroll effect con custom scroll source para móvil
+    const { scrollY } = useScroll({
+        // En móvil, usar document.body como fuente de scroll
+        container: isMobile ? { current: document.body } : undefined
+    });
     const y = useTransform(scrollY, [0, 800], [0, -200]);
 
     const features = [
@@ -55,13 +77,19 @@ export function HomePage() {
         <div className="min-h-screen">
             {/* Logo animado independiente */}
             <motion.div
-                className="fixed z-[25] pointer-events-none"
+                className="fixed z-[30] pointer-events-none"
                 style={{
                     left: "50%",
-                    top: useTransform(scrollY, [0, 200], ["18vh", "4.5rem"]),
+                    top: useTransform(scrollY,
+                        isMobile ? [0, 150] : [0, 200],
+                        isMobile ? ["15vh", "5rem"] : ["18vh", "5rem"]
+                    ),
                     x: "-50%",
                     y: "-50%",
-                    scale: useTransform(scrollY, [100, 200], [1, 0.4])
+                    scale: useTransform(scrollY,
+                        isMobile ? [25, 150] : [50, 200],
+                        isMobile ? [1, 0.6] : [1, 0.5]
+                    )
                 }}
             >
                 <img

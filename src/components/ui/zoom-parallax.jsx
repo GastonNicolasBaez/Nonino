@@ -1,12 +1,26 @@
 import { useScroll, useTransform, motion } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 export function ZoomParallax({ images }) {
     const container = useRef(null);
+    const [isMobile, setIsMobile] = useState(false);
+
     const { scrollYProgress } = useScroll({
         target: container,
         offset: ['start start', 'end end'],
     });
+
+    // Detectar si es dispositivo móvil
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Títulos y navegación para las imágenes interactivas
     const imageNavigation = {
@@ -29,6 +43,30 @@ export function ZoomParallax({ images }) {
                 behavior: 'smooth'
             });
         }
+    };
+
+    // Función para manejar interacción específica por índice
+    const handleImageClick = (index) => {
+        // En mobile, solo la imagen 0 es clickable
+        if (isMobile) {
+            if (index === 0) {
+                navigateToSection("end-parallax");
+            }
+            return;
+        }
+
+        // En desktop, todas las imágenes con navegación funcionan
+        if (imageNavigation[index]) {
+            navigateToSection(imageNavigation[index].targetId);
+        }
+    };
+
+    // Determinar si una imagen debe ser interactiva
+    const isImageInteractive = (index) => {
+        if (isMobile) {
+            return index === 0; // Solo imagen 0 en mobile
+        }
+        return imageNavigation[index] !== undefined; // Todas las navegables en desktop
     };
 
     const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
@@ -68,7 +106,7 @@ export function ZoomParallax({ images }) {
                             style={{ scale }}
                             className={`absolute top-0 flex h-full w-full items-center justify-center
                                 ${index === 0 ?
-                                    'md:[&>div]:!-top-[0vh] md:[&>div]:!left-[0vw] md:[&>div]:!h-[35vh] md:[&>div]:!w-[35vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
+                                    'md:[&>div]:!-top-[0vh] md:[&>div]:!left-[0vw] md:[&>div]:!h-[35vh] md:[&>div]:!w-[35vw] [&>div]:!-top-[0vh] [&>div]:!left-[0vw] [&>div]:!h-[27vh] [&>div]:!w-[38vw]' : ''
                                 } ${index === 1 ?
                                     'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[15vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[65vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
                                 } ${index === 2 ?
@@ -76,7 +114,7 @@ export function ZoomParallax({ images }) {
                                 } ${index === 3 ?
                                     'md:[&>div]:!-top-[2vh] md:[&>div]:!left-[37vw] md:[&>div]:!h-[32vh] md:[&>div]:!w-[35vw] [&>div]:!top-[-39vh] [&>div]:!left-[-30vw] [&>div]:!h-[20vh] [&>div]:!w-[35vw]' : ''
                                 } ${index === 4 ?
-                                    'md:[&>div]:!top-[31vh] md:[&>div]:!left-[9vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[50vw] [&>div]:!top-[33vh] [&>div]:!left-[24vw] [&>div]:!h-[30vh] [&>div]:!w-[40vw]' : ''
+                                    'md:[&>div]:!top-[31vh] md:[&>div]:!left-[9vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[50vw] [&>div]:!top-[33vh] [&>div]:!left-[24vw] [&>div]:!h-[33vh] [&>div]:!w-[44vw]' : ''
                                 } ${index === 5 ?
                                     'md:[&>div]:!top-[30vh] md:[&>div]:!-left-[33vw] md:[&>div]:!h-[40vh] md:[&>div]:!w-[30vw] [&>div]:!top-[32vh] [&>div]:!-left-[24vw] [&>div]:!h-[35vh] [&>div]:!w-[45vw]' : ''
                                 } ${index === 6 ?
@@ -84,11 +122,17 @@ export function ZoomParallax({ images }) {
                                 }`}
                         >
                             <motion.div
-                                className={`relative h-[25vh] w-[35vw] md:h-[25vh] md:w-[25vw] group ${imageNavigation[index] ? 'cursor-pointer z-10' : 'z-0'}`}
+                                className={`relative h-[25vh] w-[35vw] md:h-[25vh] md:w-[25vw] group ${
+                                    isImageInteractive(index) ? 'cursor-pointer z-10 touch-manipulation' : 'z-0'
+                                }`}
                                 style={{
                                     filter: imageBlur
                                 }}
-                                onClick={imageNavigation[index] ? () => navigateToSection(imageNavigation[index].targetId) : undefined}
+                                onClick={isImageInteractive(index) ? () => handleImageClick(index) : undefined}
+                                onTouchStart={isImageInteractive(index) ? (e) => {
+                                    e.preventDefault();
+                                    handleImageClick(index);
+                                } : undefined}
                             >
                                 <img
                                     src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
@@ -100,14 +144,14 @@ export function ZoomParallax({ images }) {
                                     }}
                                 />
                                 {/* Overlay con título al hover */}
-                                {imageNavigation[index] && (
+                                {isImageInteractive(index) && (
                                     <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex items-center justify-center z-20 backdrop-blur-sm">
                                         <div className="text-center text-white px-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                                             <h3 className="text-xs md:text-base lg:text-lg font-bold mb-1 md:mb-2 text-empanada-golden">
-                                                {imageNavigation[index].title}
+                                                {isMobile && index === 0 ? "Nuestra Historia" : imageNavigation[index]?.title}
                                             </h3>
                                             <p className="text-[10px] md:text-xs lg:text-sm opacity-90">
-                                                Click para navegar
+                                                {isMobile ? "Toca para navegar" : "Click para navegar"}
                                             </p>
                                         </div>
                                     </div>

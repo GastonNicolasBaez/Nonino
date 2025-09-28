@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
+import noninoEmpanada from '@/assets/nonino.webp';
 
 export const Card = React.memo(
   ({
@@ -22,7 +23,7 @@ export const Card = React.memo(
         alt={card.title}
         className="object-cover absolute inset-0 w-full h-full"
         onError={(e) => {
-          e.target.src = '/nonino.webp';
+          e.target.src = noninoEmpanada;
         }}
       />
       <div

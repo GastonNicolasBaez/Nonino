@@ -20,6 +20,7 @@ import { useCart } from "../../context/CartProvider";
 import { useSession } from "@/context/SessionProvider";
 import { cn } from "../../lib/utils";
 import { CartDropdown } from "./CartDropdown";
+import logoNonino from '@/assets/logos/nonino.png';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -162,7 +163,7 @@ export function Header() {
             >
               <Link to="/" className="flex items-center space-x-1 sm:space-x-2">
                 <motion.img
-                  src="/src/assets/images/LogoNonino.png"
+                  src={logoNonino}
                   alt="Logo Nonino"
                   className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0"
                   style={{ opacity: navbarLogoOpacity }}
@@ -358,7 +359,7 @@ export function Header() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 sm:space-x-3">
                     <img 
-                      src="/src/assets/images/LogoNonino.png" 
+                      src={logoNonino}
                       alt="Logo Nonino" 
                       className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0"
                     />
@@ -422,7 +423,7 @@ export function Header() {
                       className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <img 
-                        src="/src/assets/images/LogoNonino.png" 
+                        src={logoNonino}
                         alt="Logo Nonino" 
                         className="w-6 h-6 mb-2"
                       />

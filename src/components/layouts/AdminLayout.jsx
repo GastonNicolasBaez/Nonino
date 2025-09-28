@@ -39,6 +39,8 @@ import { useTheme } from "@/context/ThemeProvider";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useOrders } from "@/context/OrdersContext";
 
+import logoNonino from '@/assets/logos/nonino.png';
+
 const AdminLayout = () => {
     const session = useSession();
     const navigate = useNavigate();
@@ -141,7 +143,7 @@ const AdminLayout = () => {
                 icon: Archive,
                 hasDropdown: true,
                 dropdownItems: [
-                    { name: "Gestión", href: "/intranet/admin/inventario", icon: Archive },
+                    { name: "Gestionar", href: "/intranet/admin/inventario", icon: Archive },
                     { name: "Productos", href: "/intranet/admin/inventario-productos", icon: ShoppingCart },
                     { name: "Receta", href: "/intranet/admin/inventario-receta", icon: Package }
                 ]
@@ -266,7 +268,7 @@ const AdminLayout = () => {
                         <div className="flex flex-col items-center space-y-3">
                             <Link to="/admin" className="flex items-center justify-center">
                                 <img
-                                    src="/src/assets/images/remo.png"
+                                    src={logoNonino}
                                     alt="Nonino Empanadas"
                                     className="w-12 h-12"
                                 />
@@ -286,7 +288,7 @@ const AdminLayout = () => {
                         <>
                             <Link to="/admin" className="flex items-center space-x-2">
                                 <img
-                                    src="/src/assets/images/remo.png"
+                                    src={logoNonino}
                                     alt="Nonino Empanadas"
                                     className="w-8 h-8"
                                 />
@@ -458,7 +460,7 @@ const AdminLayout = () => {
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <Link to="/admin" className="flex items-center space-x-2">
                         <img
-                            src="/src/assets/images/remo.png"
+                            src={logoNonino}
                             alt="Nonino Empanadas"
                             className="w-8 h-8"
                         />

@@ -7,7 +7,8 @@ import {
     getLoginQueryFunction,
     getRefreshQueryFunction
 } from "@/config/apiLoginQueryFunctions";
-//import { toast } from "react-toastify";
+
+const csrfLocalStorageKeyName = 'noninoSysCsrf';
 
 // integrar dependencia con el rol
 
@@ -50,7 +51,7 @@ export const SessionProvider = ({ children }) => {
         onSuccess: (data) => {
             setUserData(userDataTransform(data));
             setIsAuthenticated(true);
-            localStorage.setItem('noninoSysCsrf', data.csrfToken);
+            localStorage.setItem(csrfLocalStorageKeyName, data.csrfToken);
         }
     });
 
@@ -60,15 +61,15 @@ export const SessionProvider = ({ children }) => {
         onSuccess: (data) => {
             setUserData(userDataTransform(data));
             setIsAuthenticated(true);
-            localStorage.setItem('noninoSysCsrf', data.csrfToken);
+            localStorage.setItem(csrfLocalStorageKeyName, data.csrfToken);
         },
         onError: () => {
-            localStorage.removeItem('noninoSysCsrf');
+            localStorage.removeItem(csrfLocalStorageKeyName);
         }
     });
 
     useLayoutEffect(() => {
-        const csrf = localStorage.getItem('noninoSysCsrf');
+        const csrf = localStorage.getItem(csrfLocalStorageKeyName);
         if (csrf) {
             callRelogin(csrf);
         }
@@ -82,7 +83,7 @@ export const SessionProvider = ({ children }) => {
     const logout = () => {
         setUserData(null);
         setIsAuthenticated(false);
-        localStorage.removeItem("noninoSys");
+        localStorage.removeItem(csrfLocalStorageKeyName);
     };
 
     const loading = componentLoading || callLoginLoading || callReloginLoading;

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
+import noninoEmpanada from '@/assets/empanada1.webp';
 
 const PARALLAX_FACTOR = 0.4;
 
@@ -26,7 +27,7 @@ const OptimizedProductImage = React.memo(({ product, onImageLoad }) => {
         if (product.image) return product.image;
         if (product.foto) return product.foto;
         if (product.imagen) return product.imagen;
-        return '/nonino.webp';
+        return noninoEmpanada;
     };
 
     const handleImageLoad = (e) => {
@@ -60,7 +61,7 @@ const OptimizedProductImage = React.memo(({ product, onImageLoad }) => {
         }
 
         // Fallback final
-        e.target.src = '/nonino.webp';
+        e.target.src = noninoEmpanada;
         setImageLoaded(true);
     };
 

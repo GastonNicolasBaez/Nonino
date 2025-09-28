@@ -10,6 +10,8 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
+import logoNonino from '@/assets/logos/nonino.png';
+import sanMartinBgImage from '@/assets/images/SanMartin.jpg'
 
 export function HomePage() {
 
@@ -65,7 +67,7 @@ export function HomePage() {
                 }}
             >
                 <img
-                    src="/src/assets/images/LogoNonino.png"
+                    src={logoNonino}
                     alt="Logo Nonino"
                     className="w-48 h-48 xs:w-56 xs:h-56 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72"
                 />
@@ -76,7 +78,7 @@ export function HomePage() {
                 <motion.div
                     className="absolute inset-0 w-full h-[160%] -top-[30%]"
                     style={{
-                        backgroundImage: "url('/src/assets/images/SanMartin.jpg')",
+                        backgroundImage: `url(${sanMartinBgImage})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center top",
                         y

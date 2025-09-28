@@ -7,6 +7,7 @@ import { formatPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartProvider';
 import { Star, Plus, Clock, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import noninoEmpanada from '@/assets/nonino.webp';
 
 const PARALLAX_FACTOR = 0.4;
 
@@ -170,11 +171,11 @@ export function ProductsCarousel({ products = [], className = '', title = 'Nuest
                       <img
                         className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                         src={
-                          product.image || product.imageUrl || '/nonino.webp'
+                          product.image || product.imageUrl || noninoEmpanada
                         }
                         alt={product.name}
                         onError={(e) => {
-                          e.target.src = '/nonino.webp';
+                          e.target.src = noninoEmpanada;
                         }}
                       />
                     </div>

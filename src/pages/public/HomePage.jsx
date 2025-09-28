@@ -252,13 +252,13 @@ export function HomePage() {
                                 transition={{ delay: index * 0.1 }}
                                 className="h-full"
                             >
-                                <Card className="text-center hover:shadow-lg transition-all duration-300 group h-full flex flex-col bg-white/25 backdrop-blur-lg border-white/40 shadow-2xl backdrop-brightness-110">
+                                <Card className="text-center hover:shadow-lg transition-all duration-300 group h-full flex flex-col bg-white/25 backdrop-blur-xs border-white/40 shadow-2xl backdrop-brightness-110">
                                     <CardContent className="p-4 sm:p-6 flex flex-col flex-1">
                                         <div className="mb-3 sm:mb-4 flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-empanada-golden/10 rounded-full group-hover:bg-empanada-golden/20 transition-colors mx-auto">
                                             <feature.icon className="w-6 h-6 sm:w-8 sm:h-8 text-empanada-golden" />
                                         </div>
                                         <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">{feature.title}</h3>
-                                        <p className="text-sm sm:text-base text-muted-foreground flex-1">{feature.description}</p>
+                                        <p className="text-sm sm:text-base text-foreground flex-1">{feature.description}</p>
                                     </CardContent>
                                 </Card>
                             </motion.div>

@@ -1,12 +1,30 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { ShoppingBag, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { Link } from "react-router";
+import { Portal } from "./Portal";
 
 export function CartDropdown({ isOpen, onClose }) {
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
+
+  // Calcular posición del dropdown cuando se abre
+  useEffect(() => {
+    if (isOpen) {
+      // Buscar el botón del carrito para calcular la posición
+      const cartButton = document.querySelector('[aria-label*="Carrito de compras"]');
+      if (cartButton) {
+        const rect = cartButton.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.bottom + 8, // 8px de margen
+          right: window.innerWidth - rect.right + 16 // 16px de offset desde la derecha
+        });
+      }
+    }
+  }, [isOpen]);
   const {
     items,
     updateQuantity,
@@ -35,19 +53,24 @@ export function CartDropdown({ isOpen, onClose }) {
         <>
           {/* Overlay invisible para cerrar */}
           <div
-            className="fixed inset-0 z-[99998]"
+            className="fixed inset-0 z-40"
             onClick={onClose}
           />
 
-          {/* Dropdown */}
-          <motion.div
-            variants={dropdownVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            transition={{ duration: 0.2 }}
-            className="absolute -right-4 top-full mt-2 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 z-[99999] overflow-hidden"
-          >
+          {/* Dropdown renderizado en Portal */}
+          <Portal>
+            <motion.div
+              variants={dropdownVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              transition={{ duration: 0.2 }}
+              className="fixed w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+              style={{
+                top: `${dropdownPosition.top}px`,
+                right: `${dropdownPosition.right}px`
+              }}
+            >
             {/* Header */}
             <div className="p-4 border-b bg-gradient-to-r from-empanada-cream/20 to-empanada-wheat/20">
               <div className="flex items-center justify-between">
@@ -198,6 +221,7 @@ export function CartDropdown({ isOpen, onClose }) {
               </div>
             )}
           </motion.div>
+          </Portal>
         </>
       )}
     </AnimatePresence>

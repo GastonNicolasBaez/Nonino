@@ -256,13 +256,6 @@ export function Header() {
                   <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
 
-                {/* Desktop Cart Dropdown */}
-                <div className="hidden lg:block">
-                  <CartDropdown
-                    isOpen={isCartDropdownOpen}
-                    onClose={() => setIsCartDropdownOpen(false)}
-                  />
-                </div>
               </motion.div>
 
               {/* Cart */}
@@ -287,6 +280,14 @@ export function Header() {
                     </Badge>
                   )}
                 </Button>
+
+                {/* Desktop Cart Dropdown */}
+                <div className="hidden lg:block">
+                  <CartDropdown
+                    isOpen={isCartDropdownOpen}
+                    onClose={() => setIsCartDropdownOpen(false)}
+                  />
+                </div>
 
               </motion.div>
 

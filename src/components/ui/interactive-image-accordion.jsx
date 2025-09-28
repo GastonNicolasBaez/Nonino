@@ -2,54 +2,47 @@ import React, { useState } from 'react';
 import { MapPin, Clock, Phone, Factory, Calendar } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WordPullUp } from './word-pull-up';
+import localRuta40 from '../../assets/images/localRuta40.jpg';
+import localVillegas from '../../assets/images/LocalVillegas.jpg';
+import fabrica from '../../assets/images/Fabrica.jpg';
 
 // --- Data for the empanadas locations accordion ---
 const accordionItems = [
   {
     id: 1,
-    title: 'Local Centro',
+    title: 'Local Ruta 40',
     type: 'store',
-    address: 'Av. San Martín 1234, Centro',
-    phone: '(011) 4444-5555',
+    address: 'Ruta Nacional 40, Km 1234, San Martín de los Andes',
+    phone: '(02972) 444-555',
     hours: 'Lun a Dom: 11:00 - 23:00',
-    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop',
-    description: 'Nuestro local principal en el corazón de la ciudad'
+    imageUrl: localRuta40,
+    description: 'Nuestro local principal con vista a la cordillera'
   },
   {
     id: 2,
-    title: 'Local Palermo',
+    title: 'Local Villegas',
     type: 'store',
-    address: 'Av. Santa Fe 2567, Palermo',
-    phone: '(011) 4444-6666',
+    address: 'Av. Villegas 567, San Martín de los Andes',
+    phone: '(02972) 444-666',
     hours: 'Lun a Dom: 12:00 - 00:00',
-    imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop',
-    description: 'Ambiente moderno en el barrio más trendy'
+    imageUrl: localVillegas,
+    description: 'Ambiente acogedor en el centro de la ciudad'
   },
   {
     id: 3,
-    title: 'Local Belgrano',
-    type: 'store',
-    address: 'Av. Cabildo 3456, Belgrano',
-    phone: '(011) 4444-7777',
-    hours: 'Lun a Dom: 11:30 - 23:30',
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop',
-    description: 'Tradición familiar en zona norte'
-  },
-  {
-    id: 4,
     title: 'Fábrica Nonino',
     type: 'factory',
-    address: 'Parque Industrial Norte, Lote 45',
-    phone: '(011) 4444-8888',
+    address: 'Parque Industrial, San Martín de los Andes',
+    phone: '(02972) 444-888',
     hours: 'Lun a Vie: 06:00 - 18:00',
-    imageUrl: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: fabrica,
     description: 'Centro de producción con más de 25 años de experiencia'
   },
   {
-    id: 5,
+    id: 4,
     title: 'Próximamente',
     type: 'coming_soon',
-    address: 'Próxima apertura',
+    address: 'Nueva apertura',
     phone: 'Información pronto',
     hours: 'Muy pronto',
     imageUrl: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop',
@@ -164,7 +157,7 @@ export function InteractiveImageAccordion({
   buttonText = "Ver Todos los Locales",
   buttonHref = "/locales"
 }) {
-  const [activeIndex, setActiveIndex] = useState(3); // Start with factory active
+  const [activeIndex, setActiveIndex] = useState(2); // Start with factory active
 
   const handleItemHover = (index) => {
     setActiveIndex(index);

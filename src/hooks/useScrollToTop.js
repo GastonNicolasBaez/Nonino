@@ -5,7 +5,12 @@ export function useScrollToTop() {
   const location = useLocation();
 
   useEffect(() => {
-    // Scroll to top when route changes
+    // Skip scroll to top for /inicio to preserve logo animation
+    if (location.pathname === '/' || location.pathname === '/inicio') {
+      return;
+    }
+
+    // Scroll to top when route changes for other pages
     window.scrollTo({
       top: 0,
       left: 0,

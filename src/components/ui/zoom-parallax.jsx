@@ -8,6 +8,8 @@ export function ZoomParallax({ images }) {
     const { scrollYProgress } = useScroll({
         target: container,
         offset: ['start start', 'end end'],
+        // En móvil, usar document.body como fuente de scroll
+        container: isMobile ? { current: document.body } : undefined
     });
 
     // Detectar si es dispositivo móvil
@@ -27,8 +29,8 @@ export function ZoomParallax({ images }) {
         0: { title: "Conocenos", targetId: "end-parallax" },
         1: { title: "La Historia de Don Carlos", targetId: "historia" },
         2: { title: "Nuestros Valores", targetId: "valores" },
-        4: { title: "Nuestra Trayectoria", targetId: "trayectoria" },
-        6: { title: "Nuestro Equipo", targetId: "equipo" }
+        3: { title: "Nuestro Equipo", targetId: "equipo" },
+        4: { title: "Nuestra Trayectoria", targetId: "trayectoria" }
     };
 
     // Función para navegar a una sección específica
@@ -69,26 +71,33 @@ export function ZoomParallax({ images }) {
         return imageNavigation[index] !== undefined; // Todas las navegables en desktop
     };
 
-    const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
-    const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
-    const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
-    const scale8 = useTransform(scrollYProgress, [0, 1], [1, 8]);
-    const scale9 = useTransform(scrollYProgress, [0, 1], [1, 9]);
+   // Escalas más conservadoras en móvil para mejor performance
+    const scale4 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 3] : [1, 4]);
+    const scale5 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 3.5] : [1, 5]);
+    const scale6 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 4] : [1, 6]);
+    const scale8 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 5] : [1, 8]);
+    const scale9 = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 5.5] : [1, 9]);
 
     // Transformación del degradado según el scroll
-    const gradientOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 0.6, 0.3]);
+    const gradientOpacity = useTransform(
+        scrollYProgress,
+        [0, 0.5, 1],
+        isMobile ? [0.6, 0.6, 0.6] : [0.8, 0.6, 0.3]
+    );
 
     // Transformación del difuminado de las imágenes según el zoom
     const imageBlur = useTransform(
         scrollYProgress,
         [0, 0.3, 0.8, 1],
-        ["blur(0px)", "blur(0px)", "blur(2px)", "blur(3px)"]
+        isMobile ?
+            ["blur(0px)", "blur(0px)", "blur(0px)", "blur(0px)"] :
+            ["blur(0px)", "blur(0px)", "blur(2px)", "blur(3px)"]
     );
 
     const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
 
     return (
-        <div ref={container} className="relative h-[300vh] bg-gradient-to-b from-empanada-golden via-empanada-warm to-empanada-cream">
+        <div ref={container} className={`relative ${isMobile ? 'h-[200vh]' : 'h-[300vh]'} bg-gradient-to-b from-empanada-golden via-empanada-warm to-empanada-cream`}>
             {/* Degradado dinámico superpuesto que evoluciona con el scroll */}
             <motion.div
                 className="absolute inset-0 bg-gradient-to-b from-empanada-dark/60 via-empanada-rich/40 to-transparent"
@@ -103,22 +112,30 @@ export function ZoomParallax({ images }) {
                     return (
                         <motion.div
                             key={index}
-                            style={{ scale }}
+                            style={{ 
+                                scale,
+                                // Optimizaciones para móvil
+                                ...(isMobile && {
+                                    willChange: 'transform',
+                                    backfaceVisibility: 'hidden',
+                                    perspective: 1000
+                                })
+                             }}
                             className={`absolute top-0 flex h-full w-full items-center justify-center
                                 ${index === 0 ?
-                                    'md:[&>div]:!-top-[0vh] md:[&>div]:!left-[0vw] md:[&>div]:!h-[35vh] md:[&>div]:!w-[35vw] [&>div]:!-top-[0vh] [&>div]:!left-[0vw] [&>div]:!h-[27vh] [&>div]:!w-[38vw]' : ''
+                                    'md:[&>div]:!-top-[0vh] md:[&>div]:!left-[0vw] md:[&>div]:!h-[35vh] md:[&>div]:!w-[35vw] [&>div]:!-top-[1vh] [&>div]:!left-[0vw] [&>div]:!h-[27vh] [&>div]:!w-[38vw]' : ''
                                 } ${index === 1 ?
-                                    'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[15vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[65vw] [&>div]:!-top-[32vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
+                                    'md:[&>div]:!-top-[35vh] md:[&>div]:!left-[15vw] md:[&>div]:!h-[30vh] md:[&>div]:!w-[65vw] [&>div]:!-top-[33vh] [&>div]:!left-[20vw] [&>div]:!h-[35vh] [&>div]:!w-[60vw]' : ''
                                 } ${index === 2 ?
                                     'md:[&>div]:!-top-[20vh] md:[&>div]:!-left-[39vw] md:[&>div]:!h-[55vh] md:[&>div]:!w-[40vw] [&>div]:!-top-[8vh] [&>div]:!-left-[40vw] [&>div]:!h-[40vh] [&>div]:!w-[35vw]' : ''
                                 } ${index === 3 ?
                                     'md:[&>div]:!-top-[2vh] md:[&>div]:!left-[37vw] md:[&>div]:!h-[32vh] md:[&>div]:!w-[35vw] [&>div]:!top-[-39vh] [&>div]:!left-[-30vw] [&>div]:!h-[20vh] [&>div]:!w-[35vw]' : ''
                                 } ${index === 4 ?
-                                    'md:[&>div]:!top-[31vh] md:[&>div]:!left-[9vw] md:[&>div]:!h-[25vh] md:[&>div]:!w-[50vw] [&>div]:!top-[33vh] [&>div]:!left-[24vw] [&>div]:!h-[33vh] [&>div]:!w-[44vw]' : ''
+                                    'md:[&>div]:!top-[36vh] md:[&>div]:!left-[9vw] md:[&>div]:!h-[34vh] md:[&>div]:!w-[50vw] [&>div]:!top-[33vh] [&>div]:!left-[24vw] [&>div]:!h-[33vh] [&>div]:!w-[44vw]' : ''
                                 } ${index === 5 ?
-                                    'md:[&>div]:!top-[30vh] md:[&>div]:!-left-[33vw] md:[&>div]:!h-[40vh] md:[&>div]:!w-[30vw] [&>div]:!top-[32vh] [&>div]:!-left-[24vw] [&>div]:!h-[35vh] [&>div]:!w-[45vw]' : ''
+                                    'md:[&>div]:!top-[30vh] md:[&>div]:!-left-[34vw] md:[&>div]:!h-[40vh] md:[&>div]:!w-[32vw] [&>div]:!top-[32vh] [&>div]:!-left-[24vw] [&>div]:!h-[35vh] [&>div]:!w-[45vw]' : ''
                                 } ${index === 6 ?
-                                    'md:[&>div]:!top-[26vh] md:[&>div]:!left-[43vw] md:[&>div]:!h-[20vh] md:[&>div]:!w-[15vw] [&>div]:!top-[3vh] [&>div]:!left-[38vw] [&>div]:!h-[25vh] [&>div]:!w-[35vw]' : ''
+                                    'md:[&>div]:!top-[35vh] md:[&>div]:!left-[43vw] md:[&>div]:!h-[40vh] md:[&>div]:!w-[15vw] [&>div]:!top-[1vh] [&>div]:!left-[38vw] [&>div]:!h-[29vh] [&>div]:!w-[35vw]' : ''
                                 }`}
                         >
                             <motion.div
@@ -126,7 +143,7 @@ export function ZoomParallax({ images }) {
                                     isImageInteractive(index) ? 'cursor-pointer z-10 touch-manipulation' : 'z-0'
                                 }`}
                                 style={{
-                                    filter: imageBlur
+                                    filter: index === 6 ? "blur(0px)" : imageBlur
                                 }}
                                 onClick={isImageInteractive(index) ? () => handleImageClick(index) : undefined}
                                 onTouchStart={isImageInteractive(index) ? (e) => {
@@ -137,7 +154,20 @@ export function ZoomParallax({ images }) {
                                 <img
                                     src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
                                     alt={alt || `Imagen ${index + 1}`}
-                                    className="h-full w-full object-cover rounded-lg transition-all duration-300 group-hover:brightness-75"
+                                    className={`h-full w-full object-cover rounded-lg ${
+                                        isMobile ?
+                                            "transition-none" : // Sin transiciones en móvil
+                                            "transition-all duration-300 group-hover:brightness-75"
+                                    }`}
+                                    loading="lazy"
+                                    decoding="async"
+                                    style={{
+                                        // Optimizaciones adicionales para móvil
+                                        ...(isMobile && {
+                                            willChange: 'auto',
+                                            transform: 'translateZ(0)' // Force hardware acceleration
+                                        })
+                                    }}
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1);
@@ -145,7 +175,7 @@ export function ZoomParallax({ images }) {
                                 />
                                 {/* Overlay con título al hover */}
                                 {isImageInteractive(index) && (
-                                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex items-center justify-center z-20 backdrop-blur-sm">
+                                    <div className={`absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex items-center justify-center z-20 ${index === 6 ? '' : 'backdrop-blur-sm'}`}>
                                         <div className="text-center text-white px-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                                             <h3 className="text-xs md:text-base lg:text-lg font-bold mb-1 md:mb-2 text-empanada-golden">
                                                 {isMobile && index === 0 ? "Nuestra Historia" : imageNavigation[index]?.title}

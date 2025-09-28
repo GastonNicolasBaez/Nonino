@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Quote, Star } from "lucide-react";
+import somos1 from "@/assets/images/somos.jpg";
+import somos2 from "@/assets/images/somos2.jpg";
+import somos3 from "@/assets/images/somos3.jpg";
 
 const teamMembers = [
   {
@@ -8,40 +11,43 @@ const teamMembers = [
       "Fundé Nonino hace más de 25 años con el sueño de compartir las recetas familiares de mi abuela. Cada empanada que sale de nuestra cocina lleva mi pasión y dedicación por mantener viva esta tradición.",
     name: "Carlos Nonino",
     designation: "Fundador y Chef Principal",
-    src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop&crop=face",
+    src: somos1,
   },
   {
     quote:
       "Como gerente general, me aseguro de que cada cliente reciba el mejor servicio. Coordino todos nuestros locales y mantengo los estándares de calidad que nos han caracterizado durante tantos años.",
     name: "María Nonino",
     designation: "Gerente General",
-    src: "https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=200&h=200&auto=format&fit=crop&crop=face",
+    src: somos2,
   },
   {
     quote:
       "En la cocina central, superviso la producción diaria de miles de empanadas. Mi equipo y yo nos aseguramos de que cada masa tenga la textura perfecta y cada relleno el sabor auténtico que nos distingue.",
     name: "José Martínez",
     designation: "Chef de Producción",
-    src: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&h=200&auto=format&fit=crop&crop=face",
+    src: somos3,
   },
   {
     quote:
       "Manejo toda la logística de delivery y me aseguro de que nuestras empanadas lleguen calientes a cada hogar. La puntualidad y calidad en el servicio son mi prioridad número uno.",
     name: "Ana Morales",
     designation: "Coordinadora de Delivery",
-    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&h=200&auto=format&fit=crop&crop=face",
+    src: somos1,
   },
   {
     quote:
       "Como encargada del local Centro, recibo a nuestros clientes con una sonrisa y me aseguro de que vivan la experiencia Nonino completa. Conozco las preferencias de cada cliente regular.",
     name: "Laura Vega",
     designation: "Encargada Local Centro",
-    src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&h=200&auto=format&fit=crop&crop=face",
+    src: somos2,
   },
 ];
 
 export function AnimatedTestimonials({ autoplay = false }) {
   const [active, setActive] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
   const handleNext = () => {
     setActive((prev) => (prev + 1) % teamMembers.length);
@@ -55,6 +61,18 @@ export function AnimatedTestimonials({ autoplay = false }) {
     return index === active;
   };
 
+  // Detectar si es dispositivo móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useEffect(() => {
     if (autoplay) {
       const interval = setInterval(handleNext, 8000);
@@ -66,11 +84,43 @@ export function AnimatedTestimonials({ autoplay = false }) {
     return Math.floor(Math.random() * 21) - 10;
   };
 
+  // Funciones para manejar swipe/touch
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      handleNext();
+    }
+    if (isRightSwipe) {
+      handlePrev();
+    }
+  };
+
   return (
     <div className="max-w-sm md:max-w-4xl mx-auto antialiased font-sans px-4 md:px-8 lg:px-12 py-20 relative" style={{ zIndex: 1 }}>
       <div className="relative grid grid-cols-1 md:grid-cols-2 gap-20">
         <div>
-          <div className="relative h-80 w-full">
+          <div
+            className="relative h-80 w-full"
+            onTouchStart={isMobile ? onTouchStart : undefined}
+            onTouchMove={isMobile ? onTouchMove : undefined}
+            onTouchEnd={isMobile ? onTouchEnd : undefined}
+          >
             <AnimatePresence>
               {teamMembers.map((member, index) => (
                 <motion.div
@@ -145,7 +195,7 @@ export function AnimatedTestimonials({ autoplay = false }) {
               {teamMembers[active].designation}
             </div>
           </motion.div>
-          <div className="flex gap-4 pt-12 md:pt-0">
+          <div className={`gap-4 pt-12 md:pt-0 ${isMobile ? 'hidden' : 'flex'}`}>
             <button
               onClick={handlePrev}
               className="h-7 w-7 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center group/button"

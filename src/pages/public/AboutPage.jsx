@@ -15,6 +15,8 @@ import parallax1 from "../../assets/images/parallax1.JPG";
 import parallax2 from "../../assets/images/parallax2.jpg";
 import parallax3 from "../../assets/images/parallax3.jpg";
 import parallax4 from "../../assets/images/parallax4.jpg";
+import parallax5 from "../../assets/images/parallax5.jpg";
+import parallax6 from "../../assets/images/parallax6.jpg";
 
 export function AboutPage() {
   const parallaxRef = useRef(null);
@@ -45,8 +47,8 @@ export function AboutPage() {
   });
 
   // Transformaciones para el efecto sticky del título
-  const titleY = useTransform(scrollYProgress, [0, 0.3, 0.75, 0.9], [200, 0, 0, -200]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.2, 0.7, 0.8], [0, 1, 1, 0]);
+  const titleY = useTransform(scrollYProgress, [0, 0.3, 0.6, 0.75], [200, 0, 0, -200]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.2, 0.6, 0.7], [0, 1, 1, 0]);
 
   // Control de animación WordPullUp basado en scroll
   const [shouldAnimateTitle, setShouldAnimateTitle] = useState(false);
@@ -118,11 +120,11 @@ export function AboutPage() {
       alt: 'Ambiente familiar y acogedor - Index 4',
     },
     {
-      src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop',
+      src: parallax5,
       alt: 'Tradición culinaria argentina - Index 5',
     },
     {
-      src: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=2070&auto=format&fit=crop',
+      src: parallax6,
       alt: 'Cocina profesional argentina - Index 6',
     },
   ];

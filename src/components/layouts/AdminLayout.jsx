@@ -118,6 +118,7 @@ const AdminLayout = () => {
                 icon: ShoppingCart,
                 badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
             },
+            { name: "Menú", href: "/intranet/admin/menu", icon: Menu },
             {
                 name: "Definiciones",
                 icon: Package,
@@ -125,8 +126,7 @@ const AdminLayout = () => {
                 dropdownItems: [
                     { name: "Productos", href: "/intranet/admin/productos", icon: Package },
                     { name: "Materiales", href: "/intranet/admin/materiales", icon: Archive },
-                    { name: "Combos", href: "/intranet/admin/combos", icon: ShoppingCart },
-                    { name: "Menú", href: "/intranet/admin/sucursal-menu", icon: Building2 }
+                    { name: "Combos", href: "/intranet/admin/combos", icon: ShoppingCart }
                 ]
             },
             {
@@ -191,7 +191,7 @@ const AdminLayout = () => {
     // Abrir/cerrar dropdowns basado en la ruta actual
     useEffect(() => {
         if (location.pathname.includes('/productos') || location.pathname.includes('/materiales') ||
-            location.pathname.includes('/combos') || location.pathname.includes('/sucursal-menu')) {
+            location.pathname.includes('/combos')) {
             setDefinitionsDropdownOpen(true);
         } else {
             setDefinitionsDropdownOpen(false);
@@ -224,7 +224,6 @@ const AdminLayout = () => {
     const shouldDeactivateOthers = () => {
         return definitionsDropdownOpen || location.pathname.includes('/productos') ||
             location.pathname.includes('/materiales') || location.pathname.includes('/combos') ||
-            location.pathname.includes('/sucursal-menu') ||
             inventoryDropdownOpen || location.pathname.includes('/inventario');
     };
 

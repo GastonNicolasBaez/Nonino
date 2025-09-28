@@ -114,6 +114,7 @@ function App() {
                                 <Route index element={<AdminDashboard />} />
                                 <Route path="pedidos" element={<OrderManagement />} />
                                 <Route path="ordenes" element={<OrderManagement />} />
+                                <Route path="menu" element={<MenuManagement />} />
                                 <Route path="productos" element={<ProductManagement />} />
                                 <Route path="materiales" element={<MaterialManagement />} />
                                 <Route path="combos" element={<ComboManagement />} />

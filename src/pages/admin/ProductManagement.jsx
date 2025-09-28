@@ -38,7 +38,9 @@ import {
     MoreVertical,
     X,
     Save,
-    RefreshCw
+    RefreshCw,
+    ChefHat,
+    Minus
 } from "lucide-react";
 
 // PROVIDERS
@@ -60,12 +62,17 @@ export function ProductManagement() {
     //   const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
+    const [editingRecipe, setEditingRecipe] = useState(null);
+    const [editingIngredients, setEditingIngredients] = useState([]);
+    const [showIngredientSearch, setShowIngredientSearch] = useState(false);
+    const [ingredientSearchTerm, setIngredientSearchTerm] = useState("");
     const [productStates, setProductStates] = useState({});
 
     const session = useSession();
     const {
         productos: products,
         categorias: categories,
+        inventario,
         adminDataLoading: loading,
 
         callProductosYCategorias,
@@ -284,6 +291,73 @@ export function ProductManagement() {
             console.error('Error al crear producto:', error);
             toast.error(error.message || "Error al crear el producto");
         }
+    };
+
+    // Funciones para el modal de receta
+    const handleEditRecipe = (product) => {
+        setEditingRecipe(product);
+        setEditingIngredients(
+            product.receta?.map(item => ({
+                ...item,
+                ingrediente: inventario?.find(ing => ing.id === item.ingredienteId) || {}
+            })) || []
+        );
+    };
+
+    const handleAddIngredient = () => {
+        setShowIngredientSearch(true);
+        setIngredientSearchTerm("");
+    };
+
+    const handleSelectIngredient = (ingrediente) => {
+        setEditingIngredients([
+            ...editingIngredients,
+            {
+                ingredienteId: ingrediente.id,
+                cantidad: 1,
+                unidad: ingrediente.unidadMedida || 'unidad',
+                ingrediente: ingrediente
+            }
+        ]);
+        setShowIngredientSearch(false);
+        setIngredientSearchTerm("");
+    };
+
+    const handleCancelIngredientSearch = () => {
+        setShowIngredientSearch(false);
+        setIngredientSearchTerm("");
+    };
+
+    const handleRemoveIngredient = (index) => {
+        setEditingIngredients(editingIngredients.filter((_, i) => i !== index));
+    };
+
+    const handleIngredientChange = (index, field, value) => {
+        const updated = [...editingIngredients];
+        updated[index] = { ...updated[index], [field]: value };
+
+        if (field === 'ingredienteId') {
+            const ingrediente = inventario?.find(ing => ing.id === value);
+            updated[index].ingrediente = ingrediente || {};
+            updated[index].unidad = ingrediente?.unidadMedida || 'unidad';
+        }
+
+        setEditingIngredients(updated);
+    };
+
+    const handleSaveRecipe = () => {
+        toast.success(`Receta de ${editingRecipe.name} actualizada correctamente`);
+        setEditingRecipe(null);
+        setEditingIngredients([]);
+        setShowIngredientSearch(false);
+        setIngredientSearchTerm("");
+    };
+
+    const handleCloseRecipeModal = () => {
+        setEditingRecipe(null);
+        setEditingIngredients([]);
+        setShowIngredientSearch(false);
+        setIngredientSearchTerm("");
     };
 
     const handleExportProducts = () => {
@@ -514,6 +588,28 @@ export function ProductManagement() {
                                                 className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                                             />
                                         </div>
+
+                                        {/* Configuraciones del producto */}
+                                        <div className="mt-4 flex gap-4">
+                                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.isAvailable}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
+                                                    className="rounded border-gray-300 dark:border-gray-600"
+                                                />
+                                                Disponible para venta
+                                            </label>
+                                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.isPopular}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, isPopular: e.target.checked }))}
+                                                    className="rounded border-gray-300 dark:border-gray-600"
+                                                />
+                                                Producto popular
+                                            </label>
+                                        </div>
                                     </CardContent>
                                 </Card>
 
@@ -545,69 +641,6 @@ export function ProductManagement() {
                                     </CardContent>
                                 </Card>
 
-                                {/* Inventario y Disponibilidad */}
-                                <Card className="">
-                                    <CardHeader>
-                                        <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                                            <Package className="w-5 h-5" />
-                                            Inventario y Disponibilidad
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Stock Actual</label>
-                                                <Input
-                                                    type="number"
-                                                    value={formData.stock}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, stock: Number(e.target.value) }))}
-                                                    placeholder="Cantidad en stock"
-                                                    className="admin-input"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Stock Mínimo</label>
-                                                <Input
-                                                    type="number"
-                                                    value={formData.minStock}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, minStock: Number(e.target.value) }))}
-                                                    placeholder="Stock mínimo"
-                                                    className="admin-input"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Tiempo de Preparación (min)</label>
-                                                <Input
-                                                    type="number"
-                                                    value={formData.preparationTime}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, preparationTime: Number(e.target.value) }))}
-                                                    placeholder="Minutos"
-                                                    className="admin-input"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 flex gap-4">
-                                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.isAvailable}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
-                                                    className="rounded border-gray-300 dark:border-gray-600"
-                                                />
-                                                Disponible para venta
-                                            </label>
-                                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.isPopular}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, isPopular: e.target.checked }))}
-                                                    className="rounded border-gray-300 dark:border-gray-600"
-                                                />
-                                                Producto popular
-                                            </label>
-                                        </div>
-                                    </CardContent>
-                                </Card>
 
                 </div>
             </BrandedModal>
@@ -816,6 +849,15 @@ export function ProductManagement() {
                                                             Editar
                                                         </Button>
                                                         <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-8 px-3 text-xs bg-empanada-golden/10 hover:bg-empanada-golden/20 text-empanada-golden border-empanada-golden/30"
+                                                            onClick={() => handleEditRecipe(product)}
+                                                        >
+                                                            <ChefHat className="w-3 h-3 mr-1" />
+                                                            Receta
+                                                        </Button>
+                                                        <Button
                                                             variant="destructive"
                                                             size="sm"
                                                             className="h-8 px-3 text-xs"
@@ -850,6 +892,176 @@ export function ProductManagement() {
                     product={editingProduct}
                     onClose={() => setEditingProduct(null)}
                 />
+            )}
+
+            {/* Modal de edición de receta */}
+            {editingRecipe && (
+                <BrandedModal
+                    isOpen={!!editingRecipe}
+                    onClose={handleCloseRecipeModal}
+                    title={`Editar Receta: ${editingRecipe.name}`}
+                    subtitle="Modifica los ingredientes y cantidades de esta empanada"
+                    icon={<ChefHat className="w-5 h-5 text-empanada-golden" />}
+                    maxWidth="max-w-2xl"
+                    footer={
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                variant="outline"
+                                onClick={handleCloseRecipeModal}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                onClick={handleSaveRecipe}
+                                className="bg-empanada-golden hover:bg-empanada-golden/90 text-white"
+                            >
+                                <Save className="w-4 h-4 mr-2" />
+                                Guardar Receta
+                            </Button>
+                        </div>
+                    }
+                >
+                    <div className="space-y-4">
+                        {/* Lista de ingredientes editables */}
+                        {editingIngredients.map((item, index) => (
+                            <div key={index} className="flex items-center gap-3 p-4 border rounded-lg">
+                                {/* Selector de ingrediente */}
+                                <div className="flex-1">
+                                    <select
+                                        value={item.ingredienteId}
+                                        onChange={(e) => handleIngredientChange(index, 'ingredienteId', e.target.value)}
+                                        className="w-full p-2 border rounded-md bg-background"
+                                    >
+                                        {inventario?.map(ingrediente => (
+                                            <option key={ingrediente.id} value={ingrediente.id}>
+                                                {ingrediente.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Cantidad */}
+                                <div className="w-24">
+                                    <Input
+                                        type="number"
+                                        value={item.cantidad}
+                                        onChange={(e) => handleIngredientChange(index, 'cantidad', parseFloat(e.target.value) || 0)}
+                                        min="0"
+                                        step="0.1"
+                                        className="text-center"
+                                    />
+                                </div>
+
+                                {/* Unidad */}
+                                <div className="w-20">
+                                    <Input
+                                        value={item.unidad}
+                                        onChange={(e) => handleIngredientChange(index, 'unidad', e.target.value)}
+                                        className="text-center text-sm"
+                                    />
+                                </div>
+
+                                {/* Botón eliminar */}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRemoveIngredient(index)}
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    <Minus className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        ))}
+
+                        {/* Botón añadir ingrediente o búsqueda inline */}
+                        {!showIngredientSearch ? (
+                            <Button
+                                variant="outline"
+                                onClick={handleAddIngredient}
+                                className="w-full border-dashed border-2 border-gray-300 hover:border-empanada-golden hover:bg-empanada-golden/5"
+                            >
+                                <Plus className="w-4 h-4 mr-2" />
+                                Añadir Ingrediente
+                            </Button>
+                        ) : (
+                            <div className="space-y-2">
+                                {/* Barra de búsqueda */}
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <Input
+                                        placeholder="Buscar ingredientes..."
+                                        value={ingredientSearchTerm}
+                                        onChange={(e) => setIngredientSearchTerm(e.target.value)}
+                                        className="pl-10 pr-10"
+                                        autoFocus
+                                    />
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={handleCancelIngredientSearch}
+                                        className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+
+                                {/* Lista de ingredientes filtrados */}
+                                <div className="max-h-40 overflow-y-auto space-y-1">
+                                    {inventario
+                                        ?.filter(ing =>
+                                            // Excluir ingredientes ya añadidos
+                                            !editingIngredients.some(editIng => editIng.ingredienteId === ing.id) &&
+                                            // Filtrar por término de búsqueda
+                                            ing.nombre.toLowerCase().includes(ingredientSearchTerm.toLowerCase())
+                                        )
+                                        .map(ingrediente => (
+                                            <div
+                                                key={ingrediente.id}
+                                                onClick={() => handleSelectIngredient(ingrediente)}
+                                                className="p-2 border rounded-md hover:bg-empanada-golden/10 hover:border-empanada-golden cursor-pointer transition-colors"
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <span className="font-medium text-sm text-gray-900 dark:text-white">
+                                                            {ingrediente.nombre}
+                                                        </span>
+                                                        <span className="text-xs text-gray-500 ml-2">
+                                                            {ingrediente.categoria}
+                                                        </span>
+                                                    </div>
+                                                    <Badge variant="outline" className="text-xs">
+                                                        {ingrediente.stock || 0}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+                                        )) || []
+                                    }
+                                </div>
+
+                                {/* Mensaje cuando no hay resultados */}
+                                {inventario?.filter(ing =>
+                                    !editingIngredients.some(editIng => editIng.ingredienteId === ing.id) &&
+                                    ing.nombre.toLowerCase().includes(ingredientSearchTerm.toLowerCase())
+                                ).length === 0 && (
+                                    <div className="text-center py-4 text-gray-500">
+                                        <Package className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                                        <p className="text-sm">
+                                            {ingredientSearchTerm ? 'No se encontraron ingredientes' : 'No hay ingredientes disponibles'}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {editingIngredients.length === 0 && (
+                            <div className="text-center py-8 text-gray-500">
+                                <ChefHat className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                                <p>No hay ingredientes en esta receta</p>
+                                <p className="text-sm">Añade ingredientes para comenzar</p>
+                            </div>
+                        )}
+                    </div>
+                </BrandedModal>
             )}
 
             {/* Modal Components */}

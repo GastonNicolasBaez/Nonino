@@ -10,12 +10,9 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
-<<<<<<< HEAD
 import logoNonino from '@/assets/logos/nonino.png';
 import sanMartinBgImage from '@/assets/images/SanMartin.jpg'
-=======
 import sanMartin2 from "@/assets/images/SanMartin2.jpg";
->>>>>>> ReparacionAcausaDelNegroSeverus
 
 export function HomePage() {
 

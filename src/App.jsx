@@ -49,6 +49,10 @@ import { BranchManagement } from "@/pages/admin/BranchManagement";
 import { DeliveryManagement } from "@/pages/admin/DeliveryManagement";
 import { ProductStockManagement } from "@/pages/admin/ProductStockManagement";
 import { ComboManagement } from "@/pages/admin/ComboManagement";
+import { MaterialManagement } from "@/pages/admin/MaterialManagement";
+import { MaterialStockManagement } from "@/pages/admin/MaterialStockManagement";
+import { MenuManagement } from "@/pages/admin/MenuManagement";
+import { MetricsManagement } from "@/pages/admin/MetricsManagement";
 import { AdminDataProvider } from "./context/AdminDataProvider";
 
 // Crear cliente de React Query
@@ -109,15 +113,21 @@ function App() {
                             >
                                 <Route index element={<AdminDashboard />} />
                                 <Route path="pedidos" element={<OrderManagement />} />
+                                <Route path="ordenes" element={<OrderManagement />} />
                                 <Route path="productos" element={<ProductManagement />} />
+                                <Route path="materiales" element={<MaterialManagement />} />
+                                <Route path="combos" element={<ComboManagement />} />
+                                <Route path="sucursal-menu" element={<MenuManagement />} />
                                 <Route path="productos-combos" element={<ComboManagement />} />
                                 <Route path="productos-sucursal" element={<ProductosPorSucursal />} />
                                 <Route path="sucursal" element={<BranchManagement />} />
                                 <Route path="sucursal-envios" element={<DeliveryManagement />} />
                                 <Route path="inventario" element={<InventoryManagement />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
+                                <Route path="inventario-materiales" element={<MaterialStockManagement />} />
                                 <Route path="inventario-receta" element={<RecipeManagement />} />
                                 <Route path="clientes" element={<CustomerManagement />} />
+                                <Route path="metricas" element={<MetricsManagement />} />
                                 <Route path="reportes" element={<ReportsPage />} />
                                 <Route path="configuracion" element={<SettingsPage />} />
                             </Route>

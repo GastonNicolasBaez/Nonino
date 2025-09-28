@@ -55,8 +55,7 @@ const AdminLayout = () => {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
-    const [branchesDropdownOpen, setBranchesDropdownOpen] = useState(false);
+    const [definitionsDropdownOpen, setDefinitionsDropdownOpen] = useState(false);
     const [inventoryDropdownOpen, setInventoryDropdownOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
@@ -114,28 +113,20 @@ const AdminLayout = () => {
         "ADMIN": [
             { name: "Dashboard", href: "/intranet/admin", icon: Home },
             {
-                name: "Pedidos",
-                href: "/intranet/admin/pedidos",
+                name: "Órdenes",
+                href: "/intranet/admin/ordenes",
                 icon: ShoppingCart,
                 badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
             },
             {
-                name: "Productos",
+                name: "Definiciones",
                 icon: Package,
                 hasDropdown: true,
                 dropdownItems: [
-                    { name: "Gestionar", href: "/intranet/admin/productos", icon: Package },
-                    { name: "Combos", href: "/intranet/admin/productos-combos", icon: ShoppingCart },
-                    { name: "Menú", href: "/intranet/admin/productos-sucursal", icon: Building2 }
-                ]
-            },
-            {
-                name: "Sucursal",
-                icon: Building2,
-                hasDropdown: true,
-                dropdownItems: [
-                    { name: "Gestionar", href: "/intranet/admin/sucursal", icon: Building2 },
-                    { name: "Envíos", href: "/intranet/admin/sucursal-envios", icon: Truck }
+                    { name: "Productos", href: "/intranet/admin/productos", icon: Package },
+                    { name: "Materiales", href: "/intranet/admin/materiales", icon: Archive },
+                    { name: "Combos", href: "/intranet/admin/combos", icon: ShoppingCart },
+                    { name: "Menú", href: "/intranet/admin/sucursal-menu", icon: Building2 }
                 ]
             },
             {
@@ -143,13 +134,12 @@ const AdminLayout = () => {
                 icon: Archive,
                 hasDropdown: true,
                 dropdownItems: [
-                    { name: "Gestionar", href: "/intranet/admin/inventario", icon: Archive },
                     { name: "Productos", href: "/intranet/admin/inventario-productos", icon: ShoppingCart },
-                    { name: "Receta", href: "/intranet/admin/inventario-receta", icon: Package }
+                    { name: "Materiales", href: "/intranet/admin/inventario-materiales", icon: Package }
                 ]
             },
             { name: "Clientes", href: "/intranet/admin/clientes", icon: Users },
-            { name: "Reportes", href: "/intranet/admin/reportes", icon: BarChart3 },
+            { name: "Métricas", href: "/intranet/admin/metricas", icon: BarChart3 },
             { name: "Configuración", href: "/intranet/admin/configuracion", icon: Settings },
         ],
         "LOCAL": [
@@ -200,16 +190,11 @@ const AdminLayout = () => {
 
     // Abrir/cerrar dropdowns basado en la ruta actual
     useEffect(() => {
-        if (location.pathname.includes('/productos')) {
-            setProductsDropdownOpen(true);
+        if (location.pathname.includes('/productos') || location.pathname.includes('/materiales') ||
+            location.pathname.includes('/combos') || location.pathname.includes('/sucursal-menu')) {
+            setDefinitionsDropdownOpen(true);
         } else {
-            setProductsDropdownOpen(false);
-        }
-
-        if (location.pathname.includes('/sucursal')) {
-            setBranchesDropdownOpen(true);
-        } else {
-            setBranchesDropdownOpen(false);
+            setDefinitionsDropdownOpen(false);
         }
 
         if (location.pathname.includes('/inventario')) {
@@ -222,12 +207,9 @@ const AdminLayout = () => {
     // Función simplificada para determinar si un item está activo
     const isItemActive = (item) => {
         if (item.hasDropdown) {
-            if (item.name === "Productos") {
-                // Para productos: activo solo si el dropdown está abierto
-                return productsDropdownOpen;
-            } else if (item.name === "Sucursal") {
-                // Para sucursal: activo solo si el dropdown está abierto
-                return branchesDropdownOpen;
+            if (item.name === "Definiciones") {
+                // Para definiciones: activo solo si el dropdown está abierto
+                return definitionsDropdownOpen;
             } else if (item.name === "Inventario") {
                 // Para inventario: activo solo si el dropdown está abierto
                 return inventoryDropdownOpen;
@@ -240,8 +222,9 @@ const AdminLayout = () => {
 
     // Función para determinar si otras secciones deben estar desactivadas
     const shouldDeactivateOthers = () => {
-        return productsDropdownOpen || location.pathname.includes('/productos') ||
-            branchesDropdownOpen || location.pathname.includes('/sucursal') ||
+        return definitionsDropdownOpen || location.pathname.includes('/productos') ||
+            location.pathname.includes('/materiales') || location.pathname.includes('/combos') ||
+            location.pathname.includes('/sucursal-menu') ||
             inventoryDropdownOpen || location.pathname.includes('/inventario');
     };
 
@@ -335,18 +318,12 @@ const AdminLayout = () => {
                                 <div className="space-y-1">
                                     <button
                                         onClick={() => {
-                                            if (item.name === "Productos") {
-                                                setProductsDropdownOpen(!productsDropdownOpen);
-                                                setBranchesDropdownOpen(false); // Cerrar los otros dropdowns
-                                                setInventoryDropdownOpen(false);
-                                            } else if (item.name === "Sucursal") {
-                                                setBranchesDropdownOpen(!branchesDropdownOpen);
-                                                setProductsDropdownOpen(false); // Cerrar los otros dropdowns
+                                            if (item.name === "Definiciones") {
+                                                setDefinitionsDropdownOpen(!definitionsDropdownOpen);
                                                 setInventoryDropdownOpen(false);
                                             } else if (item.name === "Inventario") {
                                                 setInventoryDropdownOpen(!inventoryDropdownOpen);
-                                                setProductsDropdownOpen(false); // Cerrar los otros dropdowns
-                                                setBranchesDropdownOpen(false);
+                                                setDefinitionsDropdownOpen(false);
                                             }
                                         }}
                                         className={`w-full flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item)
@@ -371,8 +348,7 @@ const AdminLayout = () => {
                                                         {item.badge}
                                                     </Badge>
                                                 )}
-                                                {((item.name === "Productos" && productsDropdownOpen) ||
-                                                    (item.name === "Sucursal" && branchesDropdownOpen) ||
+                                                {((item.name === "Definiciones" && definitionsDropdownOpen) ||
                                                     (item.name === "Inventario" && inventoryDropdownOpen)) ? (
                                                     <ChevronUp className="w-4 h-4" />
                                                 ) : (
@@ -388,8 +364,7 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {!sidebarCollapsed && ((item.name === "Productos" && productsDropdownOpen) ||
-                                        (item.name === "Sucursal" && branchesDropdownOpen) ||
+                                    {!sidebarCollapsed && ((item.name === "Definiciones" && definitionsDropdownOpen) ||
                                         (item.name === "Inventario" && inventoryDropdownOpen)) && (
                                             <div className="ml-4 space-y-1">
                                                 {item.dropdownItems.map((subItem) => (
@@ -414,8 +389,7 @@ const AdminLayout = () => {
                                     to={item.href}
                                     onClick={() => {
                                         // Cerrar dropdowns cuando hacemos click en otros elementos
-                                        setProductsDropdownOpen(false);
-                                        setBranchesDropdownOpen(false);
+                                        setDefinitionsDropdownOpen(false);
                                         setInventoryDropdownOpen(false);
                                     }}
                                     className={`relative flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item) && !shouldDeactivateOthers()
@@ -503,18 +477,12 @@ const AdminLayout = () => {
                                 <div className="space-y-1">
                                     <button
                                         onClick={() => {
-                                            if (item.name === "Productos") {
-                                                setProductsDropdownOpen(!productsDropdownOpen);
-                                                setBranchesDropdownOpen(false); // Cerrar los otros dropdowns
-                                                setInventoryDropdownOpen(false);
-                                            } else if (item.name === "Sucursal") {
-                                                setBranchesDropdownOpen(!branchesDropdownOpen);
-                                                setProductsDropdownOpen(false); // Cerrar los otros dropdowns
+                                            if (item.name === "Definiciones") {
+                                                setDefinitionsDropdownOpen(!definitionsDropdownOpen);
                                                 setInventoryDropdownOpen(false);
                                             } else if (item.name === "Inventario") {
                                                 setInventoryDropdownOpen(!inventoryDropdownOpen);
-                                                setProductsDropdownOpen(false); // Cerrar los otros dropdowns
-                                                setBranchesDropdownOpen(false);
+                                                setDefinitionsDropdownOpen(false);
                                             }
                                         }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item)
@@ -574,8 +542,7 @@ const AdminLayout = () => {
                                     onClick={() => {
                                         setSidebarOpen(false);
                                         // Cerrar dropdowns cuando hacemos click en otros elementos
-                                        setProductsDropdownOpen(false);
-                                        setBranchesDropdownOpen(false);
+                                        setDefinitionsDropdownOpen(false);
                                         setInventoryDropdownOpen(false);
                                     }}
                                     className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item) && !shouldDeactivateOthers()

@@ -22,13 +22,16 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminLogin } from "./pages/admin/AdminLogin";
 import { OrderManagement } from "./pages/admin/OrderManagement";
 import { ProductManagement } from "./pages/admin/ProductManagement";
-import { ProductosPorSucursal } from "./pages/admin/ProductosPorSucursal";
+import { MenuManagement } from "./pages/admin/MenuManagement";
 import { BranchManagement } from "./pages/admin/BranchManagement";
 import { DeliveryManagement } from "./pages/admin/DeliveryManagement";
-import { InventoryManagement } from "./pages/admin/InventoryManagement";
+import { MaterialManagement } from "./pages/admin/MaterialManagement";
+import { ComboManagement } from "./pages/admin/ComboManagement";
+import { MaterialStockManagement } from "./pages/admin/MaterialStockManagement";
+import { ProductStockManagement } from "./pages/admin/ProductStockManagement";
 import { RecipeManagement } from "./pages/admin/RecipeManagement";
 import { CustomerManagement } from "./pages/admin/CustomerManagement";
-import { ReportsPage } from "./pages/admin/ReportsPage";
+import { MetricsManagement } from "./pages/admin/MetricsManagement";
 import { SettingsPage } from "./pages/admin/SettingsPage";
 
 // Componentes de protección
@@ -122,12 +125,32 @@ export const router = createBrowserRouter([
         element: <OrderManagement />,
       },
       {
+        path: "ordenes",
+        element: <OrderManagement />,
+      },
+      {
         path: "productos",
         element: <ProductManagement />,
       },
       {
-        path: "productos-sucursal",
-        element: <ProductosPorSucursal />,
+        path: "materiales",
+        element: <MaterialManagement />,
+      },
+      {
+        path: "combos",
+        element: <ComboManagement />,
+      },
+      {
+        path: "sucursal-menu",
+        element: <MenuManagement />,
+      },
+      {
+        path: "inventario-productos",
+        element: <ProductStockManagement />,
+      },
+      {
+        path: "inventario-materiales",
+        element: <MaterialStockManagement />,
       },
       {
         path: "sucursal",
@@ -139,11 +162,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "inventario",
-        element: <InventoryManagement />,
+        element: <MaterialManagement />,
       },
       {
         path: "inventario-receta",
-        element: <InventoryManagement />,
+        element: <RecipeManagement />,
       },
       {
         path: "clientes",
@@ -151,7 +174,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "reportes",
-        element: <ReportsPage />,
+        element: <MetricsManagement />,
+      },
+      {
+        path: "metricas",
+        element: <MetricsManagement />,
       },
       {
         path: "configuracion",
@@ -191,15 +218,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "inventario",
-        element: <InventoryManagement />,
+        element: <MaterialManagement />,
       },
       {
         path: "inventario-receta",
-        element: <InventoryManagement />,
+        element: <RecipeManagement />,
       },
       {
         path: "reportes",
-        element: <ReportsPage />,
+        element: <MetricsManagement />,
       },
     ],
   },
@@ -223,11 +250,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "inventario",
-        element: <InventoryManagement />,
+        element: <MaterialManagement />,
       },
       {
         path: "inventario-receta",
-        element: <InventoryManagement />,
+        element: <RecipeManagement />,
       },
     ],
   },

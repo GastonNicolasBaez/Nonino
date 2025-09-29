@@ -194,7 +194,7 @@ export function AboutPage() {
       <div id="end-parallax" className="absolute" style={{ top: '200vh' }}></div>
 
       {/* Story Section */}
-      <section id="historia" className="py-8 sm:py-12 lg:py-16 bg-empanada-cream -mt-1">
+      <section id="historia" className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-empanada-medium to-empanada-light-gray -mt-1">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -247,7 +247,7 @@ export function AboutPage() {
       </section>
 
       {/* Separator Section - Story to Values */}
-      <section className="py-4 bg-empanada-cream relative overflow-hidden">
+      <section className="py-4 bg-gradient-to-b from-empanada-light-gray to-empanada-medium relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-4">
@@ -266,7 +266,7 @@ export function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section id="valores" className="py-8 sm:py-12 lg:py-16 bg-empanada-cream relative">
+      <section id="valores" className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-empanada-medium to-empanada-dark relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -274,10 +274,10 @@ export function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
               Nuestros Valores
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
               Los principios que guían cada día nuestro trabajo y nos conectan con nuestros clientes
             </p>
           </motion.div>
@@ -307,11 +307,11 @@ export function AboutPage() {
           </div>
         </div>
         {/* Degradado de transición hacia la siguiente sección */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-empanada-cream"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-empanada-dark"></div>
       </section>
 
       {/* Separator Section - Values to Timeline */}
-      <section className="py-4 bg-empanada-cream relative overflow-hidden">
+      <section className="py-4 bg-gradient-to-b from-empanada-dark to-empanada-darker relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-4">
@@ -330,7 +330,7 @@ export function AboutPage() {
       </section>
 
       {/* Timeline Section */}
-      <section id="trayectoria" className="py-6 sm:py-8 lg:py-10 bg-empanada-cream">
+      <section id="trayectoria" className="py-6 sm:py-8 lg:py-10 bg-gradient-to-b from-empanada-darker to-black">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -338,10 +338,10 @@ export function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
               Nuestra Trayectoria
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-300">
               Los momentos más importantes de nuestra historia
             </p>
           </motion.div>
@@ -419,7 +419,7 @@ export function AboutPage() {
       </section>
 
       {/* Separator Section */}
-      <section className="py-4 bg-empanada-cream relative overflow-hidden">
+      <section className="py-4 bg-black relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-4">
@@ -438,7 +438,7 @@ export function AboutPage() {
       </section>
 
       {/* Team Section */}
-      <section id="equipo" className="py-6 sm:py-8 lg:py-12 bg-empanada-cream relative">
+      <section id="equipo" className="py-6 sm:py-8 lg:py-12 bg-black relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -446,10 +446,10 @@ export function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
               Nuestro Equipo
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-300">
               Las personas que hacen posible cada empanada
             </p>
           </motion.div>

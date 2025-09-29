@@ -38,11 +38,10 @@ export function PromotionsPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-empanada-light-gray">
       {/* Hero Section */}
-      <section className="bg-empanada-dark text-white py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-empanada-golden/20 to-empanada-crust/20"></div>
-        <div className="relative container mx-auto px-4 text-center">
+      <section className="bg-gradient-to-b from-black via-empanada-darker to-empanada-medium text-white py-20">
+        <div className="container mx-auto px-4 text-center">
           <TextAnimate
             animation="slideUp"
             by="word"
@@ -62,7 +61,7 @@ export function PromotionsPage() {
       </section>
 
       {/* Promotions Grid */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gradient-to-b from-empanada-medium to-empanada-light-gray">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {promotions.map((promotion, index) => (
@@ -139,7 +138,7 @@ export function PromotionsPage() {
       </section>
 
       {/* Promo Codes */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-b from-empanada-light-gray to-empanada-medium/40">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -147,10 +146,10 @@ export function PromotionsPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
               Códigos de Descuento
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-300">
               Usa estos códigos en tu próxima compra online
             </p>
           </motion.div>
@@ -180,7 +179,7 @@ export function PromotionsPage() {
                     <div className="text-2xl font-bold text-empanada-golden mb-2">
                       {promo.discount}
                     </div>
-                    <p className="text-sm text-gray-600">{promo.description}</p>
+                    <p className="text-sm text-gray-300">{promo.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>

@@ -38,12 +38,14 @@ import { useAdminData } from "@/context/AdminDataProvider";
 import { formatPrice } from "@/lib/utils";
 
 export function ProductStockManagement() {
-  const { sucursalSeleccionada } = useAdminData();
+  const { 
+    inventarioProductosSucursal: products,
+    sucursalSeleccionada,
+    adminDataLoading: loading,
+ } = useAdminData();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Hooks para modales
   const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -58,86 +60,6 @@ export function ProductStockManagement() {
     { value: "Otros", label: "Otros" }
   ];
 
-  // Mock data para productos
-  const mockProducts = [
-    {
-      id: "prod-001",
-      name: "Empanada de Carne",
-      category: "Empanadas",
-      currentStock: 45,
-      minStock: 10,
-      maxStock: 100,
-      unit: "unidades",
-      cost: 800,
-      price: 1200,
-      lastUpdated: "2024-01-15T14:30:00Z",
-      status: "good",
-      image: null
-    },
-    {
-      id: "prod-002",
-      name: "Empanada de Pollo",
-      category: "Empanadas",
-      currentStock: 8,
-      minStock: 15,
-      maxStock: 80,
-      unit: "unidades",
-      cost: 750,
-      price: 1100,
-      lastUpdated: "2024-01-15T12:15:00Z",
-      status: "low",
-      image: null
-    },
-    {
-      id: "prod-003",
-      name: "Empanada de Jamón y Queso",
-      category: "Empanadas",
-      currentStock: 25,
-      minStock: 10,
-      maxStock: 60,
-      unit: "unidades",
-      cost: 700,
-      price: 1000,
-      lastUpdated: "2024-01-15T10:45:00Z",
-      status: "good",
-      image: null
-    },
-    {
-      id: "prod-004",
-      name: "Empanada Vegetariana",
-      category: "Empanadas",
-      currentStock: 3,
-      minStock: 8,
-      maxStock: 40,
-      unit: "unidades",
-      cost: 650,
-      price: 950,
-      lastUpdated: "2024-01-14T16:20:00Z",
-      status: "low",
-      image: null
-    },
-    {
-      id: "prod-005",
-      name: "Empanada Caprese",
-      category: "Empanadas",
-      currentStock: 18,
-      minStock: 8,
-      maxStock: 50,
-      unit: "unidades",
-      cost: 720,
-      price: 1050,
-      lastUpdated: "2024-01-15T09:30:00Z",
-      status: "good",
-      image: null
-    }
-  ];
-
-  // Cargar datos mock al inicializar
-  useEffect(() => {
-    setProducts(mockProducts);
-    setLoading(false);
-  }, []);
-
   // Filtrar productos
   const filteredProducts = products.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -146,38 +68,38 @@ export function ProductStockManagement() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleDeleteProduct = (productId) => {
-    openConfirmModal({
-      title: "Eliminar Producto",
-      message: "¿Estás seguro de que quieres eliminar este producto del inventario?",
-      type: "danger",
-      confirmText: "Eliminar",
-      onConfirm: () => {
-        setProducts(prev => prev.filter(item => item.id !== productId));
-        toast.success("Producto eliminado correctamente");
-      }
-    });
-  };
+//   const handleDeleteProduct = (productId) => {
+//     openConfirmModal({
+//       title: "Eliminar Producto",
+//       message: "¿Estás seguro de que quieres eliminar este producto del inventario?",
+//       type: "danger",
+//       confirmText: "Eliminar",
+//       onConfirm: () => {
+//         setProducts(prev => prev.filter(item => item.id !== productId));
+//         toast.success("Producto eliminado correctamente");
+//       }
+//     });
+//   };
 
-  const handleUpdateProductStock = (productId, currentStock) => {
-    openStockModal({
-      title: "Actualizar Stock de Producto",
-      currentStock,
-      onConfirm: (newStock) => {
-        setProducts(prev => prev.map(item =>
-          item.id === productId
-            ? {
-                ...item,
-                currentStock: newStock,
-                status: newStock <= item.minStock ? 'low' : 'good',
-                lastUpdated: new Date().toISOString()
-              }
-            : item
-        ));
-        toast.success("Stock de producto actualizado correctamente");
-      }
-    });
-  };
+//   const handleUpdateProductStock = (productId, currentStock) => {
+//     openStockModal({
+//       title: "Actualizar Stock de Producto",
+//       currentStock,
+//       onConfirm: (newStock) => {
+//         setProducts(prev => prev.map(item =>
+//           item.id === productId
+//             ? {
+//                 ...item,
+//                 currentStock: newStock,
+//                 status: newStock <= item.minStock ? 'low' : 'good',
+//                 lastUpdated: new Date().toISOString()
+//               }
+//             : item
+//         ));
+//         toast.success("Stock de producto actualizado correctamente");
+//       }
+//     });
+//   };
 
   // Preparar datos para StatsCards
   const statsData = [
@@ -388,7 +310,7 @@ export function ProductStockManagement() {
                           </div>
                         </td>
                         <td className="p-2 w-24 min-w-24">
-                          <div className="flex gap-1">
+                          {/* <div className="flex gap-1">
                             <Button
                               variant="outline"
                               size="sm"
@@ -405,7 +327,7 @@ export function ProductStockManagement() {
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
-                          </div>
+                          </div> */}
                         </td>
                       </tr>
                     );

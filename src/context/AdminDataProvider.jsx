@@ -32,7 +32,16 @@ import {
     getAdminInventoryMaterialsQueryFunction,
     postAdminInventoryAddMaterialQueryFunction,
     postAdminInventoryAssignRecipeQueryFunction,
-    getAdminInventoryGetProductRecipeQueryFunction
+    getAdminInventoryGetProductRecipeQueryFunction,
+
+    getAdminInventoryMaterialsOnStoreQueryFunction,
+    getAdminInventoryProductsOnStoreQueryFunction,
+
+    postAdminInventoryInboundQueryFunction,
+
+    postAdminInventoryMakeProductsQueryFunction,
+    postAdminInventoryTransferProductsQueryFunction,
+    postAdminInventoryAdjustProductsQueryFunction,
 } from '@/config/apiInventoryQueryFunctions';
 
 import { useSession } from '@/context/SessionProvider';
@@ -55,6 +64,8 @@ export const AdminDataProvider = ({ children }) => {
     const [combosSucursal, setCombosSucursal] = useState([]);
     const [deliverySucursal, setDeliverySucursal] = useState([]);
     const [horariosSucursal, setHorariosSucursal] = useState([]);
+    const [inventarioMaterialesSucursal, setInventarioMaterialesSucursal] = useState([]);
+    const [inventarioProductosSucursal, setInventarioProductosSucursal] = useState([]);
 
     //cargar información de admin al montar la vista de administrador
     useEffect(() => {
@@ -71,10 +82,12 @@ export const AdminDataProvider = ({ children }) => {
     //cargar información de sucursal cuando cambie
     useEffect(() => {
         if (sucursalSeleccionada && session.userData) {
+            const at = session.userData?.accessToken;
+
             // zonas de delivery
             callDeliveryZones({
                 _storeId: sucursalSeleccionada,
-                _accessToken: session.userData.accessToken,
+                _accessToken: at,
             });
 
             // productos de sucursal
@@ -83,8 +96,18 @@ export const AdminDataProvider = ({ children }) => {
             // horarios
             callSchedule({
                 _storeId: sucursalSeleccionada,
-                _accessToken: session.userData.accessToken,
-            })
+                _accessToken: at,
+            });
+
+            //inventario de sucursal
+            callInventarioMaterialesSucursal({
+                _storeId: sucursalSeleccionada,
+                _accessToken: at,
+            });
+            callInventarioProductosSucursal({
+                _storeId: sucursalSeleccionada,
+                _accessToken: at,
+            });
         }
     }, [sucursalSeleccionada]);
 
@@ -187,11 +210,11 @@ export const AdminDataProvider = ({ children }) => {
     });
 
     // llamar receta del producto
-const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoading } = useMutation({
+    const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoading } = useMutation({
         mutationKey: ['adminRecetaDelProducto'],
         mutationFn: getAdminInventoryGetProductRecipeQueryFunction,
     });
-    
+
     // ---------- SUCURSALES
     // listar
     const { mutateAsync: callSucursales, isPending: callSucursalesLoading } = useMutation({
@@ -319,6 +342,57 @@ const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoad
         mutationFn: postAdminInventoryAddMaterialQueryFunction,
     });
 
+    // inventario materiales sucursal
+    const { mutateAsync: callInventarioMaterialesSucursal, isPending: callInventarioMaterialesSucursalLoading } = useMutation({
+        mutationKey: ['adminCallInventarioMaterialesSucursal'],
+        mutationFn: getAdminInventoryMaterialsOnStoreQueryFunction,
+        onSuccess: (data) => {
+            setInventarioMaterialesSucursal(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setInventarioMaterialesSucursal([]);
+        }
+    });
+
+    // inventario productos sucursal
+    const { mutateAsync: callInventarioProductosSucursal, isPending: callInventarioProductosSucursalLoading } = useMutation({
+        mutationKey: ['adminCallInventarioProductosSucursal'],
+        mutationFn: getAdminInventoryProductsOnStoreQueryFunction,
+        onSuccess: (data) => {
+            setInventarioProductosSucursal(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setInventarioProductosSucursal([]);
+        }
+    });
+
+    // inbound
+    const { mutateAsync: callInbound, isPending: callInboundLoading } = useMutation({
+        mutationKey: ['adminInbound'],
+        mutationFn: postAdminInventoryInboundQueryFunction,
+    });
+
+    // ---------- FABRICA
+
+    // make
+    const { mutateAsync: callMakeProducto, isPending: callMakeProductoLoading } = useMutation({
+        mutationKey: ['adminMakeProducto'],
+        mutationFn: postAdminInventoryMakeProductsQueryFunction,
+    });
+
+    // transfer
+    const { mutateAsync: callTransferProducto, isPending: callTransferProductoLoading } = useMutation({
+        mutationKey: ['adminTransferProducto'],
+        mutationFn: postAdminInventoryTransferProductsQueryFunction,
+    });
+
+    // adjust
+    const { mutateAsync: callAdjustProducto, isPending: callAdjustProductoLoading } = useMutation({
+        mutationKey: ['adminAdjustProducto'],
+        mutationFn: postAdminInventoryAdjustProductsQueryFunction,
+    });
 
 
 
@@ -337,6 +411,8 @@ const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoad
         console.log('COMBOS SUCURSAL:', combosSucursal);
         console.log('DELIVERY SUCURSAL:', deliverySucursal);
         console.log('HORARIOS SUCURSAL:', horariosSucursal);
+        console.log('INVENTARIO MATERIALES SUCURSAL:', inventarioMaterialesSucursal);
+        console.log('INVENTARIO PRODUCTOS SUCURSAL:', inventarioProductosSucursal);
     }
 
     //
@@ -359,10 +435,16 @@ const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoad
         callUpdateScheduleLoading ||
         callMaterialesLoading ||
         callCrearMaterialLoading ||
-        callCombosLoading || 
-        callCrearComboLoading || 
+        callCombosLoading ||
+        callCrearComboLoading ||
         callCrearYAsignarRecetaLoading ||
-        callBorrarComboLoading;
+        callBorrarComboLoading ||
+        callInventarioMaterialesSucursalLoading ||
+        callInventarioProductosSucursalLoading || 
+        callMakeProductoLoading || 
+        callTransferProductoLoading ||
+        callAdjustProductoLoading ||
+        callInboundLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -379,9 +461,21 @@ const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoad
             deliverySucursal,
             horariosSucursal,
 
+            inventarioMaterialesSucursal,
+            inventarioProductosSucursal,
+
             showDebugStateInfo,
 
             adminDataLoading,
+
+            callInventarioMaterialesSucursal,
+            callInventarioProductosSucursal,
+
+            callInbound,
+
+            callMakeProducto,
+            callTransferProducto,
+            callAdjustProducto,
 
             callCombos,
             callCrearCombo,

@@ -49,7 +49,6 @@ import { useSession } from "@/context/SessionProvider";
 
 // UTILIDADES Y SERVICIOS
 import { formatPrice } from "@/lib/utils";
-import { generateProductsReportPDF, downloadPDF } from "@/services/pdfService";
 import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 
 // ------------------ IMPORT ------------------ //
@@ -375,40 +374,40 @@ export function ProductManagement() {
         setIngredientSearchTerm("");
     };
 
-    const handleExportProducts = () => {
-        try {
-            const stats = {
-                total: productStats.total,
-                available: productStats.available,
-                outOfStock: productStats.outOfStock,
-                lowStock: productStats.lowStock
-            };
+    // const handleExportProducts = () => {
+    //     try {
+    //         const stats = {
+    //             total: productStats.total,
+    //             available: productStats.available,
+    //             outOfStock: productStats.outOfStock,
+    //             lowStock: productStats.lowStock
+    //         };
 
-            const doc = generateProductsReportPDF(filteredProducts, stats);
-            const filename = `reporte-productos-${new Date().toISOString().split('T')[0]}.pdf`;
-            downloadPDF(doc, filename);
+    //         const doc = generateProductsReportPDF(filteredProducts, stats);
+    //         const filename = `reporte-productos-${new Date().toISOString().split('T')[0]}.pdf`;
+    //         downloadPDF(doc, filename);
 
-            toast.success('Reporte de productos exportado correctamente');
-        } catch (error) {
-            console.error('Error generando PDF:', error);
-            toast.error('Error al generar el PDF. Inténtalo de nuevo.');
-        }
-    };
+    //         toast.success('Reporte de productos exportado correctamente');
+    //     } catch (error) {
+    //         console.error('Error generando PDF:', error);
+    //         toast.error('Error al generar el PDF. Inténtalo de nuevo.');
+    //     }
+    // };
 
-    const handleImportProducts = () => {
-        toast.info("Funcionalidad de importación próximamente");
-    };
+    // const handleImportProducts = () => {
+    //     toast.info("Funcionalidad de importación próximamente");
+    // };
 
-    const handleUpdateStock = (productId) => {
-        const product = products.find(p => p.id === productId);
-        openStockModal({
-            productName: product?.name || 'Producto',
-            currentStock: product?.stock || 0,
-            onSave: (newStock) => {
-                updateStock(productId, newStock);
-            }
-        });
-    };
+    // const handleUpdateStock = (productId) => {
+    //     const product = products.find(p => p.id === productId);
+    //     openStockModal({
+    //         productName: product?.name || 'Producto',
+    //         currentStock: product?.stock || 0,
+    //         onSave: (newStock) => {
+    //             updateStock(productId, newStock);
+    //         }
+    //     });
+    // };
 
     // Preparar datos para StatsCards - críticas primero, resto neutras
     const statsData = [
@@ -866,6 +865,7 @@ export function ProductManagement() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
+                                                            disabled
                                                             className="h-8 px-3 text-xs bg-empanada-golden/10 hover:bg-empanada-golden/20 text-empanada-golden border-empanada-golden/30"
                                                             onClick={() => handleEditRecipe(product)}
                                                         >

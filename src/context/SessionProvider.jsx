@@ -13,7 +13,7 @@ const csrfLocalStorageKeyName = 'noninoSysCsrf';
 // integrar dependencia con el rol
 
 const userPrivilegesByEmail = {
-    'admin@nonino': { role: 'ADMIN', sucursal: '' },
+    'admin@nonino': { role: 'ADMIN', sucursal: '', },
     'fabrica@nonino': { role: 'FABRICA', sucursal: 10 },
     'local1@nonino': { role: 'LOCAL', sucursal: 1 },
     'local2@nonino': { role: 'LOCAL', sucursal: 1 },

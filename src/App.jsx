@@ -39,12 +39,9 @@ import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { AdminLogin } from "@/pages/admin/AdminLogin";
 import { OrderManagement } from "@/pages/admin/OrderManagement";
 import { ProductManagement } from "@/pages/admin/ProductManagement";
-import { InventoryManagement } from "@/pages/admin/InventoryManagement";
 import { RecipeManagement } from "@/pages/admin/RecipeManagement";
 import { CustomerManagement } from "@/pages/admin/CustomerManagement";
-import { ReportsPage } from "@/pages/admin/ReportsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
-import { ProductosPorSucursal } from "@/pages/admin/ProductosPorSucursal";
 import { BranchManagement } from "@/pages/admin/BranchManagement";
 import { DeliveryManagement } from "@/pages/admin/DeliveryManagement";
 import { ProductStockManagement } from "@/pages/admin/ProductStockManagement";
@@ -112,24 +109,18 @@ function App() {
                                 }
                             >
                                 <Route index element={<AdminDashboard />} />
-                                <Route path="pedidos" element={<OrderManagement />} />
                                 <Route path="ordenes" element={<OrderManagement />} />
                                 <Route path="menu" element={<MenuManagement />} />
                                 <Route path="productos" element={<ProductManagement />} />
                                 <Route path="materiales" element={<MaterialManagement />} />
                                 <Route path="combos" element={<ComboManagement />} />
                                 <Route path="sucursal-menu" element={<MenuManagement />} />
-                                <Route path="productos-combos" element={<ComboManagement />} />
-                                <Route path="productos-sucursal" element={<ProductosPorSucursal />} />
-                                <Route path="sucursal" element={<BranchManagement />} />
+                                <Route path="sucursal-configurar" element={<BranchManagement />} />
                                 <Route path="sucursal-envios" element={<DeliveryManagement />} />
-                                <Route path="inventario" element={<InventoryManagement />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
                                 <Route path="inventario-materiales" element={<MaterialStockManagement />} />
-                                <Route path="inventario-receta" element={<RecipeManagement />} />
                                 <Route path="clientes" element={<CustomerManagement />} />
                                 <Route path="metricas" element={<MetricsManagement />} />
-                                <Route path="reportes" element={<ReportsPage />} />
                                 <Route path="configuracion" element={<SettingsPage />} />
                             </Route>
 
@@ -148,13 +139,12 @@ function App() {
                                 }
                             >
                                 <Route index element={<AdminDashboard />} />
-                                <Route path="pedidos" element={<OrderManagement />} />
+                                <Route path="ordenes" element={<OrderManagement />} />
                                 <Route path="sucursal" element={<BranchManagement />} />
                                 <Route path="sucursal-envios" element={<DeliveryManagement />} />
-                                <Route path="inventario" element={<InventoryManagement />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
                                 <Route path="inventario-receta" element={<RecipeManagement />} />
-                                <Route path="reportes" element={<ReportsPage />} />
+                                <Route path="metricas" element={<MetricsManagement />} />
                             </Route>
 
                             {/* FABRICA */}
@@ -172,7 +162,6 @@ function App() {
                                 }
                             >
                                 <Route index element={<AdminDashboard />} />
-                                <Route path="inventario" element={<InventoryManagement />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
                                 <Route path="inventario-receta" element={<RecipeManagement />} />
                             </Route>

@@ -38,12 +38,14 @@ import { useAdminData } from "@/context/AdminDataProvider";
 import { formatPrice } from "@/lib/utils";
 
 export function MaterialStockManagement() {
-  const { sucursalSeleccionada } = useAdminData();
+  const { 
+    inventarioMaterialesSucursal: materials,
+    sucursalSeleccionada,
+    adminDataLoading: loading,
+ } = useAdminData();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [materials, setMaterials] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Hooks para modales
   const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -60,86 +62,6 @@ export function MaterialStockManagement() {
     { value: "Otros", label: "Otros" }
   ];
 
-  // Mock data para materiales
-  const mockMaterials = [
-    {
-      id: "mat-001",
-      name: "Harina de Trigo",
-      category: "Harinas",
-      currentStock: 50,
-      minStock: 10,
-      maxStock: 100,
-      unit: "kg",
-      cost: 150,
-      price: 0, // Los materiales no tienen precio de venta
-      lastUpdated: "2024-01-15T14:30:00Z",
-      status: "good",
-      image: null
-    },
-    {
-      id: "mat-002",
-      name: "Carne Molida",
-      category: "Carnes",
-      currentStock: 8,
-      minStock: 15,
-      maxStock: 50,
-      unit: "kg",
-      cost: 8500,
-      price: 0,
-      lastUpdated: "2024-01-15T12:15:00Z",
-      status: "low",
-      image: null
-    },
-    {
-      id: "mat-003",
-      name: "Queso Mozzarella",
-      category: "Lácteos",
-      currentStock: 12,
-      minStock: 5,
-      maxStock: 30,
-      unit: "kg",
-      cost: 4200,
-      price: 0,
-      lastUpdated: "2024-01-15T10:45:00Z",
-      status: "good",
-      image: null
-    },
-    {
-      id: "mat-004",
-      name: "Cebolla",
-      category: "Vegetales",
-      currentStock: 3,
-      minStock: 8,
-      maxStock: 25,
-      unit: "kg",
-      cost: 300,
-      price: 0,
-      lastUpdated: "2024-01-14T16:20:00Z",
-      status: "low",
-      image: null
-    },
-    {
-      id: "mat-005",
-      name: "Aceite de Girasol",
-      category: "Otros",
-      currentStock: 6,
-      minStock: 3,
-      maxStock: 20,
-      unit: "litros",
-      cost: 850,
-      price: 0,
-      lastUpdated: "2024-01-15T09:30:00Z",
-      status: "good",
-      image: null
-    }
-  ];
-
-  // Cargar datos mock al inicializar
-  useEffect(() => {
-    setMaterials(mockMaterials);
-    setLoading(false);
-  }, []);
-
   // Filtrar materiales
   const filteredMaterials = materials.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -148,18 +70,18 @@ export function MaterialStockManagement() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleDeleteMaterial = (materialId) => {
-    openConfirmModal({
-      title: "Eliminar Material",
-      message: "¿Estás seguro de que quieres eliminar este material del inventario?",
-      type: "danger",
-      confirmText: "Eliminar",
-      onConfirm: () => {
-        setMaterials(prev => prev.filter(item => item.id !== materialId));
-        toast.success("Material eliminado correctamente");
-      }
-    });
-  };
+//   const handleDeleteMaterial = (materialId) => {
+//     openConfirmModal({
+//       title: "Eliminar Material",
+//       message: "¿Estás seguro de que quieres eliminar este material del inventario?",
+//       type: "danger",
+//       confirmText: "Eliminar",
+//       onConfirm: () => {
+//         setMaterials(prev => prev.filter(item => item.id !== materialId));
+//         toast.success("Material eliminado correctamente");
+//       }
+//     });
+//   };
 
   const handleUpdateMaterialStock = (materialId, currentStock) => {
     openStockModal({
@@ -386,14 +308,14 @@ export function MaterialStockManagement() {
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
-                            <Button
+                            {/* <Button
                               variant="destructive"
                               size="sm"
                               onClick={() => handleDeleteMaterial(item.id)}
                               className="p-2 min-w-8 h-8"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </td>
                       </tr>

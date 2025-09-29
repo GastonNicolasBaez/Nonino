@@ -8,6 +8,7 @@ import {
     getPublicStoresQueryFunction,
     getPublicProductosQueryFunction,
     getPublicCombosQueryFunction,
+    getPublicCompanyInfoQueryFunction
 } from '@/config/apiPublicQueryFunctions';
 
 const PublicDataContext = createContext();
@@ -21,6 +22,7 @@ export const PublicDataProvider = ({ children }) => {
     const [categorias, setCategorias] = useState([]);
     const [sucursales, setSucursales] = useState([]);
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState();
+    const [companyInfo, setCompanyInfo] = useState([]);
 
     // sucursales
     const { mutateAsync: callPublicStores, isPending: callPublicStoresLoading } = useMutation({
@@ -87,6 +89,17 @@ export const PublicDataProvider = ({ children }) => {
         }
     });
 
+    const { mutateAsync: callPublicCompanyInfo, isPending: callPublicCompanyInfoLoading } = useMutation({
+        mutationKey: ['publicCompanyInfo'],
+        mutationFn: getPublicCompanyInfoQueryFunction,
+        onSuccess: (data) => {
+            setCompanyInfo(data);
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
     useEffect(() => {
         if (sucursalSeleccionada) {
             callPublicCatalog(sucursalSeleccionada);
@@ -97,13 +110,15 @@ export const PublicDataProvider = ({ children }) => {
         callPublicStores();
         callPublicProductos();
         callPublicCombos();
+        callPublicCompanyInfo();
     }, []);
 
     const publicDataLoading =
         callPublicCatalogLoading ||
         callPublicStoresLoading ||
         callPublicProductosLoading ||
-        callPublicCombosLoading;
+        callPublicCombosLoading ||
+        callPublicCompanyInfoLoading;
 
     return (
         <PublicDataContext.Provider value={{
@@ -113,6 +128,7 @@ export const PublicDataProvider = ({ children }) => {
             sucursalSeleccionada,
             productosTodos,
             combosTodos,
+            companyInfo,
             setSucursalSeleccionada,
 
             publicDataLoading,

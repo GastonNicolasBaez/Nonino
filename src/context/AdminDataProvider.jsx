@@ -24,6 +24,9 @@ import {
     deleteAdminStoresDeleteDeliveryZoneQueryFunction,
     putAdminStoresUpdateScheduleZoneQueryFunction,
     getAdminStoresScheduleQueryFunction,
+
+    getAdminStoresCompanyInfoQueryFunction,
+    putAdminStoresUpdateCompanyInfoQueryFunction,
 } from '@/config/apiStoresQueryFunctions';
 import {
     getPublicCatalogQueryFunction,
@@ -66,6 +69,7 @@ export const AdminDataProvider = ({ children }) => {
     const [horariosSucursal, setHorariosSucursal] = useState([]);
     const [inventarioMaterialesSucursal, setInventarioMaterialesSucursal] = useState([]);
     const [inventarioProductosSucursal, setInventarioProductosSucursal] = useState([]);
+    const [companyInfo, setCompanyInfo] = useState([]);
 
     //cargar información de admin al montar la vista de administrador
     useEffect(() => {
@@ -375,7 +379,6 @@ export const AdminDataProvider = ({ children }) => {
     });
 
     // ---------- FABRICA
-
     // make
     const { mutateAsync: callMakeProducto, isPending: callMakeProductoLoading } = useMutation({
         mutationKey: ['adminMakeProducto'],
@@ -394,7 +397,25 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminInventoryAdjustProductsQueryFunction,
     });
 
+    // ---------- COMPANY INFO
+    // get
+const { mutateAsync: callCompanyInfo, isPending: callCompanyInfoLoading } = useMutation({
+        mutationKey: ['adminCallCompanyInfo'],
+        mutationFn: getAdminStoresCompanyInfoQueryFunction,
+        onSuccess: (data) => {
+            setCompanyInfo(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setCompanyInfo([]);
+        }
+    });
 
+    // update
+    const { mutateAsync: callActualizarCompanyInfo, isPending: callActualizarCompanyInfoLoading } = useMutation({
+        mutationKey: ['adminActualizarCompanyInfo'],
+        mutationFn: putAdminStoresUpdateCompanyInfoQueryFunction,
+    });
 
     //
 
@@ -405,6 +426,7 @@ export const AdminDataProvider = ({ children }) => {
         console.log('SUCURSALES:', sucursales);
         console.log('MATERIALES:', materiales);
         console.log('COMBOS:', combos);
+        console.log('COMPANY INFO:', companyInfo);
         console.log('--- --- ---');
         console.log('SUCURSAL SELECCIONADA:', sucursalSeleccionada);
         console.log('PRODUCTOS SUCURSAL:', productosSucursal);
@@ -444,7 +466,9 @@ export const AdminDataProvider = ({ children }) => {
         callMakeProductoLoading || 
         callTransferProductoLoading ||
         callAdjustProductoLoading ||
-        callInboundLoading;
+        callInboundLoading ||
+        callCompanyInfoLoading ||
+        callActualizarCompanyInfoLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -467,6 +491,9 @@ export const AdminDataProvider = ({ children }) => {
             showDebugStateInfo,
 
             adminDataLoading,
+
+            callCompanyInfo,
+            callActualizarCompanyInfo,
 
             callInventarioMaterialesSucursal,
             callInventarioProductosSucursal,

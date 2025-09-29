@@ -21,3 +21,8 @@ export const getPublicCombosQueryFunction = async () => {
     const response = await axios.get(`${ENDPOINTS.catalog}/public/catalog/combos`);
     return await response.data;
 }
+
+export const getPublicCompanyInfoQueryFunction = async () => {
+    const response = await axios.get(`${ENDPOINTS.stores}/public/company`);
+    return await response.data;
+}

@@ -146,3 +146,36 @@ export const putAdminStoresUpdateScheduleZoneQueryFunction = async ({_storeId, _
     const response = await axios.put(`${ENDPOINTS.stores}/admin/stores/${_storeId}/opening-hours`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
+
+// ---------- compañia
+// get
+export const getAdminStoresCompanyInfoQueryFunction = async (_accessToken) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.get(`${ENDPOINTS.stores}/admin/company`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// put
+export const putAdminStoresUpdateCompanyInfoQueryFunction = async ({_companyInfo, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _companyInfo,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.put(`${ENDPOINTS.stores}/admin/company`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}

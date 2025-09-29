@@ -25,7 +25,7 @@ import { formatPrice } from "@/lib/utils";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
 import { Portal } from "@/components/common/Portal";
-import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
+import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter} from "@/components/branding";
 import { toast } from "sonner";
 
 import { useAdminData } from "@/context/AdminDataProvider";

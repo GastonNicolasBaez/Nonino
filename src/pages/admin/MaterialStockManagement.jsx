@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Portal } from "@/components/common/Portal";
-import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
+import { SectionHeader, StatsCards, CustomSelect, EmptyState } from "@/components/branding";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
 
@@ -40,7 +40,7 @@ import { formatPrice } from "@/lib/utils";
 export function MaterialStockManagement() {
   const { 
     inventarioMaterialesSucursal: materials,
-    sucursalSeleccionada,
+    sucursalSeleccionada: selectedStore,
     adminDataLoading: loading,
  } = useAdminData();
 
@@ -168,7 +168,7 @@ export function MaterialStockManagement() {
       {/* Header usando SectionHeader */}
       <SectionHeader
         title="Stock de Materiales"
-        subtitle={`Gestiona el inventario de materias primas${sucursalSeleccionada ? ` - ${sucursalSeleccionada.nombre}` : ''}`}
+        subtitle={`Gestiona el inventario de materias primas${selectedStore ? ` - ${selectedStore}` : ''}`}
         icon={<Package className="w-6 h-6" />}
         actions={headerActions}
       />
@@ -176,7 +176,16 @@ export function MaterialStockManagement() {
       {/* Stats usando StatsCards */}
       <StatsCards stats={statsData} />
 
+      {/* Mensaje cuando no hay sucursal seleccionada */}
+            {!selectedStore && (
+                <EmptyState
+                    title="Selecciona una Sucursal"
+                    subtitle="Elige una sucursal para comenzar a gestionar sus productos"
+                />
+            )}
+
       {/* Tabla de Materiales */}
+      {selectedStore && (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -327,7 +336,7 @@ export function MaterialStockManagement() {
           )}
         </CardContent>
       </Card>
-
+      )}
       {/* Modales */}
       <ConfirmModalComponent />
       <UpdateStockModalComponent />

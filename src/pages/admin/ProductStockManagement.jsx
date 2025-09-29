@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Portal } from "@/components/common/Portal";
-import { SectionHeader, StatsCards, CustomSelect } from "@/components/branding";
+import { SectionHeader, StatsCards, CustomSelect, EmptyState } from "@/components/branding";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
 
@@ -40,7 +40,7 @@ import { formatPrice } from "@/lib/utils";
 export function ProductStockManagement() {
   const { 
     inventarioProductosSucursal: products,
-    sucursalSeleccionada,
+    sucursalSeleccionada: selectedStore,
     adminDataLoading: loading,
  } = useAdminData();
 
@@ -173,7 +173,7 @@ export function ProductStockManagement() {
       {/* Header usando SectionHeader */}
       <SectionHeader
         title="Stock de Productos"
-        subtitle={`Gestiona el inventario de productos terminados${sucursalSeleccionada ? ` - ${sucursalSeleccionada.nombre}` : ''}`}
+        subtitle={`Gestiona el inventario de productos terminados${selectedStore ? ` - ${selectedStore}` : ''}`}
         icon={<ShoppingCart className="w-6 h-6" />}
         actions={headerActions}
       />
@@ -181,7 +181,16 @@ export function ProductStockManagement() {
       {/* Stats usando StatsCards */}
       <StatsCards stats={statsData} />
 
+      {/* Mensaje cuando no hay sucursal seleccionada */}
+            {!selectedStore && (
+                <EmptyState
+                    title="Selecciona una Sucursal"
+                    subtitle="Elige una sucursal para comenzar a gestionar sus productos"
+                />
+            )}
+      
       {/* Tabla de Productos */}
+      {selectedStore && (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -338,6 +347,7 @@ export function ProductStockManagement() {
           )}
         </CardContent>
       </Card>
+      )}
 
       {/* Modales */}
       <ConfirmModalComponent />

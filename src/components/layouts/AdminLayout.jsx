@@ -50,6 +50,7 @@ const AdminLayout = () => {
         sucursales,
         sucursalSeleccionada,
         setSucursalSeleccionada,
+        showDebugStateInfo,
         adminDataLoading,
     } = useAdminData();
 
@@ -465,9 +466,11 @@ const AdminLayout = () => {
                             disabled={adminDataLoading}
                         />
                     ) : (
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
-                            {sucursales[0]?.name}
-                        </span>
+                        <>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
+                                {sucursales[0]?.name}
+                            </span>
+                        </>
                     )}
 
                     {assignedNavigationItems.map((item) => (
@@ -636,6 +639,13 @@ const AdminLayout = () => {
                                                 </div>
                                             </div>
                                             <div className="p-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => showDebugStateInfo()}
+                                                >
+                                                    DEBUG STATE INFO
+                                                </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"

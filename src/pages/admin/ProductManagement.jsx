@@ -79,6 +79,10 @@ export function ProductManagement() {
         callProductoNuevo,
         callBorrarProducto,
         callModificarProducto,
+
+        callCrearYAsignarReceta,
+        callRecetaDelProducto,
+        callRecetaDelProductoLoading,
     } = useAdminData();
 
     const categoriasTodas = [
@@ -273,16 +277,27 @@ export function ProductManagement() {
                 "active": productData.isAvailable,
                 "categoryId": productData.category,
                 "imageBase64": productData.imageUrl,
-                // Campos adicionales del modal de pasos
-                "recipe": productData.recipe,
-                "preparationTime": productData.preparationTime,
-                "minStock": productData.minStock
             };
 
-            await callProductoNuevo({
+            const result = await callProductoNuevo({
                 _producto: adaptedProduct,
                 _accessToken: session.userData.accessToken
             });
+
+            const newProductId = result.id;
+            const newComponents = productData.recipe.map((ingredient) => ({
+                materialId: ingredient.id,
+                qtyPerUnit: ingredient.quantity,
+            }))
+            const newRecipe = {
+                productId: newProductId,
+                components: newComponents,
+            }
+
+            await callCrearYAsignarReceta({
+                _recipe: newRecipe,
+                _accessToken: session.userData.accessToken,
+            })
 
             toast.success("Producto creado correctamente");
             callProductosYCategorias(session.userData.accessToken);

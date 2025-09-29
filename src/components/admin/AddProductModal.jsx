@@ -12,6 +12,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { ImageUpload } from '../ui/image-upload';
 
+import { useAdminData } from '@/context/AdminDataProvider';
+
 /**
  * Modal para agregar nuevos productos con sistema de pasos
  * Paso 1: Información básica
@@ -25,6 +27,11 @@ export function AddProductModal({
     isLoading = false,
     categories = []
 }) {
+
+    const {
+        materiales: availableIngredients
+    } = useAdminData();
+
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         // Paso 1: Información básica
@@ -49,18 +56,6 @@ export function AddProductModal({
     const [selectedIngredient, setSelectedIngredient] = useState('');
     const [ingredientQuantity, setIngredientQuantity] = useState('');
     const [focusedQuantityIndex, setFocusedQuantityIndex] = useState(-1);
-
-    // Mock de ingredientes disponibles (desde inventario)
-    const availableIngredients = [
-        { id: 'ing-001', name: 'Harina 000', unit: 'g', stock: 25000 },
-        { id: 'ing-002', name: 'Carne Molida', unit: 'g', stock: 5000 },
-        { id: 'ing-003', name: 'Cebolla', unit: 'g', stock: 15000 },
-        { id: 'ing-004', name: 'Queso Mozzarella', unit: 'g', stock: 3000 },
-        { id: 'ing-005', name: 'Aceite de Oliva', unit: 'ml', stock: 8000 },
-        { id: 'ing-006', name: 'Sal', unit: 'g', stock: 2000 },
-        { id: 'ing-007', name: 'Pimienta', unit: 'g', stock: 500 },
-        { id: 'ing-008', name: 'Huevo', unit: 'unidades', stock: 24 }
-    ];
 
     // Opciones para categorías
     const categoryOptions = [
@@ -219,14 +214,17 @@ export function AddProductModal({
     };
 
     const validateStep4 = () => {
-        const newErrors = {};
+        // const newErrors = {};
 
-        if (!formData.minStock || parseInt(formData.minStock) < 0) {
-            newErrors.minStock = 'El stock mínimo debe ser mayor o igual a 0';
-        }
+        // if (!formData.minStock || parseInt(formData.minStock) < 0) {
+        //     newErrors.minStock = 'El stock mínimo debe ser mayor o igual a 0';
+        // }
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        // setErrors(newErrors);
+        // return Object.keys(newErrors).length === 0;
+
+        // solo confirmar, siempre valido
+        return true;
     };
 
     // Navegación entre pasos
@@ -550,12 +548,6 @@ export function AddProductModal({
                                                                             Enter para agregar → especificar cantidad
                                                                         </span>
                                                                     </div>
-                                                                    <div className="text-right">
-                                                                        <span className="text-sm font-medium text-empanada-golden">
-                                                                            {ingredient.stock} {ingredient.unit}
-                                                                        </span>
-                                                                        <div className="text-xs text-gray-400">disponible</div>
-                                                                    </div>
                                                                 </button>
                                                             ))}
                                                         </div>
@@ -628,7 +620,7 @@ export function AddProductModal({
 
 
                                         {/* Tiempo de preparación */}
-                                        <div>
+                                        {/* <div>
                                             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                                                 Tiempo de Preparación (minutos)
                                             </label>
@@ -639,7 +631,7 @@ export function AddProductModal({
                                                 placeholder="15"
                                                 className="max-w-xs"
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 )}
 
@@ -723,9 +715,9 @@ export function AddProductModal({
 
                                 {/* PASO 4: CONFIGURACIÓN FINAL Y RESUMEN */}
                                 {currentStep === 4 && (
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 gap-6">
                                         {/* Configuración de stock */}
-                                        <div className="space-y-4">
+                                        {/* <div className="space-y-4">
                                             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                                                 Configuración de Inventario
                                             </h3>
@@ -770,7 +762,7 @@ export function AddProductModal({
                                                     Los clientes podrán ver y comprar este producto
                                                 </p>
                                             </div>
-                                        </div>
+                                        </div> */}
 
                                         {/* Resumen del producto */}
                                         <div className="space-y-4">

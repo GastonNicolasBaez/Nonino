@@ -9,6 +9,9 @@ import {
     deleteAdminCatalogDeleteProductQueryFunction,
     updateAdminCatalogUpdateProductQueryFunction,
     postAdminCatalogAsignarASucursalQueryFunction,
+    getAdminCatalogCombosQueryFunction,
+    postAdminCatalogAddComboQueryFunction,
+    deleteAdminCatalogDeleteComboQueryFunction
 } from '@/config/apiCatalogQueryFunctions';
 import {
     getAdminStoresQueryFunction,
@@ -23,8 +26,14 @@ import {
     getAdminStoresScheduleQueryFunction,
 } from '@/config/apiStoresQueryFunctions';
 import {
-    getPublicCatalogQueryFunction
+    getPublicCatalogQueryFunction,
 } from '@/config/apiPublicQueryFunctions';
+import {
+    getAdminInventoryMaterialsQueryFunction,
+    postAdminInventoryAddMaterialQueryFunction,
+    postAdminInventoryAssignRecipeQueryFunction,
+    getAdminInventoryGetProductRecipeQueryFunction
+} from '@/config/apiInventoryQueryFunctions';
 
 import { useSession } from '@/context/SessionProvider';
 
@@ -37,18 +46,24 @@ export const AdminDataProvider = ({ children }) => {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [sucursales, setSucursales] = useState([]);
+    const [materiales, setMateriales] = useState([]);
+    const [combos, setCombos] = useState([]);
 
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState();
 
     const [productosSucursal, setProductosSucursal] = useState([]);
+    const [combosSucursal, setCombosSucursal] = useState([]);
     const [deliverySucursal, setDeliverySucursal] = useState([]);
     const [horariosSucursal, setHorariosSucursal] = useState([]);
 
     //cargar información de admin al montar la vista de administrador
     useEffect(() => {
-        if (session.userData?.accessToken) {
-            callProductosYCategorias(session.userData.accessToken);
-            callSucursales(session.userData.accessToken);
+        const at = session.userData?.accessToken;
+        if (at) {
+            callProductosYCategorias(at);
+            callSucursales(at);
+            callMateriales(at);
+            callCombos(at);
             setSucursalSeleccionada(session.userData.sucursal);
         }
     }, [session.userData?.accessToken]);
@@ -90,11 +105,15 @@ export const AdminDataProvider = ({ children }) => {
                     image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
                 })));
 
+            const gotCombos = data.combos;
+
             setProductosSucursal(gotProducts);
+            setCombosSucursal(gotCombos);
         },
         onError: (error) => {
             console.log(error);
             setProductosSucursal([]);
+            setCombosSucursal([]);
         }
     });
 
@@ -161,6 +180,18 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: updateAdminCatalogUpdateProductQueryFunction,
     });
 
+    // asignar receta
+    const { mutateAsync: callCrearYAsignarReceta, isPending: callCrearYAsignarRecetaLoading } = useMutation({
+        mutationKey: ['adminCrearYAsignarReceta'],
+        mutationFn: postAdminInventoryAssignRecipeQueryFunction,
+    });
+
+    // llamar receta del producto
+const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoading } = useMutation({
+        mutationKey: ['adminRecetaDelProducto'],
+        mutationFn: getAdminInventoryGetProductRecipeQueryFunction,
+    });
+    
     // ---------- SUCURSALES
     // listar
     const { mutateAsync: callSucursales, isPending: callSucursalesLoading } = useMutation({
@@ -241,8 +272,72 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: deleteAdminStoresDeleteDeliveryZoneQueryFunction,
     });
 
+    // ---------- COMBOS
+    // listar
+    const { mutateAsync: callCombos, isPending: callCombosLoading } = useMutation({
+        mutationKey: ['adminCombos'],
+        mutationFn: getAdminCatalogCombosQueryFunction,
+        onSuccess: (data) => {
+            setCombos(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setCombos([]);
+        }
+    });
+
+    // crear
+    const { mutateAsync: callCrearCombo, isPending: callCrearComboLoading } = useMutation({
+        mutationKey: ['adminCrearCombo'],
+        mutationFn: postAdminCatalogAddComboQueryFunction,
+    });
+
+    // borrar
+    const { mutateAsync: callBorrarCombo, isPending: callBorrarComboLoading } = useMutation({
+        mutationKey: ['adminBorrarCombo'],
+        mutationFn: deleteAdminCatalogDeleteComboQueryFunction,
+    });
 
 
+    // ---------- INVENTARIO
+    // listar
+    const { mutateAsync: callMateriales, isPending: callMaterialesLoading } = useMutation({
+        mutationKey: ['adminCallMateriales'],
+        mutationFn: getAdminInventoryMaterialsQueryFunction,
+        onSuccess: (data) => {
+            setMateriales(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setMateriales([]);
+        }
+    });
+
+    // crear
+    const { mutateAsync: callCrearMaterial, isPending: callCrearMaterialLoading } = useMutation({
+        mutationKey: ['adminCrearMaterial'],
+        mutationFn: postAdminInventoryAddMaterialQueryFunction,
+    });
+
+
+
+
+    //
+
+    const showDebugStateInfo = () => {
+        console.log('ACCESSTOKEN:', session.userData.accessToken);
+        console.log('PRODUCTOS:', productos);
+        console.log('CATEGORIAS:', categorias);
+        console.log('SUCURSALES:', sucursales);
+        console.log('MATERIALES:', materiales);
+        console.log('COMBOS:', combos);
+        console.log('--- --- ---');
+        console.log('SUCURSAL SELECCIONADA:', sucursalSeleccionada);
+        console.log('PRODUCTOS SUCURSAL:', productosSucursal);
+        console.log('COMBOS SUCURSAL:', combosSucursal);
+        console.log('DELIVERY SUCURSAL:', deliverySucursal);
+        console.log('HORARIOS SUCURSAL:', horariosSucursal);
+    }
 
     //
 
@@ -258,26 +353,47 @@ export const AdminDataProvider = ({ children }) => {
         callActualizarSucursalLoading ||
         callDeliveryZonesLoading ||
         callCrearDeliveryZoneLoading ||
-        callActualizarDeliveryZoneLoading || 
+        callActualizarDeliveryZoneLoading ||
         callBorrarDeliveryZoneLoading ||
         callScheduleLoading ||
-        callUpdateScheduleLoading;
+        callUpdateScheduleLoading ||
+        callMaterialesLoading ||
+        callCrearMaterialLoading ||
+        callCombosLoading || 
+        callCrearComboLoading || 
+        callCrearYAsignarRecetaLoading ||
+        callBorrarComboLoading;
 
     return (
         <AdminDataContext.Provider value={{
             productos,
+            combos,
             categorias,
             sucursales,
+            materiales,
+
             sucursalSeleccionada,
             setSucursalSeleccionada,
             productosSucursal,
+            combosSucursal,
             deliverySucursal,
             horariosSucursal,
 
+            showDebugStateInfo,
+
             adminDataLoading,
+
+            callCombos,
+            callCrearCombo,
+            callBorrarCombo,
 
             callProductosYCategorias,
             callProductoNuevo,
+
+            callCrearYAsignarReceta,
+            callRecetaDelProducto,
+            callRecetaDelProductoLoading,
+
             callBorrarProducto,
             callModificarProducto,
             callSucursales,
@@ -293,6 +409,9 @@ export const AdminDataProvider = ({ children }) => {
 
             callSchedule,
             callUpdateSchedule,
+
+            callMateriales,
+            callCrearMaterial,
         }}>
             {children}
         </AdminDataContext.Provider>

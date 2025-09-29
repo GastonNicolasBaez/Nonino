@@ -114,3 +114,52 @@ export const postAdminCatalogAsignarASucursalQueryFunction = async ({_productosC
     const response = await axios.post(`${ENDPOINTS.catalog}/admin/publish/${_idSucursal}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
+
+// listar combos
+export const getAdminCatalogCombosQueryFunction = async (_accessToken) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            },
+        }
+    }
+
+    const response = await axios.get(`${ENDPOINTS.catalog}/admin/combos`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// publicar combo
+export const postAdminCatalogAddComboQueryFunction = async ({_combo, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _combo,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.post(`${ENDPOINTS.catalog}/admin/combos`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// borrar combo
+export const deleteAdminCatalogDeleteComboQueryFunction = async ({_id, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.delete(`${ENDPOINTS.catalog}/admin/combos/${_id}`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+

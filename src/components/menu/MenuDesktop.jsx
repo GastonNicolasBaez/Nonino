@@ -53,35 +53,35 @@ export function MenuDesktop({
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-900 dark">
             {/* Header con info del restaurante */}
-            <div className="bg-white shadow-lg border-b lg:bg-white/95 lg:backdrop-blur-md lg:border-b lg:border-gray-200/50 py-6 sticky top-16 z-40">
+            <div className="bg-gray-800 shadow-lg border-b lg:bg-gray-800/95 lg:backdrop-blur-md lg:border-b lg:border-gray-700 py-6 sticky top-16 z-40">
                 <div className="container mx-auto px-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-6">
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900">Nonino Empanadas</h1>
+                                <h1 className="text-2xl font-bold text-gray-100">Nonino Empanadas</h1>
                                 <div className="flex items-center gap-2 mt-1">
                                     <MapPin className="w-4 h-4 text-gray-500" />
-                                    <span className="text-sm text-gray-600">
+                                    <span className="text-sm text-gray-300">
                                         {selectedStore?.name || "Selecciona una sucursal"}
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-6 text-sm text-gray-600">
-                                <div className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-lg">
-                                    <Clock className="w-4 h-4 text-green-600" />
-                                    <span className="text-green-700 font-medium">{selectedStore?.deliveryTime || "30-40 min"}</span>
+                            <div className="flex items-center gap-6 text-sm text-gray-300">
+                                <div className="flex items-center gap-2 bg-green-900/30 px-3 py-2 rounded-lg border border-green-800">
+                                    <Clock className="w-4 h-4 text-green-400" />
+                                    <span className="text-green-300 font-medium">{selectedStore?.deliveryTime || "30-40 min"}</span>
                                 </div>
-                                <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg">
-                                    <Truck className="w-4 h-4 text-blue-600" />
-                                    <span className="text-blue-700 font-medium">
+                                <div className="flex items-center gap-2 bg-blue-900/30 px-3 py-2 rounded-lg border border-blue-800">
+                                    <Truck className="w-4 h-4 text-blue-400" />
+                                    <span className="text-blue-300 font-medium">
                                         Envío: {selectedStore?.deliveryFee === 0 ? "Gratis" : `$${selectedStore?.deliveryFee || 500}`}
                                     </span>
                                 </div>
-                                <div className="bg-orange-50 px-3 py-2 rounded-lg">
-                                    <span className="text-orange-700 font-medium">Mín: ${selectedStore?.minOrder || 2000}</span>
+                                <div className="bg-orange-900/30 px-3 py-2 rounded-lg border border-orange-800">
+                                    <span className="text-orange-300 font-medium">Mín: ${selectedStore?.minOrder || 2000}</span>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@ export function MenuDesktop({
                         <div className="flex items-center gap-2">
                             <Star className="w-5 h-5 text-yellow-400 fill-current" />
                             <span className="font-semibold text-lg">4.5</span>
-                            <span className="text-gray-600">(500+ reseñas)</span>
+                            <span className="text-gray-400">(500+ reseñas)</span>
                         </div>
                     </div>
                 </div>
@@ -101,22 +101,22 @@ export function MenuDesktop({
                     <aside className="w-80 flex-shrink-0">
                         <div className="sticky space-y-6" style={{top: '180px'}}>
                             {/* Buscador */}
-                            <div className="bg-white rounded-xl p-6 shadow-sm">
-                                <h3 className="text-lg font-semibold mb-4 text-gray-900">Buscar</h3>
+                            <div className="bg-gray-800 rounded-xl p-6 shadow-sm">
+                                <h3 className="text-lg font-semibold mb-4 text-white">Buscar</h3>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                                     <Input
                                         placeholder="Buscar empanadas, combos..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10 pr-10 py-3 text-base border-2 focus:border-empanada-golden"
+                                        className="pl-10 pr-10 py-3 text-base border-2 bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:border-empanada-golden"
                                     />
                                     {searchTerm && (
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => setSearchTerm("")}
-                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 hover:bg-empanada-golden/10"
+                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 hover:bg-gray-600 text-gray-300"
                                         >
                                             <X className="w-4 h-4" />
                                         </Button>
@@ -125,12 +125,12 @@ export function MenuDesktop({
                             </div>
 
                             {/* Filtros */}
-                            <div className="bg-white rounded-xl p-6 shadow-sm">
-                                <h3 className="text-lg font-semibold mb-4 text-gray-900">Filtros</h3>
+                            <div className="bg-gray-800 rounded-xl p-6 shadow-sm">
+                                <h3 className="text-lg font-semibold mb-4 text-white">Filtros</h3>
 
                                 {/* Categorías */}
                                 <div className="mb-6">
-                                    <h4 className="text-sm font-medium text-gray-700 mb-3">Categorías</h4>
+                                    <h4 className="text-sm font-medium text-gray-300 mb-3">Categorías</h4>
                                     <div className="space-y-2">
                                         <Button
                                             variant={selectedCategory === "all" ? "empanada" : "outline"}
@@ -157,11 +157,11 @@ export function MenuDesktop({
 
                                 {/* Ordenar */}
                                 <div>
-                                    <h4 className="text-sm font-medium text-gray-700 mb-3">Ordenar por</h4>
+                                    <h4 className="text-sm font-medium text-gray-300 mb-3">Ordenar por</h4>
                                     <select
                                         value={sortBy}
                                         onChange={(e) => setSortBy(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-sm"
+                                        className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-sm"
                                     >
                                         {sortOptions.map((option) => (
                                             <option key={option.value} value={option.value}>
@@ -179,18 +179,18 @@ export function MenuDesktop({
                         {/* Los Elegidos de Hoy */}
                         <section id="elegidos-hoy" className="mb-12">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="bg-orange-100 p-2 rounded-lg">
+                                <div className="bg-orange-500/20 p-2 rounded-lg">
                                     <Star className="w-6 h-6 text-orange-600" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">Los Elegidos de Hoy</h2>
-                                    <p className="text-gray-600">¡Los más pedidos del día!</p>
+                                    <h2 className="text-2xl font-bold text-white">Los Elegidos de Hoy</h2>
+                                    <p className="text-gray-400">¡Los más pedidos del día!</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-3 gap-6">
                                 {todaysPicks.slice(0, 6).map((product) => (
                                     <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                                        <div className="aspect-square bg-gray-200 relative">
+                                        <div className="aspect-square bg-gray-700 relative">
                                             <img
                                                 src={product.image || "/api/placeholder/200/200"}
                                                 alt={product.name}
@@ -200,8 +200,8 @@ export function MenuDesktop({
                                                 Popular
                                             </Badge>
                                         </div>
-                                        <CardContent className="p-4">
-                                            <h3 className="font-semibold text-lg text-gray-900 mb-1">{product.name}</h3>
+                                        <CardContent className="p-4 bg-gray-800">
+                                            <h3 className="font-semibold text-lg text-white mb-1">{product.name}</h3>
                                             <p className="text-2xl font-bold text-empanada-golden">${product.price}</p>
                                         </CardContent>
                                     </Card>
@@ -212,12 +212,12 @@ export function MenuDesktop({
                         {/* Promociones */}
                         <section id="promociones" className="mb-12">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="bg-red-100 p-2 rounded-lg">
+                                <div className="bg-red-500/20 p-2 rounded-lg">
                                     <Badge className="bg-red-500 text-white">%</Badge>
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">Promociones</h2>
-                                    <p className="text-gray-600">Ofertas que no puedes perderte</p>
+                                    <h2 className="text-2xl font-bold text-white">Promociones</h2>
+                                    <p className="text-gray-400">Ofertas que no puedes perderte</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-6">
@@ -229,11 +229,11 @@ export function MenuDesktop({
                                                     <h3 className="font-bold text-xl mb-2">{promo.title}</h3>
                                                     <p className="text-white/90">{promo.description}</p>
                                                 </div>
-                                                <Badge className="bg-white text-red-500 font-bold text-lg px-3 py-1">
+                                                <Badge className="bg-gray-800 text-red-500 font-bold text-lg px-3 py-1">
                                                     {promo.discount}
                                                 </Badge>
                                             </div>
-                                            <Button className="bg-white text-red-500 hover:bg-gray-100 font-semibold w-full">
+                                            <Button className="bg-gray-800 text-red-500 hover:bg-gray-700 font-semibold w-full">
                                                 ¡Quiero esta promo!
                                             </Button>
                                         </CardContent>
@@ -245,31 +245,31 @@ export function MenuDesktop({
                         {/* Combos */}
                         <section id="combos" className="mb-12">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="bg-green-100 p-2 rounded-lg">
+                                <div className="bg-green-500/20 p-2 rounded-lg">
                                     <div className="w-6 h-6 bg-green-600 rounded"></div>
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">Combos Especiales</h2>
-                                    <p className="text-gray-600">Más por menos</p>
+                                    <h2 className="text-2xl font-bold text-white">Combos Especiales</h2>
+                                    <p className="text-gray-400">Más por menos</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 {combos.map((combo) => (
                                     <Card key={combo.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                                         <div className="flex">
-                                            <div className="w-32 h-32 bg-gray-200 flex-shrink-0">
+                                            <div className="w-32 h-32 bg-gray-700 flex-shrink-0">
                                                 <img
                                                     src={combo.image}
                                                     alt={combo.name}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
-                                            <CardContent className="flex-1 p-6 flex flex-col justify-center">
-                                                <h3 className="font-bold text-xl text-gray-900 mb-2">{combo.name}</h3>
-                                                <p className="text-gray-600 mb-3">{combo.description}</p>
+                                            <CardContent className="flex-1 p-6 flex flex-col justify-center bg-gray-800">
+                                                <h3 className="font-bold text-xl text-white mb-2">{combo.name}</h3>
+                                                <p className="text-gray-400 mb-3">{combo.description}</p>
                                                 <div className="flex items-center gap-3">
                                                     <span className="text-2xl font-bold text-empanada-golden">${combo.price}</span>
-                                                    <span className="text-lg text-gray-500 line-through">${combo.originalPrice}</span>
+                                                    <span className="text-lg text-gray-400 line-through">${combo.originalPrice}</span>
                                                     <Badge variant="empanada">
                                                         Ahorra ${combo.originalPrice - combo.price}
                                                     </Badge>
@@ -285,8 +285,8 @@ export function MenuDesktop({
                         <section>
                             <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">Todos los Productos</h2>
-                                    <p className="text-gray-600">
+                                    <h2 className="text-2xl font-bold text-white">Todos los Productos</h2>
+                                    <p className="text-gray-400">
                                         {filteredProducts.length} productos encontrados
                                         {searchTerm && ` para "${searchTerm}"`}
                                     </p>
@@ -299,7 +299,7 @@ export function MenuDesktop({
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => setSelectedCategory("all")}
-                                            className="h-4 w-4 ml-1 hover:bg-white/20"
+                                            className="h-4 w-4 ml-1 hover:bg-gray-700"
                                         >
                                             <X className="w-3 h-3" />
                                         </Button>
@@ -310,8 +310,8 @@ export function MenuDesktop({
                             {filteredProducts.length === 0 ? (
                                 <div className="text-center py-16">
                                     <div className="text-6xl mb-4">🔍</div>
-                                    <h3 className="text-2xl font-semibold mb-4">No encontramos productos</h3>
-                                    <p className="text-gray-600 mb-8">Intenta con otros términos de búsqueda o filtros</p>
+                                    <h3 className="text-2xl font-semibold mb-4 text-white">No encontramos productos</h3>
+                                    <p className="text-gray-400 mb-8">Intenta con otros términos de búsqueda o filtros</p>
                                     <Button
                                         onClick={() => {
                                             setSearchTerm("");

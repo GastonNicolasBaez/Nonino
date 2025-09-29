@@ -16,10 +16,10 @@ function ConfirmDialog({ isOpen, onClose, onConfirm, title, message }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-2xl p-6 w-full max-w-sm"
+        className="bg-gray-800 rounded-2xl p-6 w-full max-w-sm"
       >
-        <h3 className="text-lg font-semibold mb-2">{title}</h3>
-        <p className="text-gray-600 mb-6">{message}</p>
+        <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
+        <p className="text-gray-300 mb-6">{message}</p>
         <div className="flex gap-3">
           <Button variant="outline" onClick={onClose} className="flex-1 rounded-xl">
             Cancelar
@@ -68,9 +68,9 @@ export function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gray-900 dark">
         {/* Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-10">
+        <div className="sticky top-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-10">
           <div className="flex items-center justify-between px-4 py-3">
             <Link to="/pedir">
               <Button variant="ghost" size="sm" className="p-2">
@@ -88,11 +88,11 @@ export function CartPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center"
           >
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+            <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mb-6">
               <ShoppingBag className="w-10 h-10 text-gray-400" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Tu carrito está vacío</h2>
-            <p className="text-gray-500 mb-8 max-w-sm">
+            <h2 className="text-xl font-semibold text-white mb-2">Tu carrito está vacío</h2>
+            <p className="text-gray-400 mb-8 max-w-sm">
               Agrega algunas empanadas deliciosas para comenzar tu pedido
             </p>
             <Link to="/pedir">
@@ -107,9 +107,9 @@ export function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-900 dark">
       {/* MOBILE HEADER - Solo visible en mobile */}
-      <div className="md:hidden fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-30">
+      <div className="md:hidden fixed top-16 left-0 right-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-30">
         <div className="flex items-center justify-between px-4 py-3">
           <Link to="/pedir">
             <Button variant="ghost" size="sm" className="p-2">
@@ -117,8 +117,8 @@ export function CartPage() {
             </Button>
           </Link>
           <div className="text-center">
-            <h1 className="font-semibold">Mi Carrito</h1>
-            <p className="text-xs text-gray-500">{itemCount} productos</p>
+            <h1 className="font-semibold text-white">Mi Carrito</h1>
+            <p className="text-xs text-gray-300">{itemCount} productos</p>
           </div>
           <Button variant="ghost" size="sm" onClick={() => setShowClearConfirm(true)} className="p-2 text-red-500">
             <Trash2 className="w-5 h-5" />
@@ -130,7 +130,7 @@ export function CartPage() {
       <div className="hidden md:block pt-8 pb-7">
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between mb-2">
-            <Link to="/pedir" className="flex items-center gap-2 text-empanada-dark hover:text-empanada-golden transition-colors">
+            <Link to="/pedir" className="flex items-center gap-2 text-white hover:text-empanada-golden transition-colors">
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Continuar comprando</span>
             </Link>
@@ -138,14 +138,14 @@ export function CartPage() {
               variant="ghost"
               size="sm"
               onClick={() => setShowClearConfirm(true)}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+              className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Vaciar carrito
             </Button>
           </div>
-          <h1 className="text-3xl font-bold text-empanada-dark">Tu Carrito</h1>
-          <p className="text-gray-600 mt-1">{itemCount} {itemCount === 1 ? 'producto' : 'productos'} en tu carrito</p>
+          <h1 className="text-3xl font-bold text-white">Tu Carrito</h1>
+          <p className="text-gray-400 mt-1">{itemCount} {itemCount === 1 ? 'producto' : 'productos'} en tu carrito</p>
         </div>
       </div>
 
@@ -169,10 +169,10 @@ export function CartPage() {
               transition={{ delay: index * 0.05 }}
               className="mb-4"
             >
-              <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-4 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="flex gap-4">
-                  {/* Image */}
-                  <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+                  {/* Image - más prominente */}
+                  <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-gray-600">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -182,19 +182,22 @@ export function CartPage() {
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start justify-between mb-3">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1 truncate">
+                        <h3 className="font-bold text-white text-base leading-tight mb-1 truncate">
                           {item.name}
                         </h3>
-                        <p className="text-empanada-rich font-medium text-sm">
-                          {formatPrice(item.price)}
-                        </p>
+                        <div className="flex items-center gap-2 mb-2">
+                          <p className="text-empanada-golden font-semibold text-sm">
+                            {formatPrice(item.price)}
+                          </p>
+                          <span className="text-gray-400 text-xs">c/u</span>
+                        </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-gray-400 hover:text-red-500 p-1 h-auto"
+                        className="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-2 h-auto rounded-full transition-colors"
                         onClick={() => removeItem(item.id, item.customizations)}
                       >
                         <X className="w-4 h-4" />
@@ -205,20 +208,20 @@ export function CartPage() {
                     {item.customizations && Object.keys(item.customizations).length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-3">
                         {Object.entries(item.customizations).map(([key, value]) => (
-                          <Badge key={key} variant="secondary" className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600">
+                          <Badge key={key} variant="secondary" className="text-xs px-2 py-1 bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30">
                             {value}
                           </Badge>
                         ))}
                       </div>
                     )}
 
-                    {/* Quantity & Total */}
+                    {/* Quantity Controls & Total */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center bg-gray-50 rounded-full p-0.5">
+                      <div className="flex items-center bg-gray-700 rounded-xl p-1 shadow-inner">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 rounded-full hover:bg-white"
+                          className="h-8 w-8 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -229,13 +232,13 @@ export function CartPage() {
                         >
                           <Minus className="w-3 h-3" />
                         </Button>
-                        <span className="px-3 py-1 font-medium text-sm min-w-[2rem] text-center">
+                        <div className="px-4 py-1 font-bold text-white min-w-[3rem] text-center">
                           {item.quantity}
-                        </span>
+                        </div>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 rounded-full hover:bg-white"
+                          className="h-8 w-8 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -248,8 +251,11 @@ export function CartPage() {
                         </Button>
                       </div>
 
-                      <div className="font-semibold text-empanada-golden">
-                        {formatPrice(item.price * item.quantity)}
+                      <div className="text-right">
+                        <div className="font-bold text-empanada-golden text-lg">
+                          {formatPrice(item.price * item.quantity)}
+                        </div>
+                        <div className="text-xs text-gray-400">Total</div>
                       </div>
                     </div>
                   </div>
@@ -275,11 +281,11 @@ export function CartPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -100 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+                      className="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       <div className="flex gap-6">
-                        {/* Imagen más grande para desktop */}
-                        <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+                        {/* Imagen más prominente para desktop */}
+                        <div className="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-gray-600">
                           <img
                             src={item.image}
                             alt={item.name}
@@ -289,43 +295,46 @@ export function CartPage() {
 
                         {/* Contenido expandido */}
                         <div className="flex-1">
-                          <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-start justify-between mb-4">
                             <div className="flex-1">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                              <h3 className="text-xl font-bold text-white mb-2">
                                 {item.name}
                               </h3>
-                              <p className="text-empanada-rich font-medium">
-                                {formatPrice(item.price)} c/u
-                              </p>
+                              <div className="flex items-center gap-3 mb-2">
+                                <p className="text-empanada-golden font-bold text-lg">
+                                  {formatPrice(item.price)}
+                                </p>
+                                <span className="text-gray-400 text-sm">por unidad</span>
+                              </div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-gray-400 hover:text-red-500 hover:bg-red-50"
+                              className="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-3 rounded-full transition-colors"
                               onClick={() => removeItem(item.id, item.customizations)}
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-5 h-5" />
                             </Button>
                           </div>
 
-                          {/* Personalizaciones */}
+                          {/* Personalizaciones mejoradas */}
                           {item.customizations && Object.keys(item.customizations).length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-4">
                               {Object.entries(item.customizations).map(([key, value]) => (
-                                <Badge key={key} variant="secondary" className="px-3 py-1 bg-empanada-cream text-empanada-dark">
+                                <Badge key={key} variant="secondary" className="px-3 py-1 bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30">
                                   {value}
                                 </Badge>
                               ))}
                             </div>
                           )}
 
-                          {/* Controles de cantidad y precio */}
+                          {/* Controles de cantidad y precio mejorados */}
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center bg-gray-50 rounded-lg p-1">
+                            <div className="flex items-center bg-gray-700 rounded-xl p-1 shadow-inner">
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-10 w-10 p-0 rounded-md hover:bg-white"
+                                className="h-10 w-10 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
                                 onClick={() =>
                                   updateQuantity(
                                     item.id,
@@ -336,13 +345,13 @@ export function CartPage() {
                               >
                                 <Minus className="w-4 h-4" />
                               </Button>
-                              <span className="px-4 py-2 font-semibold text-base min-w-[3rem] text-center">
+                              <div className="px-6 py-2 font-bold text-white text-lg min-w-[4rem] text-center">
                                 {item.quantity}
-                              </span>
+                              </div>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-10 w-10 p-0 rounded-md hover:bg-white"
+                                className="h-10 w-10 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
                                 onClick={() =>
                                   updateQuantity(
                                     item.id,
@@ -356,10 +365,10 @@ export function CartPage() {
                             </div>
 
                             <div className="text-right">
-                              <div className="text-xl font-bold text-empanada-golden">
+                              <div className="text-2xl font-bold text-empanada-golden">
                                 {formatPrice(item.price * item.quantity)}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-400">
                                 Total del producto
                               </div>
                             </div>
@@ -375,8 +384,8 @@ export function CartPage() {
             {/* Columna derecha - Resumen sticky */}
             <div className="col-span-4">
               <div className="sticky top-24">
-                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4">Resumen del pedido</h3>
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4 text-white">Resumen del pedido</h3>
 
                   {/* Promo Code Section */}
                   <AnimatePresence>
@@ -387,12 +396,12 @@ export function CartPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="mb-4"
                       >
-                        <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center justify-between p-3 bg-gray-800 border border-green-600 rounded-lg">
                           <div className="flex-1">
-                            <span className="text-sm font-medium text-green-800 block">
+                            <span className="text-sm font-medium text-green-400 block">
                               {promoCode.code}
                             </span>
-                            <p className="text-xs text-green-600">
+                            <p className="text-xs text-green-300">
                               {promoCode.description}
                             </p>
                           </div>
@@ -400,7 +409,7 @@ export function CartPage() {
                             variant="ghost"
                             size="sm"
                             onClick={removePromoCode}
-                            className="text-green-600 hover:text-green-800 p-1"
+                            className="text-green-400 hover:text-green-300 p-1"
                           >
                             <X className="w-4 h-4" />
                           </Button>
@@ -436,7 +445,7 @@ export function CartPage() {
                       <Button
                         variant="ghost"
                         onClick={() => setShowPromoInput(true)}
-                        className="mb-4 w-full justify-start text-empanada-rich hover:bg-empanada-cream/50"
+                        className="mb-4 w-full justify-start text-gray-300 hover:bg-gray-700"
                       >
                         <Tag className="w-4 h-4 mr-2" />
                         ¿Tienes un código promocional?
@@ -447,8 +456,8 @@ export function CartPage() {
                   {/* Summary */}
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Subtotal</span>
-                      <span className="font-medium">{formatPrice(subtotal)}</span>
+                      <span className="text-gray-400">Subtotal</span>
+                      <span className="font-medium text-white">{formatPrice(subtotal)}</span>
                     </div>
                     {discount > 0 && (
                       <div className="flex justify-between text-green-600">
@@ -457,12 +466,12 @@ export function CartPage() {
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Envío</span>
-                      <span className="font-medium">{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
+                      <span className="text-gray-400">Envío</span>
+                      <span className="font-medium text-white">{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
                     </div>
-                    <div className="border-t pt-3">
+                    <div className="border-t border-gray-600 pt-3">
                       <div className="flex justify-between font-bold text-xl">
-                        <span>Total</span>
+                        <span className="text-white">Total</span>
                         <span className="text-empanada-golden">{formatPrice(total)}</span>
                       </div>
                     </div>
@@ -483,7 +492,7 @@ export function CartPage() {
                   </Link>
 
                   {/* Trust indicators */}
-                  <div className="mt-6 pt-4 border-t text-xs text-gray-500 space-y-2">
+                  <div className="mt-6 pt-4 border-t border-gray-600 text-xs text-gray-400 space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-green-500">✓</span>
                       <span>Envío gratis en pedidos &gt; $3000</span>
@@ -505,7 +514,7 @@ export function CartPage() {
       </div>
 
       {/* MOBILE FOOTER - Solo visible en mobile */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 z-50">
         <div className="p-4 pb-16">
         {/* Promo Code Section */}
         <AnimatePresence>
@@ -516,12 +525,12 @@ export function CartPage() {
               exit={{ opacity: 0, height: 0 }}
               className="mb-4"
             >
-              <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-xl">
+              <div className="flex items-center justify-between p-3 bg-gray-800 border border-green-600 rounded-xl">
                 <div className="flex-1 min-w-0">
-                  <span className="text-sm font-medium text-green-800 block truncate">
+                  <span className="text-sm font-medium text-green-400 block truncate">
                     {promoCode.code}
                   </span>
-                  <p className="text-xs text-green-600">
+                  <p className="text-xs text-green-300">
                     {promoCode.description}
                   </p>
                 </div>
@@ -529,7 +538,7 @@ export function CartPage() {
                   variant="ghost"
                   size="sm"
                   onClick={removePromoCode}
-                  className="text-green-600 hover:text-green-800 p-1 h-auto"
+                  className="text-green-400 hover:text-green-300 p-1 h-auto"
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -546,7 +555,7 @@ export function CartPage() {
               <Input
                 name="promoCode"
                 placeholder="Código promocional"
-                className="flex-1 rounded-xl border-gray-200"
+                className="flex-1 rounded-xl border-gray-600 bg-gray-700 text-white"
                 autoFocus
               />
               <Button type="submit" variant="outline" size="sm" className="px-4 rounded-xl">
@@ -567,7 +576,7 @@ export function CartPage() {
               variant="ghost"
               size="sm"
               onClick={() => setShowPromoInput(true)}
-              className="mb-4 w-full justify-start text-empanada-rich"
+              className="mb-4 w-full justify-start text-gray-300"
             >
               <Tag className="w-4 h-4 mr-2" />
               ¿Tienes un código promocional?
@@ -578,8 +587,8 @@ export function CartPage() {
         {/* Order Summary */}
         <div className="space-y-2 mb-4">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Subtotal</span>
-            <span>{formatPrice(subtotal)}</span>
+            <span className="text-gray-300">Subtotal</span>
+            <span className="text-white font-medium">{formatPrice(subtotal)}</span>
           </div>
           {discount > 0 && (
             <div className="flex justify-between text-sm text-green-600">
@@ -588,12 +597,12 @@ export function CartPage() {
             </div>
           )}
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Envío</span>
-            <span>{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
+            <span className="text-gray-300">Envío</span>
+            <span className="text-white font-medium">{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
           </div>
-          <div className="border-t pt-2">
+          <div className="border-t border-gray-600 pt-2">
             <div className="flex justify-between font-bold text-lg">
-              <span>Total</span>
+              <span className="text-white">Total</span>
               <span className="text-empanada-golden">{formatPrice(total)}</span>
             </div>
           </div>

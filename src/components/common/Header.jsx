@@ -35,7 +35,10 @@ export function Header() {
   const { scrollY } = useScroll();
   
   // Detectar si estamos en páginas que no deben tener animaciones
-  const isStaticPage = ['/pedir', '/promociones', '/locales', '/nosotros', '/contacto', '/menu'].includes(location.pathname);
+  const isStaticPage = ['/pedir', '/promociones', '/locales', '/nosotros', '/contacto', '/menu', '/carrito', '/checkout'].includes(location.pathname);
+
+  // Detectar si estamos en la página de inicio (única que debe tener transparencias)
+  const isHomePage = location.pathname === '/';
 
   // Hero logo effect - commented out as not currently used
   // const heroLogoY = useTransform(scrollY, [0, 400], [400, -20]); // Moves from below viewport to navbar
@@ -141,10 +144,12 @@ export function Header() {
       <motion.header
         className={cn(
           "fixed top-0 left-0 right-0 z-20 transition-all duration-300",
-          // En móvil siempre sólido, en desktop con transparencias
-          "bg-white shadow-lg border-b",
-          "lg:bg-white/10 lg:backdrop-blur-3xl",
-          !isStaticPage && scrolled && "lg:bg-white/15 lg:backdrop-blur-3xl"
+          // En móvil siempre sólido
+          "bg-gray-800 shadow-lg border-b border-gray-700",
+          // Solo en inicio (/) usar transparencias en desktop, en el resto usar sólido
+          isHomePage
+            ? "lg:bg-gray-800/90 lg:backdrop-blur-3xl" + (!isStaticPage && scrolled ? " lg:bg-gray-800/95" : "")
+            : "lg:bg-gray-800"
         )}
         initial={{ y: isStaticPage ? 0 : -100 }}
         animate={{ y: 0 }}
@@ -353,10 +358,10 @@ export function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl"
+              className="fixed right-0 top-0 h-full w-full max-w-sm bg-gray-800 shadow-2xl"
             >
               {/* Header */}
-              <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-cream to-empanada-wheat">
+              <div className="p-4 sm:p-6 border-b border-gray-600 bg-gray-800">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 sm:space-x-3">
                     <img 
@@ -366,7 +371,7 @@ export function Header() {
                     />
                     <div>
                       <h2 className="text-base sm:text-lg md:text-xl font-bold text-empanada-golden">NONINO</h2>
-                      <p className="text-xs sm:text-sm text-gray-600">Menú de navegación</p>
+                      <p className="text-xs sm:text-sm text-gray-300">Menú de navegación</p>
                     </div>
                   </div>
                   <Button
@@ -421,22 +426,22 @@ export function Header() {
                     <Link
                       to="/pedir"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-700 transition-colors"
                     >
                       <img 
                         src={logoNonino}
                         alt="Logo Nonino" 
                         className="w-6 h-6 mb-2"
                       />
-                      <span className="text-xs font-medium text-gray-700">Pedir Ya</span>
+                      <span className="text-xs font-medium text-white">Pedir Ya</span>
                     </Link>
                     <Link
                       to="/locales"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-700 transition-colors"
                     >
-                      <MapPin className="w-6 h-6 mb-2 text-gray-600" />
-                      <span className="text-xs font-medium text-gray-700">Locales</span>
+                      <MapPin className="w-6 h-6 mb-2 text-gray-300" />
+                      <span className="text-xs font-medium text-white">Locales</span>
                     </Link>
                   </div>
                 </div>

@@ -205,28 +205,28 @@ export function CheckoutPage() {
     <div className="space-y-4">
       {/* Store Selection */}
       {selectedStore ? (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <Check className="w-4 h-4 text-green-600" />
+            <div className="w-8 h-8 bg-green-800 rounded-full flex items-center justify-center flex-shrink-0">
+              <Check className="w-4 h-4 text-green-400" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-green-900 text-sm mb-1">{selectedStore.name}</h3>
-              <p className="text-green-700 text-xs">{selectedStore.address}</p>
+              <h3 className="font-semibold text-green-400 text-sm mb-1">{selectedStore.name}</h3>
+              <p className="text-green-300 text-xs">{selectedStore.address}</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+        <div className="bg-gray-800 border border-red-600 rounded-lg p-4 text-center">
           <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
-          <h3 className="font-semibold text-red-900 text-sm mb-1">Selecciona una sucursal</h3>
-          <p className="text-red-700 text-xs">Necesitas elegir una sucursal para continuar</p>
+          <h3 className="font-semibold text-red-400 text-sm mb-1">Selecciona una sucursal</h3>
+          <p className="text-red-300 text-xs">Necesitas elegir una sucursal para continuar</p>
         </div>
       )}
 
       {/* Delivery Type */}
       <div className="space-y-3">
-        <h3 className="text-base font-semibold text-gray-900">¿Cómo quieres recibir tu pedido?</h3>
+        <h3 className="text-base font-semibold text-white">¿Cómo quieres recibir tu pedido?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
@@ -235,7 +235,7 @@ export function CheckoutPage() {
               "p-4 rounded-lg border-2 text-left transition-all",
               orderData.deliveryType === "delivery"
                 ? "border-empanada-golden bg-empanada-golden/5"
-                : "border-gray-200 hover:border-empanada-golden/50"
+                : "border-gray-600 hover:border-empanada-golden/50"
             )}
           >
             <div className="flex items-start gap-3">
@@ -243,13 +243,13 @@ export function CheckoutPage() {
                 "w-8 h-8 rounded-full flex items-center justify-center",
                 orderData.deliveryType === "delivery"
                   ? "bg-empanada-golden text-white"
-                  : "bg-gray-100 text-gray-600"
+                  : "bg-gray-700 text-gray-300"
               )}>
                 <Truck className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 text-sm mb-1">Delivery a domicilio</h4>
-                <p className="text-xs text-gray-600 mb-1">Recibe tu pedido en casa</p>
+                <h4 className="font-semibold text-white text-sm mb-1">Delivery a domicilio</h4>
+                <p className="text-xs text-gray-300 mb-1">Recibe tu pedido en casa</p>
                 <div className="flex items-center gap-1 text-xs text-empanada-golden">
                   <Clock className="w-3 h-3" />
                   <span>30-45 min</span>
@@ -265,7 +265,7 @@ export function CheckoutPage() {
               "p-4 rounded-lg border-2 text-left transition-all",
               orderData.deliveryType === "pickup"
                 ? "border-empanada-golden bg-empanada-golden/5"
-                : "border-gray-200 hover:border-empanada-golden/50"
+                : "border-gray-600 hover:border-empanada-golden/50"
             )}
           >
             <div className="flex items-start gap-3">
@@ -273,13 +273,13 @@ export function CheckoutPage() {
                 "w-8 h-8 rounded-full flex items-center justify-center",
                 orderData.deliveryType === "pickup"
                   ? "bg-empanada-golden text-white"
-                  : "bg-gray-100 text-gray-600"
+                  : "bg-gray-700 text-gray-300"
               )}>
                 <Home className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 text-sm mb-1">Retirar en sucursal</h4>
-                <p className="text-xs text-gray-600 mb-1">Pasa a buscar tu pedido</p>
+                <h4 className="font-semibold text-white text-sm mb-1">Retirar en sucursal</h4>
+                <p className="text-xs text-gray-300 mb-1">Pasa a buscar tu pedido</p>
                 <div className="flex items-center gap-1 text-xs text-empanada-golden">
                   <Clock className="w-3 h-3" />
                   <span>15-20 min</span>
@@ -300,12 +300,12 @@ export function CheckoutPage() {
           <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
             <User className="w-4 h-4 text-empanada-golden" />
           </div>
-          <h3 className="text-base font-semibold text-gray-900">Información de contacto</h3>
+          <h3 className="text-base font-semibold text-white">Información de contacto</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="block text-xs font-medium text-gray-700">
+            <label className="block text-xs font-medium text-gray-300">
               Nombre completo <span className="text-red-500">*</span>
             </label>
             <Input
@@ -315,7 +315,7 @@ export function CheckoutPage() {
                 "h-9 text-sm",
                 errors['customerInfo.name']
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-300 focus:border-empanada-golden"
+                  : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
               )}
               placeholder="Tu nombre y apellido"
             />
@@ -325,7 +325,7 @@ export function CheckoutPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-medium text-gray-700">
+            <label className="block text-xs font-medium text-gray-300">
               Teléfono <span className="text-red-500">*</span>
             </label>
             <Input
@@ -335,7 +335,7 @@ export function CheckoutPage() {
                 "h-9 text-sm",
                 errors['customerInfo.phone']
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-300 focus:border-empanada-golden"
+                  : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
               )}
               placeholder="11 1234 5678"
             />
@@ -346,12 +346,12 @@ export function CheckoutPage() {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-xs font-medium text-gray-700">Email (opcional)</label>
+          <label className="block text-xs font-medium text-gray-300">Email (opcional)</label>
           <Input
             type="email"
             value={orderData.customerInfo.email}
             onChange={(e) => handleInputChange("customerInfo", "email", e.target.value)}
-            className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
+            className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
             placeholder="tu@email.com"
           />
         </div>
@@ -369,12 +369,12 @@ export function CheckoutPage() {
             <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
               <MapPin className="w-4 h-4 text-empanada-golden" />
             </div>
-            <h3 className="text-base font-semibold text-gray-900">Dirección de entrega</h3>
+            <h3 className="text-base font-semibold text-white">Dirección de entrega</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2 space-y-1">
-              <label className="block text-xs font-medium text-gray-700">
+              <label className="block text-xs font-medium text-gray-300">
                 Calle <span className="text-red-500">*</span>
               </label>
               <Input
@@ -384,7 +384,7 @@ export function CheckoutPage() {
                   "h-9 text-sm",
                   errors['address.street']
                     ? "border-red-300 focus:border-red-500"
-                    : "border-gray-300 focus:border-empanada-golden"
+                    : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
                 )}
                 placeholder="Av. Corrientes"
               />
@@ -394,7 +394,7 @@ export function CheckoutPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-700">
+              <label className="block text-xs font-medium text-gray-300">
                 Número <span className="text-red-500">*</span>
               </label>
               <Input
@@ -404,7 +404,7 @@ export function CheckoutPage() {
                   "h-9 text-sm",
                   errors['address.number']
                     ? "border-red-300 focus:border-red-500"
-                    : "border-gray-300 focus:border-empanada-golden"
+                    : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
                 )}
                 placeholder="1234"
               />
@@ -416,42 +416,42 @@ export function CheckoutPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-700">Piso</label>
+              <label className="block text-xs font-medium text-gray-300">Piso</label>
               <Input
                 value={orderData.address.floor}
                 onChange={(e) => handleInputChange("address", "floor", e.target.value)}
-                className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
+                className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
                 placeholder="5"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-700">Depto</label>
+              <label className="block text-xs font-medium text-gray-300">Depto</label>
               <Input
                 value={orderData.address.apartment}
                 onChange={(e) => handleInputChange("address", "apartment", e.target.value)}
-                className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
+                className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
                 placeholder="A"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-700">Barrio</label>
+              <label className="block text-xs font-medium text-gray-300">Barrio</label>
               <Input
                 value={orderData.address.neighborhood}
                 onChange={(e) => handleInputChange("address", "neighborhood", e.target.value)}
-                className="h-9 text-sm border-gray-300 focus:border-empanada-golden"
+                className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
                 placeholder="Balvanera"
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-medium text-gray-700">Referencias</label>
+            <label className="block text-xs font-medium text-gray-300">Referencias</label>
             <textarea
               value={orderData.address.references}
               onChange={(e) => handleInputChange("address", "references", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+              className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
               rows={2}
               placeholder="Ej: Casa con portón verde, timbre 2A"
             />
@@ -469,11 +469,11 @@ export function CheckoutPage() {
           <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
             <CreditCard className="w-4 h-4 text-empanada-golden" />
           </div>
-          <h3 className="text-base font-semibold text-gray-900">Método de pago</h3>
+          <h3 className="text-base font-semibold text-white">Método de pago</h3>
         </div>
 
         <div className="space-y-2">
-          <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+          <label className="flex items-start p-4 border-2 border-gray-600 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
             <input
               type="radio"
               name="paymentMethod"
@@ -484,12 +484,12 @@ export function CheckoutPage() {
             />
             <div className="ml-3 flex-1">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <CreditCard className="w-4 h-4 text-blue-600" />
+                <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CreditCard className="w-4 h-4 text-blue-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1">Mercado Pago</h4>
-                  <p className="text-xs text-gray-600 mb-2">Tarjetas, transferencias y billeteras digitales</p>
+                  <h4 className="font-semibold text-white text-sm mb-1">Mercado Pago</h4>
+                  <p className="text-xs text-gray-300 mb-2">Tarjetas, transferencias y billeteras digitales</p>
                   <div className="flex items-center gap-1">
                     <Shield className="w-3 h-3 text-green-600" />
                     <span className="text-xs text-green-600 font-medium">Pago seguro</span>
@@ -499,7 +499,7 @@ export function CheckoutPage() {
             </div>
           </label>
 
-          <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+          <label className="flex items-start p-4 border-2 border-gray-600 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
             <input
               type="radio"
               name="paymentMethod"
@@ -510,15 +510,15 @@ export function CheckoutPage() {
             />
             <div className="ml-3 flex-1">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
                   <div className="text-lg">💵</div>
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1">Efectivo</h4>
-                  <p className="text-xs text-gray-600 mb-2">Paga en efectivo al recibir</p>
+                  <h4 className="font-semibold text-white text-sm mb-1">Efectivo</h4>
+                  <p className="text-xs text-gray-300 mb-2">Paga en efectivo al recibir</p>
                   <div className="flex items-center gap-1">
-                    <Info className="w-3 h-3 text-gray-500" />
-                    <span className="text-xs text-gray-500">Monto exacto preparado</span>
+                    <Info className="w-3 h-3 text-gray-400" />
+                    <span className="text-xs text-gray-400">Monto exacto preparado</span>
                   </div>
                 </div>
               </div>
@@ -529,13 +529,13 @@ export function CheckoutPage() {
 
       {/* Notes */}
       <div className="space-y-1">
-        <label className="block text-xs font-medium text-gray-700">
+        <label className="block text-xs font-medium text-gray-300">
           Observaciones para tu pedido
         </label>
         <textarea
           value={orderData.notes}
           onChange={(e) => setOrderData(prev => ({ ...prev, notes: e.target.value }))}
-          className="w-full px-3 py-2 border border-gray-300 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+          className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
           rows={3}
           placeholder="Instrucciones especiales, alergias, etc."
         />
@@ -546,23 +546,23 @@ export function CheckoutPage() {
   const ConfirmStep = useMemo(() => (
     <div className="space-y-4">
       {/* Unified Order Summary */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <h4 className="font-semibold text-gray-900 mb-6 flex items-center gap-2 text-lg">
+      <div className="bg-gray-800 rounded-lg p-6">
+        <h4 className="font-semibold text-white mb-6 flex items-center gap-2 text-lg">
           <ShoppingBag className="w-5 h-5 text-empanada-golden" />
           Resumen de tu pedido
         </h4>
 
         {/* 1. Contact Information - Quién recibe */}
         <div className="mb-4">
-          <h5 className="font-medium text-gray-700 text-sm mb-2">Contacto</h5>
-          <p className="text-sm text-gray-900 font-medium">{orderData.customerInfo.name}</p>
-          <p className="text-sm text-gray-600">{orderData.customerInfo.phone}</p>
+          <h5 className="font-medium text-gray-300 text-sm mb-2">Contacto</h5>
+          <p className="text-sm text-white font-medium">{orderData.customerInfo.name}</p>
+          <p className="text-sm text-gray-300">{orderData.customerInfo.phone}</p>
         </div>
 
         {/* 2. Delivery Details - Cómo y dónde se entrega */}
         <div className="mb-4">
-          <h5 className="font-medium text-gray-700 text-sm mb-2">Entrega</h5>
-          <div className="flex items-center gap-2 text-sm text-gray-900 mb-1">
+          <h5 className="font-medium text-gray-300 text-sm mb-2">Entrega</h5>
+          <div className="flex items-center gap-2 text-sm text-white mb-1">
             {orderData.deliveryType === "delivery" ? (
               <>
                 <Truck className="w-4 h-4 text-empanada-golden" />
@@ -575,7 +575,7 @@ export function CheckoutPage() {
               </>
             )}
           </div>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-300">
             Tiempo estimado: {orderData.deliveryType === "delivery" ? "30-45" : "15-20"} min
           </p>
         </div>
@@ -583,17 +583,17 @@ export function CheckoutPage() {
         {/* Address (if delivery) - Parte de los detalles de entrega */}
         {orderData.deliveryType === "delivery" && orderData.address.street && (
           <div className="mb-4">
-            <h5 className="font-medium text-gray-700 text-sm mb-2">Dirección de entrega</h5>
-            <p className="text-sm text-gray-900">
+            <h5 className="font-medium text-gray-300 text-sm mb-2">Dirección de entrega</h5>
+            <p className="text-sm text-white">
               {orderData.address.street} {orderData.address.number}
               {orderData.address.floor && `, Piso ${orderData.address.floor}`}
               {orderData.address.apartment && `, Depto ${orderData.address.apartment}`}
             </p>
             {orderData.address.neighborhood && (
-              <p className="text-sm text-gray-600">{orderData.address.neighborhood}</p>
+              <p className="text-sm text-gray-300">{orderData.address.neighborhood}</p>
             )}
             {orderData.address.references && (
-              <p className="text-xs text-gray-600 mt-1">Ref: {orderData.address.references}</p>
+              <p className="text-xs text-gray-300 mt-1">Ref: {orderData.address.references}</p>
             )}
           </div>
         )}
@@ -601,16 +601,16 @@ export function CheckoutPage() {
         {/* Store Info (if pickup) - Parte de los detalles de entrega */}
         {orderData.deliveryType === "pickup" && selectedStore && (
           <div className="mb-4">
-            <h5 className="font-medium text-gray-700 text-sm mb-2">Sucursal para retiro</h5>
-            <p className="text-sm text-gray-900 font-medium">{selectedStore.name}</p>
-            <p className="text-sm text-gray-600">{selectedStore.address}</p>
+            <h5 className="font-medium text-gray-300 text-sm mb-2">Sucursal para retiro</h5>
+            <p className="text-sm text-white font-medium">{selectedStore.name}</p>
+            <p className="text-sm text-gray-300">{selectedStore.address}</p>
           </div>
         )}
 
         {/* 3. Payment Method - Cómo paga */}
         <div className="mb-4">
-          <h5 className="font-medium text-gray-700 text-sm mb-2">Método de pago</h5>
-          <div className="flex items-center gap-2 text-sm text-gray-900">
+          <h5 className="font-medium text-gray-300 text-sm mb-2">Método de pago</h5>
+          <div className="flex items-center gap-2 text-sm text-white">
             <CreditCard className="w-4 h-4 text-empanada-golden" />
             <span>
               {orderData.paymentMethod === "mercadopago" ? "Mercado Pago" : "Efectivo"}
@@ -621,14 +621,14 @@ export function CheckoutPage() {
         {/* 4. Additional Information - Información extra */}
         {orderData.notes && (
           <div className="mb-6">
-            <h5 className="font-medium text-gray-700 text-sm mb-2">Observaciones</h5>
-            <p className="text-sm text-gray-900">{orderData.notes}</p>
+            <h5 className="font-medium text-gray-300 text-sm mb-2">Observaciones</h5>
+            <p className="text-sm text-white">{orderData.notes}</p>
           </div>
         )}
 
         {/* 5. FINAL: Products & Pricing - Confirmación final de lo que va a pagar */}
-        <div className="mb-0 pt-4 border-t border-gray-300">
-          <h5 className="font-medium text-gray-700 text-sm mb-3">Productos</h5>
+        <div className="mb-0 pt-4 border-t border-gray-600">
+          <h5 className="font-medium text-gray-300 text-sm mb-3">Productos</h5>
           <div className="space-y-3">
             {items.map((item, index) => (
               <div key={index} className="flex items-center gap-3">
@@ -643,10 +643,10 @@ export function CheckoutPage() {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h6 className="font-medium text-gray-900 text-sm truncate">{item.name}</h6>
+                  <h6 className="font-medium text-white text-sm truncate">{item.name}</h6>
                   <p className="text-xs text-empanada-golden">{formatPrice(item.price)} c/u</p>
                   {item.customizations && Object.keys(item.customizations).length > 0 && (
-                    <p className="text-xs text-gray-600 truncate">
+                    <p className="text-xs text-gray-300 truncate">
                       {Object.values(item.customizations).join(", ")}
                     </p>
                   )}
@@ -661,8 +661,8 @@ export function CheckoutPage() {
           </div>
 
           {/* Price Summary - Confirmación final */}
-          <div className="mt-4 pt-4 border-t border-gray-300 space-y-2">
-            <div className="flex justify-between text-sm text-gray-700">
+          <div className="mt-4 pt-4 border-t border-gray-600 space-y-2">
+            <div className="flex justify-between text-sm text-gray-300">
               <span>Subtotal</span>
               <span className="font-medium">{formatPrice(subtotal)}</span>
             </div>
@@ -672,13 +672,13 @@ export function CheckoutPage() {
                 <span className="font-medium">-{formatPrice(discount)}</span>
               </div>
             )}
-            <div className="flex justify-between text-sm text-gray-700">
+            <div className="flex justify-between text-sm text-gray-300">
               <span>Envío</span>
               <span className={cn("font-medium", deliveryFee === 0 && "text-green-600")}>
                 {deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}
               </span>
             </div>
-            <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-300">
+            <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-gray-600">
               <span>Total</span>
               <span className="text-empanada-golden">{formatPrice(total)}</span>
             </div>
@@ -693,8 +693,8 @@ export function CheckoutPage() {
             <Check className="w-4 h-4 text-empanada-golden" />
           </div>
           <div>
-            <h4 className="font-semibold text-empanada-dark text-sm mb-1">¡Casi listo!</h4>
-            <p className="text-xs text-gray-700">
+            <h4 className="font-semibold text-empanada-golden text-sm mb-1">¡Casi listo!</h4>
+            <p className="text-xs text-gray-300">
               Al confirmar recibirás una notificación con el estado de tu pedido.
               {orderData.paymentMethod === "mercadopago" && " Serás redirigido a Mercado Pago."}
             </p>
@@ -706,29 +706,29 @@ export function CheckoutPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900 dark">
       {/* DESKTOP HEADER - Compacto */}
-      <div className="hidden md:block bg-white border-b">
+      <div className="hidden md:block bg-gray-800 border-b border-gray-700">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between mb-2">
-            <Link to="/carrito" className="flex items-center gap-2 text-gray-600 hover:text-empanada-golden transition-colors">
+            <Link to="/carrito" className="flex items-center gap-2 text-gray-300 hover:text-empanada-golden transition-colors">
               <ArrowLeft className="w-4 h-4" />
               <span className="text-sm font-medium">Volver al carrito</span>
             </Link>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-2 text-xs text-gray-400">
               <Shield className="w-3 h-3" />
               Checkout seguro
             </div>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Finalizar pedido</h1>
-            <p className="text-gray-600 text-sm">Completa tu información para procesar tu pedido</p>
+            <h1 className="text-2xl font-bold text-white mb-1">Finalizar pedido</h1>
+            <p className="text-gray-300 text-sm">Completa tu información para procesar tu pedido</p>
           </div>
         </div>
       </div>
 
       {/* MOBILE HEADER */}
-      <div className="md:hidden bg-white border-b sticky top-16 z-40">
+      <div className="md:hidden bg-gray-800 border-b border-gray-700 sticky top-16 z-40">
         <div className="flex items-center justify-between px-4 py-3">
           <Link to="/carrito">
             <Button variant="ghost" size="sm">
@@ -736,8 +736,8 @@ export function CheckoutPage() {
             </Button>
           </Link>
           <div className="text-center">
-            <h1 className="font-semibold text-gray-900 text-sm">{steps[currentStep - 1].title}</h1>
-            <p className="text-xs text-gray-500">Paso {currentStep} de {steps.length}</p>
+            <h1 className="font-semibold text-white text-sm">{steps[currentStep - 1].title}</h1>
+            <p className="text-xs text-gray-400">Paso {currentStep} de {steps.length}</p>
           </div>
           {/* Indicador visual del progreso */}
           <div className="w-10 flex justify-center">
@@ -753,9 +753,9 @@ export function CheckoutPage() {
           <div className="grid gap-6 grid-cols-1">
             {/* Main Content - Ocupa todo el ancho */}
             <div className="w-full">
-              <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 shadow-sm mb-4">
+              <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 md:p-6 shadow-sm mb-4">
                 {/* Progress Indicator - Optimizado para mobile */}
-                <div className="mb-6 pb-4 border-b border-gray-100">
+                <div className="mb-6 pb-4 border-b border-gray-600">
                   {/* Mobile Progress - Optimizado */}
                   <div className="md:hidden">
                     <div className="flex items-center justify-between mb-4">
@@ -779,10 +779,10 @@ export function CheckoutPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm font-medium text-gray-700">
+                        <div className="text-sm font-medium text-gray-300">
                           {Math.round(currentStep / steps.length * 100)}%
                         </div>
-                        <div className="text-xs text-gray-500">completo</div>
+                        <div className="text-xs text-gray-400">completo</div>
                       </div>
                     </div>
 
@@ -807,7 +807,7 @@ export function CheckoutPage() {
                               ? "bg-empanada-golden text-white border-empanada-golden"
                               : completedSteps.has(step.id)
                               ? "bg-green-500 text-white border-green-500"
-                              : "bg-white text-gray-400 border-gray-300"
+                              : "bg-gray-800 text-gray-400 border-gray-600"
                           )}
                         >
                           {completedSteps.has(step.id) ? (
@@ -820,7 +820,7 @@ export function CheckoutPage() {
                           <div className={cn(
                             "text-xs font-medium",
                             currentStep === step.id ? "text-empanada-golden" :
-                            completedSteps.has(step.id) ? "text-green-600" : "text-gray-500"
+                            completedSteps.has(step.id) ? "text-green-600" : "text-gray-400"
                           )}>
                             {step.title}
                           </div>
@@ -851,7 +851,7 @@ export function CheckoutPage() {
                 </AnimatePresence>
 
                 {/* Navigation Buttons - Integrados */}
-                <div className="flex justify-between items-center pt-6 mt-6 border-t border-gray-100">
+                <div className="flex justify-between items-center pt-6 mt-6 border-t border-gray-600">
                   <Button
                     type="button"
                     variant="outline"

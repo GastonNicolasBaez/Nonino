@@ -44,16 +44,16 @@ export function MenuMobile({
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 ">
+        <div className="min-h-screen bg-gray-900 dark">
             {/* Header del restaurante */}
-            <div className="bg-white border-b border-gray-200 py-4 sticky top-16 z-40">
+            <div className="bg-gray-800 border-b border-gray-700 py-4 sticky top-16 z-40">
                 <div className="px-4">
                     <div className="flex items-center justify-between mb-3">
                         <div>
-                            <h1 className="text-xl font-bold text-gray-900">Nonino Empanadas</h1>
+                            <h1 className="text-xl font-bold text-gray-100">Nonino Empanadas</h1>
                             <div className="flex items-center gap-1 mt-1">
                                 <MapPin className="w-3 h-3 text-gray-500" />
-                                <span className="text-sm text-gray-600">
+                                <span className="text-sm text-gray-300">
                                     {selectedStore?.name || "Selecciona sucursal"}
                                 </span>
                             </div>
@@ -61,11 +61,11 @@ export function MenuMobile({
                         <div className="flex items-center gap-1">
                             <Star className="w-5 h-5 text-yellow-400 fill-current" />
                             <span className="font-semibold">4.5</span>
-                            <span className="text-gray-600 text-sm">(500+)</span>
+                            <span className="text-gray-300 text-sm">(500+)</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-gray-300">
                         <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
                             <span>{selectedStore?.deliveryTime || "30 min"}</span>
@@ -82,7 +82,7 @@ export function MenuMobile({
             </div>
 
             {/* Buscador */}
-                <div className="bg-white border-b py-3 px-4 +  sticky z-30" style={{top: '180px'}}>            
+                <div className="bg-gray-800 border-b border-gray-700 py-3 px-4 +  sticky z-30" style={{top: '180px'}}>            
                     <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
@@ -109,12 +109,12 @@ export function MenuMobile({
                 {/* Secciones por defecto - Siempre presentes pero pueden estar ocultas */}
                 <div className={`transition-all duration-300 ${searchTerm ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 {/* Los elegidos de hoy */}
-                <section className="py-6 bg-white mb-4">
+                <section className="py-6 bg-gray-800 mb-4">
                     <div className="px-4">
                         <div className="flex items-center gap-2 mb-4">
                             <Flame className="w-5 h-5 text-orange-500" />
-                            <h2 className="text-lg font-bold text-gray-900">Los elegidos de hoy</h2>
-                            <span className="text-sm text-gray-500">¡Apúrate que vuelan!</span>
+                            <h2 className="text-lg font-bold text-white">Los elegidos de hoy</h2>
+                            <span className="text-sm text-gray-300">¡Apúrate que vuelan!</span>
                         </div>
 
                         <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
@@ -124,7 +124,7 @@ export function MenuMobile({
                                         className="overflow-hidden hover:shadow-md transition-shadow h-[200px] flex flex-col cursor-pointer"
                                         onClick={() => handleProductClick(product)}
                                     >
-                                        <div className="h-24 bg-gray-200 relative flex-shrink-0">
+                                        <div className="h-24 bg-gray-700 relative flex-shrink-0">
                                             <img
                                                 src={product.image || "/api/placeholder/150/100"}
                                                 alt={product.name}
@@ -138,12 +138,12 @@ export function MenuMobile({
                                         </div>
                                         <CardContent className="p-3 flex flex-col flex-1 justify-between">
                                             <div>
-                                                <h3 className="font-semibold text-sm text-gray-900 leading-tight mb-2 h-8 line-clamp-2">{product.name}</h3>
+                                                <h3 className="font-semibold text-sm text-white leading-tight mb-2 h-8 line-clamp-2">{product.name}</h3>
                                             </div>
                                             <div className="flex items-center justify-between mt-auto">
                                                 <div className="flex flex-col">
                                                     <p className="text-lg font-bold text-empanada-golden">${product.price}</p>
-                                                    <p className="text-xs text-gray-500">c/u</p>
+                                                    <p className="text-xs text-gray-400">c/u</p>
                                                 </div>
                                                 <Button
                                                     size="icon"
@@ -166,9 +166,9 @@ export function MenuMobile({
                 </section>
 
                 {/* Promociones */}
-                <section className="py-6 bg-gray-50 mb-4">
+                <section className="py-6 bg-gray-900 mb-4">
                     <div className="px-4">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Promociones</h2>
+                        <h2 className="text-lg font-bold text-white mb-4">Promociones</h2>
 
                         <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                             {promotions.map((promo) => (
@@ -180,12 +180,12 @@ export function MenuMobile({
                                                     <h3 className="font-bold text-lg">{promo.title}</h3>
                                                     <p className="text-sm opacity-90">{promo.description}</p>
                                                 </div>
-                                                <Badge className="bg-white text-red-500 font-bold">
+                                                <Badge className="bg-gray-800 text-red-500 font-bold">
                                                     {promo.discount}
                                                 </Badge>
                                             </div>
                                             <div className="mt-4">
-                                                <Button className="bg-white text-red-500 hover:bg-gray-100 font-semibold w-full">
+                                                <Button className="bg-gray-800 text-red-500 hover:bg-gray-700 font-semibold w-full">
                                                     ¡Quiero esta promo!
                                                 </Button>
                                             </div>
@@ -198,9 +198,9 @@ export function MenuMobile({
                 </section>
 
                 {/* Combos */}
-                <section className="py-6 bg-white mb-4">
+                <section className="py-6 bg-gray-800 mb-4">
                     <div className="px-4">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Combos Especiales</h2>
+                        <h2 className="text-lg font-bold text-white mb-4">Combos Especiales</h2>
 
                         <div className="space-y-4">
                             {combos.map((combo) => (
@@ -210,7 +210,7 @@ export function MenuMobile({
                                     onClick={() => handleProductClick(combo)}
                                 >
                                     <div className="flex">
-                                        <div className="w-24 h-24 bg-gray-200 flex-shrink-0">
+                                        <div className="w-24 h-24 bg-gray-700 flex-shrink-0">
                                             <img
                                                 src={combo.image}
                                                 alt={combo.name}
@@ -218,12 +218,12 @@ export function MenuMobile({
                                             />
                                         </div>
                                         <CardContent className="flex-1 p-4 flex flex-col">
-                                            <h3 className="font-semibold text-gray-900">{combo.name}</h3>
-                                            <p className="text-sm text-gray-600 mb-2 line-clamp-2 flex-1">{combo.description}</p>
+                                            <h3 className="font-semibold text-white">{combo.name}</h3>
+                                            <p className="text-sm text-gray-300 mb-2 line-clamp-2 flex-1">{combo.description}</p>
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-lg font-bold text-empanada-golden">${combo.price}</span>
-                                                    <span className="text-sm text-gray-500 line-through">${combo.originalPrice}</span>
+                                                    <span className="text-sm text-gray-400 line-through">${combo.originalPrice}</span>
                                                 </div>
                                                 <Button
                                                     size="sm"
@@ -254,15 +254,15 @@ export function MenuMobile({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="absolute inset-0 bg-gray-50 z-10"
+                        className="absolute inset-0 bg-gray-900 z-10"
                     >
-                        <section className="bg-white py-6">
+                        <section className="bg-gray-800 py-6">
                             <div className="px-4">
                                 <div className="mb-6">
-                                    <h2 className="text-xl font-bold text-gray-900">
+                                    <h2 className="text-xl font-bold text-white">
                                         Resultados de búsqueda
                                     </h2>
-                                    <p className="text-gray-600 text-sm">
+                                    <p className="text-gray-300 text-sm">
                                         {filteredProducts.length} productos encontrados para "{searchTerm}"
                                     </p>
                                 </div>
@@ -270,8 +270,8 @@ export function MenuMobile({
                                 {filteredProducts.length === 0 ? (
                                     <motion.div className="text-center py-12">
                                         <div className="text-4xl mb-4">🔍</div>
-                                        <h3 className="text-xl font-semibold mb-3">No encontramos empanadas</h3>
-                                        <p className="text-gray-600 mb-6">Intenta con otros términos de búsqueda</p>
+                                        <h3 className="text-xl font-semibold mb-3 text-white">No encontramos empanadas</h3>
+                                        <p className="text-gray-300 mb-6">Intenta con otros términos de búsqueda</p>
                                         <Button
                                             onClick={() => setSearchTerm("")}
                                             variant="empanada"
@@ -301,13 +301,13 @@ export function MenuMobile({
 
                 {/* Todos los productos - Solo cuando no hay búsqueda */}
                 {!searchTerm && (
-                <section className="bg-white">
+                <section className="bg-gray-800">
                     <div className="px-4 py-6">
                         <div className="mb-6">
-                            <h2 className="text-xl font-bold text-gray-900">
+                            <h2 className="text-xl font-bold text-white">
                                 Todas las Empanadas
                             </h2>
-                            <p className="text-gray-600 text-sm">
+                            <p className="text-gray-300 text-sm">
                                 {products.length} productos disponibles
                             </p>
                         </div>

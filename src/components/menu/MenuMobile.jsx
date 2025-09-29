@@ -44,9 +44,9 @@ export function MenuMobile({
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 dark">
+        <div className="min-h-screen bg-black dark">
             {/* Header del restaurante */}
-            <div className="bg-gray-800 border-b border-gray-700 py-4 sticky top-16 z-40">
+            <div className="bg-empanada-dark border-b border-empanada-light-gray py-4 sticky top-16 z-40">
                 <div className="px-4">
                     <div className="flex items-center justify-between mb-3">
                         <div>
@@ -82,7 +82,7 @@ export function MenuMobile({
             </div>
 
             {/* Buscador */}
-                <div className="bg-gray-800 border-b border-gray-700 py-3 px-4 +  sticky z-30" style={{top: '180px'}}>            
+                <div className="bg-empanada-dark border-b border-empanada-light-gray py-3 px-4 +  sticky z-30" style={{top: '180px'}}>
                     <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
@@ -109,7 +109,7 @@ export function MenuMobile({
                 {/* Secciones por defecto - Siempre presentes pero pueden estar ocultas */}
                 <div className={`transition-all duration-300 ${searchTerm ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 {/* Los elegidos de hoy */}
-                <section className="py-6 bg-gray-800 mb-4">
+                <section className="py-6 bg-black mb-4">
                     <div className="px-4">
                         <div className="flex items-center gap-2 mb-4">
                             <Flame className="w-5 h-5 text-orange-500" />
@@ -121,10 +121,10 @@ export function MenuMobile({
                             {todaysPicks.map((product) => (
                                 <div key={product.id} className="flex-none w-44">
                                     <Card
-                                        className="overflow-hidden hover:shadow-md transition-shadow h-[200px] flex flex-col cursor-pointer"
+                                        className="overflow-hidden hover:shadow-md transition-shadow h-[200px] flex flex-col cursor-pointer bg-empanada-dark border-empanada-light-gray"
                                         onClick={() => handleProductClick(product)}
                                     >
-                                        <div className="h-24 bg-gray-700 relative flex-shrink-0">
+                                        <div className="h-24 bg-empanada-medium relative flex-shrink-0">
                                             <img
                                                 src={product.image || "/api/placeholder/150/100"}
                                                 alt={product.name}
@@ -166,7 +166,7 @@ export function MenuMobile({
                 </section>
 
                 {/* Promociones */}
-                <section className="py-6 bg-gray-900 mb-4">
+                <section className="py-6 bg-black mb-4">
                     <div className="px-4">
                         <h2 className="text-lg font-bold text-white mb-4">Promociones</h2>
 
@@ -185,7 +185,7 @@ export function MenuMobile({
                                                 </Badge>
                                             </div>
                                             <div className="mt-4">
-                                                <Button className="bg-gray-800 text-red-500 hover:bg-gray-700 font-semibold w-full">
+                                                <Button className="bg-empanada-dark text-red-500 hover:bg-empanada-medium font-semibold w-full">
                                                     ¡Quiero esta promo!
                                                 </Button>
                                             </div>
@@ -198,7 +198,7 @@ export function MenuMobile({
                 </section>
 
                 {/* Combos */}
-                <section className="py-6 bg-gray-800 mb-4">
+                <section className="py-6 bg-black mb-4">
                     <div className="px-4">
                         <h2 className="text-lg font-bold text-white mb-4">Combos Especiales</h2>
 
@@ -206,11 +206,11 @@ export function MenuMobile({
                             {combos.map((combo) => (
                                 <Card
                                     key={combo.id}
-                                    className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                                    className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer bg-empanada-dark border-empanada-light-gray"
                                     onClick={() => handleProductClick(combo)}
                                 >
                                     <div className="flex">
-                                        <div className="w-24 h-24 bg-gray-700 flex-shrink-0">
+                                        <div className="w-24 h-24 bg-empanada-medium flex-shrink-0">
                                             <img
                                                 src={combo.image}
                                                 alt={combo.name}
@@ -254,9 +254,9 @@ export function MenuMobile({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="absolute inset-0 bg-gray-900 z-10"
+                        className="absolute inset-0 bg-black z-10"
                     >
-                        <section className="bg-gray-800 py-6">
+                        <section className="bg-black py-6">
                             <div className="px-4">
                                 <div className="mb-6">
                                     <h2 className="text-xl font-bold text-white">
@@ -301,7 +301,7 @@ export function MenuMobile({
 
                 {/* Todos los productos - Solo cuando no hay búsqueda */}
                 {!searchTerm && (
-                <section className="bg-gray-800">
+                <section className="bg-black">
                     <div className="px-4 py-6">
                         <div className="mb-6">
                             <h2 className="text-xl font-bold text-white">

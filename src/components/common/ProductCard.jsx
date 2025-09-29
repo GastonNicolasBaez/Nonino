@@ -53,7 +53,7 @@ export function ProductCard({ product, className }) {
         onHoverEnd={() => setIsHovered(false)}
       >
         <Card
-          className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col"
+          className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col bg-empanada-dark border-empanada-light-gray"
           onClick={handleCardClick}
         >
         <div>
@@ -85,7 +85,7 @@ export function ProductCard({ product, className }) {
 
           {/* Like Button */}
           <motion.button
-            className="absolute top-2 right-2 p-2 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm"
+            className="absolute top-2 right-2 p-2 bg-empanada-dark/80 backdrop-blur-sm rounded-full shadow-sm"
             onClick={handleLike}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}

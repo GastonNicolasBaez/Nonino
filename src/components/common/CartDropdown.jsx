@@ -65,14 +65,14 @@ export function CartDropdown({ isOpen, onClose }) {
               animate="open"
               exit="closed"
               transition={{ duration: 0.2 }}
-              className="fixed w-96 bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 z-50 overflow-hidden"
+              className="fixed w-96 bg-empanada-dark rounded-2xl shadow-2xl border border-empanada-light-gray z-50 overflow-hidden"
               style={{
                 top: `${dropdownPosition.top}px`,
                 right: `${dropdownPosition.right}px`
               }}
             >
             {/* Header */}
-            <div className="p-4 border-b border-gray-700 bg-gray-800">
+            <div className="p-4 border-b border-empanada-light-gray bg-empanada-dark">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold flex items-center gap-2 text-white">
                   <ShoppingBag className="w-4 h-4 text-empanada-golden" />
@@ -90,7 +90,7 @@ export function CartDropdown({ isOpen, onClose }) {
             </div>
 
             {/* Content */}
-            <div className="max-h-80 overflow-y-auto bg-gray-900">
+            <div className="max-h-80 overflow-y-auto bg-black">
               {items.length === 0 ? (
                 <div className="p-6 text-center">
                   <div className="text-4xl mb-3">🥟</div>
@@ -111,7 +111,7 @@ export function CartDropdown({ isOpen, onClose }) {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-empanada-medium transition-colors"
                     >
                       <img
                         src={item.image}
@@ -133,7 +133,7 @@ export function CartDropdown({ isOpen, onClose }) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6"
+                          className="h-6 w-6 cart-quantity-button"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -150,7 +150,7 @@ export function CartDropdown({ isOpen, onClose }) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6"
+                          className="h-6 w-6 cart-quantity-button"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -164,7 +164,7 @@ export function CartDropdown({ isOpen, onClose }) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6 text-red-500 hover:text-red-700"
+                          className="h-6 w-6 text-red-500 hover:text-red-300 hover:bg-red-900/20"
                           onClick={() => removeItem(item.id, item.customizations)}
                         >
                           <Trash2 className="w-3 h-3" />
@@ -174,7 +174,7 @@ export function CartDropdown({ isOpen, onClose }) {
                   ))}
 
                   {items.length > 4 && (
-                    <div className="text-center py-2 border-t border-gray-600">
+                    <div className="text-center py-2 border-t border-empanada-light-gray">
                       <p className="text-xs text-gray-400">
                         +{items.length - 4} productos más
                       </p>
@@ -186,7 +186,7 @@ export function CartDropdown({ isOpen, onClose }) {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t border-gray-600 p-4 bg-gray-700">
+              <div className="border-t border-empanada-light-gray p-4 bg-empanada-dark">
                 <div className="flex justify-between text-sm mb-3">
                   <span className="font-medium text-white">Subtotal</span>
                   <span className="font-semibold text-empanada-golden">
@@ -198,7 +198,7 @@ export function CartDropdown({ isOpen, onClose }) {
                   <Link to="/carrito" onClick={onClose} className="flex-1">
                     <Button
                       variant="outline"
-                      className="w-full text-sm py-2 h-auto border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+                      className="w-full text-sm py-2 h-auto cart-secondary-button"
                     >
                       Ver Carrito
                     </Button>

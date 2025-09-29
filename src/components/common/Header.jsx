@@ -145,11 +145,11 @@ export function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-20 transition-all duration-300",
           // En móvil siempre sólido
-          "bg-gray-800 shadow-lg border-b border-gray-700",
+          "bg-empanada-dark shadow-lg border-b border-empanada-light-gray",
           // Solo en inicio (/) usar transparencias en desktop, en el resto usar sólido
           isHomePage
-            ? "lg:bg-gray-800/90 lg:backdrop-blur-3xl" + (!isStaticPage && scrolled ? " lg:bg-gray-800/95" : "")
-            : "lg:bg-gray-800"
+            ? "lg:bg-empanada-dark/90 lg:backdrop-blur-3xl" + (!isStaticPage && scrolled ? " lg:bg-empanada-dark/95" : "")
+            : "lg:bg-empanada-dark"
         )}
         initial={{ y: isStaticPage ? 0 : -100 }}
         animate={{ y: 0 }}
@@ -198,7 +198,7 @@ export function Header() {
                       "text-xs lg:text-sm xl:text-sm 2xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-1 lg:px-2 py-1 whitespace-nowrap header-nav-item",
                       isActive(item.href)
                         ? "text-empanada-golden"
-                        : "text-empanada-dark"
+                        : "text-white"
                     )}
                   >
                     {item.name}
@@ -227,7 +227,7 @@ export function Header() {
                       "text-xs lg:text-sm xl:text-sm 2xl:text-base font-medium transition-colors hover:text-empanada-golden relative px-1 lg:px-2 py-1 whitespace-nowrap header-nav-item",
                       isActive(item.href)
                         ? "text-empanada-golden"
-                        : "text-empanada-dark"
+                        : "text-white"
                     )}
                   >
                     {item.name}
@@ -255,7 +255,7 @@ export function Header() {
                   size="icon"
                   className={cn(
                     "relative h-10 w-10 sm:h-11 sm:w-11 hidden sm:flex",
-                    "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
+                    "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
                   )}
                 >
                   <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -271,7 +271,7 @@ export function Header() {
                   onClick={handleCartClick}
                   className={cn(
                     "relative h-10 w-10 sm:h-11 sm:w-11",
-                    "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
+                    "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
                   )}
                   aria-label={`Carrito de compras${itemCount > 0 ? ` (${itemCount} productos)` : ''}`}
                 >
@@ -305,16 +305,16 @@ export function Header() {
                     onClick={session.isAuthenticated ? session.logout : undefined}
                     className={cn(
                       "h-10 w-10 sm:h-11 sm:w-11",
-                      "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
+                      "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
                     )}
                   >
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Button>
                   {/* Tooltip hacia abajo - Hidden on mobile */}
                   {!session.isAuthenticated && (
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block z-[999]">
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-empanada-dark text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block z-[999]">
                       Próximamente
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-empanada-dark"></div>
                     </div>
                   )}
                 </div>
@@ -358,10 +358,10 @@ export function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed right-0 top-0 h-full w-full max-w-sm bg-gray-800 shadow-2xl"
+              className="fixed right-0 top-0 h-full w-full max-w-sm bg-empanada-dark shadow-2xl"
             >
               {/* Header */}
-              <div className="p-4 sm:p-6 border-b border-gray-600 bg-gray-800">
+              <div className="p-4 sm:p-6 border-b border-empanada-light-gray bg-empanada-dark">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 sm:space-x-3">
                     <img 
@@ -405,7 +405,7 @@ export function Header() {
                           "flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all duration-200 hover:bg-empanada-golden/10 group",
                           isActive(item.href)
                             ? "bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30"
-                            : "text-empanada-dark hover:text-empanada-golden"
+                            : "text-white hover:text-empanada-golden"
                         )}
                       >
                         <span className="text-base sm:text-lg font-medium">
@@ -418,7 +418,7 @@ export function Header() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
+                <div className="mt-8 pt-6 border-t border-empanada-light-gray">
                   <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
                     Acciones rápidas
                   </h3>
@@ -426,7 +426,7 @@ export function Header() {
                     <Link
                       to="/pedir"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-700 transition-colors"
+                      className="flex flex-col items-center p-3 rounded-lg hover:bg-empanada-medium transition-colors"
                     >
                       <img 
                         src={logoNonino}
@@ -438,7 +438,7 @@ export function Header() {
                     <Link
                       to="/locales"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-700 transition-colors"
+                      className="flex flex-col items-center p-3 rounded-lg hover:bg-empanada-medium transition-colors"
                     >
                       <MapPin className="w-6 h-6 mb-2 text-gray-300" />
                       <span className="text-xs font-medium text-white">Locales</span>

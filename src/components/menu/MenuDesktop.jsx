@@ -53,9 +53,9 @@ export function MenuDesktop({
     ];
 
     return (
-        <div className="min-h-screen bg-gray-900 dark">
+        <div className="min-h-screen bg-black dark">
             {/* Header con info del restaurante */}
-            <div className="bg-gray-800 shadow-lg border-b lg:bg-gray-800/95 lg:backdrop-blur-md lg:border-b lg:border-gray-700 py-6 sticky top-16 z-40">
+            <div className="bg-empanada-dark shadow-lg border-b lg:bg-empanada-dark/95 lg:backdrop-blur-md lg:border-b lg:border-empanada-light-gray py-6 sticky top-16 z-40">
                 <div className="container mx-auto px-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-6">
@@ -101,7 +101,7 @@ export function MenuDesktop({
                     <aside className="w-80 flex-shrink-0">
                         <div className="sticky space-y-6" style={{top: '180px'}}>
                             {/* Buscador */}
-                            <div className="bg-gray-800 rounded-xl p-6 shadow-sm">
+                            <div className="bg-empanada-dark rounded-xl p-6 shadow-sm">
                                 <h3 className="text-lg font-semibold mb-4 text-white">Buscar</h3>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -109,14 +109,14 @@ export function MenuDesktop({
                                         placeholder="Buscar empanadas, combos..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10 pr-10 py-3 text-base border-2 bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:border-empanada-golden"
+                                        className="pl-10 pr-10 py-3 text-base border-2 bg-empanada-medium text-white placeholder-gray-400 border-empanada-light-gray focus:border-empanada-golden"
                                     />
                                     {searchTerm && (
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => setSearchTerm("")}
-                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 hover:bg-gray-600 text-gray-300"
+                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 hover:bg-empanada-light-gray text-gray-300"
                                         >
                                             <X className="w-4 h-4" />
                                         </Button>
@@ -125,7 +125,7 @@ export function MenuDesktop({
                             </div>
 
                             {/* Filtros */}
-                            <div className="bg-gray-800 rounded-xl p-6 shadow-sm">
+                            <div className="bg-empanada-dark rounded-xl p-6 shadow-sm">
                                 <h3 className="text-lg font-semibold mb-4 text-white">Filtros</h3>
 
                                 {/* Categorías */}
@@ -135,7 +135,7 @@ export function MenuDesktop({
                                         <Button
                                             variant={selectedCategory === "all" ? "empanada" : "outline"}
                                             onClick={() => setSelectedCategory("all")}
-                                            className="w-full justify-start text-sm"
+                                            className={`w-full justify-start text-sm ${selectedCategory === "all" ? "" : "menu-category-button"}`}
                                             size="sm"
                                         >
                                             Todas las categorías
@@ -145,7 +145,7 @@ export function MenuDesktop({
                                                 key={category.id}
                                                 variant={selectedCategory === category.id ? "empanada" : "outline"}
                                                 onClick={() => setSelectedCategory(category.id)}
-                                                className="w-full justify-start text-sm"
+                                                className={`w-full justify-start text-sm ${selectedCategory === category.id ? "" : "menu-category-button"}`}
                                                 size="sm"
                                             >
                                                 <span className="mr-2">{category.icon}</span>
@@ -161,7 +161,7 @@ export function MenuDesktop({
                                     <select
                                         value={sortBy}
                                         onChange={(e) => setSortBy(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-sm"
+                                        className="w-full px-3 py-2 border border-empanada-light-gray bg-empanada-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-sm menu-select"
                                     >
                                         {sortOptions.map((option) => (
                                             <option key={option.value} value={option.value}>
@@ -189,8 +189,8 @@ export function MenuDesktop({
                             </div>
                             <div className="grid grid-cols-3 gap-6">
                                 {todaysPicks.slice(0, 6).map((product) => (
-                                    <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                                        <div className="aspect-square bg-gray-700 relative">
+                                    <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray">
+                                        <div className="aspect-square bg-empanada-medium relative">
                                             <img
                                                 src={product.image || "/api/placeholder/200/200"}
                                                 alt={product.name}
@@ -200,7 +200,7 @@ export function MenuDesktop({
                                                 Popular
                                             </Badge>
                                         </div>
-                                        <CardContent className="p-4 bg-gray-800">
+                                        <CardContent className="p-4 bg-empanada-dark">
                                             <h3 className="font-semibold text-lg text-white mb-1">{product.name}</h3>
                                             <p className="text-2xl font-bold text-empanada-golden">${product.price}</p>
                                         </CardContent>
@@ -229,11 +229,11 @@ export function MenuDesktop({
                                                     <h3 className="font-bold text-xl mb-2">{promo.title}</h3>
                                                     <p className="text-white/90">{promo.description}</p>
                                                 </div>
-                                                <Badge className="bg-gray-800 text-red-500 font-bold text-lg px-3 py-1">
+                                                <Badge className="bg-empanada-dark text-red-500 font-bold text-lg px-3 py-1">
                                                     {promo.discount}
                                                 </Badge>
                                             </div>
-                                            <Button className="bg-gray-800 text-red-500 hover:bg-gray-700 font-semibold w-full">
+                                            <Button className="bg-empanada-dark text-red-500 hover:bg-empanada-medium font-semibold w-full">
                                                 ¡Quiero esta promo!
                                             </Button>
                                         </CardContent>
@@ -255,16 +255,16 @@ export function MenuDesktop({
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 {combos.map((combo) => (
-                                    <Card key={combo.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                                    <Card key={combo.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray">
                                         <div className="flex">
-                                            <div className="w-32 h-32 bg-gray-700 flex-shrink-0">
+                                            <div className="w-32 h-32 bg-empanada-medium flex-shrink-0">
                                                 <img
                                                     src={combo.image}
                                                     alt={combo.name}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
-                                            <CardContent className="flex-1 p-6 flex flex-col justify-center bg-gray-800">
+                                            <CardContent className="flex-1 p-6 flex flex-col justify-center bg-empanada-dark">
                                                 <h3 className="font-bold text-xl text-white mb-2">{combo.name}</h3>
                                                 <p className="text-gray-400 mb-3">{combo.description}</p>
                                                 <div className="flex items-center gap-3">
@@ -299,7 +299,7 @@ export function MenuDesktop({
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => setSelectedCategory("all")}
-                                            className="h-4 w-4 ml-1 hover:bg-gray-700"
+                                            className="h-4 w-4 ml-1 hover:bg-empanada-medium"
                                         >
                                             <X className="w-3 h-3" />
                                         </Button>

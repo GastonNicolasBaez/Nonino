@@ -24,8 +24,8 @@ export function StoreSelectionPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center dark">
-            <div className="text-center bg-gray-800 p-8 rounded-xl shadow-2xl max-w-md w-full mx-4 border border-gray-700">
+        <div className="min-h-screen bg-black flex items-center justify-center dark">
+            <div className="text-center bg-empanada-dark p-8 rounded-xl shadow-2xl max-w-md w-full mx-4 border border-empanada-light-gray">
                 <div className="flex items-center justify-center gap-3 mb-4">
                     <Store className="w-8 h-8 text-empanada-golden" />
                     <h1 className="text-3xl font-bold text-white">
@@ -47,7 +47,7 @@ export function StoreSelectionPage() {
                             <Card
                                 className={`cursor-pointer transition-all duration-300 hover:shadow-md ${selectedStore?.id === store.id
                                         ? 'bg-empanada-golden/20 border-empanada-golden border-2'
-                                        : 'bg-gray-700 hover:bg-gray-600 border border-gray-600'
+                                        : 'bg-empanada-light-gray hover:bg-empanada-medium border border-empanada-light-gray'
                                     }`}
                                 onClick={() => handleSelectStore(store)}
                             >

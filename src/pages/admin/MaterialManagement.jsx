@@ -15,6 +15,7 @@ import {
     X,
     Save,
     BarChart,
+    PackagePlus,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,8 @@ export function MaterialManagement() {
     //   const [categoryFilter, setCategoryFilter] = useState("all");
     // const [materials, setMaterials] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showInboundModal, setShowInboundModal] = useState(false);
+    const [selectedMaterial, setSelectedMaterial] = useState(null);
 
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -141,6 +144,11 @@ export function MaterialManagement() {
 
     const handleAddItem = () => {
         setShowAddModal(true);
+    };
+
+    const handleOpenInbound = (material) => {
+        setSelectedMaterial(material);
+        setShowInboundModal(true);
     };
 
     // // Preparar datos para StatsCards - críticas primero, resto neutras
@@ -317,6 +325,14 @@ export function MaterialManagement() {
                                             <td className="p-4" style={{ width: '1px' }}>
                                                 <div className="flex gap-2">
                                                     <Button
+                                                        variant="empanada"
+                                                        size="sm"
+                                                        onClick={() => handleOpenInbound(item)}
+                                                        title="Registrar Entrada"
+                                                    >
+                                                        <PackagePlus className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
                                                         variant="outline"
                                                         size="sm"
                                                         disabled
@@ -355,6 +371,24 @@ export function MaterialManagement() {
                         });
                         setShowAddModal(false);
                         toast.success(`Material ${newItem.name} agregado correctamente`);
+                        callMateriales(session.userData.accessToken);
+                    }}
+                />
+            )}
+
+            {/* Inbound Modal */}
+            {showInboundModal && selectedMaterial && (
+                <InboundMaterialModal
+                    material={selectedMaterial}
+                    onClose={() => {
+                        setShowInboundModal(false);
+                        setSelectedMaterial(null);
+                    }}
+                    onConfirm={(inboundData) => {
+                        // Aquí iría la llamada a la API
+                        toast.success(`Entrada registrada: ${inboundData.operationId}`);
+                        setShowInboundModal(false);
+                        setSelectedMaterial(null);
                         callMateriales(session.userData.accessToken);
                     }}
                 />
@@ -543,6 +577,117 @@ function AddMaterialModal({ onClose, onSave }) {
                 </CardContent>
               </Card> */}
             </div>
+        </BrandedModal>
+    );
+}
+
+// Modal de Registrar Entrada (Inbound)
+function InboundMaterialModal({ material, onClose, onConfirm }) {
+    const [quantity, setQuantity] = useState("");
+    const [batchNumber, setBatchNumber] = useState("");
+    const [notes, setNotes] = useState("");
+    const [operationId] = useState(`INB-${Math.random().toString(36).substr(2, 9).toUpperCase()}`);
+
+    const handleConfirm = () => {
+        if (!quantity || parseFloat(quantity) <= 0) {
+            toast.error("Debes ingresar una cantidad válida");
+            return;
+        }
+
+        const inboundData = {
+            operationId,
+            materialId: material.id,
+            materialName: material.name,
+            quantity: parseFloat(quantity),
+            batchNumber,
+            notes,
+            timestamp: new Date().toISOString()
+        };
+
+        onConfirm(inboundData);
+    };
+
+    const isFormValid = quantity && parseFloat(quantity) > 0;
+
+    return (
+        <BrandedModal
+            isOpen={true}
+            onClose={onClose}
+            title="Registrar Entrada de Material"
+            subtitle={`Material: ${material.name}`}
+            icon={<PackagePlus className="w-6 h-6" />}
+        >
+            <div className="space-y-6">
+                {/* ID de Operación */}
+                <div className="bg-empanada-golden/10 border border-empanada-golden/30 rounded-lg p-4">
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        ID de Operación:
+                    </p>
+                    <p className="text-lg font-mono font-bold text-empanada-golden">
+                        {operationId}
+                    </p>
+                </div>
+
+                {/* Cantidad */}
+                <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Cantidad * ({material.unit})
+                    </label>
+                    <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
+                        placeholder={`Cantidad en ${material.unit}`}
+                        className="text-base"
+                    />
+                </div>
+
+                {/* Número de Lote */}
+                <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Número de Lote
+                    </label>
+                    <Input
+                        type="text"
+                        value={batchNumber}
+                        onChange={(e) => setBatchNumber(e.target.value)}
+                        placeholder="Ej: LOTE-2024-001"
+                        className="text-base"
+                    />
+                </div>
+
+                {/* Notas */}
+                <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Notas
+                    </label>
+                    <textarea
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="Notas adicionales sobre esta entrada (opcional)..."
+                        rows={3}
+                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    />
+                </div>
+            </div>
+
+            <BrandedModalFooter>
+                <Button
+                    variant="outline"
+                    onClick={onClose}
+                >
+                    Cancelar
+                </Button>
+                <Button
+                    variant="empanada"
+                    onClick={handleConfirm}
+                    disabled={!isFormValid}
+                >
+                    Registrar Entrada
+                </Button>
+            </BrandedModalFooter>
         </BrandedModal>
     );
 }

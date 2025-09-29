@@ -11,7 +11,11 @@ import {
     postAdminCatalogAsignarASucursalQueryFunction,
     getAdminCatalogCombosQueryFunction,
     postAdminCatalogAddComboQueryFunction,
-    deleteAdminCatalogDeleteComboQueryFunction
+    deleteAdminCatalogDeleteComboQueryFunction,
+    getAdminCatalogCategoriesQueryFunction,
+    postAdminCatalogAddCategoryQueryFunction,
+    putAdminCatalogUpdateCategoryQueryFunction,
+    deleteAdminCatalogDeleteCategoryQueryFunction
 } from '@/config/apiCatalogQueryFunctions';
 import {
     getAdminStoresQueryFunction,
@@ -325,6 +329,38 @@ export const AdminDataProvider = ({ children }) => {
         mutationFn: deleteAdminCatalogDeleteComboQueryFunction,
     });
 
+    // ---------- CATEGORÍAS
+    // listar (ya se obtienen en callProductosYCategorias, pero agregamos uno independiente por si se necesita)
+    const { mutateAsync: callCategorias, isPending: callCategoriasLoading } = useMutation({
+        mutationKey: ['adminCategorias'],
+        mutationFn: getAdminCatalogCategoriesQueryFunction,
+        onSuccess: (data) => {
+            setCategorias(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setCategorias([]);
+        }
+    });
+
+    // crear
+    const { mutateAsync: callCrearCategoria, isPending: callCrearCategoriaLoading } = useMutation({
+        mutationKey: ['adminCrearCategoria'],
+        mutationFn: postAdminCatalogAddCategoryQueryFunction,
+    });
+
+    // actualizar
+    const { mutateAsync: callActualizarCategoria, isPending: callActualizarCategoriaLoading } = useMutation({
+        mutationKey: ['adminActualizarCategoria'],
+        mutationFn: putAdminCatalogUpdateCategoryQueryFunction,
+    });
+
+    // eliminar
+    const { mutateAsync: callEliminarCategoria, isPending: callEliminarCategoriaLoading } = useMutation({
+        mutationKey: ['adminEliminarCategoria'],
+        mutationFn: deleteAdminCatalogDeleteCategoryQueryFunction,
+    });
+
 
     // ---------- INVENTARIO
     // listar
@@ -533,6 +569,11 @@ const { mutateAsync: callCompanyInfo, isPending: callCompanyInfoLoading } = useM
 
             callMateriales,
             callCrearMaterial,
+
+            callCategorias,
+            callCrearCategoria,
+            callActualizarCategoria,
+            callEliminarCategoria,
         }}>
             {children}
         </AdminDataContext.Provider>

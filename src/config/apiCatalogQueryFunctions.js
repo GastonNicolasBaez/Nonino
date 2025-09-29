@@ -163,3 +163,68 @@ export const deleteAdminCatalogDeleteComboQueryFunction = async ({_id, _accessTo
     return await response.data;
 }
 
+// ========== CATEGORÍAS ==========
+
+// listar categorías
+export const getAdminCatalogCategoriesQueryFunction = async (_accessToken) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            },
+        }
+    }
+
+    const response = await axios.get(`${ENDPOINTS.catalog}/admin/categories`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// crear categoría
+export const postAdminCatalogAddCategoryQueryFunction = async ({_category, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _category,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.post(`${ENDPOINTS.catalog}/admin/categories`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// actualizar categoría
+export const putAdminCatalogUpdateCategoryQueryFunction = async ({_category, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _category,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.put(`${ENDPOINTS.catalog}/admin/categories/${_category.id}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+// eliminar categoría
+export const deleteAdminCatalogDeleteCategoryQueryFunction = async ({_id, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.delete(`${ENDPOINTS.catalog}/admin/categories/${_id}`, axiosSetup.axiosConfig);
+    return await response.data;
+}

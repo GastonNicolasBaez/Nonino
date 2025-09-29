@@ -21,7 +21,9 @@ import {
     ChevronDown,
     ChevronUp,
     Building2,
-    Truck
+    Truck,
+    Factory,
+    Tag
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -58,6 +60,8 @@ const AdminLayout = () => {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [definitionsDropdownOpen, setDefinitionsDropdownOpen] = useState(false);
     const [inventoryDropdownOpen, setInventoryDropdownOpen] = useState(false);
+    const [sucursalDropdownOpen, setSucursalDropdownOpen] = useState(false);
+    const [fabricaDropdownOpen, setFabricaDropdownOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
     // Opciones para CustomSelect de sucursales
@@ -126,6 +130,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Productos", href: "/intranet/admin/productos", icon: Package },
+                    { name: "Categorías", href: "/intranet/admin/categorias", icon: Tag },
                     { name: "Materiales", href: "/intranet/admin/materiales", icon: Archive },
                     { name: "Combos", href: "/intranet/admin/combos", icon: ShoppingCart }
                 ]
@@ -137,6 +142,24 @@ const AdminLayout = () => {
                 dropdownItems: [
                     { name: "Productos", href: "/intranet/admin/inventario-productos", icon: ShoppingCart },
                     { name: "Materiales", href: "/intranet/admin/inventario-materiales", icon: Package }
+                ]
+            },
+            {
+                name: "Sucursal",
+                icon: Building2,
+                hasDropdown: true,
+                dropdownItems: [
+                    { name: "Configurar", href: "/intranet/admin/sucursal-configurar", icon: Settings },
+                    { name: "Delivery", href: "/intranet/admin/sucursal-delivery", icon: Truck }
+                ]
+            },
+            {
+                name: "Fábrica",
+                icon: Factory,
+                hasDropdown: true,
+                dropdownItems: [
+                    { name: "Producir", href: "/intranet/admin/fabrica-producir", icon: Package },
+                    { name: "Transferir", href: "/intranet/admin/fabrica-transferir", icon: Truck }
                 ]
             },
             { name: "Clientes", href: "/intranet/admin/clientes", icon: Users },
@@ -203,6 +226,18 @@ const AdminLayout = () => {
         } else {
             setInventoryDropdownOpen(false);
         }
+
+        if (location.pathname.includes('/sucursal-')) {
+            setSucursalDropdownOpen(true);
+        } else {
+            setSucursalDropdownOpen(false);
+        }
+
+        if (location.pathname.includes('/fabrica-')) {
+            setFabricaDropdownOpen(true);
+        } else {
+            setFabricaDropdownOpen(false);
+        }
     }, [location.pathname]);
 
     // Función simplificada para determinar si un item está activo
@@ -214,6 +249,12 @@ const AdminLayout = () => {
             } else if (item.name === "Inventario") {
                 // Para inventario: activo solo si el dropdown está abierto
                 return inventoryDropdownOpen;
+            } else if (item.name === "Sucursal") {
+                // Para sucursal: activo solo si el dropdown está abierto
+                return sucursalDropdownOpen;
+            } else if (item.name === "Fábrica") {
+                // Para fábrica: activo solo si el dropdown está abierto
+                return fabricaDropdownOpen;
             }
         } else {
             // Para otros items: activo si la ruta coincide exactamente
@@ -225,7 +266,9 @@ const AdminLayout = () => {
     const shouldDeactivateOthers = () => {
         return definitionsDropdownOpen || location.pathname.includes('/productos') ||
             location.pathname.includes('/materiales') || location.pathname.includes('/combos') ||
-            inventoryDropdownOpen || location.pathname.includes('/inventario');
+            inventoryDropdownOpen || location.pathname.includes('/inventario') ||
+            sucursalDropdownOpen || location.pathname.includes('/sucursal-') ||
+            fabricaDropdownOpen || location.pathname.includes('/fabrica-');
     };
 
     return (
@@ -321,9 +364,23 @@ const AdminLayout = () => {
                                             if (item.name === "Definiciones") {
                                                 setDefinitionsDropdownOpen(!definitionsDropdownOpen);
                                                 setInventoryDropdownOpen(false);
+                                                setSucursalDropdownOpen(false);
+                                                setFabricaDropdownOpen(false);
                                             } else if (item.name === "Inventario") {
                                                 setInventoryDropdownOpen(!inventoryDropdownOpen);
                                                 setDefinitionsDropdownOpen(false);
+                                                setSucursalDropdownOpen(false);
+                                                setFabricaDropdownOpen(false);
+                                            } else if (item.name === "Sucursal") {
+                                                setSucursalDropdownOpen(!sucursalDropdownOpen);
+                                                setDefinitionsDropdownOpen(false);
+                                                setInventoryDropdownOpen(false);
+                                                setFabricaDropdownOpen(false);
+                                            } else if (item.name === "Fábrica") {
+                                                setFabricaDropdownOpen(!fabricaDropdownOpen);
+                                                setDefinitionsDropdownOpen(false);
+                                                setInventoryDropdownOpen(false);
+                                                setSucursalDropdownOpen(false);
                                             }
                                         }}
                                         className={`w-full flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item)
@@ -349,7 +406,9 @@ const AdminLayout = () => {
                                                     </Badge>
                                                 )}
                                                 {((item.name === "Definiciones" && definitionsDropdownOpen) ||
-                                                    (item.name === "Inventario" && inventoryDropdownOpen)) ? (
+                                                    (item.name === "Inventario" && inventoryDropdownOpen) ||
+                                                    (item.name === "Sucursal" && sucursalDropdownOpen) ||
+                                                    (item.name === "Fábrica" && fabricaDropdownOpen)) ? (
                                                     <ChevronUp className="w-4 h-4" />
                                                 ) : (
                                                     <ChevronDown className="w-4 h-4" />
@@ -365,7 +424,9 @@ const AdminLayout = () => {
 
                                     {/* Dropdown Items */}
                                     {!sidebarCollapsed && ((item.name === "Definiciones" && definitionsDropdownOpen) ||
-                                        (item.name === "Inventario" && inventoryDropdownOpen)) && (
+                                        (item.name === "Inventario" && inventoryDropdownOpen) ||
+                                        (item.name === "Sucursal" && sucursalDropdownOpen) ||
+                                        (item.name === "Fábrica" && fabricaDropdownOpen)) && (
                                             <div className="ml-4 space-y-1">
                                                 {item.dropdownItems.map((subItem) => (
                                                     <NavLink
@@ -391,6 +452,8 @@ const AdminLayout = () => {
                                         // Cerrar dropdowns cuando hacemos click en otros elementos
                                         setDefinitionsDropdownOpen(false);
                                         setInventoryDropdownOpen(false);
+                                        setSucursalDropdownOpen(false);
+                                        setFabricaDropdownOpen(false);
                                     }}
                                     className={`relative flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item) && !shouldDeactivateOthers()
                                         ? "bg-empanada-golden text-white active"
@@ -482,9 +545,23 @@ const AdminLayout = () => {
                                             if (item.name === "Definiciones") {
                                                 setDefinitionsDropdownOpen(!definitionsDropdownOpen);
                                                 setInventoryDropdownOpen(false);
+                                                setSucursalDropdownOpen(false);
+                                                setFabricaDropdownOpen(false);
                                             } else if (item.name === "Inventario") {
                                                 setInventoryDropdownOpen(!inventoryDropdownOpen);
                                                 setDefinitionsDropdownOpen(false);
+                                                setSucursalDropdownOpen(false);
+                                                setFabricaDropdownOpen(false);
+                                            } else if (item.name === "Sucursal") {
+                                                setSucursalDropdownOpen(!sucursalDropdownOpen);
+                                                setDefinitionsDropdownOpen(false);
+                                                setInventoryDropdownOpen(false);
+                                                setFabricaDropdownOpen(false);
+                                            } else if (item.name === "Fábrica") {
+                                                setFabricaDropdownOpen(!fabricaDropdownOpen);
+                                                setDefinitionsDropdownOpen(false);
+                                                setInventoryDropdownOpen(false);
+                                                setSucursalDropdownOpen(false);
                                             }
                                         }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item)
@@ -505,9 +582,10 @@ const AdminLayout = () => {
                                                     {item.badge}
                                                 </Badge>
                                             )}
-                                            {((item.name === "Productos" && productsDropdownOpen) ||
-                                                (item.name === "Sucursal" && branchesDropdownOpen) ||
-                                                (item.name === "Inventario" && inventoryDropdownOpen)) ? (
+                                            {((item.name === "Definiciones" && definitionsDropdownOpen) ||
+                                                (item.name === "Inventario" && inventoryDropdownOpen) ||
+                                                (item.name === "Sucursal" && sucursalDropdownOpen) ||
+                                                (item.name === "Fábrica" && fabricaDropdownOpen)) ? (
                                                 <ChevronUp className="w-4 h-4" />
                                             ) : (
                                                 <ChevronDown className="w-4 h-4" />
@@ -516,9 +594,10 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {((item.name === "Productos" && productsDropdownOpen) ||
-                                        (item.name === "Sucursal" && branchesDropdownOpen) ||
-                                        (item.name === "Inventario" && inventoryDropdownOpen)) && (
+                                    {((item.name === "Definiciones" && definitionsDropdownOpen) ||
+                                        (item.name === "Inventario" && inventoryDropdownOpen) ||
+                                        (item.name === "Sucursal" && sucursalDropdownOpen) ||
+                                        (item.name === "Fábrica" && fabricaDropdownOpen)) && (
                                             <div className="ml-4 space-y-1">
                                                 {item.dropdownItems.map((subItem) => (
                                                     <NavLink
@@ -546,6 +625,8 @@ const AdminLayout = () => {
                                         // Cerrar dropdowns cuando hacemos click en otros elementos
                                         setDefinitionsDropdownOpen(false);
                                         setInventoryDropdownOpen(false);
+                                        setSucursalDropdownOpen(false);
+                                        setFabricaDropdownOpen(false);
                                     }}
                                     className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item) && !shouldDeactivateOthers()
                                         ? "bg-empanada-golden text-white"

@@ -50,6 +50,9 @@ import { MaterialManagement } from "@/pages/admin/MaterialManagement";
 import { MaterialStockManagement } from "@/pages/admin/MaterialStockManagement";
 import { MenuManagement } from "@/pages/admin/MenuManagement";
 import { MetricsManagement } from "@/pages/admin/MetricsManagement";
+import { FabricaProducir } from "@/pages/admin/FabricaProducir";
+import { FabricaTransferir } from "@/pages/admin/FabricaTransferir";
+import { CategoryManagement } from "@/pages/admin/CategoryManagement";
 import { AdminDataProvider } from "./context/AdminDataProvider";
 
 // Crear cliente de React Query
@@ -112,13 +115,16 @@ function App() {
                                 <Route path="ordenes" element={<OrderManagement />} />
                                 <Route path="menu" element={<MenuManagement />} />
                                 <Route path="productos" element={<ProductManagement />} />
+                                <Route path="categorias" element={<CategoryManagement />} />
                                 <Route path="materiales" element={<MaterialManagement />} />
                                 <Route path="combos" element={<ComboManagement />} />
                                 <Route path="sucursal-menu" element={<MenuManagement />} />
                                 <Route path="sucursal-configurar" element={<BranchManagement />} />
-                                <Route path="sucursal-envios" element={<DeliveryManagement />} />
+                                <Route path="sucursal-delivery" element={<DeliveryManagement />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
                                 <Route path="inventario-materiales" element={<MaterialStockManagement />} />
+                                <Route path="fabrica-producir" element={<FabricaProducir />} />
+                                <Route path="fabrica-transferir" element={<FabricaTransferir />} />
                                 <Route path="clientes" element={<CustomerManagement />} />
                                 <Route path="metricas" element={<MetricsManagement />} />
                                 <Route path="configuracion" element={<SettingsPage />} />

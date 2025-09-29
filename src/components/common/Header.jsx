@@ -143,8 +143,8 @@ export function Header() {
           "fixed top-0 left-0 right-0 z-20 transition-all duration-300",
           // En móvil siempre sólido, en desktop con transparencias
           "bg-white shadow-lg border-b",
-          "lg:bg-white/95 lg:backdrop-blur-md",
-          !isStaticPage && scrolled && "lg:bg-white/20 lg:backdrop-blur-sm"
+          "lg:bg-white/10 lg:backdrop-blur-3xl",
+          !isStaticPage && scrolled && "lg:bg-white/15 lg:backdrop-blur-3xl"
         )}
         initial={{ y: isStaticPage ? 0 : -100 }}
         animate={{ y: 0 }}

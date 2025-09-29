@@ -835,3 +835,8 @@ html.dark .admin-user-card:hover {
     padding: 0.25rem 0.5rem !important;
   }
 }
+
+/* HomePage específico - body transparente para mostrar background image */
+body.homepage-background {
+  background-color: transparent !important;
+}

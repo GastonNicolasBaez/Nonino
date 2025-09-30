@@ -31,8 +31,6 @@ export const postAdminInventoryAddMaterialQueryFunction = async ({_material, _ac
         }
     }
 
-    console.log(axiosSetup);
-
     const response = await axios.post(`${ENDPOINTS.inventory}/admin/materials`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
@@ -48,8 +46,6 @@ export const postAdminInventoryAssignRecipeQueryFunction = async ({_recipe, _acc
             }
         }
     }
-
-    console.log(axiosSetup);
 
     const response = await axios.post(`${ENDPOINTS.inventory}/admin/recipes`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;

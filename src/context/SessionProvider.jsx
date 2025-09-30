@@ -89,6 +89,7 @@ export const SessionProvider = ({ children }) => {
         setUserData(null);
         setIsAuthenticated(false);
         localStorage.removeItem(csrfLocalStorageKeyName);
+        localStorage.removeItem('noninoSysStore');
     };
 
     const loading = componentLoading || callLoginLoading || callReloginLoading;

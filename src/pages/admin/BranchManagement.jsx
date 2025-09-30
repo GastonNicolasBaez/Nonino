@@ -80,8 +80,6 @@ export function BranchManagement() {
     const handleSaveStore = async (storeData) => {
         setIsAddingStore(true);
 
-        console.log(storeData);
-
         try {
             await callCrearSucursal({
                 _store: storeData,

@@ -288,7 +288,6 @@ export function FabricaProducir() {
                         variant="empanada"
                         size="sm"
                         onClick={() => {
-                            console.log('click');
                             handleProcessProduction
                         }}
                     >

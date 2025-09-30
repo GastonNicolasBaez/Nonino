@@ -86,7 +86,12 @@ export const AdminDataProvider = ({ children }) => {
             callMateriales(at);
             callCombos(at);
             callCategorias(at);
-            setSucursalSeleccionada(session.userData.sucursal);
+            if (session.userData.isAdmin) {
+                const adminStore = localStorage.getItem('noninoSysStore');
+                setSucursalSeleccionada(adminStore ? Number(adminStore) : '')
+            } else {
+                setSucursalSeleccionada(session.userData.sucursal);
+            }
         }
     }, [session.userData?.accessToken]);
 
@@ -110,17 +115,31 @@ export const AdminDataProvider = ({ children }) => {
                 _accessToken: at,
             });
 
-            //inventario de sucursal
-            callInventarioMaterialesSucursal({
-                _storeId: sucursalSeleccionada,
-                _accessToken: at,
-            });
-            callInventarioProductosSucursal({
-                _storeId: sucursalSeleccionada,
-                _accessToken: at,
-            });
+            // guardar seleccionada en localstorage
+            localStorage.setItem('noninoSysStore', sucursalSeleccionada);
         }
     }, [sucursalSeleccionada]);
+
+    // llamar materiales de sucursal cuando haya materiales y cambie la sucursal
+    useEffect(() => {
+        if (materiales.length > 0) {
+            callInventarioMaterialesSucursal({
+                _storeId: sucursalSeleccionada,
+                _accessToken: session.userData.accessToken,
+            });
+        }
+    }, [materiales, sucursalSeleccionada]);
+
+    // llamar productos de sucursal cuando haya materiales y cambie la sucursal
+    useEffect(() => {
+        if (productos.length > 0) {
+            callInventarioProductosSucursal({
+                _storeId: sucursalSeleccionada,
+                _accessToken: session.userData.accessToken,
+            });
+        }
+    }, [productos, sucursalSeleccionada]);
+
 
 
     // ---------- PRODUCTOS Y CATEGORIAS PÚBLICO
@@ -232,7 +251,7 @@ export const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminSucursales'],
         mutationFn: getAdminStoresQueryFunction,
         onSuccess: (data) => {
-            if (session.userData.sucursal) {
+            if (!session.userData.isAdmin) {
                 setSucursales(data.filter((s) => s.id == session.userData.sucursal));
             } else {
                 setSucursales(data);
@@ -467,21 +486,23 @@ export const AdminDataProvider = ({ children }) => {
     //
 
     const showDebugStateInfo = () => {
-        console.log('SUCURSAL:', sucursalSeleccionada);
-        console.log('PRODUCTOS:', productos);
-        console.log('CATEGORIAS:', categorias);
-        console.log('SUCURSALES:', sucursales);
-        console.log('MATERIALES:', materiales);
-        console.log('COMBOS:', combos);
-        console.log('COMPANY INFO:', companyInfo);
-        console.log('--- --- ---');
-        console.log('SUCURSAL SELECCIONADA:', sucursalSeleccionada);
-        console.log('PRODUCTOS SUCURSAL:', productosSucursal);
-        console.log('COMBOS SUCURSAL:', combosSucursal);
-        console.log('DELIVERY SUCURSAL:', deliverySucursal);
-        console.log('HORARIOS SUCURSAL:', horariosSucursal);
-        console.log('INVENTARIO MATERIALES SUCURSAL:', inventarioMaterialesSucursal);
-        console.log('INVENTARIO PRODUCTOS SUCURSAL:', inventarioProductosSucursal);
+        const debugInfo = {
+            SUCURSAL: sucursalSeleccionada,
+            PRODUCTOS: productos,
+            CATEGORIAS: categorias,
+            SUCURSALES: sucursales,
+            MATERIALES: materiales,
+            COMBOS: combos,
+            COMPANY_INFO: companyInfo,
+            SUCURSAL_SELECCIONADA: sucursalSeleccionada,
+            PRODUCTOS_SUCURSAL: productosSucursal,
+            COMBOS_SUCURSAL: combosSucursal,
+            DELIVERY_SUCURSAL: deliverySucursal,
+            HORARIOS_SUCURSAL: horariosSucursal,
+            INVENTARIO_MATERIALES_SUCURSAL: inventarioMaterialesSucursal,
+            INVENTARIO_PROODUCTOS_SUCURSAL: inventarioProductosSucursal,
+        }
+        console.log(debugInfo);
     }
 
     //

@@ -21,7 +21,6 @@ const OptimizedProductImage = React.memo(({ product, onImageLoad }) => {
     // Determinar la mejor fuente de imagen disponible
     // Ahora con prioridad para imágenes procesadas por el admin
     const getImageSrc = () => {
-        console.log(product);
         // Priorizar imageBase64 (desde admin) o imageUrl procesadas
         if (product.imageBase64) return `data:image/webp;base64,${product.imageBase64}`;
         if (product.imageUrl) return product.imageUrl;

@@ -74,7 +74,11 @@ export default {
           cream: '#f5f5dc',       // secondary-cream
           wheat: '#f0e68c',       // secondary-wheat
           terracotta: '#cd853f',  // secondary-terracotta
-          dark: '#1a1a1a',        // neutral-dark (gris oscuro)
+          dark: '#1a1a1a',        // neutral-dark (gris oscuro del footer)
+          darker: '#0f0f0f',      // más oscuro que el footer
+          medium: '#2a2a2a',      // versión más clara del footer
+          'medium-light': '#454545', // tono intermedio para cards
+          'light-gray': '#3a3a3a', // para elementos interactivos
           light: '#fdf5e6',       // neutral-light
         },
         // Colores de acento

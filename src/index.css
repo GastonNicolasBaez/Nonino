@@ -5,43 +5,55 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 25 20% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 25 20% 15%;
-    --muted: 45 20% 95%;
-    --muted-foreground: 25 15% 45%;
-    --border: 45 15% 90%;
-    --input: 45 15% 90%;
-    --primary: 45 65% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 45 20% 95%;
-    --secondary-foreground: 25 20% 15%;
-    --accent: 45 20% 95%;
-    --accent-foreground: 25 20% 15%;
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --ring: 45 65% 50%;
-  }
-
-  .dark {
-    --background: 217 32% 17%;
-    --foreground: 45 20% 95%;
-    --card: 216 28% 16%;
-    --card-foreground: 45 20% 95%;
-    --muted: 216 28% 16%;
+    --background: 0 0% 0%;          /* negro intenso como la sección de productos */
+    --foreground: 45 20% 95%;       /* texto claro sobre fondo oscuro */
+    --card: 0 0% 10%;               /* empanada-dark para cards */
+    --card-foreground: 45 20% 95%;  /* texto claro para cards */
+    --muted: 0 0% 16%;              /* empanada-medium */
     --muted-foreground: 45 10% 65%;
-    --border: 215 25% 25%;
-    --input: 216 28% 16%;
-    --primary: 45 65% 50%;
-    --primary-foreground: 25 20% 8%;
-    --secondary: 216 28% 16%;
+    --border: 0 0% 23%;             /* empanada-light-gray */
+    --input: 0 0% 16%;              /* empanada-medium */
+    --primary: 45 65% 50%;          /* empanada-golden */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 16%;          /* empanada-medium */
     --secondary-foreground: 45 20% 95%;
-    --accent: 216 28% 16%;
+    --accent: 0 0% 16%;             /* empanada-medium */
     --accent-foreground: 45 20% 95%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
     --ring: 45 65% 50%;
+
+    /* Nuevas variables para paleta empanada */
+    --empanada-dark: 0 0% 10%;      /* #1a1a1a */
+    --empanada-darker: 0 0% 6%;     /* #0f0f0f */
+    --empanada-medium: 0 0% 16%;    /* #2a2a2a */
+    --empanada-light-gray: 0 0% 23%; /* #3a3a3a */
+  }
+
+  .dark {
+    --background: 0 0% 0%;          /* negro intenso para consistencia */
+    --foreground: 45 20% 95%;
+    --card: 0 0% 10%;               /* empanada-dark para cards */
+    --card-foreground: 45 20% 95%;
+    --muted: 0 0% 16%;              /* empanada-medium para elementos muted */
+    --muted-foreground: 45 10% 65%;
+    --border: 0 0% 23%;             /* empanada-light-gray para bordes */
+    --input: 0 0% 16%;              /* empanada-medium para inputs */
+    --primary: 45 65% 50%;
+    --primary-foreground: 25 20% 8%;
+    --secondary: 0 0% 16%;          /* empanada-medium */
+    --secondary-foreground: 45 20% 95%;
+    --accent: 0 0% 16%;             /* empanada-medium */
+    --accent-foreground: 45 20% 95%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 45 65% 50%;
+
+    /* Variables empanada para modo oscuro */
+    --empanada-dark: 0 0% 10%;      /* #1a1a1a */
+    --empanada-darker: 0 0% 6%;     /* #0f0f0f */
+    --empanada-medium: 0 0% 16%;    /* #2a2a2a */
+    --empanada-light-gray: 0 0% 23%; /* #3a3a3a */
   }
 
   * {
@@ -56,6 +68,11 @@
     /* Ocultar scrollbar del mouse */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+
+  /* Override para páginas de menú con fondo empanada */
+  body.menu-page {
+    background-color: #0f0f0f !important; /* empanada-darker */
   }
 
   /* Ensure full viewport coverage for fixed positioned elements */
@@ -613,8 +630,75 @@ html.dark input[type="number"],
 html.dark input[type="date"],
 html.dark textarea,
 html.dark select {
-  background-color: #1f2937 !important;
-  border-color: #4b5563 !important;
+  background-color: #2a2a2a !important; /* empanada-medium */
+  border-color: #3a3a3a !important; /* empanada-light-gray */
+  color: #f9fafb !important;
+}
+
+/* Estilos específicos para opciones de select en modo oscuro */
+html.dark select option {
+  background-color: #2a2a2a !important; /* empanada-medium */
+  color: #f9fafb !important;
+  border: none !important;
+}
+
+/* Estilos específicos para componentes de menú */
+.menu-select {
+  background-color: #2a2a2a !important; /* empanada-medium */
+  border-color: #3a3a3a !important; /* empanada-light-gray */
+  color: #f9fafb !important;
+}
+
+.menu-select:focus {
+  background-color: #3a3a3a !important; /* empanada-light-gray */
+  border-color: #d4af37 !important; /* empanada-golden */
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2) !important;
+  outline: none !important;
+}
+
+.menu-select option {
+  background-color: #2a2a2a !important; /* empanada-medium */
+  color: #f9fafb !important;
+}
+
+/* Estilos específicos para botones del CartSidebar */
+.cart-quantity-button {
+  background-color: #3a3a3a !important; /* empanada-light-gray */
+  border-color: #3a3a3a !important;
+  color: #f9fafb !important;
+  transition: all 0.2s ease;
+}
+
+.cart-quantity-button:hover {
+  background-color: #2a2a2a !important; /* empanada-medium */
+  border-color: #3a3a3a !important;
+  color: #f9fafb !important;
+}
+
+.cart-secondary-button {
+  background-color: #3a3a3a !important; /* empanada-light-gray */
+  border-color: #3a3a3a !important;
+  color: #f9fafb !important;
+  transition: all 0.2s ease;
+}
+
+.cart-secondary-button:hover {
+  background-color: #2a2a2a !important; /* empanada-medium */
+  border-color: #3a3a3a !important;
+  color: #f9fafb !important;
+}
+
+/* Estilos específicos para botones de categoría del menú */
+.menu-category-button {
+  background-color: #3a3a3a !important; /* empanada-light-gray */
+  border-color: #3a3a3a !important;
+  color: #f9fafb !important;
+  transition: all 0.2s ease;
+}
+
+.menu-category-button:hover {
+  background-color: #2a2a2a !important; /* empanada-medium */
+  border-color: #3a3a3a !important;
   color: #f9fafb !important;
 }
 
@@ -625,9 +709,9 @@ html.dark input[type="number"]:focus,
 html.dark input[type="date"]:focus,
 html.dark textarea:focus,
 html.dark select:focus {
-  background-color: #374151 !important;
-  border-color: hsl(var(--primary)) !important;
-  box-shadow: none !important;
+  background-color: #3a3a3a !important; /* empanada-light-gray */
+  border-color: #d4af37 !important; /* empanada-golden */
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2) !important;
   outline: none !important;
 }
 
@@ -834,4 +918,9 @@ html.dark .admin-user-card:hover {
     font-size: 0.875rem !important;
     padding: 0.25rem 0.5rem !important;
   }
+}
+
+/* HomePage específico - body transparente para mostrar background image */
+body.homepage-background {
+  background-color: transparent !important;
 }

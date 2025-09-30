@@ -97,14 +97,14 @@ export function ZoomParallax({ images }) {
     const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
 
     return (
-        <div ref={container} className={`relative ${isMobile ? 'h-[200vh]' : 'h-[300vh]'} bg-gradient-to-b from-empanada-golden via-empanada-warm to-empanada-cream`}>
+        <div ref={container} className={`relative ${isMobile ? 'h-[200vh]' : 'h-[300vh]'} bg-gradient-to-b from-black via-empanada-darker via-empanada-dark to-empanada-medium`}>
             {/* Degradado dinámico superpuesto que evoluciona con el scroll */}
             <motion.div
-                className="absolute inset-0 bg-gradient-to-b from-empanada-dark/60 via-empanada-rich/40 to-transparent"
+                className="absolute inset-0 bg-gradient-to-b from-empanada-darker/60 via-empanada-dark/40 to-transparent"
                 style={{ opacity: gradientOpacity }}
             />
             {/* Degradado de transición para el final */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-empanada-cream to-transparent"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-empanada-medium to-transparent"></div>
             <div className="sticky top-0 h-screen overflow-hidden relative" style={{ transform: 'translateY(0)' }}>
                 {images.map(({ src, alt }, index) => {
                     const scale = scales[index % scales.length];

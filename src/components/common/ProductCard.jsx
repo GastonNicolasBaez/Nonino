@@ -53,7 +53,7 @@ export function ProductCard({ product, className }) {
         onHoverEnd={() => setIsHovered(false)}
       >
         <Card
-          className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col"
+          className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col bg-empanada-dark border-empanada-light-gray"
           onClick={handleCardClick}
         >
         <div>
@@ -85,14 +85,14 @@ export function ProductCard({ product, className }) {
 
           {/* Like Button */}
           <motion.button
-            className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm"
+            className="absolute top-2 right-2 p-2 bg-empanada-dark/80 backdrop-blur-sm rounded-full shadow-sm"
             onClick={handleLike}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <Heart
               className={`w-4 h-4 transition-colors ${
-                isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
+                isLiked ? "fill-red-500 text-red-500" : "text-gray-300"
               }`}
             />
           </motion.button>
@@ -121,7 +121,7 @@ export function ProductCard({ product, className }) {
 
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-2">
-            <h3 className="font-semibold text-lg leading-tight group-hover:text-empanada-golden transition-colors">
+            <h3 className="font-semibold text-lg leading-tight text-white group-hover:text-empanada-golden transition-colors">
               {product.name}
             </h3>
             <div className="text-right">
@@ -131,11 +131,11 @@ export function ProductCard({ product, className }) {
             </div>
           </div>
 
-          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+          <p className="text-gray-300 text-sm mb-3 line-clamp-2">
             {product.description}
           </p>
 
-          <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+          <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
             <div className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
               <span>{product.preparationTime} min</span>

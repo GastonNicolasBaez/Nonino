@@ -24,15 +24,15 @@ export function StoreSelectionPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-            <div className="text-center bg-white p-8 rounded-xl shadow-2xl max-w-md w-full mx-4">
+        <div className="min-h-screen bg-black flex items-center justify-center dark">
+            <div className="text-center bg-empanada-dark p-8 rounded-xl shadow-2xl max-w-md w-full mx-4 border border-empanada-light-gray">
                 <div className="flex items-center justify-center gap-3 mb-4">
                     <Store className="w-8 h-8 text-empanada-golden" />
-                    <h1 className="text-3xl font-bold text-gray-900">
+                    <h1 className="text-3xl font-bold text-white">
                         Elige tu Sucursal
                     </h1>
                 </div>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-300 mb-6">
                     Selecciona la sucursal más cercana para hacer tu pedido
                 </p>
 
@@ -46,8 +46,8 @@ export function StoreSelectionPage() {
                         >
                             <Card
                                 className={`cursor-pointer transition-all duration-300 hover:shadow-md ${selectedStore?.id === store.id
-                                        ? 'bg-empanada-golden/10 border-empanada-golden border-2'
-                                        : 'bg-gray-100 hover:bg-gray-200 border border-gray-300'
+                                        ? 'bg-empanada-golden/20 border-empanada-golden border-2'
+                                        : 'bg-empanada-light-gray hover:bg-empanada-medium border border-empanada-light-gray'
                                     }`}
                                 onClick={() => handleSelectStore(store)}
                             >
@@ -55,7 +55,7 @@ export function StoreSelectionPage() {
                                     <div className="flex items-start justify-between mb-2">
                                         <div className="text-left flex-1">
                                             <div className="flex items-center gap-2 mb-1">
-                                                <h3 className="font-semibold text-gray-900 text-sm">{store.name}</h3>
+                                                <h3 className="font-semibold text-white text-sm">{store.name}</h3>
                                                 <Badge
                                                     className={`text-xs px-2 py-0.5 ${store.isOpen
                                                             ? 'bg-green-500 text-white'
@@ -65,7 +65,7 @@ export function StoreSelectionPage() {
                                                     {store.isOpen ? "Abierto" : "Cerrado"}
                                                 </Badge>
                                             </div>
-                                            <div className="flex items-center gap-1 text-xs text-gray-600 mb-1">
+                                            <div className="flex items-center gap-1 text-xs text-gray-300 mb-1">
                                                 <MapPin className="w-3 h-3" />
                                                 <span>{store.address}</span>
                                             </div>
@@ -76,7 +76,7 @@ export function StoreSelectionPage() {
                                     </div>
 
                                     {/* Información compacta */}
-                                    <div className="grid grid-cols-2 gap-2 text-xs text-empanada-rich">
+                                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-300">
                                         <div className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
                                             <span>{store.hours}</span>
@@ -89,7 +89,7 @@ export function StoreSelectionPage() {
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="text-xs text-empanada-terracotta mt-1">
+                                    <div className="text-xs text-gray-400 mt-1">
                                         Mín: ${store.minOrder}
                                     </div>
                                 </CardContent>

@@ -27,6 +27,14 @@ export function HomePage() {
         return false;
     });
 
+    // Agregar clase al body para background transparente
+    useEffect(() => {
+        document.body.classList.add('homepage-background');
+        return () => {
+            document.body.classList.remove('homepage-background');
+        };
+    }, []);
+
     // Detectar si es dispositivo móvil
     useEffect(() => {
         const checkMobile = () => {
@@ -105,10 +113,10 @@ export function HomePage() {
                 />
             </motion.div>
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+            <section className="relative min-h-screen flex items-center justify-center">
                 {/* Background Image with Parallax Effect */}
                 <motion.div
-                    className="absolute inset-0 w-full h-[160%] -top-[30%]"
+                    className="absolute inset-0 w-full h-[160%] -top-[20%] lg:-top-[50%] z-[-1]"
                     style={{
                         backgroundImage: `url(${sanMartinBgImage})`,
                         backgroundSize: "cover",
@@ -118,7 +126,7 @@ export function HomePage() {
                 />
 
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute inset-0 bg-black/30" />
                 {/* Background Elements */}
                 <div className="absolute inset-0">
                     <div className="absolute top-20 left-4 sm:left-20 w-16 h-16 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-xl animate-float" />
@@ -138,6 +146,7 @@ export function HomePage() {
                             animation="slideUp"
                             by="word"
                             className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
+                            style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >
                             Las Mejores Empanadas del Sur
                         </TextAnimate>
@@ -147,6 +156,7 @@ export function HomePage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5, duration: 0.6 }}
                             className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto px-2"
+                            style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}
                         >
                             Tradición familiar desde 1995. Ingredientes frescos, recetas artesanales
                             y el sabor auténtico que tanto amas.

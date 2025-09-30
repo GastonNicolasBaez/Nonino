@@ -56,11 +56,11 @@ export function CartSidebar() {
             animate="open"
             exit="closed"
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-white shadow-2xl z-[101] flex flex-col md:hidden"
+            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-empanada-dark shadow-2xl z-[101] flex flex-col md:hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-empanada-cream to-empanada-wheat">
-              <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-empanada-light-gray bg-empanada-dark">
+              <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 text-white">
                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-empanada-golden" />
                 Tu Carrito
                 {itemCount > 0 && (
@@ -84,10 +84,10 @@ export function CartSidebar() {
               {items.length === 0 ? (
                 <div className="p-4 sm:p-6 text-center">
                   <div className="text-5xl sm:text-6xl mb-4">🥟</div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">
                     Tu carrito está vacío
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
+                  <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">
                     ¡Agrega algunas deliciosas empanadas!
                   </p>
                   <Link to="/pedir" onClick={() => setIsOpen(false)}>
@@ -108,7 +108,7 @@ export function CartSidebar() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg hover:shadow-md transition-shadow"
+                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-empanada-light-gray bg-empanada-medium rounded-lg hover:shadow-md transition-shadow"
                     >
                       <img
                         src={item.image}
@@ -116,13 +116,13 @@ export function CartSidebar() {
                         className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm sm:text-base truncate">{item.name}</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <h4 className="font-medium text-sm sm:text-base truncate text-white">{item.name}</h4>
+                        <p className="text-sm text-gray-300">
                           {formatPrice(item.price)}
                         </p>
                         {item.customizations &&
                           Object.keys(item.customizations).length > 0 && (
-                            <div className="text-xs text-muted-foreground mt-1 truncate">
+                            <div className="text-xs text-gray-400 mt-1 truncate">
                               {Object.entries(item.customizations)
                                 .map(([key, value]) => `${key}: ${value}`)
                                 .join(", ")}
@@ -133,7 +133,7 @@ export function CartSidebar() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8"
+                          className="h-7 w-7 sm:h-8 sm:w-8 cart-quantity-button"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -150,7 +150,7 @@ export function CartSidebar() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8"
+                          className="h-7 w-7 sm:h-8 sm:w-8 cart-quantity-button"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -164,7 +164,7 @@ export function CartSidebar() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8 text-red-500 hover:text-red-700"
+                          className="h-7 w-7 sm:h-8 sm:w-8 text-red-500 hover:text-red-300 hover:bg-red-900/20"
                           onClick={() => removeItem(item.id, item.customizations)}
                         >
                           <Trash2 className="w-2 h-2 sm:w-3 sm:h-3" />
@@ -178,15 +178,15 @@ export function CartSidebar() {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t p-4 sm:p-6 space-y-4 sm:space-y-6 bg-gray-50">
+              <div className="border-t border-empanada-light-gray p-4 sm:p-6 space-y-4 sm:space-y-6 bg-empanada-dark">
                 {/* Promo Code */}
                 {promoCode && (
-                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-empanada-medium border border-green-600 rounded-lg">
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm font-medium text-green-800 block truncate">
+                      <span className="text-sm font-medium text-green-400 block truncate">
                         Código: {promoCode.code}
                       </span>
-                      <p className="text-xs text-green-600 truncate">
+                      <p className="text-xs text-green-300 truncate">
                         {promoCode.description}
                       </p>
                     </div>
@@ -194,7 +194,7 @@ export function CartSidebar() {
                       variant="ghost"
                       size="sm"
                       onClick={removePromoCode}
-                      className="text-green-600 hover:text-green-800 ml-2 flex-shrink-0"
+                      className="text-green-400 hover:text-green-300 ml-2 flex-shrink-0"
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -202,7 +202,7 @@ export function CartSidebar() {
                 )}
 
                 {/* Summary */}
-                <div className="space-y-2 text-sm sm:text-base">
+                <div className="space-y-2 text-sm sm:text-base text-white">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
                     <span>{formatPrice(subtotal)}</span>
@@ -230,30 +230,30 @@ export function CartSidebar() {
                 {/* Store Selection */}
                 {selectedStore ? (
                   <div className="space-y-3">
-                    <div className="text-sm font-medium">Sucursal para el pedido:</div>
-                    <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                    <div className="text-sm font-medium text-white">Sucursal para el pedido:</div>
+                    <div className="bg-empanada-medium p-3 rounded-lg border border-green-600">
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-green-600 text-sm">✓</span>
+                        <div className="w-8 h-8 bg-green-800 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-green-400 text-sm">✓</span>
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium text-sm text-green-800">{selectedStore.name}</div>
-                          <div className="text-xs text-green-600">{selectedStore.address}</div>
-                          <div className="text-xs text-green-700 mt-1 font-medium">
+                          <div className="font-medium text-sm text-green-400">{selectedStore.name}</div>
+                          <div className="text-xs text-green-300">{selectedStore.address}</div>
+                          <div className="text-xs text-green-300 mt-1 font-medium">
                             {selectedStore.deliveryTime} • Min: {formatPrice(selectedStore.minOrder)}
                           </div>
                         </div>
                       </div>
                     </div>
                     {selectedStore.minOrder && subtotal < selectedStore.minOrder && (
-                      <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
+                      <div className="text-xs text-amber-400 bg-empanada-medium p-2 rounded border border-amber-600">
                         ⚠️ Pedido mínimo: {formatPrice(selectedStore.minOrder)}
                       </div>
                     )}
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="text-sm font-medium">Sucursal para el pedido:</div>
+                    <div className="text-sm font-medium text-white">Sucursal para el pedido:</div>
                     <StoreSelector
                       selectedStore={selectedStore}
                       onStoreSelect={updateStore}
@@ -265,7 +265,7 @@ export function CartSidebar() {
                 {/* Actions */}
                 <div className="space-y-3">
                   <Link to="/carrito" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full py-3 sm:py-4 text-sm sm:text-base">
+                    <Button variant="outline" className="w-full py-3 sm:py-4 text-sm sm:text-base cart-secondary-button">
                       Ver Carrito Completo
                     </Button>
                   </Link>
@@ -281,7 +281,7 @@ export function CartSidebar() {
                 </div>
 
                 {/* Quick Info */}
-                <div className="text-xs text-gray-500 space-y-1 pt-2 border-t">
+                <div className="text-xs text-gray-400 space-y-1 pt-2 border-t border-empanada-light-gray">
                   <p className="flex items-center gap-1">
                     <span className="text-green-500">✓</span>
                     Envío gratis en pedidos &gt; $3000

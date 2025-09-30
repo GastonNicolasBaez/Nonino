@@ -164,7 +164,7 @@ export function InteractiveImageAccordion({
   };
 
   return (
-    <div className="bg-gradient-to-br from-empanada-cream to-empanada-wheat font-sans relative">
+    <div className="bg-gradient-to-b from-black via-empanada-darker to-empanada-medium font-sans relative">
       <section className="container mx-auto px-4 py-16 md:py-20 pb-16">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
 
@@ -172,7 +172,7 @@ export function InteractiveImageAccordion({
           <div className="w-full lg:w-1/2 lg:flex-shrink-0 text-center flex flex-col justify-center">
             <WordPullUp
               words={title}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-empanada-dark leading-tight tracking-tighter"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tighter"
               wrapperFramerProps={{
                 hidden: { opacity: 0 },
                 show: {
@@ -189,7 +189,7 @@ export function InteractiveImageAccordion({
             />
             <WordPullUp
               words={subtitle}
-              className="mt-6 text-lg text-empanada-dark/80 max-w-xl mx-auto leading-relaxed"
+              className="mt-6 text-lg text-gray-300 max-w-xl mx-auto leading-relaxed"
               wrapperFramerProps={{
                 hidden: { opacity: 0 },
                 show: {
@@ -232,7 +232,7 @@ export function InteractiveImageAccordion({
       </section>
 
       {/* Degradado sutil hacia el footer */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-gray-100/30 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-empanada-medium pointer-events-none"></div>
     </div>
   );
 }

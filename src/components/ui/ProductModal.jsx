@@ -116,7 +116,7 @@ export function ProductModal({ product, isOpen, onClose }) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-full max-w-md mx-4 md:mx-auto bg-white rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col h-[95vh] md:max-h-[90vh]"
+            className="relative w-full max-w-md mx-0 md:mx-auto bg-gray-800 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col h-[95vh] md:max-h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header with Close Button */}
@@ -137,7 +137,7 @@ export function ProductModal({ product, isOpen, onClose }) {
                   variant="ghost"
                   size="icon"
                   onClick={onClose}
-                  className="absolute top-4 right-4 h-10 w-10 bg-white/90 backdrop-blur-sm hover:bg-white text-gray-800 rounded-full shadow-lg border border-white/20"
+                  className="absolute top-4 right-4 h-10 w-10 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white rounded-full shadow-lg border border-white/10"
                 >
                   <X className="w-5 h-5" />
                 </Button>
@@ -178,22 +178,22 @@ export function ProductModal({ product, isOpen, onClose }) {
               <div className="p-6 space-y-4">
                 {/* Product Name and Price */}
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-xl font-bold text-white mb-2">
                     {product.name}
                   </h2>
                   <div className="flex items-center gap-4 mb-3">
                     <span className="text-2xl font-bold text-empanada-golden">
                       {formatPrice(product.price)}
                     </span>
-                    <span className="text-sm text-gray-500">por unidad</span>
+                    <span className="text-sm text-gray-400">por unidad</span>
                   </div>
                 </div>
 
 
                 {/* Description */}
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Descripción</h3>
-                  <p className="text-gray-700 leading-relaxed">
+                  <h3 className="font-semibold text-white mb-2">Descripción</h3>
+                  <p className="text-gray-300 leading-relaxed">
                     {product.description || "Deliciosa empanada preparada con los mejores ingredientes seleccionados especialmente para ti. Una combinación perfecta de sabores tradicionales que te harán sentir como en casa."}
                   </p>
                 </div>
@@ -202,10 +202,10 @@ export function ProductModal({ product, isOpen, onClose }) {
             </div>
 
             {/* Footer - Quantity and Add Button */}
-            <div className="flex-shrink-0 p-6 bg-gray-50 border-t pb-[60px]">
+            <div className="flex-shrink-0 p-6 bg-gray-700 border-t border-gray-600 pb-[60px]">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <span className="text-sm text-gray-600 block">Cantidad</span>
+                  <span className="text-sm text-gray-300 block">Cantidad</span>
                   <div className="flex items-center gap-3 mt-1">
                     <Button
                       variant="outline"
@@ -216,7 +216,7 @@ export function ProductModal({ product, isOpen, onClose }) {
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
-                    <span className="text-xl font-bold w-8 text-center">
+                    <span className="text-xl font-bold w-8 text-center text-white">
                       {quantity}
                     </span>
                     <Button
@@ -231,7 +231,7 @@ export function ProductModal({ product, isOpen, onClose }) {
                 </div>
 
                 <div className="text-right">
-                  <span className="text-sm text-gray-600 block">Total</span>
+                  <span className="text-sm text-gray-300 block">Total</span>
                   <span className="text-2xl font-bold text-empanada-golden">
                     {formatPrice(product.price * quantity)}
                   </span>

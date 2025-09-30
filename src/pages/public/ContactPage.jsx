@@ -64,11 +64,10 @@ export function ContactPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-empanada-light-gray">
       {/* Hero Section */}
-      <section className="bg-empanada-dark text-white py-12 sm:py-16 lg:py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-empanada-golden/20 to-empanada-warm/20"></div>
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="bg-gradient-to-b from-black via-empanada-darker to-empanada-medium text-white py-12 sm:py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <TextAnimate
             animation="slideUp"
             by="word"
@@ -88,7 +87,7 @@ export function ContactPage() {
       </section>
 
       {/* Contact Info */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-empanada-medium via-empanada-light-gray to-empanada-medium/40">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">
             {contactInfo.map((info, index) => (
@@ -147,7 +146,7 @@ export function ContactPage() {
                   <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700">
+                        <label className="block text-sm font-medium mb-2 text-white">
                           Nombre *
                         </label>
                         <Input
@@ -160,7 +159,7 @@ export function ContactPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700">
+                        <label className="block text-sm font-medium mb-2 text-white">
                           Teléfono
                         </label>
                         <Input
@@ -175,7 +174,7 @@ export function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700">
+                      <label className="block text-sm font-medium mb-2 text-white">
                         Email *
                       </label>
                       <Input
@@ -190,7 +189,7 @@ export function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700">
+                      <label className="block text-sm font-medium mb-2 text-white">
                         Asunto *
                       </label>
                       <select
@@ -211,7 +210,7 @@ export function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700">
+                      <label className="block text-sm font-medium mb-2 text-white">
                         Mensaje *
                       </label>
                       <textarea
@@ -248,20 +247,20 @@ export function ContactPage() {
                 <CardContent className="px-4 sm:px-6">
                   <div className="space-y-3 sm:space-y-4">
                     <div>
-                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-gray-800">¿Cuál es el tiempo de entrega?</h4>
-                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-white">¿Cuál es el tiempo de entrega?</h4>
+                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
                         Nuestro tiempo de entrega varía entre 30-60 minutos dependiendo de la zona y el horario.
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-gray-800">¿Hacen delivery los domingos?</h4>
-                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-white">¿Hacen delivery los domingos?</h4>
+                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
                         Sí, hacemos delivery todos los días de la semana, incluidos domingos y feriados.
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-gray-800">¿Cuál es el pedido mínimo?</h4>
-                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-white">¿Cuál es el pedido mínimo?</h4>
+                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
                         El pedido mínimo varía según la zona: Centro $2000, otras zonas $2500.
                       </p>
                     </div>
@@ -289,7 +288,7 @@ export function ContactPage() {
                       📺
                     </Button>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-3 sm:mt-4 text-center sm:text-left">
+                  <p className="text-xs sm:text-sm text-gray-300 mt-3 sm:mt-4 text-center sm:text-left">
                     Mantente al día con nuestras promociones y novedades
                   </p>
                 </CardContent>

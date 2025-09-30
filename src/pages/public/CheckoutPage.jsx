@@ -205,7 +205,7 @@ export function CheckoutPage() {
     <div className="space-y-4">
       {/* Store Selection */}
       {selectedStore ? (
-        <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
+        <div className="bg-empanada-dark border border-empanada-light-gray rounded-lg p-4">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 bg-green-800 rounded-full flex items-center justify-center flex-shrink-0">
               <Check className="w-4 h-4 text-green-400" />
@@ -217,7 +217,7 @@ export function CheckoutPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-gray-800 border border-red-600 rounded-lg p-4 text-center">
+        <div className="bg-empanada-dark border border-red-600 rounded-lg p-4 text-center">
           <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
           <h3 className="font-semibold text-red-400 text-sm mb-1">Selecciona una sucursal</h3>
           <p className="text-red-300 text-xs">Necesitas elegir una sucursal para continuar</p>
@@ -235,7 +235,7 @@ export function CheckoutPage() {
               "p-4 rounded-lg border-2 text-left transition-all",
               orderData.deliveryType === "delivery"
                 ? "border-empanada-golden bg-empanada-golden/5"
-                : "border-gray-600 hover:border-empanada-golden/50"
+                : "border-empanada-light-gray hover:border-empanada-golden/50"
             )}
           >
             <div className="flex items-start gap-3">
@@ -243,7 +243,7 @@ export function CheckoutPage() {
                 "w-8 h-8 rounded-full flex items-center justify-center",
                 orderData.deliveryType === "delivery"
                   ? "bg-empanada-golden text-white"
-                  : "bg-gray-700 text-gray-300"
+                  : "bg-empanada-medium text-gray-300"
               )}>
                 <Truck className="w-4 h-4" />
               </div>
@@ -265,7 +265,7 @@ export function CheckoutPage() {
               "p-4 rounded-lg border-2 text-left transition-all",
               orderData.deliveryType === "pickup"
                 ? "border-empanada-golden bg-empanada-golden/5"
-                : "border-gray-600 hover:border-empanada-golden/50"
+                : "border-empanada-light-gray hover:border-empanada-golden/50"
             )}
           >
             <div className="flex items-start gap-3">
@@ -273,7 +273,7 @@ export function CheckoutPage() {
                 "w-8 h-8 rounded-full flex items-center justify-center",
                 orderData.deliveryType === "pickup"
                   ? "bg-empanada-golden text-white"
-                  : "bg-gray-700 text-gray-300"
+                  : "bg-empanada-medium text-gray-300"
               )}>
                 <Home className="w-4 h-4" />
               </div>
@@ -315,7 +315,7 @@ export function CheckoutPage() {
                 "h-9 text-sm",
                 errors['customerInfo.name']
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+                  : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
               )}
               placeholder="Tu nombre y apellido"
             />
@@ -335,7 +335,7 @@ export function CheckoutPage() {
                 "h-9 text-sm",
                 errors['customerInfo.phone']
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+                  : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
               )}
               placeholder="11 1234 5678"
             />
@@ -351,7 +351,7 @@ export function CheckoutPage() {
             type="email"
             value={orderData.customerInfo.email}
             onChange={(e) => handleInputChange("customerInfo", "email", e.target.value)}
-            className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+            className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
             placeholder="tu@email.com"
           />
         </div>
@@ -384,7 +384,7 @@ export function CheckoutPage() {
                   "h-9 text-sm",
                   errors['address.street']
                     ? "border-red-300 focus:border-red-500"
-                    : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+                    : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
                 )}
                 placeholder="Av. Corrientes"
               />
@@ -404,7 +404,7 @@ export function CheckoutPage() {
                   "h-9 text-sm",
                   errors['address.number']
                     ? "border-red-300 focus:border-red-500"
-                    : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+                    : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
                 )}
                 placeholder="1234"
               />
@@ -420,7 +420,7 @@ export function CheckoutPage() {
               <Input
                 value={orderData.address.floor}
                 onChange={(e) => handleInputChange("address", "floor", e.target.value)}
-                className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+                className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
                 placeholder="5"
               />
             </div>
@@ -430,7 +430,7 @@ export function CheckoutPage() {
               <Input
                 value={orderData.address.apartment}
                 onChange={(e) => handleInputChange("address", "apartment", e.target.value)}
-                className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+                className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
                 placeholder="A"
               />
             </div>
@@ -440,7 +440,7 @@ export function CheckoutPage() {
               <Input
                 value={orderData.address.neighborhood}
                 onChange={(e) => handleInputChange("address", "neighborhood", e.target.value)}
-                className="h-9 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden"
+                className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
                 placeholder="Balvanera"
               />
             </div>
@@ -451,7 +451,7 @@ export function CheckoutPage() {
             <textarea
               value={orderData.address.references}
               onChange={(e) => handleInputChange("address", "references", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+              className="w-full px-3 py-2 border border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
               rows={2}
               placeholder="Ej: Casa con portón verde, timbre 2A"
             />
@@ -473,7 +473,7 @@ export function CheckoutPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="flex items-start p-4 border-2 border-gray-600 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+          <label className="flex items-start p-4 border-2 border-empanada-light-gray bg-empanada-dark rounded-lg cursor-pointer hover:bg-empanada-medium transition-colors">
             <input
               type="radio"
               name="paymentMethod"
@@ -499,7 +499,7 @@ export function CheckoutPage() {
             </div>
           </label>
 
-          <label className="flex items-start p-4 border-2 border-gray-600 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+          <label className="flex items-start p-4 border-2 border-empanada-light-gray bg-empanada-dark rounded-lg cursor-pointer hover:bg-empanada-medium transition-colors">
             <input
               type="radio"
               name="paymentMethod"
@@ -517,8 +517,8 @@ export function CheckoutPage() {
                   <h4 className="font-semibold text-white text-sm mb-1">Efectivo</h4>
                   <p className="text-xs text-gray-300 mb-2">Paga en efectivo al recibir</p>
                   <div className="flex items-center gap-1">
-                    <Info className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs text-gray-400">Monto exacto preparado</span>
+                    <Info className="w-3 h-3 text-gray-300" />
+                    <span className="text-xs text-gray-300">Monto exacto preparado</span>
                   </div>
                 </div>
               </div>
@@ -535,7 +535,7 @@ export function CheckoutPage() {
         <textarea
           value={orderData.notes}
           onChange={(e) => setOrderData(prev => ({ ...prev, notes: e.target.value }))}
-          className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+          className="w-full px-3 py-2 border border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
           rows={3}
           placeholder="Instrucciones especiales, alergias, etc."
         />
@@ -546,7 +546,7 @@ export function CheckoutPage() {
   const ConfirmStep = useMemo(() => (
     <div className="space-y-4">
       {/* Unified Order Summary */}
-      <div className="bg-gray-800 rounded-lg p-6">
+      <div className="bg-empanada-dark rounded-lg p-6">
         <h4 className="font-semibold text-white mb-6 flex items-center gap-2 text-lg">
           <ShoppingBag className="w-5 h-5 text-empanada-golden" />
           Resumen de tu pedido
@@ -627,7 +627,7 @@ export function CheckoutPage() {
         )}
 
         {/* 5. FINAL: Products & Pricing - Confirmación final de lo que va a pagar */}
-        <div className="mb-0 pt-4 border-t border-gray-600">
+        <div className="mb-0 pt-4 border-t border-empanada-light-gray">
           <h5 className="font-medium text-gray-300 text-sm mb-3">Productos</h5>
           <div className="space-y-3">
             {items.map((item, index) => (
@@ -661,7 +661,7 @@ export function CheckoutPage() {
           </div>
 
           {/* Price Summary - Confirmación final */}
-          <div className="mt-4 pt-4 border-t border-gray-600 space-y-2">
+          <div className="mt-4 pt-4 border-t border-empanada-light-gray space-y-2">
             <div className="flex justify-between text-sm text-gray-300">
               <span>Subtotal</span>
               <span className="font-medium">{formatPrice(subtotal)}</span>
@@ -678,7 +678,7 @@ export function CheckoutPage() {
                 {deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}
               </span>
             </div>
-            <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-gray-600">
+            <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-empanada-light-gray">
               <span>Total</span>
               <span className="text-empanada-golden">{formatPrice(total)}</span>
             </div>
@@ -706,16 +706,16 @@ export function CheckoutPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-900 dark">
+    <div className="min-h-screen bg-black dark">
       {/* DESKTOP HEADER - Compacto */}
-      <div className="hidden md:block bg-gray-800 border-b border-gray-700">
+      <div className="hidden md:block bg-empanada-dark border-b border-empanada-light-gray">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between mb-2">
             <Link to="/carrito" className="flex items-center gap-2 text-gray-300 hover:text-empanada-golden transition-colors">
               <ArrowLeft className="w-4 h-4" />
               <span className="text-sm font-medium">Volver al carrito</span>
             </Link>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 text-xs text-gray-300">
               <Shield className="w-3 h-3" />
               Checkout seguro
             </div>
@@ -728,7 +728,7 @@ export function CheckoutPage() {
       </div>
 
       {/* MOBILE HEADER */}
-      <div className="md:hidden bg-gray-800 border-b border-gray-700 sticky top-16 z-40">
+      <div className="md:hidden bg-empanada-dark border-b border-empanada-light-gray sticky top-16 z-40">
         <div className="flex items-center justify-between px-4 py-3">
           <Link to="/carrito">
             <Button variant="ghost" size="sm">
@@ -737,7 +737,7 @@ export function CheckoutPage() {
           </Link>
           <div className="text-center">
             <h1 className="font-semibold text-white text-sm">{steps[currentStep - 1].title}</h1>
-            <p className="text-xs text-gray-400">Paso {currentStep} de {steps.length}</p>
+            <p className="text-xs text-gray-300">Paso {currentStep} de {steps.length}</p>
           </div>
           {/* Indicador visual del progreso */}
           <div className="w-10 flex justify-center">
@@ -753,9 +753,9 @@ export function CheckoutPage() {
           <div className="grid gap-6 grid-cols-1">
             {/* Main Content - Ocupa todo el ancho */}
             <div className="w-full">
-              <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 md:p-6 shadow-sm mb-4">
+              <div className="bg-empanada-dark rounded-lg border border-empanada-light-gray p-4 md:p-6 shadow-sm mb-4">
                 {/* Progress Indicator - Optimizado para mobile */}
-                <div className="mb-6 pb-4 border-b border-gray-600">
+                <div className="mb-6 pb-4 border-b border-empanada-light-gray">
                   {/* Mobile Progress - Optimizado */}
                   <div className="md:hidden">
                     <div className="flex items-center justify-between mb-4">
@@ -773,7 +773,7 @@ export function CheckoutPage() {
                           <div className="text-base font-semibold text-empanada-golden">
                             {steps[currentStep - 1].title}
                           </div>
-                          <div className="text-xs text-gray-600">
+                          <div className="text-xs text-gray-300">
                             Paso {currentStep} de {steps.length}
                           </div>
                         </div>
@@ -782,12 +782,12 @@ export function CheckoutPage() {
                         <div className="text-sm font-medium text-gray-300">
                           {Math.round(currentStep / steps.length * 100)}%
                         </div>
-                        <div className="text-xs text-gray-400">completo</div>
+                        <div className="text-xs text-gray-300">completo</div>
                       </div>
                     </div>
 
                     {/* Barra de progreso mobile - simplificada */}
-                    <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                    <div className="w-full bg-empanada-medium rounded-full h-3 shadow-inner">
                       <div
                         className="bg-gradient-to-r from-empanada-golden to-empanada-wheat h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
                         style={{ width: `${(currentStep / steps.length) * 100}%` }}
@@ -807,7 +807,7 @@ export function CheckoutPage() {
                               ? "bg-empanada-golden text-white border-empanada-golden"
                               : completedSteps.has(step.id)
                               ? "bg-green-500 text-white border-green-500"
-                              : "bg-gray-800 text-gray-400 border-gray-600"
+                              : "bg-empanada-medium text-gray-300 border-empanada-light-gray"
                           )}
                         >
                           {completedSteps.has(step.id) ? (
@@ -820,7 +820,7 @@ export function CheckoutPage() {
                           <div className={cn(
                             "text-xs font-medium",
                             currentStep === step.id ? "text-empanada-golden" :
-                            completedSteps.has(step.id) ? "text-green-600" : "text-gray-400"
+                            completedSteps.has(step.id) ? "text-green-600" : "text-gray-300"
                           )}>
                             {step.title}
                           </div>
@@ -828,7 +828,7 @@ export function CheckoutPage() {
                         {index < steps.length - 1 && (
                           <div className={cn(
                             "h-0.5 w-12 mx-2 rounded-full",
-                            completedSteps.has(step.id) || currentStep > step.id ? "bg-empanada-golden" : "bg-gray-200"
+                            completedSteps.has(step.id) || currentStep > step.id ? "bg-empanada-golden" : "bg-empanada-medium"
                           )} />
                         )}
                       </div>
@@ -851,13 +851,13 @@ export function CheckoutPage() {
                 </AnimatePresence>
 
                 {/* Navigation Buttons - Integrados */}
-                <div className="flex justify-between items-center pt-6 mt-6 border-t border-gray-600">
+                <div className="flex justify-between items-center pt-6 mt-6 border-t border-empanada-light-gray">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={prevStep}
                     disabled={currentStep === 1}
-                    className="flex items-center gap-2 px-4 py-2"
+                    className="flex items-center gap-2 px-4 py-2 menu-category-button"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Anterior

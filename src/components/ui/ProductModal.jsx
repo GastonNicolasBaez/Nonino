@@ -57,8 +57,8 @@ export function ProductModal({ product, isOpen, onClose }) {
   const modalVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.8,
-      y: 100
+      scale: 0.95,
+      y: "100%"
     },
     visible: {
       opacity: 1,
@@ -66,19 +66,19 @@ export function ProductModal({ product, isOpen, onClose }) {
       y: 0,
       transition: {
         type: "spring",
-        damping: 25,
-        stiffness: 300,
-        duration: 0.3
+        damping: 30,
+        stiffness: 400,
+        duration: 0.4
       }
     },
     exit: {
       opacity: 0,
-      scale: 0.8,
-      y: 100,
+      scale: 0.95,
+      y: "100%",
       transition: {
         type: "spring",
-        damping: 25,
-        stiffness: 300,
+        damping: 30,
+        stiffness: 400,
         duration: 0.3
       }
     }
@@ -99,24 +99,17 @@ export function ProductModal({ product, isOpen, onClose }) {
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center">
-          {/* Overlay */}
-          <motion.div
-            variants={overlayVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-          />
-
+        <div
+          className="modal-overlay bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center md:p-4"
+          onClick={onClose}
+        >
           {/* Modal */}
           <motion.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-full max-w-md mx-0 md:mx-auto bg-gray-800 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col h-[95vh] md:max-h-[85vh]"
+            className="relative w-full max-w-md mx-0 md:mx-auto bg-empanada-dark rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[85vh] md:max-h-[80vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header with Close Button */}
@@ -126,7 +119,7 @@ export function ProductModal({ product, isOpen, onClose }) {
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
 
                 {/* Gradient Overlay */}
@@ -174,8 +167,8 @@ export function ProductModal({ product, isOpen, onClose }) {
             </div>
 
             {/* Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto min-h-[300px]">
+              <div className="p-6 space-y-6">
                 {/* Product Name and Price */}
                 <div>
                   <h2 className="text-xl font-bold text-white mb-2">
@@ -185,24 +178,40 @@ export function ProductModal({ product, isOpen, onClose }) {
                     <span className="text-2xl font-bold text-empanada-golden">
                       {formatPrice(product.price)}
                     </span>
-                    <span className="text-sm text-gray-400">por unidad</span>
+                    <span className="text-sm text-gray-300">por unidad</span>
                   </div>
                 </div>
 
 
                 {/* Description */}
                 <div>
-                  <h3 className="font-semibold text-white mb-2">Descripción</h3>
-                  <p className="text-gray-300 leading-relaxed">
+                  <h3 className="font-semibold text-white mb-3">Descripción</h3>
+                  <p className="text-gray-300 leading-relaxed mb-4">
                     {product.description || "Deliciosa empanada preparada con los mejores ingredientes seleccionados especialmente para ti. Una combinación perfecta de sabores tradicionales que te harán sentir como en casa."}
                   </p>
+
+                  {/* Additional details section */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <span className="w-2 h-2 bg-empanada-golden rounded-full"></span>
+                      <span>Masa artesanal preparada diariamente</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <span className="w-2 h-2 bg-empanada-golden rounded-full"></span>
+                      <span>Ingredientes frescos y de primera calidad</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <span className="w-2 h-2 bg-empanada-golden rounded-full"></span>
+                      <span>Horneadas al momento para máxima frescura</span>
+                    </div>
+                  </div>
                 </div>
 
               </div>
             </div>
 
             {/* Footer - Quantity and Add Button */}
-            <div className="flex-shrink-0 p-6 bg-gray-700 border-t border-gray-600 pb-[60px]">
+            <div className="flex-shrink-0 p-6 bg-empanada-medium border-t border-empanada-light-gray pb-8 md:pb-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <span className="text-sm text-gray-300 block">Cantidad</span>
@@ -212,7 +221,7 @@ export function ProductModal({ product, isOpen, onClose }) {
                       size="icon"
                       onClick={decreaseQuantity}
                       disabled={quantity <= 1}
-                      className="h-10 w-10 rounded-full"
+                      className="h-10 w-10 rounded-full menu-category-button"
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
@@ -223,7 +232,7 @@ export function ProductModal({ product, isOpen, onClose }) {
                       variant="outline"
                       size="icon"
                       onClick={increaseQuantity}
-                      className="h-10 w-10 rounded-full"
+                      className="h-10 w-10 rounded-full menu-category-button"
                     >
                       <Plus className="w-4 h-4" />
                     </Button>

@@ -138,6 +138,9 @@ export function AboutPage() {
         <ZoomParallax images={parallaxImages} />
       </section>
 
+      {/* Unified Background Gradient Container */}
+      <div className="bg-gradient-to-b from-empanada-light-gray via-empanada-medium via-empanada-dark via-empanada-darker to-black">
+
       {/* Título sticky que aparece durante el parallax */}
       <motion.div
         className="fixed left-0 right-0 z-50 flex items-center justify-center pointer-events-none"
@@ -193,8 +196,8 @@ export function AboutPage() {
       {/* Anchor point for end of parallax */}
       <div id="end-parallax" className="absolute" style={{ top: '200vh' }}></div>
 
-      {/* Story Section */}
-      <section id="historia" className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-empanada-medium to-empanada-light-gray -mt-1">
+        {/* Story Section */}
+        <section id="historia" className="py-8 sm:py-12 lg:py-16 -mt-1">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -246,8 +249,8 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Separator Section - Story to Values */}
-      <section className="py-4 bg-gradient-to-b from-empanada-light-gray to-empanada-medium relative overflow-hidden">
+        {/* Separator Section - Story to Values */}
+        <section className="py-4 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-4">
@@ -261,12 +264,10 @@ export function AboutPage() {
             </div>
           </div>
         </div>
-        {/* Degradado decorativo de fondo */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-full bg-gradient-to-b from-empanada-golden/5 via-empanada-golden/8 to-empanada-golden/5 blur-3xl"></div>
       </section>
 
-      {/* Values Section */}
-      <section id="valores" className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-empanada-medium to-empanada-dark relative">
+        {/* Values Section */}
+        <section id="valores" className="py-8 sm:py-12 lg:py-16 relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -306,12 +307,10 @@ export function AboutPage() {
             ))}
           </div>
         </div>
-        {/* Degradado de transición hacia la siguiente sección */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-empanada-dark"></div>
       </section>
 
-      {/* Separator Section - Values to Timeline */}
-      <section className="py-4 bg-gradient-to-b from-empanada-dark to-empanada-darker relative overflow-hidden">
+        {/* Separator Section - Values to Timeline */}
+        <section className="py-4 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-4">
@@ -325,12 +324,10 @@ export function AboutPage() {
             </div>
           </div>
         </div>
-        {/* Degradado decorativo de fondo */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-full bg-gradient-to-b from-empanada-golden/5 via-empanada-golden/8 to-empanada-golden/5 blur-3xl"></div>
       </section>
 
-      {/* Timeline Section */}
-      <section id="trayectoria" className="py-6 sm:py-8 lg:py-10 bg-gradient-to-b from-empanada-darker to-black">
+        {/* Timeline Section */}
+        <section id="trayectoria" className="py-6 sm:py-8 lg:py-10">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -418,8 +415,8 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Separator Section */}
-      <section className="py-4 bg-black relative overflow-hidden">
+        {/* Separator Section */}
+        <section className="py-4 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-4">
@@ -433,12 +430,10 @@ export function AboutPage() {
             </div>
           </div>
         </div>
-        {/* Degradado decorativo de fondo */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-full bg-gradient-to-b from-empanada-golden/5 via-empanada-golden/8 to-empanada-golden/5 blur-3xl"></div>
       </section>
 
-      {/* Team Section */}
-      <section id="equipo" className="py-6 sm:py-8 lg:py-12 bg-black relative">
+        {/* Team Section */}
+        <section id="equipo" className="py-6 sm:py-8 lg:py-12 relative">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -457,6 +452,8 @@ export function AboutPage() {
           <AnimatedTestimonials autoplay={true} />
         </div>
       </section>
+
+      </div>
 
       <FloatingOrderButton />
     </div>

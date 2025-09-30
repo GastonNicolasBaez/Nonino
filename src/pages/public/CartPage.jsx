@@ -16,7 +16,7 @@ function ConfirmDialog({ isOpen, onClose, onConfirm, title, message }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-gray-800 rounded-2xl p-6 w-full max-w-sm"
+        className="bg-empanada-dark rounded-2xl p-6 w-full max-w-sm"
       >
         <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
         <p className="text-gray-300 mb-6">{message}</p>
@@ -68,9 +68,9 @@ export function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-900 dark">
+      <div className="min-h-screen bg-black dark">
         {/* Header */}
-        <div className="sticky top-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-10">
+        <div className="sticky top-0 bg-empanada-dark/95 backdrop-blur-sm border-b border-empanada-light-gray z-10">
           <div className="flex items-center justify-between px-4 py-3">
             <Link to="/pedir">
               <Button variant="ghost" size="sm" className="p-2">
@@ -88,11 +88,11 @@ export function CartPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center"
           >
-            <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mb-6">
-              <ShoppingBag className="w-10 h-10 text-gray-400" />
+            <div className="w-24 h-24 bg-empanada-medium rounded-full flex items-center justify-center mb-6">
+              <ShoppingBag className="w-10 h-10 text-gray-300" />
             </div>
             <h2 className="text-xl font-semibold text-white mb-2">Tu carrito está vacío</h2>
-            <p className="text-gray-400 mb-8 max-w-sm">
+            <p className="text-gray-300 mb-8 max-w-sm">
               Agrega algunas empanadas deliciosas para comenzar tu pedido
             </p>
             <Link to="/pedir">
@@ -107,9 +107,9 @@ export function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 dark">
+    <div className="min-h-screen bg-black dark">
       {/* MOBILE HEADER - Solo visible en mobile */}
-      <div className="md:hidden fixed top-16 left-0 right-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-30">
+      <div className="md:hidden fixed top-16 left-0 right-0 bg-empanada-dark/95 backdrop-blur-sm border-b border-empanada-light-gray z-30">
         <div className="flex items-center justify-between px-4 py-3">
           <Link to="/pedir">
             <Button variant="ghost" size="sm" className="p-2">
@@ -145,7 +145,7 @@ export function CartPage() {
             </Button>
           </div>
           <h1 className="text-3xl font-bold text-white">Tu Carrito</h1>
-          <p className="text-gray-400 mt-1">{itemCount} {itemCount === 1 ? 'producto' : 'productos'} en tu carrito</p>
+          <p className="text-gray-300 mt-1">{itemCount} {itemCount === 1 ? 'producto' : 'productos'} en tu carrito</p>
         </div>
       </div>
 
@@ -169,10 +169,10 @@ export function CartPage() {
               transition={{ delay: index * 0.05 }}
               className="mb-4"
             >
-              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-4 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="bg-empanada-dark rounded-2xl border border-empanada-light-gray p-4 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="flex gap-4">
                   {/* Image - más prominente */}
-                  <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-gray-600">
+                  <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-empanada-light-gray">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -191,13 +191,13 @@ export function CartPage() {
                           <p className="text-empanada-golden font-semibold text-sm">
                             {formatPrice(item.price)}
                           </p>
-                          <span className="text-gray-400 text-xs">c/u</span>
+                          <span className="text-gray-300 text-xs">c/u</span>
                         </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-2 h-auto rounded-full transition-colors"
+                        className="text-gray-300 hover:text-red-500 hover:bg-red-500/10 p-2 h-auto rounded-full transition-colors"
                         onClick={() => removeItem(item.id, item.customizations)}
                       >
                         <X className="w-4 h-4" />
@@ -217,11 +217,11 @@ export function CartPage() {
 
                     {/* Quantity Controls & Total */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center bg-gray-700 rounded-xl p-1 shadow-inner">
+                      <div className="flex items-center bg-empanada-medium rounded-xl p-1 shadow-inner">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
+                          className="h-8 w-8 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -238,7 +238,7 @@ export function CartPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
+                          className="h-8 w-8 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
                           onClick={() =>
                             updateQuantity(
                               item.id,
@@ -255,7 +255,7 @@ export function CartPage() {
                         <div className="font-bold text-empanada-golden text-lg">
                           {formatPrice(item.price * item.quantity)}
                         </div>
-                        <div className="text-xs text-gray-400">Total</div>
+                        <div className="text-xs text-gray-300">Total</div>
                       </div>
                     </div>
                   </div>
@@ -281,11 +281,11 @@ export function CartPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -100 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="bg-empanada-dark rounded-xl border border-empanada-light-gray p-6 shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       <div className="flex gap-6">
                         {/* Imagen más prominente para desktop */}
-                        <div className="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-gray-600">
+                        <div className="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-empanada-light-gray">
                           <img
                             src={item.image}
                             alt={item.name}
@@ -304,13 +304,13 @@ export function CartPage() {
                                 <p className="text-empanada-golden font-bold text-lg">
                                   {formatPrice(item.price)}
                                 </p>
-                                <span className="text-gray-400 text-sm">por unidad</span>
+                                <span className="text-gray-300 text-sm">por unidad</span>
                               </div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-3 rounded-full transition-colors"
+                              className="text-gray-300 hover:text-red-500 hover:bg-red-500/10 p-3 rounded-full transition-colors"
                               onClick={() => removeItem(item.id, item.customizations)}
                             >
                               <Trash2 className="w-5 h-5" />
@@ -330,11 +330,11 @@ export function CartPage() {
 
                           {/* Controles de cantidad y precio mejorados */}
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center bg-gray-700 rounded-xl p-1 shadow-inner">
+                            <div className="flex items-center bg-empanada-medium rounded-xl p-1 shadow-inner">
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-10 w-10 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
+                                className="h-10 w-10 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
                                 onClick={() =>
                                   updateQuantity(
                                     item.id,
@@ -351,7 +351,7 @@ export function CartPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-10 w-10 p-0 rounded-lg hover:bg-gray-600 text-gray-300 hover:text-white transition-colors"
+                                className="h-10 w-10 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
                                 onClick={() =>
                                   updateQuantity(
                                     item.id,
@@ -368,7 +368,7 @@ export function CartPage() {
                               <div className="text-2xl font-bold text-empanada-golden">
                                 {formatPrice(item.price * item.quantity)}
                               </div>
-                              <div className="text-sm text-gray-400">
+                              <div className="text-sm text-gray-300">
                                 Total del producto
                               </div>
                             </div>
@@ -384,7 +384,7 @@ export function CartPage() {
             {/* Columna derecha - Resumen sticky */}
             <div className="col-span-4">
               <div className="sticky top-24">
-                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-sm">
+                <div className="bg-empanada-dark rounded-xl border border-empanada-light-gray p-6 shadow-sm">
                   <h3 className="text-lg font-semibold mb-4 text-white">Resumen del pedido</h3>
 
                   {/* Promo Code Section */}
@@ -396,7 +396,7 @@ export function CartPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="mb-4"
                       >
-                        <div className="flex items-center justify-between p-3 bg-gray-800 border border-green-600 rounded-lg">
+                        <div className="flex items-center justify-between p-3 bg-empanada-dark border border-green-600 rounded-lg">
                           <div className="flex-1">
                             <span className="text-sm font-medium text-green-400 block">
                               {promoCode.code}
@@ -445,7 +445,7 @@ export function CartPage() {
                       <Button
                         variant="ghost"
                         onClick={() => setShowPromoInput(true)}
-                        className="mb-4 w-full justify-start text-gray-300 hover:bg-gray-700"
+                        className="mb-4 w-full justify-start text-gray-300 hover:bg-empanada-medium"
                       >
                         <Tag className="w-4 h-4 mr-2" />
                         ¿Tienes un código promocional?
@@ -456,7 +456,7 @@ export function CartPage() {
                   {/* Summary */}
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Subtotal</span>
+                      <span className="text-gray-300">Subtotal</span>
                       <span className="font-medium text-white">{formatPrice(subtotal)}</span>
                     </div>
                     {discount > 0 && (
@@ -466,10 +466,10 @@ export function CartPage() {
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Envío</span>
+                      <span className="text-gray-300">Envío</span>
                       <span className="font-medium text-white">{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
                     </div>
-                    <div className="border-t border-gray-600 pt-3">
+                    <div className="border-t border-empanada-light-gray pt-3">
                       <div className="flex justify-between font-bold text-xl">
                         <span className="text-white">Total</span>
                         <span className="text-empanada-golden">{formatPrice(total)}</span>
@@ -486,13 +486,13 @@ export function CartPage() {
 
                   {/* Continue Shopping */}
                   <Link to="/pedir" className="block w-full">
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full menu-category-button">
                       Continuar comprando
                     </Button>
                   </Link>
 
                   {/* Trust indicators */}
-                  <div className="mt-6 pt-4 border-t border-gray-600 text-xs text-gray-400 space-y-2">
+                  <div className="mt-6 pt-4 border-t border-empanada-light-gray text-xs text-gray-300 space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-green-500">✓</span>
                       <span>Envío gratis en pedidos &gt; $3000</span>
@@ -514,7 +514,7 @@ export function CartPage() {
       </div>
 
       {/* MOBILE FOOTER - Solo visible en mobile */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-empanada-dark border-t border-empanada-light-gray z-50">
         <div className="p-4 pb-16">
         {/* Promo Code Section */}
         <AnimatePresence>
@@ -525,7 +525,7 @@ export function CartPage() {
               exit={{ opacity: 0, height: 0 }}
               className="mb-4"
             >
-              <div className="flex items-center justify-between p-3 bg-gray-800 border border-green-600 rounded-xl">
+              <div className="flex items-center justify-between p-3 bg-empanada-dark border border-green-600 rounded-xl">
                 <div className="flex-1 min-w-0">
                   <span className="text-sm font-medium text-green-400 block truncate">
                     {promoCode.code}
@@ -555,7 +555,7 @@ export function CartPage() {
               <Input
                 name="promoCode"
                 placeholder="Código promocional"
-                className="flex-1 rounded-xl border-gray-600 bg-gray-700 text-white"
+                className="flex-1 rounded-xl border-empanada-light-gray bg-empanada-medium text-white"
                 autoFocus
               />
               <Button type="submit" variant="outline" size="sm" className="px-4 rounded-xl">
@@ -600,7 +600,7 @@ export function CartPage() {
             <span className="text-gray-300">Envío</span>
             <span className="text-white font-medium">{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
           </div>
-          <div className="border-t border-gray-600 pt-2">
+          <div className="border-t border-empanada-light-gray pt-2">
             <div className="flex justify-between font-bold text-lg">
               <span className="text-white">Total</span>
               <span className="text-empanada-golden">{formatPrice(total)}</span>

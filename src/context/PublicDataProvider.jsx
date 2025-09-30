@@ -8,7 +8,8 @@ import {
     getPublicStoresQueryFunction,
     getPublicProductosQueryFunction,
     getPublicCombosQueryFunction,
-    getPublicCompanyInfoQueryFunction
+    getPublicCompanyInfoQueryFunction,
+    getPublicStoreStatusQueryFunction
 } from '@/config/apiPublicQueryFunctions';
 
 const PublicDataContext = createContext();
@@ -28,9 +29,24 @@ export const PublicDataProvider = ({ children }) => {
     const { mutateAsync: callPublicStores, isPending: callPublicStoresLoading } = useMutation({
         mutationKey: ['publicStores'],
         mutationFn: getPublicStoresQueryFunction,
-        onSuccess: (data) => {
-            setSucursales(data);
+        onSuccess: async (data) => {
+            const fullStores = await Promise.all(
+                data.map(async (s) => {
+                    const statusData = await callPublicStoreStatus(s.id);
+                    return { ...s, statusData };
+                })
+            )
+            setSucursales(fullStores);
         },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
+    // status de cada store
+    const { mutateAsync: callPublicStoreStatus, isPending: callPublicStoreStatusLoading } = useMutation({
+        mutationKey: ['publicStoreStatus'],
+        mutationFn: getPublicStoreStatusQueryFunction,
         onError: (error) => {
             console.log(error);
         }
@@ -118,7 +134,8 @@ export const PublicDataProvider = ({ children }) => {
         callPublicStoresLoading ||
         callPublicProductosLoading ||
         callPublicCombosLoading ||
-        callPublicCompanyInfoLoading;
+        callPublicCompanyInfoLoading ||
+        callPublicStoreStatusLoading;
 
     return (
         <PublicDataContext.Provider value={{

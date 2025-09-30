@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle, Clock, Truck, MapPin, Store } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, Truck, MapPin, Store, BikeIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +21,8 @@ export function StoreSelectionPage() {
         // Ir directamente al menú
         navigate('/menu');
     };
+
+    console.log(stores);
 
     return (
         <div className="min-h-screen bg-black flex items-center justify-center dark">
@@ -46,28 +47,28 @@ export function StoreSelectionPage() {
                         >
                             <Card
                                 className={`cursor-pointer transition-all duration-300 hover:shadow-md ${selectedStore?.id === store.id
-                                        ? 'bg-empanada-golden/20 border-empanada-golden border-2'
-                                        : 'bg-empanada-light-gray hover:bg-empanada-medium border border-empanada-light-gray'
+                                    ? 'bg-empanada-golden/20 border-empanada-golden border-2'
+                                    : 'bg-empanada-light-gray hover:bg-empanada-medium border border-empanada-light-gray'
                                     }`}
                                 onClick={() => handleSelectStore(store)}
                             >
                                 <CardContent className="p-3">
                                     <div className="flex items-start justify-between mb-2">
-                                        <div className="text-left flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h3 className="font-semibold text-white text-sm">{store.name}</h3>
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between gap-2 mb-1">
+                                                <h3 className="font-semibold text-white text-md">{store.name}</h3>
                                                 <Badge
-                                                    className={`text-xs px-2 py-0.5 ${store.isOpen
-                                                            ? 'bg-green-500 text-white'
-                                                            : 'bg-red-500 text-white'
+                                                    className={`text-xs px-2 py-0.5 ${store.statusData.isOpenNow
+                                                        ? 'bg-green-700 text-white'
+                                                        : 'bg-red-700 text-white'
                                                         }`}
                                                 >
-                                                    {store.isOpen ? "Abierto" : "Cerrado"}
+                                                    {store.isOpenNow ? "Abierto" : "Cerrado"}
                                                 </Badge>
                                             </div>
                                             <div className="flex items-center gap-1 text-xs text-gray-300 mb-1">
                                                 <MapPin className="w-3 h-3" />
-                                                <span>{store.address}</span>
+                                                <span>{store.street} {store.number} ({store.barrio})</span>
                                             </div>
                                         </div>
                                         {selectedStore?.id === store.id && (
@@ -76,21 +77,23 @@ export function StoreSelectionPage() {
                                     </div>
 
                                     {/* Información compacta */}
-                                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-300">
-                                        <div className="flex items-center gap-1">
-                                            <Clock className="w-3 h-3" />
-                                            <span>{store.hours}</span>
+                                    <div className="grid grid-cols-2 gap-2 text-md text-gray-200">
+                                        <div className="flex items-center gap-2">
+                                            {store.supportsPickup && (
+                                                <>
+                                                    <Clock className="w-3 h-3" />
+                                                    <span>Retiro por tienda</span>
+                                                </>
+                                            )}
                                         </div>
-                                        <div className="flex items-center gap-1">
-                                            <Truck className="w-3 h-3" />
-                                            <span>{store.deliveryTime}</span>
-                                            <span className="font-semibold">
-                                                {store.deliveryFee === 0 ? "Gratis" : `$${store.deliveryFee}`}
-                                            </span>
+                                        <div className="flex items-center gap-2">
+                                            {store.supportsDelivery && (
+                                                <>
+                                                    <BikeIcon className="w-3 h-3" />
+                                                    <span>Delivery</span>
+                                                </>
+                                            )}
                                         </div>
-                                    </div>
-                                    <div className="text-xs text-gray-400 mt-1">
-                                        Mín: ${store.minOrder}
                                     </div>
                                 </CardContent>
                             </Card>

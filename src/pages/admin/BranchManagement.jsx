@@ -80,6 +80,8 @@ export function BranchManagement() {
     const handleSaveStore = async (storeData) => {
         setIsAddingStore(true);
 
+        console.log(storeData);
+
         try {
             await callCrearSucursal({
                 _store: storeData,
@@ -155,9 +157,6 @@ export function BranchManagement() {
             supportsDelivery: store.supportsDelivery || true,
             tel1: store.tel1 || '',
             tel2: store.tel2 || '',
-            deliveryTime: store.deliveryTime || '',
-            minOrder: store.minOrder || '',
-            isOpen: store.isOpen || false
         });
 
         // Actualizar el estado local cuando cambie el store prop
@@ -174,9 +173,6 @@ export function BranchManagement() {
                 supportsDelivery: store.supportsDelivery || true,
                 tel1: store.tel1 || '',
                 tel2: store.tel2 || '',
-                deliveryTime: store.deliveryTime || '',
-                minOrder: store.minOrder || '',
-                isOpen: store.isOpen || false
             });
         }, [store]);
 

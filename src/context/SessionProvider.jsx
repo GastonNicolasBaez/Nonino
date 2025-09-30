@@ -69,7 +69,7 @@ export const SessionProvider = ({ children }) => {
             localStorage.setItem(csrfLocalStorageKeyName, data.csrfToken);
         },
         onError: () => {
-            localStorage.removeItem(csrfLocalStorageKeyName);
+            logout();
         }
     });
 

@@ -23,14 +23,13 @@ import { useSession } from "@/context/SessionProvider";
 
 export function CategoryManagement() {
     const {
-        categorias: categories,
+        categoriasTodas: categories,
         productos: products,
         adminDataLoading: loading,
         callCategorias,
         callCrearCategoria,
         callActualizarCategoria,
         callEliminarCategoria,
-        callProductosYCategorias
     } = useAdminData();
 
     const session = useSession();
@@ -107,7 +106,7 @@ export function CategoryManagement() {
             setShowAddModal(false);
             setEditingCategory(null);
             // Recargar categorías y productos
-            await callProductosYCategorias(session.userData.accessToken);
+            await callCategorias(session.userData.accessToken);
         } catch (error) {
             console.error('Error al guardar categoría:', error);
             toast.error("Error al guardar la categoría");
@@ -149,6 +148,7 @@ export function CategoryManagement() {
     const headerActions = [
         {
             label: "Agregar Categoría",
+            disabled: true,
             variant: "empanada",
             className: "h-9 px-4 text-sm font-medium",
             onClick: handleAddCategory,
@@ -158,9 +158,9 @@ export function CategoryManagement() {
             label: "Actualizar",
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
-            onClick: () => callProductosYCategorias(session.userData.accessToken),
+            // onClick: () => callProductosYCategorias(session.userData.accessToken),
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
-        }
+        },
     ];
 
     return (
@@ -225,9 +225,8 @@ export function CategoryManagement() {
                                 <thead>
                                     <tr className="border-b">
                                         <th className="text-left p-4 font-medium">Categoría</th>
-                                        <th className="text-left p-4 font-medium">Descripción</th>
                                         <th className="text-center p-4 font-medium">Productos</th>
-                                        <th className="text-left p-4 font-medium">Acciones</th>
+                                        {/* <th className="text-left p-4 font-medium">Acciones</th> */}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -244,22 +243,18 @@ export function CategoryManagement() {
                                                         <span className="font-medium">{category.name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="p-4">
-                                                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                                                        {category.description || '-'}
-                                                    </span>
-                                                </td>
                                                 <td className="p-4 text-center">
                                                     <Badge variant={productCount > 0 ? "empanada" : "outline"}>
                                                         {productCount} {productCount === 1 ? 'producto' : 'productos'}
                                                     </Badge>
                                                 </td>
-                                                <td className="p-4" style={{ width: '1px' }}>
+                                                {/* <td className="p-4" style={{ width: '1px' }}>
                                                     <div className="flex gap-2">
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
                                                             onClick={() => handleEditCategory(category)}
+                                                            disabled
                                                         >
                                                             <Edit className="w-4 h-4" />
                                                         </Button>
@@ -267,11 +262,12 @@ export function CategoryManagement() {
                                                             variant="destructive"
                                                             size="sm"
                                                             onClick={() => handleDeleteCategory(category)}
+                                                            disabled
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </Button>
                                                     </div>
-                                                </td>
+                                                </td> */}
                                             </tr>
                                         );
                                     })}

@@ -14,7 +14,7 @@ export function CustomSelect({
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
 
-  const selectedOption = options.find(option => option.value === value);
+  const selectedOption = options.find(option => option.value == value);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

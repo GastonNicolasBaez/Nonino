@@ -29,6 +29,8 @@ export function AddStoreModal({
         lng: '',
         supportsPickup: true,
         supportsDelivery: true,
+        tel1: '',
+        tel2: '',
         timezone: 'America/Argentina/Buenos_Aires',
         schedule: null
     });
@@ -126,6 +128,8 @@ export function AddStoreModal({
             lng: Number(formData.lng),
             supportsPickup: formData.supportsPickup,
             supportsDelivery: formData.supportsDelivery,
+            tel1: formData.tel1,
+            tel2: formData.tel2,
             timezone: 'America/Argentina/Buenos_Aires',
             schedule: formData.schedule
         };
@@ -227,171 +231,195 @@ export function AddStoreModal({
                                         {/* Grid principal con 3 columnas */}
                                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                                    {/* Columna 1: Información Básica */}
-                                    <div className="space-y-3">
-                                        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                            <Building2 className="w-4 h-4" />
-                                            Información Básica
-                                        </h3>
+                                            {/* Columna 1: Información Básica */}
+                                            <div className="space-y-3">
+                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                                    <Building2 className="w-4 h-4" />
+                                                    Información Básica
+                                                </h3>
 
-                                        <div>
-                                            <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                                Nombre del Local *
-                                            </label>
-                                            <Input
-                                                value={formData.name}
-                                                onChange={(e) => handleInputChange('name', e.target.value)}
-                                                placeholder="Ej: Nonino Empanadas - Centro"
-                                                className={`admin-input text-sm ${errors.name ? 'border-red-500' : ''}`}
-                                                disabled={isLoading}
-                                            />
-                                            {errors.name && (
-                                                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                    <AlertTriangle className="w-3 h-3" />
-                                                    {errors.name}
-                                                </p>
-                                            )}
-                                        </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        Nombre del Local *
+                                                    </label>
+                                                    <Input
+                                                        value={formData.name}
+                                                        onChange={(e) => handleInputChange('name', e.target.value)}
+                                                        placeholder="Ej: Nonino Empanadas - Centro"
+                                                        className={`admin-input text-sm ${errors.name ? 'border-red-500' : ''}`}
+                                                        disabled={isLoading}
+                                                    />
+                                                    {errors.name && (
+                                                        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                            <AlertTriangle className="w-3 h-3" />
+                                                            {errors.name}
+                                                        </p>
+                                                    )}
+                                                </div>
 
-                                        <div>
-                                            <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                                Tipo *
-                                            </label>
-                                            <CustomSelect
-                                                value={formData.type}
-                                                onChange={(value) => handleInputChange('type', value)}
-                                                options={storeTypeOptions}
-                                                placeholder="Seleccionar tipo"
-                                                disabled={isLoading}
-                                            />
-                                            {errors.type && (
-                                                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                    <AlertTriangle className="w-3 h-3" />
-                                                    {errors.type}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        Tipo *
+                                                    </label>
+                                                    <CustomSelect
+                                                        value={formData.type}
+                                                        onChange={(value) => handleInputChange('type', value)}
+                                                        options={storeTypeOptions}
+                                                        placeholder="Seleccionar tipo"
+                                                        disabled={isLoading}
+                                                    />
+                                                    {errors.type && (
+                                                        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                            <AlertTriangle className="w-3 h-3" />
+                                                            {errors.type}
+                                                        </p>
+                                                    )}
+                                                </div>
 
-                                    {/* Columna 2: Ubicación */}
-                                    <div className="space-y-3">
-                                        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                            <MapPin className="w-4 h-4" />
-                                            Ubicación
-                                        </h3>
+                                                <div>
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        Teléfono
+                                                    </label>
+                                                    <Input
+                                                        value={formData.tel1}
+                                                        onChange={(e) => handleInputChange("tel1", e.target.value)}
+                                                        placeholder="+54 11 1234-5678"
+                                                        className="admin-input text-sm"
+                                                    />
+                                                </div>
 
-                                        <div>
-                                            <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                                Calle *
-                                            </label>
-                                            <Input
-                                                value={formData.street}
-                                                onChange={(e) => handleInputChange('street', e.target.value)}
-                                                placeholder="Ej: Av. San Martín"
-                                                className={`admin-input text-sm ${errors.street ? 'border-red-500' : ''}`}
-                                                disabled={isLoading}
-                                            />
-                                            {errors.street && (
-                                                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                    <AlertTriangle className="w-3 h-3" />
-                                                    {errors.street}
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                                    Número *
-                                                </label>
-                                                <Input
-                                                    value={formData.number}
-                                                    onChange={(e) => handleInputChange('number', e.target.value)}
-                                                    placeholder="123"
-                                                    className={`admin-input text-sm ${errors.number ? 'border-red-500' : ''}`}
-                                                    disabled={isLoading}
-                                                />
-                                                {errors.number && (
-                                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                        <AlertTriangle className="w-3 h-3" />
-                                                        {errors.number}
-                                                    </p>
-                                                )}
+                                                <div>
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        WhatsApp
+                                                    </label>
+                                                    <Input
+                                                        value={formData.tel2}
+                                                        onChange={(e) => handleInputChange("tel2", e.target.value)}
+                                                        placeholder="+54 11 1234-5678"
+                                                        className="admin-input text-sm"
+                                                    />
+                                                </div>
                                             </div>
 
-                                            <div>
-                                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                                    Barrio *
-                                                </label>
-                                                <Input
-                                                    value={formData.barrio}
-                                                    onChange={(e) => handleInputChange('barrio', e.target.value)}
-                                                    placeholder="Centro"
-                                                    className={`admin-input text-sm ${errors.barrio ? 'border-red-500' : ''}`}
-                                                    disabled={isLoading}
-                                                />
-                                                {errors.barrio && (
-                                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                        <AlertTriangle className="w-3 h-3" />
-                                                        {errors.barrio}
-                                                    </p>
-                                                )}
+                                            {/* Columna 2: Ubicación */}
+                                            <div className="space-y-3">
+                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                                    <MapPin className="w-4 h-4" />
+                                                    Ubicación
+                                                </h3>
+
+                                                <div>
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        Calle *
+                                                    </label>
+                                                    <Input
+                                                        value={formData.street}
+                                                        onChange={(e) => handleInputChange('street', e.target.value)}
+                                                        placeholder="Ej: Av. San Martín"
+                                                        className={`admin-input text-sm ${errors.street ? 'border-red-500' : ''}`}
+                                                        disabled={isLoading}
+                                                    />
+                                                    {errors.street && (
+                                                        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                            <AlertTriangle className="w-3 h-3" />
+                                                            {errors.street}
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                            Número *
+                                                        </label>
+                                                        <Input
+                                                            value={formData.number}
+                                                            onChange={(e) => handleInputChange('number', e.target.value)}
+                                                            placeholder="123"
+                                                            className={`admin-input text-sm ${errors.number ? 'border-red-500' : ''}`}
+                                                            disabled={isLoading}
+                                                        />
+                                                        {errors.number && (
+                                                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                                <AlertTriangle className="w-3 h-3" />
+                                                                {errors.number}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                            Barrio *
+                                                        </label>
+                                                        <Input
+                                                            value={formData.barrio}
+                                                            onChange={(e) => handleInputChange('barrio', e.target.value)}
+                                                            placeholder="Centro"
+                                                            className={`admin-input text-sm ${errors.barrio ? 'border-red-500' : ''}`}
+                                                            disabled={isLoading}
+                                                        />
+                                                        {errors.barrio && (
+                                                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                                <AlertTriangle className="w-3 h-3" />
+                                                                {errors.barrio}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                            Latitud *
+                                                        </label>
+                                                        <Input
+                                                            type="number"
+                                                            step="any"
+                                                            value={formData.lat}
+                                                            onChange={(e) => handleInputChange('lat', e.target.value)}
+                                                            placeholder="-34.6037"
+                                                            className={`admin-input text-sm ${errors.lat ? 'border-red-500' : ''}`}
+                                                            disabled={isLoading}
+                                                        />
+                                                        {errors.lat && (
+                                                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                                <AlertTriangle className="w-3 h-3" />
+                                                                {errors.lat}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                            Longitud *
+                                                        </label>
+                                                        <Input
+                                                            type="number"
+                                                            step="any"
+                                                            value={formData.lng}
+                                                            onChange={(e) => handleInputChange('lng', e.target.value)}
+                                                            placeholder="-58.3816"
+                                                            className={`admin-input text-sm ${errors.lng ? 'border-red-500' : ''}`}
+                                                            disabled={isLoading}
+                                                        />
+                                                        {errors.lng && (
+                                                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                                <AlertTriangle className="w-3 h-3" />
+                                                                {errors.lng}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                                    Latitud *
-                                                </label>
-                                                <Input
-                                                    type="number"
-                                                    step="any"
-                                                    value={formData.lat}
-                                                    onChange={(e) => handleInputChange('lat', e.target.value)}
-                                                    placeholder="-34.6037"
-                                                    className={`admin-input text-sm ${errors.lat ? 'border-red-500' : ''}`}
-                                                    disabled={isLoading}
-                                                />
-                                                {errors.lat && (
-                                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                        <AlertTriangle className="w-3 h-3" />
-                                                        {errors.lat}
-                                                    </p>
-                                                )}
-                                            </div>
+                                            {/* Columna 3: Configuración */}
+                                            <div className="space-y-3">
+                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                                    <Clock className="w-4 h-4" />
+                                                    Configuración
+                                                </h3>
 
-                                            <div>
-                                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                                                    Longitud *
-                                                </label>
-                                                <Input
-                                                    type="number"
-                                                    step="any"
-                                                    value={formData.lng}
-                                                    onChange={(e) => handleInputChange('lng', e.target.value)}
-                                                    placeholder="-58.3816"
-                                                    className={`admin-input text-sm ${errors.lng ? 'border-red-500' : ''}`}
-                                                    disabled={isLoading}
-                                                />
-                                                {errors.lng && (
-                                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                        <AlertTriangle className="w-3 h-3" />
-                                                        {errors.lng}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Columna 3: Configuración */}
-                                    <div className="space-y-3">
-                                        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                            <Clock className="w-4 h-4" />
-                                            Configuración
-                                        </h3>
-
-                                        {/* <div>
+                                                {/* <div>
                                             <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                                                 Zona Horaria *
                                             </label>
@@ -410,82 +438,82 @@ export function AddStoreModal({
                                             )}
                                             </div> */}
 
-                                        <div className="space-y-2">
-                                            <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                                                Servicios Disponibles
-                                            </h4>
-                                            <div className="space-y-2">
-                                                <label className="flex items-center gap-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={formData.supportsPickup}
-                                                        onChange={(e) => handleInputChange('supportsPickup', e.target.checked)}
-                                                        className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
+                                                <div className="space-y-2">
+                                                    <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                                        Servicios Disponibles
+                                                    </h4>
+                                                    <div className="space-y-2">
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={formData.supportsPickup}
+                                                                onChange={(e) => handleInputChange('supportsPickup', e.target.checked)}
+                                                                className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
+                                                                disabled={isLoading}
+                                                            />
+                                                            <span className="text-xs text-gray-700 dark:text-gray-300">
+                                                                Soporta Retiro en Local
+                                                            </span>
+                                                        </label>
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={formData.supportsDelivery}
+                                                                onChange={(e) => handleInputChange('supportsDelivery', e.target.checked)}
+                                                                className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
+                                                                disabled={isLoading}
+                                                            />
+                                                            <span className="text-xs text-gray-700 dark:text-gray-300">
+                                                                Soporta Delivery
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                {/* Botón de Horarios */}
+                                                <div className="mt-4">
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => setCurrentView('schedule')}
                                                         disabled={isLoading}
-                                                    />
-                                                    <span className="text-xs text-gray-700 dark:text-gray-300">
-                                                        Soporta Retiro en Local
-                                                    </span>
-                                                </label>
-                                                <label className="flex items-center gap-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={formData.supportsDelivery}
-                                                        onChange={(e) => handleInputChange('supportsDelivery', e.target.checked)}
-                                                        className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
-                                                        disabled={isLoading}
-                                                    />
-                                                    <span className="text-xs text-gray-700 dark:text-gray-300">
-                                                        Soporta Delivery
-                                                    </span>
-                                                </label>
+                                                        className="flex items-center gap-2 text-sm border-empanada-golden/30 hover:bg-empanada-golden/10"
+                                                    >
+                                                        <Clock className="w-4 h-4" />
+                                                        Configurar Horarios
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        {/* Botón de Horarios */}
-                                        <div className="mt-4">
+                                        {/* Botones de Acción */}
+                                        <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                                             <Button
                                                 variant="outline"
-                                                onClick={() => setCurrentView('schedule')}
+                                                onClick={handleClose}
                                                 disabled={isLoading}
-                                                className="flex items-center gap-2 text-sm border-empanada-golden/30 hover:bg-empanada-golden/10"
+                                                className="min-w-[80px] text-sm"
                                             >
-                                                <Clock className="w-4 h-4" />
-                                                Configurar Horarios
+                                                Cancelar
+                                            </Button>
+                                            <Button
+                                                variant="empanada"
+                                                onClick={handleSave}
+                                                disabled={isLoading}
+                                                className="min-w-[100px] text-sm"
+                                            >
+                                                {isLoading ? (
+                                                    <>
+                                                        <div className="w-3 h-3 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                                        Guardando...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Check className="w-3 h-3 mr-2" />
+                                                        Guardar Local
+                                                    </>
+                                                )}
                                             </Button>
                                         </div>
-                                    </div>
-                                </div>
-
-                                {/* Botones de Acción */}
-                                <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                                    <Button
-                                        variant="outline"
-                                        onClick={handleClose}
-                                        disabled={isLoading}
-                                        className="min-w-[80px] text-sm"
-                                    >
-                                        Cancelar
-                                    </Button>
-                                    <Button
-                                        variant="empanada"
-                                        onClick={handleSave}
-                                        disabled={isLoading}
-                                        className="min-w-[100px] text-sm"
-                                    >
-                                        {isLoading ? (
-                                            <>
-                                                <div className="w-3 h-3 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                                Guardando...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Check className="w-3 h-3 mr-2" />
-                                                Guardar Local
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
                                     </>
                                 ) : (
                                     <>

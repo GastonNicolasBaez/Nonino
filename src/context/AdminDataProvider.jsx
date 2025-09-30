@@ -61,6 +61,7 @@ export const AdminDataProvider = ({ children }) => {
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
+    const [categoriasTodas, setCategoriasTodas] = useState([]);
     const [sucursales, setSucursales] = useState([]);
     const [materiales, setMateriales] = useState([]);
     const [combos, setCombos] = useState([]);
@@ -75,6 +76,7 @@ export const AdminDataProvider = ({ children }) => {
     const [inventarioProductosSucursal, setInventarioProductosSucursal] = useState([]);
     const [companyInfo, setCompanyInfo] = useState([]);
 
+
     //cargar información de admin al montar la vista de administrador
     useEffect(() => {
         const at = session.userData?.accessToken;
@@ -83,6 +85,7 @@ export const AdminDataProvider = ({ children }) => {
             callSucursales(at);
             callMateriales(at);
             callCombos(at);
+            callCategorias(at);
             setSucursalSeleccionada(session.userData.sucursal);
         }
     }, [session.userData?.accessToken]);
@@ -335,11 +338,11 @@ export const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCategorias'],
         mutationFn: getAdminCatalogCategoriesQueryFunction,
         onSuccess: (data) => {
-            setCategorias(data);
+            setCategoriasTodas(data);
         },
         onError: (error) => {
             console.log(error);
-            setCategorias([]);
+            setCategoriasTodas([]);
         }
     });
 
@@ -400,7 +403,15 @@ export const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCallInventarioProductosSucursal'],
         mutationFn: getAdminInventoryProductsOnStoreQueryFunction,
         onSuccess: (data) => {
-            setInventarioProductosSucursal(data);
+            const merged = data.map(sel => {
+                const cat = productos.find(c => c.id === sel.productId);
+                return {
+                    ...sel,      // keep qty
+                    ...cat       // bring in name, price
+                };
+            });
+
+            setInventarioProductosSucursal(merged);
         },
         onError: (error) => {
             console.log(error);
@@ -435,7 +446,7 @@ export const AdminDataProvider = ({ children }) => {
 
     // ---------- COMPANY INFO
     // get
-const { mutateAsync: callCompanyInfo, isPending: callCompanyInfoLoading } = useMutation({
+    const { mutateAsync: callCompanyInfo, isPending: callCompanyInfoLoading } = useMutation({
         mutationKey: ['adminCallCompanyInfo'],
         mutationFn: getAdminStoresCompanyInfoQueryFunction,
         onSuccess: (data) => {
@@ -456,7 +467,7 @@ const { mutateAsync: callCompanyInfo, isPending: callCompanyInfoLoading } = useM
     //
 
     const showDebugStateInfo = () => {
-        console.log('ACCESSTOKEN:', session.userData.accessToken);
+        console.log('SUCURSAL:', sucursalSeleccionada);
         console.log('PRODUCTOS:', productos);
         console.log('CATEGORIAS:', categorias);
         console.log('SUCURSALES:', sucursales);
@@ -498,19 +509,24 @@ const { mutateAsync: callCompanyInfo, isPending: callCompanyInfoLoading } = useM
         callCrearYAsignarRecetaLoading ||
         callBorrarComboLoading ||
         callInventarioMaterialesSucursalLoading ||
-        callInventarioProductosSucursalLoading || 
-        callMakeProductoLoading || 
+        callInventarioProductosSucursalLoading ||
+        callMakeProductoLoading ||
         callTransferProductoLoading ||
         callAdjustProductoLoading ||
         callInboundLoading ||
         callCompanyInfoLoading ||
-        callActualizarCompanyInfoLoading;
+        callActualizarCompanyInfoLoading ||
+        callCategoriasLoading ||
+        callActualizarCategoriaLoading ||
+        callCrearCategoriaLoading ||
+        callEliminarCategoriaLoading;
 
     return (
         <AdminDataContext.Provider value={{
             productos,
             combos,
             categorias,
+            categoriasTodas,
             sucursales,
             materiales,
 

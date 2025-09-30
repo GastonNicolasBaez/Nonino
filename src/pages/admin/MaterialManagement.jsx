@@ -25,19 +25,27 @@ import { formatPrice } from "@/lib/utils";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
 import { Portal } from "@/components/common/Portal";
-import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter} from "@/components/branding";
+import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 import { toast } from "sonner";
 
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
+
+const unitOptions = [
+        { value: "g", label: "por Peso (gramos, kilogramos)" },
+        { value: "ml", label: "por Volumen (litros, mililitros)" },
+      ];
 
 export function MaterialManagement() {
 
     const {
         materiales: materials,
         adminDataLoading: loading,
+        sucursalSeleccionada,
         callMateriales,
-        callCrearMaterial
+        callCrearMaterial,
+        callInbound,
+        callInventarioMaterialesSucursal,
     } = useAdminData();
 
     const session = useSession();
@@ -74,17 +82,6 @@ export function MaterialManagement() {
     //     { value: "Condimentos", label: "Condimentos" },
     //     { value: "Aceites", label: "Aceites" },
     //     { value: "Otros", label: "Otros" }
-    //   ];
-
-    //   const unitOptions = [
-    //     { value: "", label: "Seleccionar unidad" },
-    //     { value: "kg", label: "Kilogramos (kg)" },
-    //     { value: "g", label: "Gramos (g)" },
-    //     { value: "l", label: "Litros (l)" },
-    //     { value: "ml", label: "Mililitros (ml)" },
-    //     { value: "unidades", label: "Unidades" },
-    //     { value: "cajas", label: "Cajas" },
-    //     { value: "bolsas", label: "Bolsas" }
     //   ];
 
     // Cerrar modales con ESC
@@ -281,7 +278,7 @@ export function MaterialManagement() {
                     <th className="text-left p-4 font-medium">Stock Actual</th>
                     <th className="text-left p-4 font-medium">Stock Mín.</th>
                     <th className="text-left p-4 font-medium">Proveedor</th> */}
-                                        <th className="text-left p-4 font-medium">Costo por gramo</th>
+                                        <th className="text-left p-4 font-medium">Costo por unidad</th>
                                         {/* <th className="text-left p-4 font-medium">Estado</th> */}
                                         <th className="text-left p-4 font-medium">Acciones</th>
                                     </tr>
@@ -313,8 +310,8 @@ export function MaterialManagement() {
                         <span className="text-sm">{item.supplier}</span>
                       </td> */}
                                             <td className="p-4 flex items-center gap-2">
-                                                <span className="font-medium">{formatPrice(item.unitPrice)}</span>
-                                                <p className="text-sm text-muted-foreground">/{item.unit}</p>
+                                                <span className="font-medium">{formatPrice(item.unitPrice*1000)}</span>
+                                                <p className="text-sm text-muted-foreground">/ {item.unit == 'g' ? 'kg' : 'litro'}</p>
                                                 {/* <span className="text-sm text-muted-foreground">/{item.unit}</span> */}
                                             </td>
                                             {/* <td className="p-4">
@@ -328,6 +325,7 @@ export function MaterialManagement() {
                                                         variant="empanada"
                                                         size="sm"
                                                         onClick={() => handleOpenInbound(item)}
+                                                        disabled={!sucursalSeleccionada}
                                                         title="Registrar Entrada"
                                                     >
                                                         <PackagePlus className="w-4 h-4" />
@@ -365,6 +363,7 @@ export function MaterialManagement() {
                     onClose={() => setShowAddModal(false)}
                     onSave={async (newItem) => {
                         // setMaterials(prev => [...prev, newItem]);
+                        newItem.unitPrice /= 1000;
                         await callCrearMaterial({
                             _material: newItem,
                             _accessToken: session.userData.accessToken,
@@ -384,9 +383,31 @@ export function MaterialManagement() {
                         setShowInboundModal(false);
                         setSelectedMaterial(null);
                     }}
-                    onConfirm={(inboundData) => {
+                    onConfirm={async (inboundData) => {
                         // Aquí iría la llamada a la API
-                        toast.success(`Entrada registrada: ${inboundData.operationId}`);
+
+                        const newInboundData = {
+                            factoryId: sucursalSeleccionada,
+                            storeId: null,
+                            materialId: inboundData.materialId,
+                            quantity: inboundData.quantity,
+                            operationId: null,
+                            lotNumber: null,
+                            notes: inboundData.notes,
+                        }
+
+                        await callInbound({
+                            _inbound: newInboundData,
+                            _accessToken: session.userData.accessToken,
+                        });
+
+                        toast.success(`Entrada registrada`);
+
+                        await callInventarioMaterialesSucursal({
+                            _storeId: sucursalSeleccionada,
+                            _accessToken: session.userData.accessToken
+                        });
+
                         setShowInboundModal(false);
                         setSelectedMaterial(null);
                         callMateriales(session.userData.accessToken);
@@ -406,7 +427,7 @@ function AddMaterialModal({ onClose, onSave }) {
     const [formData, setFormData] = useState({
         code: '',
         name: '',
-        unit: 'g',
+        unit: '',
         unitPrice: 0,
     });
 
@@ -440,17 +461,11 @@ function AddMaterialModal({ onClose, onSave }) {
                 />
             }
         >
-            <div className="space-y-6">
+            <div className="space-y-8">
                 {/* Información Básica */}
                 <Card className="">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                            <Package className="w-5 h-5" />
-                            Información Básica
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <CardContent className="my-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre *</label>
                                 <Input
@@ -462,7 +477,16 @@ function AddMaterialModal({ onClose, onSave }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Precio por gramo *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Medida *</label>
+                                <CustomSelect
+                                    value={formData.unit}
+                                    onChange={(value) => setFormData({ ...formData, unit: value })}
+                                    options={unitOptions}
+                                    placeholder="Seleccionar unidad"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Precio por {formData.unit == 'g' ? 'kilo' : 'litro'} *</label>
                                 <Input
                                     type='number'
                                     value={formData.unitPrice}
@@ -584,22 +608,18 @@ function AddMaterialModal({ onClose, onSave }) {
 // Modal de Registrar Entrada (Inbound)
 function InboundMaterialModal({ material, onClose, onConfirm }) {
     const [quantity, setQuantity] = useState("");
-    const [batchNumber, setBatchNumber] = useState("");
     const [notes, setNotes] = useState("");
-    const [operationId] = useState(`INB-${Math.random().toString(36).substr(2, 9).toUpperCase()}`);
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         if (!quantity || parseFloat(quantity) <= 0) {
             toast.error("Debes ingresar una cantidad válida");
             return;
         }
 
         const inboundData = {
-            operationId,
             materialId: material.id,
             materialName: material.name,
-            quantity: parseFloat(quantity),
-            batchNumber,
+            quantity: parseFloat(quantity*1000),
             notes,
             timestamp: new Date().toISOString()
         };
@@ -618,20 +638,11 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
             icon={<PackagePlus className="w-6 h-6" />}
         >
             <div className="space-y-6">
-                {/* ID de Operación */}
-                <div className="bg-empanada-golden/10 border border-empanada-golden/30 rounded-lg p-4">
-                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        ID de Operación:
-                    </p>
-                    <p className="text-lg font-mono font-bold text-empanada-golden">
-                        {operationId}
-                    </p>
-                </div>
 
                 {/* Cantidad */}
                 <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                        Cantidad * ({material.unit})
+                        Cantidad * ({material.unit == 'g' ? 'kilogramos' : 'litros'})
                     </label>
                     <Input
                         type="number"
@@ -639,13 +650,13 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
                         step="0.01"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
-                        placeholder={`Cantidad en ${material.unit}`}
+                        placeholder={`Cantidad en ${material.unit == 'g' ? 'kilogramos' : 'litros'}`}
                         className="text-base"
                     />
                 </div>
 
                 {/* Número de Lote */}
-                <div>
+                {/* <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                         Número de Lote
                     </label>
@@ -656,7 +667,7 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
                         placeholder="Ej: LOTE-2024-001"
                         className="text-base"
                     />
-                </div>
+                </div> */}
 
                 {/* Notas */}
                 <div>
@@ -673,21 +684,21 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
                 </div>
             </div>
 
-            <BrandedModalFooter>
-                <Button
-                    variant="outline"
+            <div className="flex gap-4 my-4">
+                <button
                     onClick={onClose}
+                    className="border rounded px-2 py-1"
                 >
                     Cancelar
-                </Button>
-                <Button
-                    variant="empanada"
+                </button>
+                <button
                     onClick={handleConfirm}
                     disabled={!isFormValid}
+                    className="border rounded px-2 py-1"
                 >
-                    Registrar Entrada
-                </Button>
-            </BrandedModalFooter>
+                    Confirmar
+                </button>
+            </div>
         </BrandedModal>
     );
 }

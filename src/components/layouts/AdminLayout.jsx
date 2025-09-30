@@ -23,7 +23,8 @@ import {
     Building2,
     Truck,
     Factory,
-    Tag
+    Tag,
+    RefreshCcw
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -54,6 +55,8 @@ const AdminLayout = () => {
         setSucursalSeleccionada,
         showDebugStateInfo,
         adminDataLoading,
+
+        refreshAll,
     } = useAdminData();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -125,7 +128,7 @@ const AdminLayout = () => {
             },
             { name: "Menú", href: "/intranet/admin/menu", icon: Menu },
             {
-                name: "Definiciones",
+                name: "Catálogos",
                 icon: Package,
                 hasDropdown: true,
                 dropdownItems: [
@@ -243,7 +246,7 @@ const AdminLayout = () => {
     // Función simplificada para determinar si un item está activo
     const isItemActive = (item) => {
         if (item.hasDropdown) {
-            if (item.name === "Definiciones") {
+            if (item.name === "Catálogos") {
                 // Para definiciones: activo solo si el dropdown está abierto
                 return definitionsDropdownOpen;
             } else if (item.name === "Inventario") {
@@ -361,7 +364,7 @@ const AdminLayout = () => {
                                 <div className="space-y-1">
                                     <button
                                         onClick={() => {
-                                            if (item.name === "Definiciones") {
+                                            if (item.name === "Catálogos") {
                                                 setDefinitionsDropdownOpen(!definitionsDropdownOpen);
                                                 setInventoryDropdownOpen(false);
                                                 setSucursalDropdownOpen(false);
@@ -405,7 +408,7 @@ const AdminLayout = () => {
                                                         {item.badge}
                                                     </Badge>
                                                 )}
-                                                {((item.name === "Definiciones" && definitionsDropdownOpen) ||
+                                                {((item.name === "Catálogos" && definitionsDropdownOpen) ||
                                                     (item.name === "Inventario" && inventoryDropdownOpen) ||
                                                     (item.name === "Sucursal" && sucursalDropdownOpen) ||
                                                     (item.name === "Fábrica" && fabricaDropdownOpen)) ? (
@@ -423,7 +426,7 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {!sidebarCollapsed && ((item.name === "Definiciones" && definitionsDropdownOpen) ||
+                                    {!sidebarCollapsed && ((item.name === "Catálogos" && definitionsDropdownOpen) ||
                                         (item.name === "Inventario" && inventoryDropdownOpen) ||
                                         (item.name === "Sucursal" && sucursalDropdownOpen) ||
                                         (item.name === "Fábrica" && fabricaDropdownOpen)) && (
@@ -542,7 +545,7 @@ const AdminLayout = () => {
                                 <div className="space-y-1">
                                     <button
                                         onClick={() => {
-                                            if (item.name === "Definiciones") {
+                                            if (item.name === "Catálogos") {
                                                 setDefinitionsDropdownOpen(!definitionsDropdownOpen);
                                                 setInventoryDropdownOpen(false);
                                                 setSucursalDropdownOpen(false);
@@ -582,7 +585,7 @@ const AdminLayout = () => {
                                                     {item.badge}
                                                 </Badge>
                                             )}
-                                            {((item.name === "Definiciones" && definitionsDropdownOpen) ||
+                                            {((item.name === "Catálogos" && definitionsDropdownOpen) ||
                                                 (item.name === "Inventario" && inventoryDropdownOpen) ||
                                                 (item.name === "Sucursal" && sucursalDropdownOpen) ||
                                                 (item.name === "Fábrica" && fabricaDropdownOpen)) ? (
@@ -594,7 +597,7 @@ const AdminLayout = () => {
                                     </button>
 
                                     {/* Dropdown Items */}
-                                    {((item.name === "Definiciones" && definitionsDropdownOpen) ||
+                                    {((item.name === "Catálogos" && definitionsDropdownOpen) ||
                                         (item.name === "Inventario" && inventoryDropdownOpen) ||
                                         (item.name === "Sucursal" && sucursalDropdownOpen) ||
                                         (item.name === "Fábrica" && fabricaDropdownOpen)) && (
@@ -676,6 +679,16 @@ const AdminLayout = () => {
                             </div>
 
                             <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => {
+                                        refreshAll();
+                                    }}
+                                    className="text-gray-600 hover:text-gray-700 hover:bg-red-50 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-900/20"
+                                >
+                                    <RefreshCcw className="w-4 h-4 mr-2" />
+                                </Button>
                                 {/* Notifications Dropdown */}
                                 <div className="hidden sm:block">
                                     <NotificationsDropdown />

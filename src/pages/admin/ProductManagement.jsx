@@ -70,7 +70,7 @@ export function ProductManagement() {
     const session = useSession();
     const {
         productos: products,
-        categorias: categories,
+        categoriasTodas: categories,
         inventario,
         adminDataLoading: loading,
 

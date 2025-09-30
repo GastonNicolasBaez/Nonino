@@ -177,7 +177,7 @@ export const getAdminCatalogCategoriesQueryFunction = async (_accessToken) => {
         }
     }
 
-    const response = await axios.get(`${ENDPOINTS.catalog}/admin/categories`, axiosSetup.axiosConfig);
+    const response = await axios.get(`${ENDPOINTS.catalog}/admin/products/categories`, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -214,7 +214,7 @@ export const putAdminCatalogUpdateCategoryQueryFunction = async ({_category, _ac
 }
 
 // eliminar categoría
-export const deleteAdminCatalogDeleteCategoryQueryFunction = async ({_id, _accessToken}) => {
+export const deleteAdminCatalogDeleteCategoryQueryFunction = async ({_categoryId, _accessToken}) => {
     const axiosSetup = {
         axiosData: null,
         axiosConfig: {
@@ -225,6 +225,6 @@ export const deleteAdminCatalogDeleteCategoryQueryFunction = async ({_id, _acces
         }
     }
 
-    const response = await axios.delete(`${ENDPOINTS.catalog}/admin/categories/${_id}`, axiosSetup.axiosConfig);
+    const response = await axios.delete(`${ENDPOINTS.catalog}/admin/categories/${_categoryId}`, axiosSetup.axiosConfig);
     return await response.data;
 }

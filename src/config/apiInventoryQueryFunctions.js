@@ -117,9 +117,7 @@ export const postAdminInventoryInboundQueryFunction = async ({_inbound, _accessT
         }
     }
 
-    console.log(axiosSetup);
-
-    const response = await axios.post(`${ENDPOINTS.inventory}/admin/product-stock/produce`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${ENDPOINTS.inventory}/admin/materials/inbound-lots`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 
@@ -135,8 +133,6 @@ export const postAdminInventoryTransferProductsQueryFunction = async ({_transfer
             }
         }
     }
-
-    console.log(axiosSetup);
 
     const response = await axios.post(`${ENDPOINTS.inventory}/admin/product-stock/transfer`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
@@ -154,8 +150,6 @@ export const postAdminInventoryMakeProductsQueryFunction = async ({_produce, _ac
         }
     }
 
-    console.log(axiosSetup);
-
     const response = await axios.post(`${ENDPOINTS.inventory}/admin/product-stock/produce`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
@@ -171,8 +165,6 @@ export const postAdminInventoryAdjustProductsQueryFunction = async ({_adjust, _a
             }
         }
     }
-
-    console.log(axiosSetup);
 
     const response = await axios.post(`${ENDPOINTS.inventory}/admin/product-stock/adjust`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;

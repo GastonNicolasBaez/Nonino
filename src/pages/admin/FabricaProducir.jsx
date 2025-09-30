@@ -12,14 +12,21 @@ import { Input } from "@/components/ui/input";
 import { SectionHeader, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 import { toast } from "sonner";
 import { useAdminData } from "@/context/AdminDataProvider";
+import { useSession } from "@/context/SessionProvider";
 
 export function FabricaProducir() {
-    const { productos, adminDataLoading } = useAdminData();
+    const {
+        sucursalSeleccionada,
+        productos,
+        adminDataLoading,
+
+        callMakeProducto,
+    } = useAdminData();
+
+    const session = useSession();
 
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [notes, setNotes] = useState("");
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [operationId, setOperationId] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
 
     // Filtrar productos por término de búsqueda
@@ -27,11 +34,6 @@ export function FabricaProducir() {
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.sku?.toLowerCase().includes(searchTerm.toLowerCase())
     ) || [];
-
-    // Generar ID de operación
-    const generateOperationId = () => {
-        return `PRO-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    };
 
     // Agregar producto a la lista
     const handleAddProduct = (productId) => {
@@ -58,27 +60,34 @@ export function FabricaProducir() {
         ));
     };
 
-    // Confirmar producción
-    const handleConfirmProduction = () => {
+    // Procesar producción
+    const handleProcessProduction = () => {
         if (selectedProducts.length === 0) {
             toast.error("Debes seleccionar al menos un producto");
             return;
         }
 
-        const newOperationId = generateOperationId();
-        setOperationId(newOperationId);
-        setShowConfirmModal(true);
-    };
+        const newProducts = selectedProducts.map((p) => ({
+            productId: p.id,
+            quantity: p.quantity
+        }));
 
-    // Procesar producción
-    const handleProcessProduction = () => {
-        // Aquí iría la llamada a la API
-        toast.success(`Producción registrada: ${operationId}`);
+        const resolvedProduction = {
+            factoryId: sucursalSeleccionada,
+            items: newProducts,
+            operationId: null,
+            notes: notes,
+        }
+
+        callMakeProducto({
+            _produce: resolvedProduction,
+            _accessToken: session.userData.accessToken,
+        })
+        toast.success(`Producción registrada`);
 
         // Resetear formulario
         setSelectedProducts([]);
         setNotes("");
-        setShowConfirmModal(false);
     };
 
     return (
@@ -127,11 +136,10 @@ export function FabricaProducir() {
                                                 setSearchTerm("");
                                             }}
                                             disabled={selectedProducts.find(p => p.id === product.id)}
-                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${
-                                                selectedProducts.find(p => p.id === product.id)
+                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${selectedProducts.find(p => p.id === product.id)
                                                     ? 'bg-gray-100 dark:bg-gray-700 opacity-50 cursor-not-allowed'
                                                     : ''
-                                            }`}
+                                                }`}
                                         >
                                             <p className="font-medium text-gray-900 dark:text-white">
                                                 {product.name}
@@ -218,7 +226,7 @@ export function FabricaProducir() {
                 <Button
                     variant="empanada"
                     size="lg"
-                    onClick={handleConfirmProduction}
+                    onClick={handleProcessProduction}
                     disabled={selectedProducts.length === 0}
                     className="gap-2"
                 >
@@ -228,7 +236,7 @@ export function FabricaProducir() {
             </div>
 
             {/* Modal de confirmación */}
-            <BrandedModal
+            {/* <BrandedModal
                 isOpen={showConfirmModal}
                 onClose={() => setShowConfirmModal(false)}
                 title="Confirmar Producción"
@@ -271,18 +279,23 @@ export function FabricaProducir() {
                 <BrandedModalFooter>
                     <Button
                         variant="outline"
+                        size="sm"
                         onClick={() => setShowConfirmModal(false)}
                     >
                         Cancelar
                     </Button>
                     <Button
                         variant="empanada"
-                        onClick={handleProcessProduction}
+                        size="sm"
+                        onClick={() => {
+                            console.log('click');
+                            handleProcessProduction
+                        }}
                     >
                         Confirmar
                     </Button>
                 </BrandedModalFooter>
-            </BrandedModal>
+            </BrandedModal> */}
         </div>
     );
 }

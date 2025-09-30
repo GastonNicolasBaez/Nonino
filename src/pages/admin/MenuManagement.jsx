@@ -177,10 +177,10 @@ export function MenuManagement() {
             return false;
         }
 
-        if (selectedProducts.length === 0) {
-            toast.error("Por favor selecciona al menos un producto");
-            return false;
-        }
+        // if (selectedProducts.length === 0) {
+        //     toast.error("Por favor selecciona al menos un producto");
+        //     return false;
+        // }
 
         try {
             // Llamada real al backend
@@ -282,7 +282,7 @@ export function MenuManagement() {
                                         </>
                                     )}
                                 </Button>
-                                {selectedProducts.length > 0 && (
+                                
                                     <Button
                                         variant="empanada"
                                         size="sm"
@@ -302,7 +302,6 @@ export function MenuManagement() {
                                             </>
                                         )}
                                     </Button>
-                                )}
                             </div>
                         </div>
                     </CardContent>

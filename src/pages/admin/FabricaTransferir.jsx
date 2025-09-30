@@ -14,20 +14,22 @@ import { Input } from "@/components/ui/input";
 import { SectionHeader, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 import { toast } from "sonner";
 import { useAdminData } from "@/context/AdminDataProvider";
+import { useSession } from "@/context/SessionProvider";
 
 export function FabricaTransferir() {
     const {
         inventarioProductosSucursal,
         sucursales,
         sucursalSeleccionada,
-        adminDataLoading
+        adminDataLoading,
+        callTransferProducto
     } = useAdminData();
+
+    const session = useSession();
 
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [destinationStore, setDestinationStore] = useState("");
     const [notes, setNotes] = useState("");
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [operationId, setOperationId] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
 
     // Filtrar productos por búsqueda
@@ -44,11 +46,6 @@ export function FabricaTransferir() {
         })) || [])
     ];
 
-    // Generar ID de operación
-    const generateOperationId = () => {
-        return `TRF-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    };
-
     // Agregar producto a la lista
     const handleAddProduct = (productId) => {
         if (!productId || selectedProducts.find(p => (p.id || p.productId) === productId)) return;
@@ -61,7 +58,7 @@ export function FabricaTransferir() {
                     ...product,
                     id: product.id || product.productId,
                     quantity: 1,
-                    maxStock: product.currentStock || 0
+                    maxStock: product.quantity || 0
                 }
             ]);
             setSearchTerm(""); // Limpiar búsqueda al seleccionar
@@ -84,8 +81,8 @@ export function FabricaTransferir() {
         }));
     };
 
-    // Confirmar transferencia
-    const handleConfirmTransfer = () => {
+    // Procesar transferencia
+    const handleProcessTransfer = () => {
         if (selectedProducts.length === 0) {
             toast.error("Debes seleccionar al menos un producto");
             return;
@@ -96,24 +93,35 @@ export function FabricaTransferir() {
             return;
         }
 
-        const newOperationId = generateOperationId();
-        setOperationId(newOperationId);
-        setShowConfirmModal(true);
-    };
+        const newItems = selectedProducts.map((p) => ({
+            productId: p.productId,
+            quantity: p.quantity,
+            batchId: null,
+            lotNumber: null,
+        })) 
 
-    // Procesar transferencia
-    const handleProcessTransfer = () => {
-        // Aquí iría la llamada a la API
-        toast.success(`Transferencia registrada: ${operationId}`);
+        const newTransfer = {
+            fromLocationType: "FACTORY",
+            fromLocationId: sucursalSeleccionada,
+            toLocationType: "STORE",
+            toLocationId: destinationStore,
+            items: newItems,
+            operationId: null,
+            notes: notes
+        }
+
+        callTransferProducto({
+            _transfer: newTransfer,
+            _accessToken: session.userData.accessToken,
+        })
+        toast.success(`Transferencia registrada`);
 
         // Resetear formulario
         setSelectedProducts([]);
         setDestinationStore("");
         setNotes("");
-        setShowConfirmModal(false);
     };
 
-    const selectedStoreName = sucursales?.find(s => s.id === destinationStore)?.name || "";
     const originStoreName = sucursales?.find(s => s.id === sucursalSeleccionada)?.name || "Sucursal Actual";
 
     return (
@@ -178,17 +186,16 @@ export function FabricaTransferir() {
                                             key={product.id || product.productId}
                                             onClick={() => handleAddProduct(product.id || product.productId)}
                                             disabled={selectedProducts.find(p => (p.id || p.productId) === (product.id || product.productId))}
-                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${
-                                                selectedProducts.find(p => (p.id || p.productId) === (product.id || product.productId))
+                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${selectedProducts.find(p => (p.id || p.productId) === (product.id || product.productId))
                                                     ? 'bg-gray-100 dark:bg-gray-700 opacity-50 cursor-not-allowed'
                                                     : ''
-                                            }`}
+                                                }`}
                                         >
                                             <p className="font-medium text-gray-900 dark:text-white">
                                                 {product.name}
                                             </p>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                Stock disponible: {product.currentStock || 0}
+                                                Stock disponible: {product.quantity || 0}
                                                 {selectedProducts.find(p => (p.id || p.productId) === (product.id || product.productId)) && ' • Ya agregado'}
                                             </p>
                                         </button>
@@ -293,7 +300,7 @@ export function FabricaTransferir() {
                 <Button
                     variant="empanada"
                     size="lg"
-                    onClick={handleConfirmTransfer}
+                    onClick={handleProcessTransfer}
                     disabled={selectedProducts.length === 0 || !destinationStore}
                     className="gap-2"
                 >
@@ -301,72 +308,6 @@ export function FabricaTransferir() {
                     Confirmar Transferencia
                 </Button>
             </div>
-
-            {/* Modal de confirmación */}
-            <BrandedModal
-                isOpen={showConfirmModal}
-                onClose={() => setShowConfirmModal(false)}
-                title="Confirmar Transferencia"
-            >
-                <div className="space-y-4">
-                    <div className="bg-empanada-golden/10 border border-empanada-golden/30 rounded-lg p-4">
-                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                            ID de Operación:
-                        </p>
-                        <p className="text-lg font-mono font-bold text-empanada-golden">
-                            {operationId}
-                        </p>
-                    </div>
-
-                    <div className="space-y-2">
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
-                            Sucursal destino:
-                        </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded">
-                            {selectedStoreName}
-                        </p>
-                    </div>
-
-                    <div className="space-y-2">
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
-                            Productos a transferir:
-                        </h4>
-                        <ul className="space-y-1">
-                            {selectedProducts.map((product) => (
-                                <li key={product.id || product.productId} className="text-sm text-gray-600 dark:text-gray-400">
-                                    • {product.name} - Cantidad: {product.quantity}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {notes && (
-                        <div className="space-y-2">
-                            <h4 className="font-semibold text-gray-900 dark:text-white">
-                                Notas:
-                            </h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded">
-                                {notes}
-                            </p>
-                        </div>
-                    )}
-                </div>
-
-                <BrandedModalFooter>
-                    <Button
-                        variant="outline"
-                        onClick={() => setShowConfirmModal(false)}
-                    >
-                        Cancelar
-                    </Button>
-                    <Button
-                        variant="empanada"
-                        onClick={handleProcessTransfer}
-                    >
-                        Confirmar
-                    </Button>
-                </BrandedModalFooter>
-            </BrandedModal>
         </div>
     );
 }

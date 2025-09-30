@@ -234,7 +234,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
 
       <div className="space-y-6">
         {/* Información del Cliente */}
-        <Card className="bg-gray-50 dark:bg-gray-800">
+        <Card className="bg-gray-50 dark:bg-empanada-dark">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
               <User className="w-5 h-5" />
@@ -244,40 +244,40 @@ export function OrderEditModal({ order, onClose, onSave }) {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre *</label>
                       <Input
                         value={formData.customerName}
                         onChange={(e) => handleInputChange('customerName', e.target.value)}
                         placeholder="Nombre del cliente"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="bg-white dark:bg-empanada-medium border-gray-300 dark:border-empanada-light-gray text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Email</label>
                       <Input
                         value={formData.customerEmail}
                         onChange={(e) => handleInputChange('customerEmail', e.target.value)}
                         placeholder="email@ejemplo.com"
                         type="email"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="bg-white dark:bg-empanada-medium border-gray-300 dark:border-empanada-light-gray text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Teléfono</label>
                       <Input
                         value={formData.customerPhone}
                         onChange={(e) => handleInputChange('customerPhone', e.target.value)}
                         placeholder="+54 11 1234-5678"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="bg-white dark:bg-empanada-medium border-gray-300 dark:border-empanada-light-gray text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección de Entrega</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Dirección de Entrega</label>
                       <Input
                         value={formData.deliveryAddress}
                         onChange={(e) => handleInputChange('deliveryAddress', e.target.value)}
                         placeholder="Dirección completa"
-                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                        className="bg-white dark:bg-empanada-medium border-gray-300 dark:border-empanada-light-gray text-gray-900 dark:text-white"
                       />
                     </div>
                   </div>
@@ -285,7 +285,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
               </Card>
 
               {/* Configuración del Pedido */}
-              <Card className="bg-gray-50 dark:bg-gray-800">
+              <Card className="bg-gray-50 dark:bg-empanada-dark">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <Package className="w-5 h-5" />
@@ -295,7 +295,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Tipo de Entrega</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Tipo de Entrega</label>
                       <CustomSelect
                         value={formData.deliveryType}
                         onChange={(value) => handleInputChange('deliveryType', value)}
@@ -304,7 +304,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Método de Pago</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Método de Pago</label>
                       <CustomSelect
                         value={formData.paymentMethod}
                         onChange={(value) => handleInputChange('paymentMethod', value)}
@@ -313,7 +313,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Estado</label>
                       <CustomSelect
                         value={formData.status}
                         onChange={(value) => handleInputChange('status', value)}
@@ -324,19 +324,19 @@ export function OrderEditModal({ order, onClose, onSave }) {
                     </div>
                   </div>
                   <div className="mt-4">
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Notas</label>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Notas</label>
                     <textarea
                       value={formData.notes}
                       onChange={(e) => handleInputChange('notes', e.target.value)}
                       placeholder="Notas adicionales del pedido..."
-                      className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                      className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                     />
                   </div>
                 </CardContent>
               </Card>
 
               {/* Productos */}
-              <Card className="bg-gray-50 dark:bg-gray-800">
+              <Card className="bg-gray-50 dark:bg-empanada-dark">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
@@ -347,7 +347,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       variant="outline"
                       size="sm"
                       onClick={() => setShowProductSearch(true)}
-                      className="hover:bg-gray-200 dark:hover:bg-gray-700"
+                      className="hover:bg-gray-200 dark:hover:bg-empanada-medium"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Agregar Producto
@@ -357,13 +357,13 @@ export function OrderEditModal({ order, onClose, onSave }) {
                 <CardContent>
                   {/* Búsqueda de Productos */}
                   {showProductSearch && (
-                    <div className="space-y-3 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 mb-4">
+                    <div className="space-y-3 p-4 border border-gray-200 dark:border-empanada-light-gray rounded-lg bg-white dark:bg-empanada-medium mb-4">
                       <div className="flex gap-2">
                         <Input
                           placeholder="Buscar producto..."
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
-                          className="flex-1 bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+                          className="flex-1 bg-white dark:bg-empanada-light-gray border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
                         />
                         <Button
                           variant="outline"
@@ -371,7 +371,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                             setShowProductSearch(false);
                             setSearchTerm('');
                           }}
-                          className="hover:bg-gray-200 dark:hover:bg-gray-600"
+                          className="hover:bg-gray-200 dark:hover:bg-empanada-light-gray"
                         >
                           <X className="w-4 h-4" />
                         </Button>
@@ -380,7 +380,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                         {filteredProducts.map((product) => (
                           <div
                             key={product.id}
-                            className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer transition-colors"
+                            className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-empanada-light-gray rounded cursor-pointer transition-colors"
                             onClick={() => handleAddItem(product)}
                           >
                             <div>
@@ -402,7 +402,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                       {formData.items.map((item, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                          className="flex items-center justify-between p-3 border border-gray-200 dark:border-empanada-light-gray rounded-lg bg-white dark:bg-empanada-medium"
                         >
                           <div className="flex-1">
                             <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
@@ -414,7 +414,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                               variant="outline"
                               onClick={() => handleUpdateQuantity(index, item.quantity - 1)}
                               disabled={item.quantity <= 1}
-                              className="hover:bg-gray-200 dark:hover:bg-gray-600"
+                              className="hover:bg-gray-200 dark:hover:bg-empanada-light-gray"
                             >
                               <Minus className="w-3 h-3" />
                             </Button>
@@ -423,7 +423,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
                               size="sm"
                               variant="outline"
                               onClick={() => handleUpdateQuantity(index, item.quantity + 1)}
-                              className="hover:bg-gray-200 dark:hover:bg-gray-600"
+                              className="hover:bg-gray-200 dark:hover:bg-empanada-light-gray"
                             >
                               <Plus className="w-3 h-3" />
                             </Button>
@@ -452,7 +452,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
               </Card>
 
               {/* Resumen de Totales */}
-              <Card className="bg-gray-50 dark:bg-gray-800">
+              <Card className="bg-gray-50 dark:bg-empanada-dark">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <DollarSign className="w-5 h-5" />
@@ -460,18 +460,18 @@ export function OrderEditModal({ order, onClose, onSave }) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="bg-white dark:bg-gray-700 p-4 rounded-lg space-y-2">
-                    <div className="flex justify-between text-gray-700 dark:text-gray-300">
+                  <div className="bg-white dark:bg-empanada-medium p-4 rounded-lg space-y-2">
+                    <div className="flex justify-between text-gray-700 dark:text-white">
                       <span>Subtotal:</span>
                       <span>{formatPrice(formData.subtotal)}</span>
                     </div>
                     {formData.deliveryFee > 0 && (
-                      <div className="flex justify-between text-gray-700 dark:text-gray-300">
+                      <div className="flex justify-between text-gray-700 dark:text-white">
                         <span>Envío:</span>
                         <span>{formatPrice(formData.deliveryFee)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between font-bold text-lg border-t border-gray-200 dark:border-gray-600 pt-2 text-gray-900 dark:text-white">
+                    <div className="flex justify-between font-bold text-lg border-t border-gray-200 dark:border-empanada-light-gray pt-2 text-gray-900 dark:text-white">
                       <span>Total:</span>
                       <span>{formatPrice(formData.total)}</span>
                     </div>

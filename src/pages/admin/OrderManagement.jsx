@@ -163,7 +163,7 @@ function getStatusSelectClasses(status) {
     case 'cancelled':
       return 'bg-red-50 text-red-800 border-red-200 hover:bg-red-100 focus:ring-red-400 dark:bg-red-900/50 dark:text-red-100 dark:border-red-700 dark:hover:bg-red-900/70';
     default:
-      return 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100 focus:ring-gray-400 dark:bg-gray-800/50 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-800/70';
+      return 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100 focus:ring-gray-400 dark:bg-empanada-dark/50 dark:text-gray-100 dark:border-empanada-light-gray dark:hover:bg-empanada-medium/70';
   }
 }
 
@@ -178,7 +178,7 @@ function OrderViewModal({ order, onClose }) {
           className="w-full max-w-7xl h-[95vh] flex flex-col"
         >
           <Card className="shadow-2xl h-full flex flex-col ">
-            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -199,7 +199,7 @@ function OrderViewModal({ order, onClose }) {
                     </span>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-empanada-medium">
                   <X className="w-5 h-5" />
                 </Button>
               </div>
@@ -217,7 +217,7 @@ function OrderViewModal({ order, onClose }) {
                         Información del Cliente
                       </h3>
                       <div className="space-y-2 text-sm">
-                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Nombre:</strong> {order.customerName}</p>
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Nombre:</strong> {order.customerName}</p>
                         {order.customerEmail && (
                           <p className="flex items-center gap-2 text-gray-900 dark:text-white">
                             <Mail className="w-3 h-3" />
@@ -245,10 +245,10 @@ function OrderViewModal({ order, onClose }) {
                         Detalles del Pedido
                       </h3>
                       <div className="space-y-2 text-sm">
-                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Tipo:</strong> {order.deliveryType === 'delivery' ? 'Delivery' : 'Retiro'}</p>
-                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Pago:</strong> {order.paymentMethod || 'Efectivo'}</p>
-                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Items:</strong> {Array.isArray(order.items) ? order.items.length : 0} productos</p>
-                        {order.notes && <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-gray-300">Notas:</strong> {order.notes}</p>}
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Tipo:</strong> {order.deliveryType === 'delivery' ? 'Delivery' : 'Retiro'}</p>
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Pago:</strong> {order.paymentMethod || 'Efectivo'}</p>
+                        <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Items:</strong> {Array.isArray(order.items) ? order.items.length : 0} productos</p>
+                        {order.notes && <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Notas:</strong> {order.notes}</p>}
                       </div>
                     </div>
                   </div>
@@ -256,20 +256,20 @@ function OrderViewModal({ order, onClose }) {
                   {/* Items del Pedido */}
                   <div className="space-y-4">
                     <h3 className="font-semibold text-gray-900 dark:text-white">Productos</h3>
-                    <div className="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                    <div className="border border-gray-200 dark:border-empanada-light-gray rounded-lg overflow-hidden">
                       <table className="w-full">
-                        <thead className="bg-gray-50 dark:bg-gray-800">
+                        <thead className="bg-gray-50 dark:bg-empanada-dark">
                           <tr>
-                            <th className="text-left p-3 text-gray-700 dark:text-gray-300">Producto</th>
-                            <th className="text-center p-3 text-gray-700 dark:text-gray-300">Cantidad</th>
-                            <th className="text-right p-3 text-gray-700 dark:text-gray-300">Precio Unit.</th>
-                            <th className="text-right p-3 text-gray-700 dark:text-gray-300">Subtotal</th>
+                            <th className="text-left p-3 text-gray-700 dark:text-white">Producto</th>
+                            <th className="text-center p-3 text-gray-700 dark:text-white">Cantidad</th>
+                            <th className="text-right p-3 text-gray-700 dark:text-white">Precio Unit.</th>
+                            <th className="text-right p-3 text-gray-700 dark:text-white">Subtotal</th>
                           </tr>
                         </thead>
                         <tbody>
                           {Array.isArray(order.items) ? (
                             order.items.map((item, index) => (
-                              <tr key={index} className="border-t border-gray-200 dark:border-gray-700">
+                              <tr key={index} className="border-t border-gray-200 dark:border-empanada-light-gray">
                                 <td className="p-3 text-gray-900 dark:text-white">{item.name}</td>
                                 <td className="text-center p-3 text-gray-900 dark:text-white">{item.quantity}</td>
                                 <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.price)}</td>
@@ -322,9 +322,9 @@ function OrderViewModal({ order, onClose }) {
             </CardContent>
 
             {/* Footer */}
-            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark">
               <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-empanada-medium">
                   Cerrar
                 </Button>
               </div>
@@ -590,7 +590,7 @@ export function OrderManagement() {
         <CardContent className="pt-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                 <tr>
                   <th className="text-left p-4">ID</th>
                   <th className="text-left p-4">Cliente</th>

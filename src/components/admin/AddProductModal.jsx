@@ -358,7 +358,7 @@ export function AddProductModal({
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={prevStep}
-                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 mr-2"
+                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium mr-2"
                                                 disabled={isLoading}
                                             >
                                                 <ChevronLeft className="w-4 h-4" />
@@ -368,7 +368,7 @@ export function AddProductModal({
                                             {stepInfo[currentStep].icon}
                                         </div>
                                         <div>
-                                            <CardTitle className="text-lg text-gray-800 dark:text-gray-200">
+                                            <CardTitle className="text-lg text-gray-800 dark:text-white">
                                                 {stepInfo[currentStep].title}
                                             </CardTitle>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -380,7 +380,7 @@ export function AddProductModal({
                                         variant="ghost"
                                         size="sm"
                                         onClick={handleClose}
-                                        className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                        className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                         disabled={isLoading}
                                     >
                                         <X className="w-4 h-4" />
@@ -394,7 +394,7 @@ export function AddProductModal({
                                             <div className={`h-2 rounded-full ${
                                                 step <= currentStep
                                                     ? 'bg-empanada-golden'
-                                                    : 'bg-gray-200 dark:bg-gray-700'
+                                                    : 'bg-gray-200 dark:bg-empanada-medium'
                                             }`} />
                                         </div>
                                     ))}
@@ -407,7 +407,7 @@ export function AddProductModal({
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                                     Nombre del Producto *
                                                 </label>
                                                 <Input
@@ -426,7 +426,7 @@ export function AddProductModal({
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                                     Categoría *
                                                 </label>
                                                 <CustomSelect
@@ -445,7 +445,7 @@ export function AddProductModal({
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                                     Precio de Venta *
                                                 </label>
                                                 <Input
@@ -468,7 +468,7 @@ export function AddProductModal({
 
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                                     SKU/Código
                                                 </label>
                                                 <Input
@@ -481,14 +481,14 @@ export function AddProductModal({
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                                     Descripción
                                                 </label>
                                                 <textarea
                                                     value={formData.description}
                                                     onChange={(e) => handleInputChange('description', e.target.value)}
                                                     placeholder="Describe el producto..."
-                                                    className="w-full h-32 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                                                    className="w-full h-32 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                                                     disabled={isLoading}
                                                 />
                                             </div>
@@ -500,8 +500,8 @@ export function AddProductModal({
                                 {currentStep === 2 && (
                                     <div className="space-y-6">
                                         {/* Buscador y agregar ingredientes */}
-                                        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                                            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                                        <div className="bg-gray-50 dark:bg-empanada-dark p-4 rounded-lg">
+                                            <h3 className="text-sm font-semibold text-gray-800 dark:text-white mb-3">
                                                 Agregar Ingredientes
                                             </h3>
 
@@ -530,14 +530,14 @@ export function AddProductModal({
 
                                                     {/* Sugerencias instantáneas */}
                                                     {searchIngredient.trim() && filteredIngredients.length > 0 && (
-                                                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                                             {filteredIngredients.slice(0, 5).map((ingredient, index) => (
                                                                 <button
                                                                     key={ingredient.id}
                                                                     type="button"
                                                                     onClick={() => handleQuickAddIngredient(ingredient)}
-                                                                    className={`w-full text-left px-4 py-3 hover:bg-empanada-golden/10 dark:hover:bg-empanada-golden/20 flex items-center justify-between border-b border-gray-100 dark:border-gray-700 last:border-b-0 transition-colors ${
-                                                                        index === 0 ? 'bg-gray-50 dark:bg-gray-700/50' : ''
+                                                                    className={`w-full text-left px-4 py-3 hover:bg-empanada-golden/10 dark:hover:bg-empanada-golden/20 flex items-center justify-between border-b border-gray-100 dark:border-empanada-light-gray last:border-b-0 transition-colors ${
+                                                                        index === 0 ? 'bg-gray-50 dark:bg-empanada-medium/50' : ''
                                                                     }`}
                                                                 >
                                                                     <div className="flex flex-col">
@@ -555,7 +555,7 @@ export function AddProductModal({
 
                                                     {/* Mensaje si no hay resultados */}
                                                     {searchIngredient.trim() && filteredIngredients.length === 0 && (
-                                                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 text-center text-gray-500 dark:text-gray-400">
+                                                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-lg shadow-lg p-4 text-center text-gray-500 dark:text-gray-400">
                                                             No se encontró "{searchIngredient}"
                                                         </div>
                                                     )}
@@ -564,7 +564,7 @@ export function AddProductModal({
                                                 {/* Ingredientes seleccionados como chips/tags editables */}
                                                 {formData.recipe.length > 0 && (
                                                     <div>
-                                                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                        <h4 className="text-sm font-medium text-gray-700 dark:text-white mb-2">
                                                             Ingredientes agregados ({formData.recipe.length})
                                                         </h4>
                                                         <div className="flex flex-wrap gap-2">
@@ -573,7 +573,7 @@ export function AddProductModal({
                                                                     key={index}
                                                                     className="inline-flex items-center gap-2 bg-empanada-golden/10 dark:bg-empanada-golden/20 border border-empanada-golden/30 rounded-lg px-3 py-2 text-sm"
                                                                 >
-                                                                    <span className="font-medium text-gray-800 dark:text-gray-200">
+                                                                    <span className="font-medium text-gray-800 dark:text-white">
                                                                         {recipeItem.ingredientName}
                                                                     </span>
                                                                     <input
@@ -593,10 +593,10 @@ export function AddProductModal({
                                                                             }
                                                                         }}
                                                                         placeholder="0"
-                                                                        className={`w-16 px-2 py-1 text-center bg-white dark:bg-gray-700 border rounded text-xs font-medium transition-all ${
+                                                                        className={`w-16 px-2 py-1 text-center bg-white dark:bg-empanada-medium border rounded text-xs font-medium transition-all ${
                                                                             focusedQuantityIndex === index
                                                                                 ? 'border-empanada-golden ring-2 ring-empanada-golden/20'
-                                                                                : 'border-gray-200 dark:border-gray-600'
+                                                                                : 'border-gray-200 dark:border-empanada-light-gray'
                                                                         }`}
                                                                         autoFocus={focusedQuantityIndex === index}
                                                                     />
@@ -640,7 +640,7 @@ export function AddProductModal({
                                     <div className="space-y-3 -mt-6">
                                         {/* Título compacto arriba */}
                                         <div className="text-center">
-                                            <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-2">
+                                            <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center justify-center gap-2">
                                                 <Upload className="w-4 h-4 text-empanada-golden" />
                                                 Imagen (opcional)
                                             </h3>
@@ -698,8 +698,8 @@ export function AddProductModal({
                                                     </div>
                                                 )}
 
-                                                <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                                                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                <div className="bg-gray-50 dark:bg-empanada-dark p-2 rounded">
+                                                    <p className="text-xs font-medium text-gray-700 dark:text-white mb-1">
                                                         💡 Tips:
                                                     </p>
                                                     <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
@@ -766,7 +766,7 @@ export function AddProductModal({
 
                                         {/* Resumen del producto */}
                                         <div className="space-y-4">
-                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                                                 Resumen del Producto
                                             </h3>
 
@@ -774,7 +774,7 @@ export function AddProductModal({
                                                 <div className="space-y-3">
                                                     <div className="flex justify-between">
                                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Nombre:</span>
-                                                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                                             {formData.name || 'Sin especificar'}
                                                         </span>
                                                     </div>
@@ -786,25 +786,25 @@ export function AddProductModal({
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Categoría:</span>
-                                                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                                             {categories.find(cat => cat.id === formData.category)?.name || 'Sin especificar'}
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Ingredientes:</span>
-                                                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                                             {formData.recipe.length} ingredientes
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Tiempo prep.:</span>
-                                                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                                             {formData.preparationTime || '0'} min
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Imagen:</span>
-                                                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                                             {formData.imageUrl ? '✓ Agregada' : 'Sin imagen'}
                                                         </span>
                                                     </div>
@@ -820,8 +820,8 @@ export function AddProductModal({
                                             </div>
 
                                             {formData.recipe.length > 0 && (
-                                                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                                                    <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                                                <div className="bg-gray-50 dark:bg-empanada-dark p-4 rounded-lg">
+                                                    <h4 className="text-sm font-medium text-gray-800 dark:text-white mb-2">
                                                         Receta ({formData.recipe.length} ingredientes)
                                                     </h4>
                                                     <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400 max-h-32 overflow-y-auto">
@@ -840,7 +840,7 @@ export function AddProductModal({
                             </CardContent>
 
                             {/* Footer con botones */}
-                            <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                            <div className="p-6 border-t border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark">
                                 <div className="flex justify-between">
                                     <div>
                                         {currentStep > 1 && (

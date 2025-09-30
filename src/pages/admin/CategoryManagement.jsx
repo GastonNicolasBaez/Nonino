@@ -325,7 +325,7 @@ function CategoryModal({ category, onClose, onSave }) {
             <div className="space-y-4">
                 {/* Nombre */}
                 <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                         Nombre de la Categoría *
                     </label>
                     <Input
@@ -338,7 +338,7 @@ function CategoryModal({ category, onClose, onSave }) {
 
                 {/* Descripción */}
                 <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                         Descripción (opcional)
                     </label>
                     <textarea
@@ -346,7 +346,7 @@ function CategoryModal({ category, onClose, onSave }) {
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         placeholder="Descripción breve de la categoría..."
                         rows={3}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-empanada-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-empanada-dark text-gray-900 dark:text-white"
                     />
                 </div>
             </div>

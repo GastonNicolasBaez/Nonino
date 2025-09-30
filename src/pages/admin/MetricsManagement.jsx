@@ -259,7 +259,7 @@ export function MetricsManagement() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-white">Período:</span>
               </div>
               <div className="w-48">
                 <CustomSelect
@@ -272,7 +272,7 @@ export function MetricsManagement() {
 
               <div className="flex items-center gap-2 ml-0 sm:ml-4">
                 <Filter className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-white">Tipo:</span>
               </div>
               <div className="w-48">
                 <CustomSelect
@@ -387,7 +387,7 @@ export function MetricsManagement() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-white">Período:</span>
               </div>
               <div className="w-48">
                 <CustomSelect
@@ -400,7 +400,7 @@ export function MetricsManagement() {
 
               <div className="flex items-center gap-2 ml-0 sm:ml-4">
                 <Filter className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-white">Tipo:</span>
               </div>
               <div className="w-48">
                 <CustomSelect
@@ -510,7 +510,7 @@ export function MetricsManagement() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-white">Período:</span>
               </div>
               <div className="w-48">
                 <CustomSelect
@@ -523,7 +523,7 @@ export function MetricsManagement() {
 
               <div className="flex items-center gap-2 ml-0 sm:ml-4">
                 <Filter className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-white">Tipo:</span>
               </div>
               <div className="w-48">
                 <CustomSelect
@@ -684,7 +684,7 @@ export function MetricsManagement() {
                     <p className="text-xs text-muted-foreground">{category.percentage}%</p>
                   </div>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-gray-200 dark:bg-empanada-medium rounded-full h-2">
                   <div
                     className="bg-empanada-golden h-2 rounded-full transition-all duration-300"
                     style={{ width: `${category.percentage}%` }}

@@ -304,9 +304,13 @@
   background-color: theme('colors.gray.500');
 }
 
+/* ============================================ */
+/* ADMIN PANEL - COLORES EMPANADA */
+/* ============================================ */
+
 /* Color específico para admin en modo oscuro */
 .dark .bg-admin-dark {
-  background-color: #283038 !important;
+  background-color: #1a1a1a !important; /* empanada-dark */
 }
 
 /* Mejoras para tablas admin - Base (sin efectos visuales) */
@@ -418,30 +422,9 @@
 /* ADMIN PANEL - MODO CLARO MEJORADO */
 /* ============================================ */
 
-/* Contenedores principales con más definición - SOLO MODO CLARO */
-html:not(.dark) .admin-card {
-  border: 2px solid hsl(var(--border));
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  background-color: hsl(var(--card));
-}
-
-html:not(.dark) .admin-card:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-}
-
-/* Dark mode: cards con color específico #20252e */
-html.dark .admin-card {
-  border: 1px solid #374151;
-  box-shadow: none;
-  background-color: #20252e;
-}
-
-html.dark .admin-card:hover {
-  border-color: #4b5563;
-  box-shadow: none;
-  background-color: #2a2f38;
-}
+/* NOTA: Las cards del admin ahora usan el componente AdminCard que aplica
+   estilos directamente con Tailwind classes (!bg-empanada-medium, etc.)
+   Las reglas .admin-card fueron removidas para evitar conflictos */
 
 /* Headers con separación clara - SOLO MODO CLARO */
 html:not(.dark) .admin-header {
@@ -449,10 +432,10 @@ html:not(.dark) .admin-header {
   background: linear-gradient(to right, hsl(var(--muted) / 0.5), transparent);
 }
 
-/* Dark mode: header con color específico #1f2937 */
+/* Dark mode: header con paleta empanada */
 html.dark .admin-header {
-  border-bottom: 1px solid hsl(var(--border));
-  background: #1f2937;
+  border-bottom: 1px solid #3a3a3a; /* empanada-light-gray */
+  background: #1a1a1a; /* empanada-dark */
 }
 
 /* Sidebar con más contraste - SOLO MODO CLARO */
@@ -462,10 +445,10 @@ html:not(.dark) .admin-sidebar-light {
   box-shadow: 2px 0 4px -1px rgb(0 0 0 / 0.05);
 }
 
-/* Dark mode: sidebar con color específico #1f2937 */
+/* Dark mode: sidebar con paleta empanada */
 html.dark .admin-sidebar-light {
-  background-color: #1f2937;
-  border-right: 1px solid hsl(var(--border));
+  background-color: #1a1a1a; /* empanada-dark */
+  border-right: 1px solid #3a3a3a; /* empanada-light-gray */
   box-shadow: none;
 }
 
@@ -543,17 +526,17 @@ html:not(.dark) .admin-stats-card:hover {
   transform: none; /* Sin movimiento */
 }
 
-/* Dark mode: stats cards con color específico #20252e */
+/* Dark mode: stats cards con paleta empanada */
 html.dark .admin-stats-card {
-  border: 1px solid #374151;
-  background: #20252e;
+  border: 1px solid #3a3a3a; /* empanada-light-gray */
+  background: #2a2a2a; /* empanada-medium */
   box-shadow: none;
 }
 
 html.dark .admin-stats-card:hover {
-  border-color: #4b5563;
+  border-color: #454545; /* empanada-medium-light */
   box-shadow: none;
-  background: #2a2f38;
+  background: #3a3a3a; /* empanada-light-gray */
 }
 
 /* Botones del admin más definidos - SOLO MODO CLARO */
@@ -577,20 +560,20 @@ html:not(.dark) .admin-button-outline:hover {
   background-color: hsl(var(--muted) / 0.5);
 }
 
-/* Dark mode: botones con color específico #20252e */
+/* Dark mode: botones con paleta empanada */
 html.dark .admin-button-primary {
-  background: hsl(var(--primary));
-  border: 1px solid hsl(var(--primary));
+  background: #d4af37; /* empanada-golden */
+  border: 1px solid #d4af37;
   box-shadow: none;
 }
 
 html.dark .admin-button-outline {
-  border: 1px solid #374151;
-  background-color: #20252e;
+  border: 1px solid #3a3a3a; /* empanada-light-gray */
+  background-color: #2a2a2a; /* empanada-medium */
 }
 
 html.dark .admin-button-outline:hover {
-  background-color: #2a2f38;
+  background-color: #3a3a3a; /* empanada-light-gray */
 }
 
 /* Input fields con más definición - SOLO MODO CLARO */
@@ -606,16 +589,16 @@ html:not(.dark) .admin-input:focus {
   outline: none;
 }
 
-/* Dark mode: inputs con color específico #20252e */
+/* Dark mode: inputs con paleta empanada */
 html.dark .admin-input {
-  border: 1px solid #4b5563;
-  background-color: #1f2937;
+  border: 1px solid #3a3a3a; /* empanada-light-gray */
+  background-color: #2a2a2a; /* empanada-medium */
   color: #f9fafb;
 }
 
 html.dark .admin-input:focus {
-  background-color: #374151;
-  border-color: hsl(var(--primary));
+  background-color: #3a3a3a; /* empanada-light-gray */
+  border-color: #d4af37; /* empanada-golden */
 }
 
 html.dark .admin-input::placeholder {
@@ -723,10 +706,10 @@ html.dark textarea::placeholder {
   color: #9ca3af !important;
 }
 
-/* Estilos para checkboxes en modo oscuro */
+/* Estilos para checkboxes en modo oscuro con paleta empanada */
 html.dark input[type="checkbox"] {
-  background-color: #1f2937 !important;
-  border-color: #4b5563 !important;
+  background-color: #2a2a2a !important; /* empanada-medium */
+  border-color: #3a3a3a !important; /* empanada-light-gray */
 }
 
 html.dark input[type="checkbox"]:checked {
@@ -792,11 +775,11 @@ html:not(.dark) .admin-alert-danger {
   color: rgb(185 28 28);
 }
 
-/* Dark mode: alertas con color específico #20252e */
+/* Dark mode: alertas con paleta empanada */
 html.dark .admin-alert {
   border: 1px solid;
   border-radius: 0.5rem;
-  background: #20252e;
+  background: #2a2a2a; /* empanada-medium */
 }
 
 html.dark .admin-alert-warning {
@@ -839,14 +822,14 @@ html.dark .admin-main-content {
   box-shadow: none;
 }
 
-/* Mejoras específicas para cards de usuario con color #20252e */
+/* Mejoras específicas para cards de usuario con paleta empanada */
 html.dark .admin-user-card {
-  background-color: #20252e !important;
-  border: 1px solid #374151 !important;
+  background-color: #2a2a2a !important; /* empanada-medium */
+  border: 1px solid #3a3a3a !important; /* empanada-light-gray */
 }
 
 html.dark .admin-user-card:hover {
-  background-color: #2a2f38 !important;
+  background-color: #3a3a3a !important; /* empanada-light-gray */
 }
 
 /* Sliders personalizados para el editor de imágenes */
@@ -899,13 +882,13 @@ html.dark .admin-user-card:hover {
   border-radius: 5px;
 }
 
-/* Modo oscuro para sliders */
+/* Modo oscuro para sliders con paleta empanada */
 .dark .slider-empanada {
-  background: #374151;
+  background: #3a3a3a; /* empanada-light-gray */
 }
 
 .dark .slider-empanada::-moz-range-track {
-  background: #374151;
+  background: #3a3a3a; /* empanada-light-gray */
 }
 
 /* Mejoras para el header público en resoluciones intermedias */

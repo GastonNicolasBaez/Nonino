@@ -555,7 +555,7 @@ export function ProductManagement() {
                                     <CardContent>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre *</label>
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre *</label>
                                                 <Input
                                                     value={formData.name}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -564,7 +564,7 @@ export function ProductManagement() {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Categoría *</label>
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Categoría *</label>
                                                 <CustomSelect
                                                     value={formData.category}
                                                     onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
@@ -573,7 +573,7 @@ export function ProductManagement() {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Precio *</label>
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio *</label>
                                                 <Input
                                                     type="number"
                                                     value={formData.price}
@@ -583,7 +583,7 @@ export function ProductManagement() {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Costo</label>
+                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Costo</label>
                                                 <Input
                                                     type="number"
                                                     value={formData.cost}
@@ -594,32 +594,32 @@ export function ProductManagement() {
                                             </div>
                                         </div>
                                         <div className="mt-4">
-                                            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Descripción</label>
+                                            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Descripción</label>
                                             <textarea
                                                 value={formData.description}
                                                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                                                 placeholder="Descripción del producto..."
-                                                className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                                                className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                                             />
                                         </div>
 
                                         {/* Configuraciones del producto */}
                                         <div className="mt-4 flex gap-4">
-                                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                            <label className="flex items-center gap-2 text-gray-700 dark:text-white">
                                                 <input
                                                     type="checkbox"
                                                     checked={formData.isAvailable}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
-                                                    className="rounded border-gray-300 dark:border-gray-600"
+                                                    className="rounded border-gray-300 dark:border-empanada-light-gray"
                                                 />
                                                 Disponible para venta
                                             </label>
-                                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                            <label className="flex items-center gap-2 text-gray-700 dark:text-white">
                                                 <input
                                                     type="checkbox"
                                                     checked={formData.isPopular}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, isPopular: e.target.checked }))}
-                                                    className="rounded border-gray-300 dark:border-gray-600"
+                                                    className="rounded border-gray-300 dark:border-empanada-light-gray"
                                                 />
                                                 Producto popular
                                             </label>
@@ -711,7 +711,7 @@ export function ProductManagement() {
                     {loading ? (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                                     <tr>
                                         <th className="text-left p-4">Producto</th>
                                         <th className="text-center p-4">Disponible</th>
@@ -722,7 +722,7 @@ export function ProductManagement() {
                                 </thead>
                                 <tbody>
                                     {Array.from({ length: 8 }).map((_, i) => (
-                                        <tr key={i} className="border-b border-gray-200 dark:border-gray-700 animate-pulse">
+                                        <tr key={i} className="border-b border-gray-200 dark:border-empanada-light-gray animate-pulse">
                                             <td className="p-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-12 h-12 bg-gray-200 rounded-md" />
@@ -755,7 +755,7 @@ export function ProductManagement() {
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                                     <tr>
                                         <th className="text-left p-4">Producto</th>
                                         <th className="text-center p-4">Disponible</th>
@@ -779,7 +779,7 @@ export function ProductManagement() {
                                         return (
                                             <tr 
                                                 key={product.id} 
-                                                className={`border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${getPriorityColor(priority)}`}
+                                                className={`border-b border-gray-200 dark:border-empanada-light-gray hover:bg-gray-50 dark:hover:bg-empanada-medium/50 transition-colors ${getPriorityColor(priority)}`}
                                             >
                                                 {/* Columna Producto */}
                                                 <td className="p-4">
@@ -835,7 +835,7 @@ export function ProductManagement() {
                                                         className={`h-8 w-20 text-xs font-medium rounded-full transition-colors duration-200 ${
                                                             currentProduct.isPopular 
                                                                 ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300' 
-                                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-empanada-dark dark:text-gray-400'
                                                         }`}
                                                         onClick={() => togglePopular(product.id)}
                                                     >

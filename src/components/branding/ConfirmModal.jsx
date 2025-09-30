@@ -108,7 +108,7 @@ export function FloatingConfirmModal({
 
     return (
         <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
-            <div className="shadow-2xl border-2 border-empanada-golden bg-white dark:bg-gray-800 rounded-lg">
+            <div className="shadow-2xl border-2 border-empanada-golden bg-white dark:bg-empanada-dark rounded-lg">
                 <div className="p-4">
                     <div className="flex items-center gap-4">
                         {icon && (

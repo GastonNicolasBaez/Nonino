@@ -133,7 +133,7 @@ export function FabricaTransferir() {
             />
 
             {/* Card de Sucursal Origen */}
-            <Card className="admin-card bg-gray-50 dark:bg-gray-800 border-2 border-empanada-golden/20">
+            <Card className="">
                 <CardContent className="py-4">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-empanada-golden/10 rounded-lg">
@@ -152,7 +152,7 @@ export function FabricaTransferir() {
             </Card>
 
             {/* Selector de productos */}
-            <Card className="admin-card">
+            <Card className="">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Plus className="w-5 h-5 text-empanada-golden" />
@@ -162,7 +162,7 @@ export function FabricaTransferir() {
                 <CardContent className="space-y-4">
                     {/* Barra de búsqueda */}
                     <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                             Buscar Producto *
                         </label>
                         <div className="relative">
@@ -179,15 +179,15 @@ export function FabricaTransferir() {
 
                         {/* Lista de productos filtrados */}
                         {searchTerm && (
-                            <div className="mt-2 max-h-64 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800">
+                            <div className="mt-2 max-h-64 overflow-y-auto border border-gray-300 dark:border-empanada-light-gray rounded-md bg-white dark:bg-empanada-dark">
                                 {filteredProducts.length > 0 ? (
                                     filteredProducts.map((product) => (
                                         <button
                                             key={product.id || product.productId}
                                             onClick={() => handleAddProduct(product.id || product.productId)}
                                             disabled={selectedProducts.find(p => (p.id || p.productId) === (product.id || product.productId))}
-                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${selectedProducts.find(p => (p.id || p.productId) === (product.id || product.productId))
-                                                    ? 'bg-gray-100 dark:bg-gray-700 opacity-50 cursor-not-allowed'
+                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 dark:hover:bg-empanada-golden/20 transition-colors border-b border-gray-100 dark:border-empanada-light-gray last:border-b-0 ${selectedProducts.find(p => (p.id || p.productId) === (product.id || product.productId))
+                                                    ? 'bg-gray-100 dark:bg-empanada-medium opacity-50 cursor-not-allowed'
                                                     : ''
                                                 }`}
                                         >
@@ -212,13 +212,13 @@ export function FabricaTransferir() {
                     {/* Lista de productos seleccionados */}
                     {selectedProducts.length > 0 && (
                         <div className="space-y-3 mt-6">
-                            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            <h3 className="text-sm font-semibold text-gray-700 dark:text-white">
                                 Productos a transferir ({selectedProducts.length})
                             </h3>
                             {selectedProducts.map((product) => (
                                 <div
                                     key={product.id || product.productId}
-                                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                                    className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50 dark:bg-empanada-medium/50"
                                 >
                                     <div className="flex-1">
                                         <p className="font-medium text-gray-900 dark:text-white">
@@ -257,7 +257,7 @@ export function FabricaTransferir() {
             </Card>
 
             {/* Selector de sucursal destino */}
-            <Card className="admin-card">
+            <Card className="">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <ArrowRight className="w-5 h-5 text-empanada-golden" />
@@ -266,7 +266,7 @@ export function FabricaTransferir() {
                 </CardHeader>
                 <CardContent>
                     <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                             Seleccionar sucursal destino *
                         </label>
                         <CustomSelect
@@ -280,7 +280,7 @@ export function FabricaTransferir() {
             </Card>
 
             {/* Notas */}
-            <Card className="admin-card">
+            <Card className="">
                 <CardHeader>
                     <CardTitle>Notas de transferencia</CardTitle>
                 </CardHeader>
@@ -290,7 +290,7 @@ export function FabricaTransferir() {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Agrega notas sobre esta transferencia (opcional)..."
                         rows={4}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="w-full admin-input"
                     />
                 </CardContent>
             </Card>

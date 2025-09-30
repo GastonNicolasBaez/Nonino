@@ -467,7 +467,7 @@ function AddMaterialModal({ onClose, onSave }) {
                     <CardContent className="my-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre *</label>
                                 <Input
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -477,7 +477,7 @@ function AddMaterialModal({ onClose, onSave }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Medida *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Medida *</label>
                                 <CustomSelect
                                     value={formData.unit}
                                     onChange={(value) => setFormData({ ...formData, unit: value })}
@@ -486,7 +486,7 @@ function AddMaterialModal({ onClose, onSave }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Precio por {formData.unit == 'g' ? 'kilo' : 'litro'} *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio por {formData.unit == 'g' ? 'kilo' : 'litro'} *</label>
                                 <Input
                                     type='number'
                                     value={formData.unitPrice}
@@ -497,7 +497,7 @@ function AddMaterialModal({ onClose, onSave }) {
                                 />
                             </div>
                             {/* <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Categoría *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Categoría *</label>
                       <CustomSelect
                         value={formData.category}
                         onChange={(value) => setFormData({ ...formData, category: value })}
@@ -506,7 +506,7 @@ function AddMaterialModal({ onClose, onSave }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Unidad de Medida *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Unidad de Medida *</label>
                       <CustomSelect
                         value={formData.unit}
                         onChange={(value) => setFormData({ ...formData, unit: value })}
@@ -515,7 +515,7 @@ function AddMaterialModal({ onClose, onSave }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Proveedor</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Proveedor</label>
                       <Input
                         value={formData.supplier}
                         onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
@@ -538,7 +538,7 @@ function AddMaterialModal({ onClose, onSave }) {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Stock Actual</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Stock Actual</label>
                       <Input
                         type="number"
                         value={formData.currentStock}
@@ -549,7 +549,7 @@ function AddMaterialModal({ onClose, onSave }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Stock Mínimo</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Stock Mínimo</label>
                       <Input
                         type="number"
                         value={formData.minStock}
@@ -560,7 +560,7 @@ function AddMaterialModal({ onClose, onSave }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Stock Máximo</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Stock Máximo</label>
                       <Input
                         type="number"
                         value={formData.maxStock}
@@ -572,7 +572,7 @@ function AddMaterialModal({ onClose, onSave }) {
                     </div>
                   </div>
                   <div className="mt-4">
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Costo por Unidad</label>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Costo por Unidad</label>
                     <Input
                       type="number"
                       value={formData.cost}
@@ -580,7 +580,7 @@ function AddMaterialModal({ onClose, onSave }) {
                       placeholder="0.00"
                       min="0"
                       step="0.01"
-                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      className="bg-white dark:bg-empanada-medium border-gray-300 dark:border-empanada-light-gray text-gray-900 dark:text-white"
                     />
                   </div>
                 </CardContent>
@@ -596,7 +596,7 @@ function AddMaterialModal({ onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el material..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card> */}
@@ -641,7 +641,7 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
 
                 {/* Cantidad */}
                 <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                         Cantidad * ({material.unit == 'g' ? 'kilogramos' : 'litros'})
                     </label>
                     <Input
@@ -657,7 +657,7 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
 
                 {/* Número de Lote */}
                 {/* <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                         Número de Lote
                     </label>
                     <Input
@@ -671,7 +671,7 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
 
                 {/* Notas */}
                 <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                         Notas
                     </label>
                     <textarea
@@ -679,7 +679,7 @@ function InboundMaterialModal({ material, onClose, onConfirm }) {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Notas adicionales sobre esta entrada (opcional)..."
                         rows={3}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-empanada-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-empanada-dark text-gray-900 dark:text-white"
                     />
                 </div>
             </div>

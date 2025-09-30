@@ -189,7 +189,7 @@ function RecipeManagement() {
                           {producto.receta?.map((item, index) => {
                             const ingrediente = inventario?.find(ing => ing.id === item.ingredienteId);
                             return (
-                              <div key={index} className="text-sm bg-gray-50 dark:bg-gray-800 rounded px-2 py-1">
+                              <div key={index} className="text-sm bg-gray-50 dark:bg-empanada-dark rounded px-2 py-1">
                                 <span className="font-medium">{ingrediente?.nombre || 'Ingrediente no encontrado'}</span>
                                 <span className="text-muted-foreground ml-2">
                                   {item.cantidad} {item.unidad}
@@ -312,7 +312,7 @@ function RecipeManagement() {
               </div>
 
               {/* Footer del modal */}
-              <div className="flex justify-end gap-3 p-6 border-t bg-gray-50 dark:bg-gray-900">
+              <div className="flex justify-end gap-3 p-6 border-t bg-gray-50 dark:bg-empanada-dark">
                 <Button
                   variant="outline"
                   onClick={() => setIsEditModalOpen(false)}

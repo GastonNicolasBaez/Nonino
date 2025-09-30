@@ -311,7 +311,7 @@ export function MenuManagement() {
                         {adminDataLoading ? (
                             <div className="overflow-x-auto">
                                 <table className="w-full">
-                                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                    <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                                         <tr>
                                             <th className="text-left p-4">Producto</th>
                                             <th className="text-center p-4">En Menú</th>
@@ -321,7 +321,7 @@ export function MenuManagement() {
                                     </thead>
                                     <tbody>
                                         {Array.from({ length: 8 }).map((_, i) => (
-                                            <tr key={i} className="border-b border-gray-200 dark:border-gray-700 animate-pulse">
+                                            <tr key={i} className="border-b border-gray-200 dark:border-empanada-light-gray animate-pulse">
                                                 <td className="p-4">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-12 h-12 bg-gray-200 rounded-md" />
@@ -348,7 +348,7 @@ export function MenuManagement() {
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full">
-                                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                    <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                                         <tr>
                                             <th className="text-left p-4">Producto</th>
                                             <th className="text-center p-4">En Menú</th>
@@ -364,7 +364,7 @@ export function MenuManagement() {
                                             return (
                                                 <tr
                                                     key={product.id}
-                                                    className={`border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${isSelected ? 'bg-empanada-golden/5 border-empanada-golden' : ''}`}
+                                                    className={`border-b border-gray-200 dark:border-empanada-light-gray hover:bg-gray-50 dark:hover:bg-empanada-medium/50 transition-colors ${isSelected ? 'bg-empanada-golden/5 border-empanada-golden' : ''}`}
                                                 >
                                                     {/* Columna Producto */}
                                                     <td className="p-4">
@@ -400,7 +400,7 @@ export function MenuManagement() {
                                                     <td className="p-4 text-center">
                                                         <Badge className={`text-xs px-3 py-1 ${isLinked
                                                             ? 'bg-blue-500 text-white'
-                                                            : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                                                            : 'bg-gray-200 text-gray-600 dark:bg-empanada-medium dark:text-white'
                                                         }`}>
                                                             {isLinked ? 'En Menú' : 'No Incluido'}
                                                         </Badge>

@@ -188,7 +188,7 @@ export function AddStoreModal({
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => setCurrentView('general')}
-                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 mr-2"
+                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium mr-2"
                                                 disabled={isLoading}
                                             >
                                                 <ChevronLeft className="w-4 h-4" />
@@ -202,7 +202,7 @@ export function AddStoreModal({
                                             )}
                                         </div>
                                         <div>
-                                            <CardTitle className="text-lg text-gray-800 dark:text-gray-200">
+                                            <CardTitle className="text-lg text-gray-800 dark:text-white">
                                                 {currentView === 'general' ? 'Agregar Nuevo Local' : 'Configurar Horarios'}
                                             </CardTitle>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -217,7 +217,7 @@ export function AddStoreModal({
                                         variant="ghost"
                                         size="sm"
                                         onClick={handleClose}
-                                        className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                        className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                         disabled={isLoading}
                                     >
                                         <X className="w-4 h-4" />
@@ -233,13 +233,13 @@ export function AddStoreModal({
 
                                             {/* Columna 1: Información Básica */}
                                             <div className="space-y-3">
-                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                                                     <Building2 className="w-4 h-4" />
                                                     Información Básica
                                                 </h3>
 
                                                 <div>
-                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                         Nombre del Local *
                                                     </label>
                                                     <Input
@@ -258,7 +258,7 @@ export function AddStoreModal({
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                         Tipo *
                                                     </label>
                                                     <CustomSelect
@@ -277,7 +277,7 @@ export function AddStoreModal({
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                         Teléfono
                                                     </label>
                                                     <Input
@@ -289,7 +289,7 @@ export function AddStoreModal({
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                         WhatsApp
                                                     </label>
                                                     <Input
@@ -303,13 +303,13 @@ export function AddStoreModal({
 
                                             {/* Columna 2: Ubicación */}
                                             <div className="space-y-3">
-                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                                                     <MapPin className="w-4 h-4" />
                                                     Ubicación
                                                 </h3>
 
                                                 <div>
-                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                         Calle *
                                                     </label>
                                                     <Input
@@ -329,7 +329,7 @@ export function AddStoreModal({
 
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                             Número *
                                                         </label>
                                                         <Input
@@ -348,7 +348,7 @@ export function AddStoreModal({
                                                     </div>
 
                                                     <div>
-                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                             Barrio *
                                                         </label>
                                                         <Input
@@ -369,7 +369,7 @@ export function AddStoreModal({
 
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                             Latitud *
                                                         </label>
                                                         <Input
@@ -390,7 +390,7 @@ export function AddStoreModal({
                                                     </div>
 
                                                     <div>
-                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                                             Longitud *
                                                         </label>
                                                         <Input
@@ -414,7 +414,7 @@ export function AddStoreModal({
 
                                             {/* Columna 3: Configuración */}
                                             <div className="space-y-3">
-                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                                                     <Clock className="w-4 h-4" />
                                                     Configuración
                                                 </h3>
@@ -439,7 +439,7 @@ export function AddStoreModal({
                                             </div> */}
 
                                                 <div className="space-y-2">
-                                                    <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                                    <h4 className="text-xs font-medium text-gray-700 dark:text-white">
                                                         Servicios Disponibles
                                                     </h4>
                                                     <div className="space-y-2">
@@ -451,7 +451,7 @@ export function AddStoreModal({
                                                                 className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
                                                                 disabled={isLoading}
                                                             />
-                                                            <span className="text-xs text-gray-700 dark:text-gray-300">
+                                                            <span className="text-xs text-gray-700 dark:text-white">
                                                                 Soporta Retiro en Local
                                                             </span>
                                                         </label>
@@ -463,7 +463,7 @@ export function AddStoreModal({
                                                                 className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
                                                                 disabled={isLoading}
                                                             />
-                                                            <span className="text-xs text-gray-700 dark:text-gray-300">
+                                                            <span className="text-xs text-gray-700 dark:text-white">
                                                                 Soporta Delivery
                                                             </span>
                                                         </label>
@@ -486,7 +486,7 @@ export function AddStoreModal({
                                         </div>
 
                                         {/* Botones de Acción */}
-                                        <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-empanada-light-gray">
                                             <Button
                                                 variant="outline"
                                                 onClick={handleClose}
@@ -525,7 +525,7 @@ export function AddStoreModal({
                                         />
 
                                         {/* Botones de Acción para horarios */}
-                                        <div className="flex justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        <div className="flex justify-between pt-3 border-t border-gray-200 dark:border-empanada-light-gray">
                                             <Button
                                                 variant="outline"
                                                 onClick={() => setCurrentView('general')}

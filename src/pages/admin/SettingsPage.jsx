@@ -549,7 +549,7 @@ export function SettingsPage() {
                     <div className="space-y-4">
                         <h4 className="font-medium">Métodos Aceptados</h4>
                         <div className="grid grid-cols-2 gap-4">
-                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
+                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark rounded-lg admin-table-row">
                                 <span className="text-sm">Efectivo</span>
                                 <input
                                     type="checkbox"
@@ -557,7 +557,7 @@ export function SettingsPage() {
                                     onChange={(e) => updateSetting("payment", "acceptCash", e.target.checked)}
                                 />
                             </label>
-                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
+                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark rounded-lg admin-table-row">
                                 <span className="text-sm">Tarjetas</span>
                                 <input
                                     type="checkbox"
@@ -565,7 +565,7 @@ export function SettingsPage() {
                                     onChange={(e) => updateSetting("payment", "acceptCard", e.target.checked)}
                                 />
                             </label>
-                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
+                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark rounded-lg admin-table-row">
                                 <span className="text-sm">Transferencia</span>
                                 <input
                                     type="checkbox"
@@ -573,7 +573,7 @@ export function SettingsPage() {
                                     onChange={(e) => updateSetting("payment", "acceptTransfer", e.target.checked)}
                                 />
                             </label>
-                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
+                            <label className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark rounded-lg admin-table-row">
                                 <span className="text-sm">Mercado Pago</span>
                                 <input
                                     type="checkbox"
@@ -587,7 +587,7 @@ export function SettingsPage() {
                     <div className="space-y-4">
                         <h4 className="font-medium">Pasarelas de Pago</h4>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
+                            <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark rounded-lg admin-table-row">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center text-white font-bold text-xs">
                                         S
@@ -607,7 +607,7 @@ export function SettingsPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-lg admin-table-row">
+                            <div className="flex items-center justify-between p-3 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark rounded-lg admin-table-row">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xs">
                                         P
@@ -925,7 +925,7 @@ export function SettingsPage() {
                     <div>
                         <label className="block text-sm font-medium mb-1">Descripción de la Empresa</label>
                         <textarea
-                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
                             rows="3"
                             value={settings.companyHistory.companyDescription}
                             onChange={(e) => updateHistorySetting("companyDescription", e.target.value)}
@@ -936,7 +936,7 @@ export function SettingsPage() {
                     <div>
                         <label className="block text-sm font-medium mb-1">Historia de la Empresa</label>
                         <textarea
-                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
+                            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden"
                             rows="4"
                             value={settings.companyHistory.story}
                             onChange={(e) => updateHistorySetting("story", e.target.value)}
@@ -1222,7 +1222,7 @@ export function SettingsPage() {
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${activeTab === tab.id
                                                 ? "bg-empanada-golden text-white"
-                                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                             }`}
                                     >
                                         <tab.icon className="w-4 h-4" />

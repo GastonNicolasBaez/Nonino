@@ -556,7 +556,7 @@ export function ComboManagement() {
                                                     <p className="text-sm font-medium text-empanada-golden">Productos incluidos:</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                                                         {combo.components.map((product, index) => (
-                                                            <div key={index} className="text-sm bg-gray-50 dark:bg-gray-800 rounded px-3 py-2">
+                                                            <div key={index} className="text-sm bg-gray-50 dark:bg-empanada-dark rounded px-3 py-2">
                                                                 <span className="font-medium">{product.quantity}x {product.productName}</span>
                                                                 <span className="text-muted-foreground block">
                                                                     {formatPrice(product.price)} c/u
@@ -703,7 +703,7 @@ export function ComboManagement() {
                         <label className="text-sm font-medium">Productos del Combo</label>
 
                         {/* Buscador de productos integrado */}
-                        <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
+                        <div className="border rounded-lg p-4 bg-gray-50 dark:bg-empanada-dark">
                             <div className="space-y-3">
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -729,7 +729,7 @@ export function ComboManagement() {
                                                 return (
                                                     <div
                                                         key={product.id}
-                                                        className="flex items-center justify-between p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                                                        className="flex items-center justify-between p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-empanada-medium cursor-pointer transition-colors"
                                                         onClick={() => {
                                                             handleAddProductToCombo(product);
                                                             setProductSearchTerm("");
@@ -789,7 +789,7 @@ export function ComboManagement() {
                                 </div>
                             ) : (
                                 comboForm.products.map((product, index) => (
-                                    <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-gray-700/50 dark:bg-gray-700/50">
+                                    <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-gray-700/50 dark:bg-empanada-medium/50">
                                         <div className="flex-1">
                                             <div className="text-sm font-medium text-gray-900 dark:text-white">
                                                 {product.name}
@@ -823,7 +823,7 @@ export function ComboManagement() {
 
                         {/* Resumen de precios */}
                         {comboForm.products.length > 0 && (
-                            <div className="space-y-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div className="space-y-2 p-4 bg-gray-50 dark:bg-empanada-dark rounded-lg">
                                 <div className="flex justify-between text-sm">
                                     <span>Precio original:</span>
                                     <span>{formatPrice(comboForm.products.reduce((sum, p) => sum + (p.price * p.quantity), 0))}</span>

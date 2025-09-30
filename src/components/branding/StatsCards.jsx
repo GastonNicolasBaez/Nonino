@@ -26,8 +26,8 @@ export function StatsCards({
                 const iconColor = !isCritical && hasContent ? 'text-white' : `text-${stat.color || 'gray'}-500`;
                 
                 return (
-                    <Card 
-                        key={stat.id || index} 
+                    <Card
+                        key={stat.id || index}
                         className={`border-l-4 border-l-${stat.color || 'gray'}-500 ${
                             isCritical ? 'bg-red-100 dark:bg-red-900/30' : ''
                         }`}

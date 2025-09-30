@@ -30,8 +30,11 @@ export const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicStores'],
         mutationFn: getPublicStoresQueryFunction,
         onSuccess: async (data) => {
+            const servingStores = ['local', 'franquicia'];
+            const usefulStores = data.filter((s) => servingStores.includes(s.code.toLowerCase()));
+
             const fullStores = await Promise.all(
-                data.map(async (s) => {
+                usefulStores.map(async (s) => {
                     const statusData = await callPublicStoreStatus(s.id);
                     return { ...s, statusData };
                 })

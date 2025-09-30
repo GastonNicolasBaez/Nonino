@@ -41,7 +41,8 @@ export function AddStoreModal({
     // Opciones de tipo de local
     const storeTypeOptions = [
         { value: "local", label: "Local" },
-        { value: "franquicia", label: "Franquicia" }
+        { value: "franquicia", label: "Franquicia" },
+        { value: "fabrica", label: "Fábrica" }
     ];
 
     // Opciones de zona horaria

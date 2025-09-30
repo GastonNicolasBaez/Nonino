@@ -63,7 +63,7 @@ export function StoreSelectionPage() {
                                                         : 'bg-red-700 text-white'
                                                         }`}
                                                 >
-                                                    {store.isOpenNow ? "Abierto" : "Cerrado"}
+                                                    {store.statusData.isOpenNow ? "Abierto" : "Cerrado"}
                                                 </Badge>
                                             </div>
                                             <div className="flex items-center gap-1 text-xs text-gray-300 mb-1">

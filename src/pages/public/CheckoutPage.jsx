@@ -7,14 +7,16 @@ import {
   AlertCircle, Truck, Home, Edit2, ArrowRight,
   Shield, Package, ArrowLeft, Star, Info
 } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { useCart } from "../../context/CartProvider";
-import { useSession } from "../../context/SessionProvider";
-import { formatPrice, cn } from "../../lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useCart } from "@/context/CartProvider";
+import { formatPrice, cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+import { useSession } from "@/context/SessionProvider";
+import { usePublicData } from "@/context/PublicDataProvider";
 
 export function CheckoutPage() {
   const { items, total, subtotal, discount, deliveryFee, createOrder, selectedStore } = useCart();

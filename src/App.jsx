@@ -1,3 +1,5 @@
+// ch1
+
 // PROVIDERS
 import AuthProvider from "@/context/AuthProvider";
 import { PublicDataProvider } from "./context/PublicDataProvider";

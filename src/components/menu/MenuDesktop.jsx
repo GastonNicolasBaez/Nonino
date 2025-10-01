@@ -227,9 +227,10 @@ export function MenuDesktop({
                                                 className="w-full text-sm"
                                                 variant="empanada"
                                                 onClick={() => handleAddToCart(product)}
-                                                disabled={!product.isAvailable}
+                                                // disabled={!product.isAvailable}
                                             >
-                                                {product.isAvailable ? "Agregar al Carrito" : "No Disponible"}
+                                                {/* {product.isAvailable ? "Agregar al Carrito" : "No Disponible"} */}
+                                                Agregar al carrito
                                             </Button>
                                         </CardFooter>
                                     </Card>

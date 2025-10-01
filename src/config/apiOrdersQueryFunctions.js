@@ -27,6 +27,36 @@ export const getAdminOrdersGetOrdersQueryFunction = async (_accessToken) => {
         }
     }
 
-    const response = await axios.get(`${ENDPOINTS.orders}///`, axiosSetup.axiosConfig);
+    const response = await axios.get(`${ENDPOINTS.orders}/admin/orders`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+export const postAdminOrdersPayCashQueryFunction = async ({_orderId, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _orderId,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.post(`${ENDPOINTS.orders}/admin/orders/${_orderId}/pay/cash`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+export const postAdminOrdersCloseQueryFunction = async ({_orderId, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: _orderId,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.post(`${ENDPOINTS.orders}/admin/orders/${_orderId}/close`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }

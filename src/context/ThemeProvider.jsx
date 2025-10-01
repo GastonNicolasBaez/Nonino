@@ -9,7 +9,7 @@ const ThemeContext = createContext();
  * @returns {Object} - Objeto con funciones y estado del tema
  * @throws {Error} - Si se usa fuera del ThemeProvider
  */
-export const useTheme = () => {
+export function useTheme() {
     const context = useContext(ThemeContext);
     if (!context) {
         throw new Error('useTheme debe ser usado dentro de un ThemeProvider');
@@ -22,7 +22,7 @@ export const useTheme = () => {
  * @param {Object} props - Props del componente
  * @param {React.ReactNode} props.children - Componentes hijos
  */
-export const ThemeProvider = ({ children }) => {
+const ThemeProvider = ({ children }) => {
     const [theme, setTheme] = useState(() => {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) return savedTheme;
@@ -63,3 +63,5 @@ export const ThemeProvider = ({ children }) => {
         </ThemeContext.Provider>
     );
 };
+
+export default ThemeProvider;

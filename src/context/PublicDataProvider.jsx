@@ -17,7 +17,7 @@ import {
 
 const PublicDataContext = createContext();
 
-export const PublicDataProvider = ({ children }) => {
+const PublicDataProvider = ({ children }) => {
 
     const [productosTodos, setProductosTodos] = useState([]);
     const [combosTodos, setCombosTodos] = useState([]);
@@ -178,6 +178,8 @@ export const PublicDataProvider = ({ children }) => {
     )
 }
 
-export const usePublicData = () => {
+export default PublicDataProvider;
+
+export function usePublicData() {
     return useContext(PublicDataContext);
 }

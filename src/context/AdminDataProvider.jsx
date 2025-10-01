@@ -51,16 +51,21 @@ import {
     postAdminInventoryAdjustProductsQueryFunction,
 } from '@/config/apiInventoryQueryFunctions';
 import {
-    getAdminOrdersGetOrdersQueryFunction
+    postAdminOrdersCreateOrderQueryFunction,
+    getAdminOrdersGetOrdersQueryFunction,
+    postAdminOrdersPayCashQueryFunction,
+    postAdminOrdersCloseQueryFunction
 } from '@/config/apiOrdersQueryFunctions';
 
 import { useSession } from '@/context/SessionProvider';
 
 const AdminDataContext = createContext();
 
-export const AdminDataProvider = ({ children }) => {
+const AdminDataProvider = ({ children }) => {
 
     const session = useSession();
+
+    const [adminStartingLoading, setAdminStartingLoading] = useState([true]);
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -97,6 +102,7 @@ export const AdminDataProvider = ({ children }) => {
             } else {
                 setSucursalSeleccionada(session.userData.sucursal);
             }
+            setAdminStartingLoading(false);
         }
     }, [session.userData?.accessToken]);
 
@@ -120,17 +126,18 @@ export const AdminDataProvider = ({ children }) => {
                 _accessToken: at,
             });
 
-            // guardar seleccionada en localstorage solo si es admin
-            if (session.userData.isAdmin) {
-                localStorage.setItem('noninoSysStore', sucursalSeleccionada);
-            }
-            
+            // ordenes activas
+            callOrders(at);
+        }
+        // guardar seleccionada en localstorage solo si es admin
+        if (session.userData.isAdmin) {
+            localStorage.setItem('noninoSysStore', sucursalSeleccionada);
         }
     }, [sucursalSeleccionada]);
 
     // llamar materiales de sucursal cuando haya materiales y cambie la sucursal
     useEffect(() => {
-        if (materiales.length > 0) {
+        if (materiales.length > 0 && session.userData && sucursalSeleccionada) {
             callInventarioMaterialesSucursal({
                 _storeId: sucursalSeleccionada,
                 _accessToken: session.userData.accessToken,
@@ -140,7 +147,7 @@ export const AdminDataProvider = ({ children }) => {
 
     // llamar productos de sucursal cuando haya materiales y cambie la sucursal
     useEffect(() => {
-        if (productos.length > 0) {
+        if (productos.length > 0 && session.userData && sucursalSeleccionada) {
             callInventarioProductosSucursal({
                 _storeId: sucursalSeleccionada,
                 _accessToken: session.userData.accessToken,
@@ -182,6 +189,9 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callAsignarASucursal, isPending: callAsignarASucursalLoading } = useMutation({
         mutationKey: ['adminAsignarASucursal'],
         mutationFn: postAdminCatalogAsignarASucursalQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // ---------- PRODUCTOS Y CATEGORIAS ADMIN
@@ -189,12 +199,18 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callProductoNuevo, isPending: callProductoNuevoLoading } = useMutation({
         mutationKey: ['adminProductoNuevo'],
         mutationFn: postAdminCatalogAddProductQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     //eliminar
     const { mutateAsync: callBorrarProducto, isPending: callBorrarProductoLoading } = useMutation({
         mutationKey: ['adminBorrarProducto'],
         mutationFn: deleteAdminCatalogDeleteProductQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     //listar
@@ -239,18 +255,27 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callModificarProducto, isPending: callModificarProductoLoading } = useMutation({
         mutationKey: ['adminModificarProducto'],
         mutationFn: updateAdminCatalogUpdateProductQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // asignar receta
     const { mutateAsync: callCrearYAsignarReceta, isPending: callCrearYAsignarRecetaLoading } = useMutation({
         mutationKey: ['adminCrearYAsignarReceta'],
         mutationFn: postAdminInventoryAssignRecipeQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // llamar receta del producto
     const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoading } = useMutation({
         mutationKey: ['adminRecetaDelProducto'],
         mutationFn: getAdminInventoryGetProductRecipeQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // ---------- SUCURSALES
@@ -275,12 +300,18 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callCrearSucursal, isPending: callCrearSucursalLoading } = useMutation({
         mutationKey: ['adminCrearSucursal'],
         mutationFn: postAdminStoresAddStoreQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // modificar
     const { mutateAsync: callActualizarSucursal, isPending: callActualizarSucursalLoading } = useMutation({
         mutationKey: ['adminActualizarSucursal'],
         mutationFn: putAdminStoresUpdateStoreQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // listar horarios
@@ -300,6 +331,9 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callUpdateSchedule, isPending: callUpdateScheduleLoading } = useMutation({
         mutationKey: ['adminUpdateSchedule'],
         mutationFn: putAdminStoresUpdateScheduleZoneQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // listar zonas de entrega
@@ -319,18 +353,27 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callCrearDeliveryZone, isPending: callCrearDeliveryZoneLoading } = useMutation({
         mutationKey: ['adminCrearDeliveryZone'],
         mutationFn: postAdminStoresAddDeliveryZoneQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // modificar zona de entrega
     const { mutateAsync: callActualizarDeliveryZone, isPending: callActualizarDeliveryZoneLoading } = useMutation({
         mutationKey: ['adminActualizarDeliveryZone'],
         mutationFn: putAdminStoresUpdateDeliveryZoneQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // eliminar zona de entrega   
     const { mutateAsync: callBorrarDeliveryZone, isPending: callBorrarDeliveryZoneLoading } = useMutation({
         mutationKey: ['adminBorrarDeliveryZone'],
         mutationFn: deleteAdminStoresDeleteDeliveryZoneQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // ---------- COMBOS
@@ -351,12 +394,18 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callCrearCombo, isPending: callCrearComboLoading } = useMutation({
         mutationKey: ['adminCrearCombo'],
         mutationFn: postAdminCatalogAddComboQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // borrar
     const { mutateAsync: callBorrarCombo, isPending: callBorrarComboLoading } = useMutation({
         mutationKey: ['adminBorrarCombo'],
         mutationFn: deleteAdminCatalogDeleteComboQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // ---------- CATEGORÍAS
@@ -377,18 +426,27 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callCrearCategoria, isPending: callCrearCategoriaLoading } = useMutation({
         mutationKey: ['adminCrearCategoria'],
         mutationFn: postAdminCatalogAddCategoryQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // actualizar
     const { mutateAsync: callActualizarCategoria, isPending: callActualizarCategoriaLoading } = useMutation({
         mutationKey: ['adminActualizarCategoria'],
         mutationFn: putAdminCatalogUpdateCategoryQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // eliminar
     const { mutateAsync: callEliminarCategoria, isPending: callEliminarCategoriaLoading } = useMutation({
         mutationKey: ['adminEliminarCategoria'],
         mutationFn: deleteAdminCatalogDeleteCategoryQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
 
@@ -410,6 +468,9 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callCrearMaterial, isPending: callCrearMaterialLoading } = useMutation({
         mutationKey: ['adminCrearMaterial'],
         mutationFn: postAdminInventoryAddMaterialQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // inventario materiales sucursal
@@ -450,6 +511,10 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callInbound, isPending: callInboundLoading } = useMutation({
         mutationKey: ['adminInbound'],
         mutationFn: postAdminInventoryInboundQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
+
     });
 
     // ---------- FABRICA
@@ -457,18 +522,29 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callMakeProducto, isPending: callMakeProductoLoading } = useMutation({
         mutationKey: ['adminMakeProducto'],
         mutationFn: postAdminInventoryMakeProductsQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
+
     });
 
     // transfer
     const { mutateAsync: callTransferProducto, isPending: callTransferProductoLoading } = useMutation({
         mutationKey: ['adminTransferProducto'],
         mutationFn: postAdminInventoryTransferProductsQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
+
     });
 
     // adjust
     const { mutateAsync: callAdjustProducto, isPending: callAdjustProductoLoading } = useMutation({
         mutationKey: ['adminAdjustProducto'],
         mutationFn: postAdminInventoryAdjustProductsQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // ---------- COMPANY INFO
@@ -489,9 +565,55 @@ export const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callActualizarCompanyInfo, isPending: callActualizarCompanyInfoLoading } = useMutation({
         mutationKey: ['adminActualizarCompanyInfo'],
         mutationFn: putAdminStoresUpdateCompanyInfoQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
-    //
+    // --------- ORDERS
+
+    // create
+    const { mutateAsync: callCreateOrder, isPending: callCreateOrderLoading } = useMutation({
+        mutationKey: ['adminCreateOrder'],
+        mutationFn: postAdminOrdersCreateOrderQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
+    // get
+    const { mutateAsync: callOrders, isPending: callOrdersLoading } = useMutation({
+        mutationKey: ['adminOrders'],
+        mutationFn: getAdminOrdersGetOrdersQueryFunction,
+        onSuccess: (data) => {
+            setOrders(data);
+        },
+        onError: (error) => {
+            console.log(error);
+            setOrders([]);
+        }
+    });
+
+    // paycash
+    const { mutateAsync: callOrderPayCash, isPending: callOrderPayCashLoading } = useMutation({
+        mutationKey: ['adminOrderPayCash'],
+        mutationFn: postAdminOrdersPayCashQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
+    // close
+    const { mutateAsync: callOrderClose, isPending: callOrderCloseLoading } = useMutation({
+        mutationKey: ['adminOrderClose'],
+        mutationFn: postAdminOrdersCloseQueryFunction,
+        onError: (error) => {
+            console.log(error);
+            setCompanyInfo([]);
+        }
+    });
+
+
 
     const showDebugStateInfo = () => {
         const debugInfo = {
@@ -509,6 +631,7 @@ export const AdminDataProvider = ({ children }) => {
             HORARIOS_SUCURSAL: horariosSucursal,
             INVENTARIO_MATERIALES_SUCURSAL: inventarioMaterialesSucursal,
             INVENTARIO_PROODUCTOS_SUCURSAL: inventarioProductosSucursal,
+            USERDATA: session.userData,
         }
         console.log(debugInfo);
     }
@@ -548,7 +671,11 @@ export const AdminDataProvider = ({ children }) => {
         callCategoriasLoading ||
         callActualizarCategoriaLoading ||
         callCrearCategoriaLoading ||
-        callEliminarCategoriaLoading;
+        callEliminarCategoriaLoading ||
+        callCreateOrderLoading ||
+        callOrderCloseLoading ||
+        callOrderPayCashLoading ||
+        callOrdersLoading;
 
     return (
         <AdminDataContext.Provider value={{
@@ -572,6 +699,7 @@ export const AdminDataProvider = ({ children }) => {
             showDebugStateInfo,
 
             adminDataLoading,
+            adminStartingLoading,
 
             callCompanyInfo,
             callActualizarCompanyInfo,
@@ -619,12 +747,19 @@ export const AdminDataProvider = ({ children }) => {
             callCrearCategoria,
             callActualizarCategoria,
             callEliminarCategoria,
+
+            callOrders,
+            callCreateOrder,
+            callOrderPayCash,
+            callOrderClose,
         }}>
             {children}
         </AdminDataContext.Provider>
     )
 }
 
-export const useAdminData = () => {
+export default AdminDataProvider;
+
+export function useAdminData() {
     return useContext(AdminDataContext);
 }

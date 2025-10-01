@@ -2,9 +2,10 @@
 
 // PROVIDERS
 import AuthProvider from "@/context/AuthProvider";
-import { PublicDataProvider } from "./context/PublicDataProvider";
-import { ThemeProvider } from "@/context/ThemeProvider";
-import { SessionProvider } from "@/context/SessionProvider";
+import PublicDataProvider from "./context/PublicDataProvider";
+import AdminDataProvider from "./context/AdminDataProvider";
+import ThemeProvider from "@/context/ThemeProvider";
+import SessionProvider from "@/context/SessionProvider";
 import { OrdersProvider } from "@/context/OrdersContext";
 import { Toaster } from "sonner";
 
@@ -36,8 +37,13 @@ import { OrderTrackingPage } from "@/pages/public/OrderTrackingPage";
 import { StoreSelectionPage } from "@/pages/public/StoreSelectionPage";
 //import { ProfilePage } from "@/pages/public/ProfilePage";
 
-// ADMINS
+// DASHBOARDS
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import { FabricaDashboard } from "@/pages/admin/FabricaDashboard";
+import { LocalDashboard } from "@/pages/admin/LocalDashboard";
+
+// ADMINS
+
 import { AdminLogin } from "@/pages/admin/AdminLogin";
 import { OrderManagement } from "@/pages/admin/OrderManagement";
 import { ProductManagement } from "@/pages/admin/ProductManagement";
@@ -55,7 +61,6 @@ import { MetricsManagement } from "@/pages/admin/MetricsManagement";
 import { FabricaProducir } from "@/pages/admin/FabricaProducir";
 import { FabricaTransferir } from "@/pages/admin/FabricaTransferir";
 import { CategoryManagement } from "@/pages/admin/CategoryManagement";
-import { AdminDataProvider } from "./context/AdminDataProvider";
 
 // Crear cliente de React Query
 const queryClient = new QueryClient({
@@ -120,7 +125,7 @@ function App() {
                                 <Route path="categorias" element={<CategoryManagement />} />
                                 <Route path="materiales" element={<MaterialManagement />} />
                                 <Route path="combos" element={<ComboManagement />} />
-                                <Route path="sucursal-menu" element={<MenuManagement />} />
+                                {/* <Route path="sucursal-menu" element={<MenuManagement />} /> */}
                                 <Route path="sucursal-configurar" element={<BranchManagement />} />
                                 <Route path="sucursal-delivery" element={<DeliveryManagement />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
@@ -146,12 +151,13 @@ function App() {
                                     </AuthProvider>
                                 }
                             >
-                                <Route index element={<AdminDashboard />} />
+                                <Route index element={<LocalDashboard />} />
                                 <Route path="ordenes" element={<OrderManagement />} />
-                                <Route path="sucursal" element={<BranchManagement />} />
-                                <Route path="sucursal-envios" element={<DeliveryManagement />} />
+                                <Route path="menu" element={<MenuManagement />} />
+                                <Route path="sucursal-configurar" element={<BranchManagement />} />
+                                <Route path="sucursal-delivery" element={<DeliveryManagement />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
-                                <Route path="inventario-receta" element={<RecipeManagement />} />
+                                <Route path="clientes" element={<CustomerManagement />} />
                                 <Route path="metricas" element={<MetricsManagement />} />
                             </Route>
 
@@ -169,9 +175,11 @@ function App() {
                                     </AuthProvider>
                                 }
                             >
-                                <Route index element={<AdminDashboard />} />
+                                <Route index element={<FabricaDashboard />} />
                                 <Route path="inventario-productos" element={<ProductStockManagement />} />
-                                <Route path="inventario-receta" element={<RecipeManagement />} />
+                                <Route path="inventario-materiales" element={<MaterialStockManagement />} />
+                                <Route path="fabrica-producir" element={<FabricaProducir />} />
+                                <Route path="fabrica-transferir" element={<FabricaTransferir />} />
                             </Route>
                         </Route>
 

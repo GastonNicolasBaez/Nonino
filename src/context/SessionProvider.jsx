@@ -19,9 +19,9 @@ const csrfLocalStorageKeyName = 'noninoSysCsrf';
 
 const userPrivilegesByEmail = {
     'admin@nonino': { role: 'ADMIN', sucursal: '', },
-    'fabrica@nonino': { role: 'FABRICA', sucursal: 10 },
-    'local1@nonino': { role: 'LOCAL', sucursal: 1 },
-    'local2@nonino': { role: 'LOCAL', sucursal: 2 },
+    'fabrica@nonino': { role: 'FABRICA', sucursal: 1 },
+    'local1@nonino': { role: 'LOCAL', sucursal: 2 },
+    'local2@nonino': { role: 'LOCAL', sucursal: 3 },
 }
 
 const SessionContext = createContext();
@@ -44,7 +44,7 @@ const userDataTransform = (data) => {
     return user;
 }
 
-export const SessionProvider = ({ children }) => {
+const SessionProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -108,6 +108,8 @@ export const SessionProvider = ({ children }) => {
     );
 }
 
-export const useSession = () => {
+export default SessionProvider;
+
+export function useSession() {
     return useContext(SessionContext);
 }

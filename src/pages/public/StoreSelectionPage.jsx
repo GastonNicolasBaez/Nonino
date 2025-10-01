@@ -21,9 +21,7 @@ export function StoreSelectionPage() {
         // Ir directamente al menú
         navigate('/menu');
     };
-
-    console.log(stores);
-
+    
     return (
         <div className="min-h-screen bg-black flex items-center justify-center dark">
             <div className="text-center bg-empanada-dark p-8 rounded-xl shadow-2xl max-w-md w-full mx-4 border border-empanada-light-gray">

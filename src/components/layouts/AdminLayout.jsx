@@ -55,6 +55,7 @@ const AdminLayout = () => {
         setSucursalSeleccionada,
         showDebugStateInfo,
         adminDataLoading,
+        adminStartingLoading,
 
         refreshAll,
     } = useAdminData();
@@ -172,44 +173,104 @@ const AdminLayout = () => {
         "LOCAL": [
             { name: "Dashboard", href: "/intranet/local", icon: Home },
             {
-                name: "Pedidos",
-                href: "/intranet/local/pedidos",
+                name: "Órdenes",
+                href: "/intranet/local/ordenes",
                 icon: ShoppingCart,
                 badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
+            },
+            { name: "Menú", href: "/intranet/local/menu", icon: Menu },
+            // {
+            //     name: "Catálogos",
+            //     icon: Package,
+            //     hasDropdown: true,
+            //     dropdownItems: [
+            //         { name: "Productos", href: "/intranet/local/productos", icon: Package },
+            //         { name: "Categorías", href: "/intranet/local/categorias", icon: Tag },
+            //         { name: "Materiales", href: "/intranet/local/materiales", icon: Archive },
+            //         { name: "Combos", href: "/intranet/local/combos", icon: ShoppingCart }
+            //     ]
+            // },
+            {
+                name: "Inventario",
+                icon: Archive,
+                hasDropdown: true,
+                dropdownItems: [
+                    { name: "Productos", href: "/intranet/local/inventario-productos", icon: ShoppingCart },
+                    // { name: "Materiales", href: "/intranet/local/inventario-materiales", icon: Package }
+                ]
             },
             {
                 name: "Sucursal",
                 icon: Building2,
                 hasDropdown: true,
                 dropdownItems: [
-                    { name: "Gestionar", href: "/intranet/local/sucursal", icon: Building2 },
-                    { name: "Envíos", href: "/intranet/local/sucursal-envios", icon: Truck }
+                    { name: "Configurar", href: "/intranet/local/sucursal-configurar", icon: Settings },
+                    { name: "Delivery", href: "/intranet/local/sucursal-delivery", icon: Truck }
                 ]
             },
-            {
-                name: "Inventario",
-                icon: Archive,
-                hasDropdown: true,
-                dropdownItems: [
-                    { name: "Gestión", href: "/intranet/local/inventario", icon: Archive },
-                    { name: "Productos", href: "/intranet/local/inventario-productos", icon: ShoppingCart },
-                    { name: "Receta", href: "/intranet/local/inventario-receta", icon: Package }
-                ]
-            },
-            { name: "Reportes", href: "/intranet/local/reportes", icon: BarChart3 },
+            // {
+            //     name: "Fábrica",
+            //     icon: Factory,
+            //     hasDropdown: true,
+            //     dropdownItems: [
+            //         { name: "Producir", href: "/intranet/local/fabrica-producir", icon: Package },
+            //         { name: "Transferir", href: "/intranet/local/fabrica-transferir", icon: Truck }
+            //     ]
+            // },
+            { name: "Clientes", href: "/intranet/local/clientes", icon: Users },
+            { name: "Métricas", href: "/intranet/local/metricas", icon: BarChart3 },
+            // { name: "Configuración", href: "/intranet/local/configuracion", icon: Settings },
         ],
         "FABRICA": [
             { name: "Dashboard", href: "/intranet/fabrica", icon: Home },
+            // {
+            //     name: "Órdenes",
+            //     href: "/intranet/fabrica/ordenes",
+            //     icon: ShoppingCart,
+            //     badge: pendingOrdersCount > 0 ? pendingOrdersCount : null
+            // },
+            // { name: "Menú", href: "/intranet/fabrica/menu", icon: Menu },
+            // {
+            //     name: "Catálogos",
+            //     icon: Package,
+            //     hasDropdown: true,
+            //     dropdownItems: [
+            //         { name: "Productos", href: "/intranet/fabrica/productos", icon: Package },
+            //         { name: "Categorías", href: "/intranet/fabrica/categorias", icon: Tag },
+            //         { name: "Materiales", href: "/intranet/fabrica/materiales", icon: Archive },
+            //         { name: "Combos", href: "/intranet/fabrica/combos", icon: ShoppingCart }
+            //     ]
+            // },
             {
                 name: "Inventario",
                 icon: Archive,
                 hasDropdown: true,
                 dropdownItems: [
-                    { name: "Gestión", href: "/intranet/fabrica/inventario", icon: Archive },
                     { name: "Productos", href: "/intranet/fabrica/inventario-productos", icon: ShoppingCart },
-                    { name: "Receta", href: "/intranet/fabrica/inventario-receta", icon: Package }
+                    { name: "Materiales", href: "/intranet/fabrica/inventario-materiales", icon: Package }
                 ]
             },
+            // {
+            //     name: "Sucursal",
+            //     icon: Building2,
+            //     hasDropdown: true,
+            //     dropdownItems: [
+            //         { name: "Configurar", href: "/intranet/fabrica/sucursal-configurar", icon: Settings },
+            //         { name: "Delivery", href: "/intranet/fabrica/sucursal-delivery", icon: Truck }
+            //     ]
+            // },
+            {
+                name: "Fábrica",
+                icon: Factory,
+                hasDropdown: true,
+                dropdownItems: [
+                    { name: "Producir", href: "/intranet/fabrica/fabrica-producir", icon: Package },
+                    { name: "Transferir", href: "/intranet/fabrica/fabrica-transferir", icon: Truck }
+                ]
+            },
+            // { name: "Clientes", href: "/intranet/fabrica/clientes", icon: Users },
+            // { name: "Métricas", href: "/intranet/fabrica/metricas", icon: BarChart3 },
+            // { name: "Configuración", href: "/intranet/fabrica/configuracion", icon: Settings },
         ],
     }
 
@@ -775,7 +836,8 @@ const AdminLayout = () => {
 
                 {/* Page Content */}
                 <main className="flex-1 p-4 sm:p-6 overflow-y-auto admin-main-content">
-                    <Outlet />
+                    {adminStartingLoading ? 
+                    'cargando primeros...' : <Outlet />}
                 </main>
             </div>
         </div>

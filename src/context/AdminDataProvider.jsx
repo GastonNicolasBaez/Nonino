@@ -50,6 +50,9 @@ import {
     postAdminInventoryTransferProductsQueryFunction,
     postAdminInventoryAdjustProductsQueryFunction,
 } from '@/config/apiInventoryQueryFunctions';
+import {
+    getAdminOrdersGetOrdersQueryFunction
+} from '@/config/apiOrdersQueryFunctions';
 
 import { useSession } from '@/context/SessionProvider';
 
@@ -75,6 +78,8 @@ export const AdminDataProvider = ({ children }) => {
     const [inventarioMaterialesSucursal, setInventarioMaterialesSucursal] = useState([]);
     const [inventarioProductosSucursal, setInventarioProductosSucursal] = useState([]);
     const [companyInfo, setCompanyInfo] = useState([]);
+
+    const [orders, setOrders] = useState([]);
 
 
     //cargar información de admin al montar la vista de administrador
@@ -115,8 +120,11 @@ export const AdminDataProvider = ({ children }) => {
                 _accessToken: at,
             });
 
-            // guardar seleccionada en localstorage
-            localStorage.setItem('noninoSysStore', sucursalSeleccionada);
+            // guardar seleccionada en localstorage solo si es admin
+            if (session.userData.isAdmin) {
+                localStorage.setItem('noninoSysStore', sucursalSeleccionada);
+            }
+            
         }
     }, [sucursalSeleccionada]);
 

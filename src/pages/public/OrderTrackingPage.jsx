@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { motion } from "framer-motion";
 import { Clock, MapPin, Phone, CheckCircle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import { orderService } from "../../services/api";
-import { formatPrice, formatDateTime } from "../../lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { orderService } from "@/services/api";
+import { formatPrice, formatDateTime } from "@/lib/utils";
 
 export function OrderTrackingPage() {
   const { orderId } = useParams();

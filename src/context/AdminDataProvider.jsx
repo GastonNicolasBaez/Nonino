@@ -586,7 +586,13 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminOrders'],
         mutationFn: getAdminOrdersGetOrdersQueryFunction,
         onSuccess: (data) => {
-            setOrders(data);
+            if (session.userData.isAdmin) {
+                setOrders(data);
+            } else {
+                const filteredOrdersByStoreId = data.filter((o) => o.storeId == sucursalSeleccionada);
+                setOrders(filteredOrdersByStoreId);
+            }
+
         },
         onError: (error) => {
             console.log(error);
@@ -685,6 +691,7 @@ const AdminDataProvider = ({ children }) => {
             categoriasTodas,
             sucursales,
             materiales,
+            orders,
 
             sucursalSeleccionada,
             setSucursalSeleccionada,

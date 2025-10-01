@@ -129,179 +129,102 @@ export function TicketPreview({ order, showPreview = true, mode = 'dev' }) {
               ref={ticketRef}
               className="ticket-content"
               style={{
-                width: '384px', // 48mm a 203 DPI ≈ 384px
-                fontFamily: 'monospace',
-                fontSize: '12px',
-                lineHeight: '1.4',
+                width: '400px',
+                fontFamily: "'Courier New', monospace",
+                fontSize: '16px',
+                lineHeight: '1.6',
                 color: '#000',
-                backgroundColor: '#fff'
+                backgroundColor: '#fff',
+                padding: '20px'
               }}
             >
-              {/* Header con logo */}
-              <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                {defaultLogo && (
-                  <div style={{ marginBottom: '8px' }}>
-                    <img
-                      src={defaultLogo}
-                      alt="Logo"
-                      style={{
-                        maxWidth: '120px',
-                        height: 'auto',
-                        margin: '0 auto',
-                        display: 'block'
-                      }}
-                    />
-                  </div>
-                )}
-
-                <div style={{
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  marginBottom: '4px'
-                }}>
-                  {restaurantName}
+              {/* Header */}
+              <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', letterSpacing: '2px' }}>
+                  COMANDA DE COCINA
                 </div>
-
-                <div style={{ fontSize: '10px', marginBottom: '2px' }}>
-                  {address}
+                <div style={{ fontSize: '16px', marginTop: '8px' }}>
+                  NONINO EMPANADAS
                 </div>
-                <div style={{ fontSize: '10px', marginBottom: '8px' }}>
-                  Tel: {phone}
+                <div style={{ borderBottom: '2px solid #000', margin: '16px 0' }}></div>
+              </div>
+
+              {/* Número de Orden */}
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '32px', fontWeight: 'bold', textAlign: 'center', letterSpacing: '1px' }}>
+                  ORDEN #{order.id}
                 </div>
               </div>
 
-              {/* Información del pedido */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: '4px'
-                }}>
-                  <span>Mesa: {order.table || 'N/A'}</span>
-                  <span>Mozo: {order.waiter || 'N/A'}</span>
+              {/* Fecha y Hora */}
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '18px', textAlign: 'center', marginBottom: '4px' }}>
+                  <strong>Fecha:</strong> {new Date(order.time || order.orderDate || new Date()).toLocaleDateString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  })}
                 </div>
-                <div style={{ fontSize: '11px', marginBottom: '8px' }}>
-                  {formatTicketDate(order.time || order.orderDate || new Date())}
-                </div>
-                <div style={{
-                  borderTop: '1px dashed #000',
-                  borderBottom: '1px dashed #000',
-                  padding: '4px 0',
-                  fontSize: '11px'
-                }}>
-                  Pedido: {order.id}
+                <div style={{ fontSize: '20px', fontWeight: 'bold', textAlign: 'center' }}>
+                  <strong>Hora:</strong> {new Date(order.time || order.orderDate || new Date()).toLocaleTimeString('es-AR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
                 </div>
               </div>
 
-              {/* Items */}
-              <div style={{ marginBottom: '16px' }}>
+              <div style={{ borderTop: '2px solid #000', borderBottom: '2px solid #000', margin: '20px 0' }}></div>
+
+              {/* Items de la orden */}
+              <div style={{ marginBottom: '24px' }}>
                 {order.items && order.items.map((item, index) => (
-                  <div key={index} style={{ marginBottom: '8px' }}>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start'
-                    }}>
-                      <div style={{ flex: 1 }}>
-                        <div>
-                          <span style={{ fontWeight: 'bold' }}>
-                            {item.qty || item.quantity || 1}
-                          </span>
-                          {' '}
-                          <span>{item.name}</span>
-                        </div>
-                        {item.notes && (
-                          <div style={{
-                            fontSize: '10px',
-                            fontStyle: 'italic',
-                            marginLeft: '16px',
-                            color: '#666'
-                          }}>
-                            - {item.notes}
-                          </div>
-                        )}
-                      </div>
-                      <div style={{
-                        minWidth: '60px',
-                        textAlign: 'right',
-                        fontSize: '11px'
-                      }}>
-                        {item.price && formatPrice(item.price * (item.qty || item.quantity || 1))}
-                      </div>
+                  <div
+                    key={index}
+                    style={{
+                      marginBottom: '20px',
+                      padding: '12px 0',
+                      borderTop: index > 0 ? '1px dashed #999' : 'none'
+                    }}
+                  >
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+                      {item.qty || item.quantity || 1}x {(item.name || '').toUpperCase()}
                     </div>
+                    {item.notes && (
+                      <div style={{
+                        fontSize: '18px',
+                        marginLeft: '20px',
+                        fontStyle: 'italic',
+                        color: '#333',
+                        marginTop: '8px'
+                      }}>
+                        Nota: {item.notes}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
 
-              {/* Separador */}
-              <div style={{
-                borderTop: '1px dashed #000',
-                margin: '16px 0'
-              }}></div>
+              <div style={{ borderTop: '2px solid #000', margin: '20px 0' }}></div>
 
-              {/* Totales */}
-              <div style={{ marginBottom: '16px' }}>
-                {order.subtotal && (
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '4px'
-                  }}>
-                    <span>Subtotal:</span>
-                    <span>{formatPrice(order.subtotal)}</span>
-                  </div>
-                )}
-
-                {order.tax && (
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '4px'
-                  }}>
-                    <span>IVA:</span>
-                    <span>{formatPrice(order.tax)}</span>
-                  </div>
-                )}
-
+              {/* Notas especiales generales */}
+              {order.notes && (
                 <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  borderTop: '1px solid #000',
-                  paddingTop: '4px'
+                  marginBottom: '24px',
+                  padding: '12px',
+                  backgroundColor: '#f9f9f9',
+                  border: '2px solid #000'
                 }}>
-                  <span>TOTAL:</span>
-                  <span>{formatPrice(order.total)}</span>
+                  <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    ⚠️ NOTAS ESPECIALES:
+                  </div>
+                  <div style={{ fontSize: '18px' }}>
+                    {order.notes}
+                  </div>
                 </div>
-              </div>
-
-              {/* Forma de pago */}
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '16px',
-                fontSize: '11px'
-              }}>
-                <div>Forma de pago: {order.payment || order.paymentMethod || 'Efectivo'}</div>
-              </div>
-
-              {/* Footer */}
-              <div style={{
-                borderTop: '1px dashed #000',
-                paddingTop: '8px',
-                textAlign: 'center',
-                fontSize: '11px'
-              }}>
-                <div style={{ marginBottom: '4px' }}>
-                  ¡Gracias por su compra!
-                </div>
-                <div style={{ fontSize: '10px' }}>
-                  www.noninoempanadas.com
-                </div>
-              </div>
+              )}
 
               {/* Espacio para corte */}
-              <div style={{ height: '24px' }}></div>
+              <div style={{ height: '40px' }}></div>
             </div>
           </div>
         </Card>

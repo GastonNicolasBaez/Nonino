@@ -4,11 +4,13 @@ import { ShoppingBag, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useCart } from "../../context/CartProvider";
+import { usePublicData } from "@/context/PublicDataProvider";
 import { formatPrice } from "../../lib/utils";
 import { Link } from "react-router";
 import { Portal } from "./Portal";
 
 export function CartDropdown({ isOpen, onClose }) {
+  const { sucursalSeleccionada } = usePublicData();
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
 
   // Calcular posición del dropdown cuando se abre
@@ -50,16 +52,15 @@ export function CartDropdown({ isOpen, onClose }) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
+        <Portal>
           {/* Overlay invisible para cerrar */}
           <div
             className="fixed inset-0 z-40"
             onClick={onClose}
           />
 
-          {/* Dropdown renderizado en Portal */}
-          <Portal>
-            <motion.div
+          {/* Dropdown */}
+          <motion.div
               variants={dropdownVariants}
               initial="closed"
               animate="open"
@@ -97,7 +98,7 @@ export function CartDropdown({ isOpen, onClose }) {
                   <p className="text-sm text-gray-400 mb-4">
                     Tu carrito está vacío
                   </p>
-                  <Link to="/pedir" onClick={onClose}>
+                  <Link to={sucursalSeleccionada ? "/menu" : "/pedir"} onClick={onClose}>
                     <Button variant="empanada" size="sm" className="px-4">
                       Explorar Menú
                     </Button>
@@ -221,8 +222,7 @@ export function CartDropdown({ isOpen, onClose }) {
               </div>
             )}
           </motion.div>
-          </Portal>
-        </>
+        </Portal>
       )}
     </AnimatePresence>
   );

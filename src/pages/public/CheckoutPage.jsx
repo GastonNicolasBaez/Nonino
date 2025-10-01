@@ -36,6 +36,7 @@ export function CheckoutPage() {
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
 
+<<<<<<< HEAD
     // Steps definition - memoized to prevent dependency changes
     const steps = useMemo(() => [
         { id: 1, title: "Entrega", icon: selectedStore ? Home : Truck, required: true },
@@ -43,6 +44,25 @@ export function CheckoutPage() {
         { id: 3, title: "Pago", icon: CreditCard, required: true },
         { id: 4, title: "Confirmar", icon: Check, required: false }
     ], [selectedStore]);
+=======
+  const [orderData, setOrderData] = useState({
+    deliveryType: "delivery",
+    customerInfo: {
+      name: user?.name || "",
+      phone: user?.phone || "",
+    },
+    address: {
+      street: "",
+      number: "",
+      floor: "",
+      apartment: "",
+      neighborhood: "",
+      references: "",
+    },
+    paymentMethod: "mercadopago",
+    notes: "",
+  });
+>>>>>>> development
 
     const [orderData, setOrderData] = useState({
         deliveryType: "delivery",
@@ -254,6 +274,312 @@ export function CheckoutPage() {
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
+=======
+              </div>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setOrderData(prev => ({ ...prev, deliveryType: "pickup" }))}
+            className={cn(
+              "p-4 rounded-lg border-2 text-left transition-all",
+              orderData.deliveryType === "pickup"
+                ? "border-empanada-golden bg-empanada-golden/5"
+                : "border-empanada-light-gray hover:border-empanada-golden/50"
+            )}
+          >
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                "w-8 h-8 rounded-full flex items-center justify-center",
+                orderData.deliveryType === "pickup"
+                  ? "bg-empanada-golden text-white"
+                  : "bg-empanada-medium text-gray-300"
+              )}>
+                <Home className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-white text-sm mb-1">Retirar en sucursal</h4>
+                <p className="text-xs text-gray-300 mb-1">Pasa a buscar tu pedido</p>
+                <div className="flex items-center gap-1 text-xs text-empanada-golden">
+                  <Clock className="w-3 h-3" />
+                  <span>15-20 min</span>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  ), [selectedStore, orderData.deliveryType]);
+
+  const CustomerInfoStep = useMemo(() => (
+    <div className="space-y-4">
+      {/* Customer Info */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
+            <User className="w-4 h-4 text-empanada-golden" />
+          </div>
+          <h3 className="text-base font-semibold text-white">Información de contacto</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-gray-300">
+              Nombre completo <span className="text-red-500">*</span>
+            </label>
+            <Input
+              value={orderData.customerInfo.name}
+              onChange={(e) => handleInputChange("customerInfo", "name", e.target.value)}
+              className={cn(
+                "h-9 text-sm",
+                errors['customerInfo.name']
+                  ? "border-red-300 focus:border-red-500"
+                  : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
+              )}
+              placeholder="Tu nombre y apellido"
+            />
+            {errors['customerInfo.name'] && (
+              <p className="text-red-500 text-xs">{errors['customerInfo.name']}</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-gray-300">
+              Teléfono <span className="text-red-500">*</span>
+            </label>
+            <Input
+              value={orderData.customerInfo.phone}
+              onChange={(e) => handleInputChange("customerInfo", "phone", e.target.value)}
+              className={cn(
+                "h-9 text-sm",
+                errors['customerInfo.phone']
+                  ? "border-red-300 focus:border-red-500"
+                  : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
+              )}
+              placeholder="11 1234 5678"
+            />
+            {errors['customerInfo.phone'] && (
+              <p className="text-red-500 text-xs">{errors['customerInfo.phone']}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Address - Solo si es delivery, más compacto */}
+      {orderData.deliveryType === "delivery" && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="space-y-3"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
+              <MapPin className="w-4 h-4 text-empanada-golden" />
+            </div>
+            <h3 className="text-base font-semibold text-white">Dirección de entrega</h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2 space-y-1">
+              <label className="block text-xs font-medium text-gray-300">
+                Calle <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={orderData.address.street}
+                onChange={(e) => handleInputChange("address", "street", e.target.value)}
+                className={cn(
+                  "h-9 text-sm",
+                  errors['address.street']
+                    ? "border-red-300 focus:border-red-500"
+                    : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
+                )}
+                placeholder="Av. Corrientes"
+              />
+              {errors['address.street'] && (
+                <p className="text-red-500 text-xs">{errors['address.street']}</p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-300">
+                Número <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={orderData.address.number}
+                onChange={(e) => handleInputChange("address", "number", e.target.value)}
+                className={cn(
+                  "h-9 text-sm",
+                  errors['address.number']
+                    ? "border-red-300 focus:border-red-500"
+                    : "border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
+                )}
+                placeholder="1234"
+              />
+              {errors['address.number'] && (
+                <p className="text-red-500 text-xs">{errors['address.number']}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-300">Piso</label>
+              <Input
+                value={orderData.address.floor}
+                onChange={(e) => handleInputChange("address", "floor", e.target.value)}
+                className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
+                placeholder="5"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-300">Depto</label>
+              <Input
+                value={orderData.address.apartment}
+                onChange={(e) => handleInputChange("address", "apartment", e.target.value)}
+                className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
+                placeholder="A"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-300">Barrio</label>
+              <Input
+                value={orderData.address.neighborhood}
+                onChange={(e) => handleInputChange("address", "neighborhood", e.target.value)}
+                className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
+                placeholder="Balvanera"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-gray-300">Referencias</label>
+            <textarea
+              value={orderData.address.references}
+              onChange={(e) => handleInputChange("address", "references", e.target.value)}
+              className="w-full px-3 py-2 border border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+              rows={2}
+              placeholder="Ej: Casa con portón verde, timbre 2A"
+            />
+          </div>
+        </motion.div>
+      )}
+    </div>
+  ), [orderData.customerInfo, orderData.address, orderData.deliveryType, errors, handleInputChange]);
+
+  const PaymentStep = useMemo(() => (
+    <div className="space-y-4">
+      {/* Payment Method */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 bg-empanada-golden/10 rounded-full flex items-center justify-center">
+            <CreditCard className="w-4 h-4 text-empanada-golden" />
+          </div>
+          <h3 className="text-base font-semibold text-white">Método de pago</h3>
+        </div>
+
+        <div className="space-y-2">
+          <label className="flex items-start p-4 border-2 border-empanada-light-gray bg-empanada-dark rounded-lg cursor-pointer hover:bg-empanada-medium transition-colors">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="mercadopago"
+              checked={orderData.paymentMethod === "mercadopago"}
+              onChange={(e) => setOrderData(prev => ({ ...prev, paymentMethod: e.target.value }))}
+              className="mt-0.5 w-4 h-4 text-empanada-golden"
+            />
+            <div className="ml-3 flex-1">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CreditCard className="w-4 h-4 text-blue-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-white text-sm mb-1">Mercado Pago</h4>
+                  <p className="text-xs text-gray-300 mb-2">Tarjetas, transferencias y billeteras digitales</p>
+                  <div className="flex items-center gap-1">
+                    <Shield className="w-3 h-3 text-green-600" />
+                    <span className="text-xs text-green-600 font-medium">Pago seguro</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </label>
+
+          <label className="flex items-start p-4 border-2 border-empanada-light-gray bg-empanada-dark rounded-lg cursor-pointer hover:bg-empanada-medium transition-colors">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="cash"
+              checked={orderData.paymentMethod === "cash"}
+              onChange={(e) => setOrderData(prev => ({ ...prev, paymentMethod: e.target.value }))}
+              className="mt-0.5 w-4 h-4 text-empanada-golden"
+            />
+            <div className="ml-3 flex-1">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="text-lg">💵</div>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-white text-sm mb-1">Efectivo</h4>
+                  <p className="text-xs text-gray-300 mb-2">Paga en efectivo al recibir</p>
+                  <div className="flex items-center gap-1">
+                    <Info className="w-3 h-3 text-gray-300" />
+                    <span className="text-xs text-gray-300">Monto exacto preparado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      {/* Notes */}
+      <div className="space-y-1">
+        <label className="block text-xs font-medium text-gray-300">
+          Observaciones para tu pedido
+        </label>
+        <textarea
+          value={orderData.notes}
+          onChange={(e) => setOrderData(prev => ({ ...prev, notes: e.target.value }))}
+          className="w-full px-3 py-2 border border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
+          rows={3}
+          placeholder="Instrucciones especiales, alergias, etc."
+        />
+      </div>
+    </div>
+  ), [orderData.paymentMethod, orderData.notes]);
+
+  const ConfirmStep = useMemo(() => (
+    <div className="space-y-4">
+      {/* Unified Order Summary */}
+      <div className="bg-empanada-dark rounded-lg p-6">
+        <h4 className="font-semibold text-white mb-6 flex items-center gap-2 text-lg">
+          <ShoppingBag className="w-5 h-5 text-empanada-golden" />
+          Resumen de tu pedido
+        </h4>
+
+        {/* 1. Contact Information - Quién recibe */}
+        <div className="mb-4">
+          <h5 className="font-medium text-gray-300 text-sm mb-2">Contacto</h5>
+          <p className="text-sm text-white font-medium">{orderData.customerInfo.name}</p>
+          <p className="text-sm text-gray-300">{orderData.customerInfo.phone}</p>
+        </div>
+
+        {/* 2. Delivery Details - Cómo y dónde se entrega */}
+        <div className="mb-4">
+          <h5 className="font-medium text-gray-300 text-sm mb-2">Entrega</h5>
+          <div className="flex items-center gap-2 text-sm text-white mb-1">
+            {orderData.deliveryType === "delivery" ? (
+              <>
+                <Truck className="w-4 h-4 text-empanada-golden" />
+                <span>Delivery a domicilio</span>
+              </>
+>>>>>>> development
             ) : (
                 <div className="bg-empanada-dark border border-red-600 rounded-lg p-4 text-center">
                     <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />

@@ -155,7 +155,8 @@ export function AboutPage() {
           <div className="mb-4">
             <WordPullUp
               words="NUESTRA HISTORIA"
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-empanada-dark leading-tight"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-empanada-golden leading-tight"
+              style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.6), 0 0 20px rgba(0,0,0,0.4)' }}
               shouldAnimate={shouldAnimateTitle}
               wrapperFramerProps={{
                 hidden: { opacity: 0 },
@@ -173,8 +174,9 @@ export function AboutPage() {
             />
           </div>
           <WordPullUp
-            words="Una tradición familiar que comenzó hace más de 25 años con el sueño de compartir el auténtico sabor de las empanadas argentinas"
-            className="text-xl md:text-2xl text-empanada-dark/80 font-medium leading-relaxed"
+            words="Empanadas que se destacan por su tamaño y por la calidad de la materia prima que utilizamos, con la mayor variedad de rellenos deliciosos de San Martin De los Andes."
+            className="text-xl md:text-2xl text-empanada-golden/90 font-medium leading-relaxed"
+            style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.5)' }}
             shouldAnimate={shouldAnimateSubtitle}
             wrapperFramerProps={{
               hidden: { opacity: 0 },
@@ -205,10 +207,10 @@ export function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-empanada-dark">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-empanada-white">
                 La Historia de Don Carlos
               </h2>
-              <div className="space-y-4 text-empanada-rich leading-relaxed">
+              <div className="space-y-4 text-empanada-golden leading-relaxed">
                 <p>
                   Todo comenzó en 1995 cuando Don Carlos Nonino decidió cumplir su sueño 
                   de abrir su propia empanadora. Con las recetas heredadas de su abuela 

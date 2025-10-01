@@ -1,6 +1,6 @@
 /**
  * ORDER MANAGEMENT - NONINO EMPANADAS
- * Gestión de pedidos con datos mock funcionales
+ * Gestión de órdenes con datos mock funcionales
  */
 
 import { useState, useEffect } from "react";
@@ -47,77 +47,75 @@ import { useOrders } from "@/context/OrdersContext";
 import { SectionHeader, CustomSelect } from "@/components/branding";
 import { TicketPreview } from "../../components/common/TicketPreview";
 
-// Función para generar HTML de la comanda básica
+// Función para generar HTML de la comanda para cocina
 function generateTicketHTML(order) {
   const orderTime = new Date(order.time || order.orderDate || Date.now());
+  const formattedDate = orderTime.toLocaleDateString('es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+  const formattedTime = orderTime.toLocaleTimeString('es-AR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 
   return `
-    <div style="width: 384px; font-family: monospace; font-size: 14px; line-height: 1.4; color: #000; background-color: #fff;">
+    <div style="width: 400px; font-family: 'Courier New', monospace; font-size: 16px; line-height: 1.6; color: #000; background-color: #fff; padding: 20px;">
       <!-- Header -->
-      <div style="text-align: center; margin-bottom: 16px;">
-        <div style="font-size: 16px; font-weight: bold;">COMANDA DE COCINA</div>
-        <div style="font-size: 12px;">NONINO EMPANADAS</div>
-        <div style="border-bottom: 1px solid #000; margin: 8px 0;"></div>
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">COMANDA DE COCINA</div>
+        <div style="font-size: 16px; margin-top: 8px;">NONINO EMPANADAS</div>
+        <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
       </div>
 
-      <!-- Información del pedido -->
+      <!-- Número de Orden -->
       <div style="margin-bottom: 16px;">
-        <div style="font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 8px;">
-          PEDIDO: ${order.id}
+        <div style="font-size: 32px; font-weight: bold; text-align: center; letter-spacing: 1px;">
+          ORDEN #${order.id}
         </div>
-        <div style="text-align: center; margin-bottom: 8px;">
-          ${orderTime.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
-        </div>
-        ${order.deliveryType === 'delivery' ? `
-        <div style="text-align: center; font-weight: bold;">
-          *** DELIVERY ***
-        </div>` : ''}
       </div>
 
-      <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; margin: 16px 0; padding: 8px 0;"></div>
+      <div style="border-top: 2px solid #000; border-bottom: 2px solid #000; margin: 20px 0;"></div>
 
-      <!-- Items -->
-      <div style="margin-bottom: 16px;">
+      <!-- Fecha y Hora -->
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 18px; text-align: center; margin-bottom: 4px;">
+          <strong>Fecha:</strong> ${formattedDate}
+        </div>
+        <div style="font-size: 20px; font-weight: bold; text-align: center;">
+          <strong>Hora:</strong> ${formattedTime}
+        </div>
+      </div>
+
+      <div style="border-top: 2px solid #000; border-bottom: 2px solid #000; margin: 20px 0;"></div>
+
+      <!-- Items de la orden -->
+      <div style="margin-bottom: 24px;">
         ${order.items && order.items.map((item, index) => `
-          <div style="margin-bottom: 12px;">
-            <div style="font-size: 16px; font-weight: bold;">
-              ${item.qty || item.quantity || 1}x ${item.name}
+          <div style="margin-bottom: 20px; padding: 12px 0; ${index > 0 ? 'border-top: 1px dashed #999;' : ''}">
+            <div style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">
+              ${item.qty || item.quantity || 1}x ${item.name.toUpperCase()}
             </div>
             ${item.notes ? `
-            <div style="font-size: 13px; margin-left: 16px; font-style: italic;">
-              - ${item.notes}
+            <div style="font-size: 18px; margin-left: 20px; font-style: italic; color: #333; margin-top: 8px;">
+              Nota: ${item.notes}
             </div>` : ''}
           </div>
         `).join('') || ''}
       </div>
 
-      <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; margin: 16px 0; padding: 8px 0;"></div>
+      <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
 
-      <!-- Total -->
-      <div style="text-align: center; margin-bottom: 16px;">
-        <div style="font-size: 16px; font-weight: bold;">
-          TOTAL: ${order.items ? order.items.reduce((total, item) => total + (item.qty || item.quantity || 1), 0) : 0} items
-        </div>
-      </div>
-
-      <!-- Notas especiales del pedido -->
+      <!-- Notas especiales generales -->
       ${order.notes ? `
-      <div style="margin-bottom: 16px;">
-        <div style="font-size: 14px; font-weight: bold;">Notas:</div>
-        <div style="font-size: 13px;">${order.notes}</div>
+      <div style="margin-bottom: 24px; padding: 12px; background-color: #f9f9f9; border: 2px solid #000;">
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">⚠️ NOTAS ESPECIALES:</div>
+        <div style="font-size: 18px;">${order.notes}</div>
       </div>` : ''}
 
-      <!-- Control -->
-      <div style="border-top: 1px dashed #000; padding-top: 12px;">
-        <div style="font-size: 12px;">
-          <div style="margin-bottom: 4px;">PREPARADO: _____________</div>
-          <div style="margin-bottom: 4px;">REVISADO:  _____________</div>
-          <div style="margin-bottom: 4px;">ENTREGADO: _____________</div>
-        </div>
-      </div>
-
       <!-- Espacio para corte -->
-      <div style="height: 24px;"></div>
+      <div style="height: 40px;"></div>
     </div>
   `;
 }
@@ -167,7 +165,7 @@ function getStatusSelectClasses(status) {
   }
 }
 
-// Componente para modal de vista de pedido
+// Componente para modal de vista de orden
 function OrderViewModal({ order, onClose }) {
   if (!order) return null;
 
@@ -182,7 +180,7 @@ function OrderViewModal({ order, onClose }) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Detalles del Pedido #{order.id}
+                    Detalles de la Orden #{order.id}
                   </CardTitle>
                   <div className="flex items-center gap-2 mt-2">
                     <div className={`status-badge ${
@@ -207,7 +205,7 @@ function OrderViewModal({ order, onClose }) {
 
             <CardContent className="flex-1 overflow-y-auto px-6 py-6">
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full">
-                {/* Columna izquierda y central: Información del pedido */}
+                {/* Columna izquierda y central: Información de la orden */}
                 <div className="xl:col-span-2 space-y-6">
                   {/* Información del Cliente */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -242,7 +240,7 @@ function OrderViewModal({ order, onClose }) {
                     <div className="space-y-4">
                       <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
                         <Package className="w-4 h-4" />
-                        Detalles del Pedido
+                        Detalles de la Orden
                       </h3>
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Tipo:</strong> {order.deliveryType === 'delivery' ? 'Delivery' : 'Retiro'}</p>
@@ -253,7 +251,7 @@ function OrderViewModal({ order, onClose }) {
                     </div>
                   </div>
 
-                  {/* Items del Pedido */}
+                  {/* Items de la Orden */}
                   <div className="space-y-4">
                     <h3 className="font-semibold text-gray-900 dark:text-white">Productos</h3>
                     <div className="border border-gray-200 dark:border-empanada-light-gray rounded-lg overflow-hidden">
@@ -279,7 +277,7 @@ function OrderViewModal({ order, onClose }) {
                           ) : (
                             <tr>
                               <td colSpan="4" className="text-center p-6 text-gray-500 dark:text-gray-400">
-                                No hay productos en este pedido
+                                No hay productos en esta orden
                               </td>
                             </tr>
                           )}
@@ -367,7 +365,7 @@ export function OrderManagement() {
   // Hook para modales de confirmación
   const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
 
-  // Usar el contexto de pedidos
+  // Usar el contexto de órdenes
   const { 
     orders, 
     loading, 
@@ -391,12 +389,12 @@ export function OrderManagement() {
     return () => document.removeEventListener('keydown', handleEscKey);
   }, [editingOrder, showNewOrderModal, viewingOrder]);
 
-  // Filtrar pedidos usando el contexto
+  // Filtrar órdenes usando el contexto
   const filteredOrders = getFilteredOrders(searchTerm, statusFilter);
 
   const handleStatusChange = (order, newStatus) => {
     updateOrderStatus(order.id, newStatus);
-    toast.success(`Estado del pedido ${order.id} actualizado a ${getStatusLabel(newStatus)}`);
+    toast.success(`Estado de la orden ${order.id} actualizado a ${getStatusLabel(newStatus)}`);
   };
 
   const handleViewOrder = (order) => {
@@ -409,13 +407,13 @@ export function OrderManagement() {
 
   const handleDeleteOrder = (orderId) => {
     openConfirmModal({
-      title: "Eliminar Pedido",
-      message: "¿Estás seguro de que quieres eliminar este pedido? Esta acción no se puede deshacer.",
+      title: "Eliminar Orden",
+      message: "¿Estás seguro de que quieres eliminar esta orden? Esta acción no se puede deshacer.",
       type: "danger",
       confirmText: "Eliminar",
       onConfirm: () => {
         deleteOrder(orderId);
-        toast.success("Pedido eliminado correctamente");
+        toast.success("Orden eliminada correctamente");
       }
     });
   };
@@ -481,7 +479,7 @@ export function OrderManagement() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      toast.success("Pedidos actualizados");
+      toast.success("Órdenes actualizadas");
     }, 1000);
   };
 
@@ -515,7 +513,7 @@ export function OrderManagement() {
   // Preparar datos para SectionHeader
   const headerActions = [
     {
-      label: "Nuevo Pedido",
+      label: "Nueva Orden",
       variant: "empanada",
       className: "h-9 px-4 text-sm font-medium",
       onClick: handleNewOrder,
@@ -526,7 +524,7 @@ export function OrderManagement() {
       variant: "outline",
       className: "h-9 px-4 text-sm font-medium",
       onClick: () => {
-        toast.info("Actualizando pedidos...");
+        toast.info("Actualizando órdenes...");
         // Aquí se llamaría a la función de actualización
       },
       icon: <RefreshCw className="w-4 h-4 mr-2" />
@@ -537,8 +535,8 @@ export function OrderManagement() {
     <div className="space-y-6">
       {/* Header usando SectionHeader */}
       <SectionHeader
-        title="Gestión de Pedidos"
-        subtitle="Administra y monitorea todos los pedidos"
+        title="Gestión de Órdenes"
+        subtitle="Administra y monitorea todas las órdenes"
         icon={<ShoppingCart className="w-6 h-6" />}
         actions={headerActions}
       />
@@ -561,7 +559,7 @@ export function OrderManagement() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Buscar por cliente o ID de pedido..."
+                placeholder="Buscar por cliente o ID de orden..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -685,8 +683,8 @@ export function OrderManagement() {
                 <ShoppingBag className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
                 <p className="text-gray-500 dark:text-gray-400">
                   {searchTerm || statusFilter !== 'all' 
-                    ? 'No se encontraron pedidos con los filtros aplicados' 
-                    : 'No hay pedidos registrados'
+                    ? 'No se encontraron órdenes con los filtros aplicados'
+                    : 'No hay órdenes registradas'
                   }
                 </p>
               </div>
@@ -712,7 +710,7 @@ export function OrderManagement() {
               order.id === updatedOrder.id ? updatedOrder : order
             ));
             setEditingOrder(null);
-            toast.success(`Pedido ${updatedOrder.id} actualizado correctamente`);
+            toast.success(`Orden ${updatedOrder.id} actualizada correctamente`);
           }}
         />
       )}
@@ -723,7 +721,7 @@ export function OrderManagement() {
           onSave={(newOrder) => {
             setOrders(prev => [newOrder, ...prev]);
             setShowNewOrderModal(false);
-            toast.success(`Nuevo pedido ${newOrder.id} creado correctamente`);
+            toast.success(`Nueva orden ${newOrder.id} creada correctamente`);
           }}
         />
       )}

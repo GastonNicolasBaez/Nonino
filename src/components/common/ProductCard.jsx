@@ -43,6 +43,7 @@ export function ProductCard({ product, className }) {
         }
     };
 
+<<<<<<< HEAD
     return (
         <>
             <motion.div
@@ -51,6 +52,78 @@ export function ProductCard({ product, className }) {
                 transition={{ duration: 0.2 }}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
+=======
+  return (
+    <>
+      <motion.div
+        className={'h-full'}
+        whileHover={{ y: -5 }}
+        transition={{ duration: 0.2 }}
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+      >
+        <Card
+          className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col bg-empanada-dark border-empanada-light-gray"
+          onClick={handleCardClick}
+        >
+        <div>
+        <div className="relative">
+          <div className="aspect-[4/3] overflow-hidden">
+            <motion.img
+              src={product.image}
+              alt={`${product.name} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
+              className="w-full h-full object-cover"
+              animate={{ scale: isHovered ? 1.05 : 1 }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+          
+          {/* Badges */}
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
+            {product.isPopular && (
+              <Badge variant="empanada" className="text-xs">
+                <Star className="w-3 h-3 mr-1" />
+                Popular
+              </Badge>
+            )}
+            {!product.isAvailable && (
+              <Badge variant="destructive" className="text-xs">
+                Agotado
+              </Badge>
+            )}
+          </div>
+
+          {/* Like Button */}
+          <motion.button
+            className="absolute top-2 right-2 p-2 bg-empanada-dark/80 backdrop-blur-sm rounded-full shadow-sm"
+            onClick={handleLike}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Heart
+              className={`w-4 h-4 transition-colors ${
+                isLiked ? "fill-red-500 text-red-500" : "text-gray-300"
+              }`}
+            />
+          </motion.button>
+
+          {/* Quick Add Button */}
+          <motion.div
+            className="absolute bottom-2 right-2"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ 
+              opacity: isHovered ? 1 : 0, 
+              scale: isHovered ? 1 : 0.8 
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <Button
+              size="icon"
+              variant="empanada"
+              onClick={handleAddToCart}
+              disabled={!product.isAvailable}
+              className="shadow-lg"
+>>>>>>> development
             >
                 <Card
                     className="h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col bg-empanada-dark border-empanada-light-gray"

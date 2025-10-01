@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, Send, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Instagram } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -155,7 +155,7 @@ export function ContactPage() {
                           onChange={handleChange}
                           required
                           placeholder="Tu nombre completo"
-                          className="py-3 text-base border-2 focus:border-empanada-golden"
+                          className="py-3 text-base border-2 bg-empanada-medium text-white placeholder-gray-400 border-empanada-light-gray focus:border-empanada-golden"
                         />
                       </div>
                       <div>
@@ -168,7 +168,7 @@ export function ContactPage() {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="+54 11 1234-5678"
-                          className="py-3 text-base border-2 focus:border-empanada-golden"
+                          className="py-3 text-base border-2 bg-empanada-medium text-white placeholder-gray-400 border-empanada-light-gray focus:border-empanada-golden"
                         />
                       </div>
                     </div>
@@ -184,7 +184,7 @@ export function ContactPage() {
                         onChange={handleChange}
                         required
                         placeholder="tu@email.com"
-                        className="py-3 text-base border-2 focus:border-empanada-golden"
+                        className="py-3 text-base border-2 bg-empanada-medium text-white placeholder-gray-400 border-empanada-light-gray focus:border-empanada-golden"
                       />
                     </div>
 
@@ -197,12 +197,13 @@ export function ContactPage() {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-3 py-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-base bg-white"
+                        className="w-full px-3 py-3 border-2 bg-empanada-medium text-white border-empanada-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-base [&>option]:bg-empanada-medium [&>option]:text-white"
                       >
                         <option value="">Selecciona un asunto</option>
                         <option value="pedido">Consulta sobre pedidos</option>
                         <option value="delivery">Información de delivery</option>
                         <option value="productos">Consulta sobre productos</option>
+                        <option value="franquicia">Consulta por franquicia</option>
                         <option value="sugerencia">Sugerencia</option>
                         <option value="reclamo">Reclamo</option>
                         <option value="otro">Otro</option>
@@ -220,7 +221,7 @@ export function ContactPage() {
                         required
                         rows={4}
                         placeholder="Escribe tu mensaje aquí..."
-                        className="w-full px-3 py-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden resize-vertical text-base"
+                        className="w-full px-3 py-3 border-2 bg-empanada-medium text-white placeholder-gray-400 border-empanada-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden resize-vertical text-base"
                       />
                     </div>
 
@@ -275,18 +276,15 @@ export function ContactPage() {
                 </CardHeader>
                 <CardContent className="px-4 sm:px-6">
                   <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
-                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
-                      📘
-                    </Button>
-                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
-                      📷
-                    </Button>
-                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
-                      🐦
-                    </Button>
-                    <Button variant="outline" size="icon" className="w-10 h-10 sm:w-12 sm:h-12 text-lg">
-                      📺
-                    </Button>
+                    <motion.a
+                      href="#"
+                      className="text-empanada-terracotta hover:text-empanada-golden transition-colors p-2 hover:bg-empanada-dark rounded-full border-2 border-empanada-terracotta hover:border-empanada-golden"
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                      aria-label="Instagram"
+                    >
+                      <Instagram className="w-6 h-6 sm:w-7 sm:h-7" />
+                    </motion.a>
                   </div>
                   <p className="text-xs sm:text-sm text-gray-300 mt-3 sm:mt-4 text-center sm:text-left">
                     Mantente al día con nuestras promociones y novedades

@@ -72,7 +72,7 @@ export function CartPage() {
         {/* Header */}
         <div className="sticky top-0 bg-empanada-dark/95 backdrop-blur-sm border-b border-empanada-light-gray z-10">
           <div className="flex items-center justify-between px-4 py-3">
-            <Link to="/pedir">
+            <Link to="/menu">
               <Button variant="ghost" size="sm" className="p-2">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
@@ -88,14 +88,14 @@ export function CartPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center"
           >
-            <div className="w-24 h-24 bg-empanada-medium rounded-full flex items-center justify-center mb-6">
+            <div className="w-24 h-24 bg-empanada-medium rounded-full flex items-center justify-center mb-6 mx-auto">
               <ShoppingBag className="w-10 h-10 text-gray-300" />
             </div>
             <h2 className="text-xl font-semibold text-white mb-2">Tu carrito está vacío</h2>
             <p className="text-gray-300 mb-8 max-w-sm">
               Agrega algunas empanadas deliciosas para comenzar tu pedido
             </p>
-            <Link to="/pedir">
+            <Link to="/menu">
               <Button variant="empanada" className="px-8 py-3 rounded-full">
                 Explorar Menú
               </Button>
@@ -111,7 +111,7 @@ export function CartPage() {
       {/* MOBILE HEADER - Solo visible en mobile */}
       <div className="md:hidden fixed top-16 left-0 right-0 bg-empanada-dark/95 backdrop-blur-sm border-b border-empanada-light-gray z-30">
         <div className="flex items-center justify-between px-4 py-3">
-          <Link to="/pedir">
+          <Link to="/menu">
             <Button variant="ghost" size="sm" className="p-2">
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -130,7 +130,7 @@ export function CartPage() {
       <div className="hidden md:block pt-8 pb-7">
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between mb-2">
-            <Link to="/pedir" className="flex items-center gap-2 text-white hover:text-empanada-golden transition-colors">
+            <Link to="/menu" className="flex items-center gap-2 text-white hover:text-empanada-golden transition-colors">
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Continuar comprando</span>
             </Link>
@@ -485,9 +485,10 @@ export function CartPage() {
                   </Link>
 
                   {/* Continue Shopping */}
-                  <Link to="/pedir" className="block w-full">
+                  <Link to="/menu" className="block w-full">
                     <Button variant="outline" className="w-full menu-category-button">
-                      Continuar comprando
+                      <Plus className="w-4 h-4 mr-2" />
+                      ¿Deseas añadir más productos?
                     </Button>
                   </Link>
 
@@ -609,9 +610,17 @@ export function CartPage() {
         </div>
 
         {/* Checkout Button */}
-        <Link to="/checkout" className="block w-full">
+        <Link to="/checkout" className="block w-full mb-3">
           <Button variant="empanada" className="w-full py-4 rounded-xl font-semibold">
             Proceder al Pago
+          </Button>
+        </Link>
+
+        {/* Add More Products Button */}
+        <Link to="/menu" className="block w-full">
+          <Button variant="outline" className="w-full py-4 rounded-xl">
+            <Plus className="w-4 h-4 mr-2" />
+            ¿Deseas añadir más productos?
           </Button>
         </Link>
         </div>

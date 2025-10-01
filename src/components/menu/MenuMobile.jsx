@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProductCard } from "@/components/common/ProductCard";
 import { ProductModal } from "@/components/ui/ProductModal";
+import { StoreChangeButton } from "@/components/common/StoreChangeButton";
 import { useCart } from "@/context/CartProvider";
 
 export function MenuMobile({
@@ -51,11 +52,14 @@ export function MenuMobile({
                     <div className="flex items-center justify-between mb-3">
                         <div>
                             <h1 className="text-xl font-bold text-gray-100">Nonino Empanadas</h1>
-                            <div className="flex items-center gap-1 mt-1">
+                            <div className="flex items-center gap-2 mt-1">
                                 <MapPin className="w-3 h-3 text-gray-500" />
                                 <span className="text-sm text-gray-300">
                                     {selectedStore?.name || "Selecciona sucursal"}
                                 </span>
+                                {selectedStore && (
+                                    <StoreChangeButton variant="mobile" storeName={selectedStore?.name} />
+                                )}
                             </div>
                         </div>
                         <div className="flex items-center gap-1">

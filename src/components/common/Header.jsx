@@ -18,6 +18,7 @@ import { Badge } from "../ui/badge";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
 import { useCart } from "../../context/CartProvider";
 import { useSession } from "@/context/SessionProvider";
+import { usePublicData } from "@/context/PublicDataProvider";
 import { cn } from "../../lib/utils";
 import { CartDropdown } from "./CartDropdown";
 import logoNonino from '@/assets/logos/nonino.png';
@@ -30,6 +31,7 @@ export function Header() {
   const location = useLocation();
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const session = useSession();
+  const { sucursalSeleccionada } = usePublicData();
 
   // Scroll effect for logo centering
   const { scrollY } = useScroll();
@@ -169,7 +171,7 @@ export function Header() {
               <Link to="/" className="flex items-center space-x-1 sm:space-x-2">
                 <motion.img
                   src={logoNonino}
-                  alt="Logo Nonino"
+                  alt="Nonino Empanadas San Martín de los Andes - Gastronomía patagónica tradicional"
                   className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex-shrink-0"
                   style={{ opacity: navbarLogoOpacity }}
                 />
@@ -327,7 +329,7 @@ export function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   "lg:hidden h-10 w-10 sm:h-11 sm:w-11",
-                  "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
+                  "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
                 )}
                 aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
                 aria-expanded={isMenuOpen}
@@ -364,9 +366,9 @@ export function Header() {
               <div className="p-4 sm:p-6 border-b border-empanada-light-gray bg-empanada-dark">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 sm:space-x-3">
-                    <img 
+                    <img
                       src={logoNonino}
-                      alt="Logo Nonino" 
+                      alt="Nonino Empanadas San Martín de los Andes - Gastronomía patagónica tradicional"
                       className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0"
                     />
                     <div>
@@ -424,13 +426,13 @@ export function Header() {
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     <Link
-                      to="/pedir"
+                      to={sucursalSeleccionada ? "/menu" : "/pedir"}
                       onClick={() => setIsMenuOpen(false)}
                       className="flex flex-col items-center p-3 rounded-lg hover:bg-empanada-medium transition-colors"
                     >
-                      <img 
+                      <img
                         src={logoNonino}
-                        alt="Logo Nonino" 
+                        alt="Nonino Empanadas San Martín de los Andes - Gastronomía patagónica tradicional"
                         className="w-6 h-6 mb-2"
                       />
                       <span className="text-xs font-medium text-white">Pedir Ya</span>

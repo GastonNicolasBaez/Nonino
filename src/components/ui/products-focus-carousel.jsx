@@ -79,7 +79,7 @@ const OptimizedProductImage = React.memo(({ product, onImageLoad }) => {
                     imageError ? "object-contain p-1" : "object-cover object-center"
                 )}
                 src={getImageSrc()}
-                alt={product.name || 'Producto'}
+                alt={`${product.name || 'Producto'} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
                 loading="lazy"
                 onLoad={handleImageLoad}
                 onError={handleImageError}
@@ -239,7 +239,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                             >
                                 <div className="flex items-center gap-2">
                                     <ShoppingCart className="w-4 h-4" />
-                                    Ver en el Menú
+                                    Pedir Ya
                                 </div>
                             </Button>
                         </div>
@@ -582,7 +582,7 @@ function ProductMenuButton({ product }) {
             onClick={handleViewMenu}
             className="shadow-lg"
         >
-            Ver Menú
+            Pedir Ya
         </Button>
     );
 }

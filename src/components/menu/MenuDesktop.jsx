@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ProductCard } from "@/components/common/ProductCard";
+import { StoreChangeButton } from "@/components/common/StoreChangeButton";
 import { useCart } from "@/context/CartProvider";
 
 export function MenuDesktop({
@@ -76,11 +77,16 @@ export function MenuDesktop({
                         <div className="flex items-center gap-6">
                             <div>
                                 <h1 className="text-2xl font-bold text-gray-100">Nonino Empanadas</h1>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <MapPin className="w-4 h-4 text-gray-500" />
-                                    <span className="text-sm text-gray-300">
-                                        {selectedStore?.name || "Selecciona una sucursal"}
-                                    </span>
+                                <div className="flex items-center gap-3 mt-1">
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="w-4 h-4 text-gray-500" />
+                                        <span className="text-sm text-gray-300">
+                                            {selectedStore?.name || "Selecciona una sucursal"}
+                                        </span>
+                                    </div>
+                                    {selectedStore && (
+                                        <StoreChangeButton variant="desktop" storeName={selectedStore?.name} />
+                                    )}
                                 </div>
                             </div>
 

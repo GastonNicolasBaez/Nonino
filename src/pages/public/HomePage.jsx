@@ -16,13 +16,19 @@ import sanMartin2 from "@/assets/images/SanMartin2.jpg";
 
 export function HomePage() {
 
-    const { productosTodos: productos, publicDataLoading: loading } = usePublicData();
+    const { productosTodos: productos, publicDataLoading: loading, sucursalSeleccionada } = usePublicData();
 
     const [promotions] = useState([]);
     const [isMobile, setIsMobile] = useState(() => {
         // Inicializar inmediatamente si estamos en el browser
         if (typeof window !== 'undefined') {
             return window.innerWidth < 768;
+        }
+        return false;
+    });
+    const [isTablet, setIsTablet] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768 && window.innerWidth < 1024;
         }
         return false;
     });
@@ -35,16 +41,18 @@ export function HomePage() {
         };
     }, []);
 
-    // Detectar si es dispositivo móvil
+    // Detectar si es dispositivo móvil o tablet
     useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+        const checkDevice = () => {
+            const width = window.innerWidth;
+            setIsMobile(width < 768);
+            setIsTablet(width >= 768 && width < 1024);
         };
 
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
+        checkDevice();
+        window.addEventListener('resize', checkDevice);
 
-        return () => window.removeEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkDevice);
     }, []);
 
     // Parallax scroll effect con custom scroll source para móvil
@@ -89,34 +97,48 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen">
-            {/* Logo animado independiente */}
+            {/* Logo animado independiente - Optimizado para mobile/tablet */}
             <motion.div
                 className="fixed z-[30] pointer-events-none"
                 style={{
                     left: "50%",
-                    top: useTransform(scrollY,
-                        isMobile ? [0, 150] : [0, 200],
-                        isMobile ? ["15vh", "5rem"] : ["18vh", "5rem"]
+                    top: useTransform(
+                        scrollY,
+                        isMobile
+                            ? [0, 100]      // Mobile: animación más rápida
+                            : isTablet
+                            ? [0, 120]      // Tablet: intermedia
+                            : [0, 200],     // Desktop: normal
+                        isMobile
+                            ? ["17vh", "3rem"]
+                            : isTablet
+                            ? ["10vh", "3.5rem"]
+                            : ["15vh", "4.5rem"]
                     ),
                     x: "-50%",
                     y: "-50%",
-                    scale: useTransform(scrollY,
-                        isMobile ? [25, 150] : [50, 200],
-                        isMobile ? [1, 0.6] : [1, 0.5]
-                    )
+                    scale: useTransform(
+                        scrollY,
+                        isMobile ? [0, 100] : isTablet ? [0, 120] : [50, 200],
+                        isMobile ? [1, 0.5] : isTablet ? [1, 0.55] : [1, 0.35]
+                    ),
+                    willChange: 'transform'
                 }}
             >
                 <img
                     src={logoNonino}
-                    alt="Logo Nonino"
-                    className="w-48 h-48 xs:w-56 xs:h-56 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72"
+                    alt="Nonino Empanadas - Empanadas artesanales San Martín de los Andes Patagonia Argentina"
+                    className="w-40 h-40 xs:w-48 xs:h-48 sm:w-52 sm:h-52 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72"
+                    loading="eager"
                 />
             </motion.div>
             {/* Hero Section */}
             <section className="relative min-h-screen flex items-center justify-center">
                 {/* Background Image with Parallax Effect */}
                 <motion.div
-                    className="absolute inset-0 w-full h-[160%] -top-[20%] lg:-top-[50%] z-[-1]"
+                    className="absolute inset-0 w-full h-[180%] -top-[20%] md:-top-[30%] lg:-top-[40%] xl:-top-[50%] z-[-1]"
+                    aria-label="Vista panorámica de San Martín de los Andes, Patagonia Argentina - Cordillera de los Andes"
+                    role="img"
                     style={{
                         backgroundImage: `url(${sanMartinBgImage})`,
                         backgroundSize: "cover",
@@ -148,7 +170,7 @@ export function HomePage() {
                             className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >
-                            Las Mejores Empanadas del Sur
+                            Vas a volver
                         </TextAnimate>
 
                         <motion.p
@@ -168,15 +190,15 @@ export function HomePage() {
                             transition={{ delay: 0.8, duration: 0.6 }}
                             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
                         >
-                            <Link to="/pedir" className="w-full sm:w-auto">
+                            <Link to={sucursalSeleccionada ? "/menu" : "/pedir"} className="w-full sm:w-auto">
                                 <Button size="lg" variant="shimmer" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto">
-                                    Ver Nuestro Menú
+                                    Pedir YA
                                     <ChevronRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                                 </Button>
                             </Link>
                             <Link to="/locales" className="w-full sm:w-auto">
                                 <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white/20 border-white/30 text-white hover:bg-white/30 w-full sm:w-auto">
-                                    Encontrar Local
+                                    Nuestros Locales
                                 </Button>
                             </Link>
                         </motion.div>
@@ -228,6 +250,8 @@ export function HomePage() {
                 {/* Background Image with Parallax Effect */}
                 <motion.div
                     className={`absolute inset-0 w-full ${isMobile ? 'h-[220%] -top-[25%]' : 'h-[300%] -top-[40%]'}`}
+                    aria-label="Bosque patagónico en San Martín de los Andes - Naturaleza Patagonia Argentina"
+                    role="img"
                     style={{
                         backgroundImage: `url(${sanMartin2})`,
                         backgroundSize: "cover",
@@ -452,20 +476,15 @@ export function HomePage() {
                             en la comodidad de tu hogar
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-                            <Link to="/pedir" className="w-full sm:w-auto">
+                            <Link to={sucursalSeleccionada ? "/menu" : "/pedir"} className="w-full sm:w-auto">
                                 <Button
                                     size="lg"
                                     variant="shimmer"
                                     className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white text-empanada-golden hover:bg-empanada-light border-2 border-white shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
                                 >
-                                    Pedir Ahora
+                                    Pedir YA
                                 </Button>
                             </Link>
-                            <a href="tel:+541112345678" className="w-full sm:w-auto">
-                                <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white/20 border-white/30 text-white hover:bg-white/30 w-full sm:w-auto">
-                                    Llamar: +54 11 1234-5678
-                                </Button>
-                            </a>
                         </div>
                     </motion.div>
                 </div>

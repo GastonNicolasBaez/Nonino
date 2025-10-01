@@ -14,6 +14,8 @@ import {
     getAdminOrdersGetOrderByIdQueryFunction,
     postPublicOrdersCreateOrderQueryFunction
 } from '@/config/apiPublicQueryFunctions';
+import { getStorageItem, setStorageItem } from '@/lib/utils';
+import { STORAGE_KEYS } from '@/constants';
 
 const PublicDataContext = createContext();
 
@@ -25,7 +27,10 @@ const PublicDataProvider = ({ children }) => {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [sucursales, setSucursales] = useState([]);
-    const [sucursalSeleccionada, setSucursalSeleccionada] = useState();
+    const [sucursalSeleccionada, setSucursalSeleccionada] = useState(() => {
+        // Cargar sucursal seleccionada desde localStorage al iniciar
+        return getStorageItem(STORAGE_KEYS.SELECTED_STORE, null);
+    });
     const [companyInfo, setCompanyInfo] = useState([]);
 
     // sucursales
@@ -122,6 +127,7 @@ const PublicDataProvider = ({ children }) => {
         }
     });
 
+<<<<<<< HEAD
     // orders
     const { mutateAsync: callPublicOrderById, isPending: callPublicOrderByIdLoading } = useMutation({
         mutationKey: ['publicOrderById'],
@@ -134,9 +140,16 @@ const PublicDataProvider = ({ children }) => {
     });
 
 
+=======
+    // Persistir sucursal seleccionada en localStorage
+>>>>>>> development
     useEffect(() => {
         if (sucursalSeleccionada) {
+            setStorageItem(STORAGE_KEYS.SELECTED_STORE, sucursalSeleccionada);
             callPublicCatalog(sucursalSeleccionada);
+        } else {
+            // Limpiar localStorage si no hay sucursal seleccionada
+            localStorage.removeItem(STORAGE_KEYS.SELECTED_STORE);
         }
     }, [sucursalSeleccionada]);
 

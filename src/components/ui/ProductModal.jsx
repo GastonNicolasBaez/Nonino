@@ -10,7 +10,20 @@ import { toast } from "sonner";
 export function ProductModal({ product, isOpen, onClose }) {
   const [quantity, setQuantity] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { addItem } = useCart();
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Reset quantity when modal opens/closes
   useEffect(() => {
@@ -105,6 +118,16 @@ export function ProductModal({ product, isOpen, onClose }) {
         >
           {/* Modal */}
           <motion.div
+            {...(isMobile ? {
+              drag: "y",
+              dragConstraints: { top: 0, bottom: 0 },
+              dragElastic: { top: 0, bottom: 0.5 },
+              onDragEnd: (e, { offset, velocity }) => {
+                if (offset.y > 150 || velocity.y > 500) {
+                  onClose();
+                }
+              }
+            } : {})}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -112,25 +135,32 @@ export function ProductModal({ product, isOpen, onClose }) {
             className="relative w-full max-w-md mx-0 md:mx-auto bg-empanada-dark rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[85vh] md:max-h-[80vh]"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Drag Handle - Mobile Only */}
+            {isMobile && (
+              <div className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
+                <div className="w-12 h-1.5 bg-gray-600 rounded-full"></div>
+              </div>
+            )}
+
             {/* Header with Close Button */}
             <div className="relative flex-shrink-0">
               {/* Image */}
               <div className="relative h-64 rounded-t-3xl overflow-hidden">
                 <img
                   src={product.image}
-                  alt={product.name}
+                  alt={`${product.name} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
                   className="w-full h-full object-cover object-center"
                 />
 
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
-                {/* Close Button */}
+                {/* Close Button - Hidden on Mobile */}
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={onClose}
-                  className="absolute top-4 right-4 h-10 w-10 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white rounded-full shadow-lg border border-white/10"
+                  className="hidden md:flex absolute top-4 right-4 h-10 w-10 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white rounded-full shadow-lg border border-white/10"
                 >
                   <X className="w-5 h-5" />
                 </Button>

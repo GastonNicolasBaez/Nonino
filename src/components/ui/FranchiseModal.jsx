@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Store, TrendingUp, Users, Award, Phone, Mail } from 'lucide-react';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
-import fabrica from '@/assets/images/Fabrica.jpg';
+import fabrica from '@/assets/images/nonino_lateral.jpg';
 
 export function FranchiseModal({ isOpen, onClose }) {
   const modalVariants = {
@@ -103,8 +103,9 @@ export function FranchiseModal({ isOpen, onClose }) {
             <div className="hidden lg:block relative w-2/5 overflow-hidden">
               <img
                 src={fabrica}
-                alt="Fábrica Nonino"
+                alt="Fábrica Nonino Empanadas San Martín de los Andes - Tradición artesanal patagónica"
                 className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: '40% center' }}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-empanada-dark"></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
@@ -191,6 +192,14 @@ export function FranchiseModal({ isOpen, onClose }) {
 
           {/* Modal - Mobile (<768px) */}
           <motion.div
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
+            onDragEnd={(e, { offset, velocity }) => {
+              if (offset.y > 150 || velocity.y > 500) {
+                onClose();
+              }
+            }}
             variants={mobileModalVariants}
             initial="hidden"
             animate="visible"
@@ -198,17 +207,8 @@ export function FranchiseModal({ isOpen, onClose }) {
             className="md:hidden fixed inset-x-0 bottom-0 bg-empanada-dark rounded-t-3xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/40 hover:bg-black/60 rounded-full flex items-center justify-center transition-colors"
-              aria-label="Cerrar modal"
-            >
-              <X className="w-5 h-5 text-white" />
-            </button>
-
             {/* Drag Handle */}
-            <div className="flex justify-center pt-3 pb-2">
+            <div className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
               <div className="w-12 h-1.5 bg-gray-600 rounded-full"></div>
             </div>
 
@@ -216,8 +216,9 @@ export function FranchiseModal({ isOpen, onClose }) {
             <div className="relative h-48 overflow-hidden flex-shrink-0">
               <img
                 src={fabrica}
-                alt="Fábrica Nonino"
+                alt="Fábrica Nonino Empanadas San Martín de los Andes - Tradición artesanal patagónica"
                 className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: '60% center' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-empanada-dark via-black/30 to-transparent"></div>
             </div>

@@ -298,7 +298,7 @@ const AdminLayout = () => {
                             <Link to="/admin" className="flex items-center justify-center">
                                 <img
                                     src={logoNonino}
-                                    alt="Nonino Empanadas"
+                                    alt="Nonino Empanadas - Restaurante empanadas artesanales Patagonia Neuquén"
                                     className="w-12 h-12"
                                 />
                             </Link>
@@ -318,7 +318,7 @@ const AdminLayout = () => {
                             <Link to="/admin" className="flex items-center space-x-2">
                                 <img
                                     src={logoNonino}
-                                    alt="Nonino Empanadas"
+                                    alt="Nonino Empanadas - Restaurante empanadas artesanales Patagonia Neuquén"
                                     className="w-8 h-8"
                                 />
                                 <div>
@@ -501,7 +501,7 @@ const AdminLayout = () => {
                     <Link to="/admin" className="flex items-center space-x-2">
                         <img
                             src={logoNonino}
-                            alt="Nonino Empanadas"
+                            alt="Nonino Empanadas - Restaurante empanadas artesanales Patagonia Neuquén"
                             className="w-8 h-8"
                         />
                         <div>

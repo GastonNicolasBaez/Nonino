@@ -79,7 +79,7 @@ const OptimizedProductImage = React.memo(({ product, onImageLoad }) => {
                     imageError ? "object-contain p-1" : "object-cover object-center"
                 )}
                 src={getImageSrc()}
-                alt={product.name || 'Producto'}
+                alt={`${product.name || 'Producto'} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
                 loading="lazy"
                 onLoad={handleImageLoad}
                 onError={handleImageError}

@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import { X, AlertTriangle, MapPin } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -59,7 +60,7 @@ export function StoreChangeModal({ isOpen, onClose, onConfirm }) {
     exit: { opacity: 0 }
   };
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
         <>
@@ -69,12 +70,12 @@ export function StoreChangeModal({ isOpen, onClose, onConfirm }) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
             onClick={onClose}
           />
 
           {/* Modal Container */}
-          <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 md:p-8 pointer-events-none">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8 pointer-events-none">
             <div className="pointer-events-auto">
 
           {/* Modal - Desktop/Tablet (≥768px) */}
@@ -220,4 +221,9 @@ export function StoreChangeModal({ isOpen, onClose, onConfirm }) {
       )}
     </AnimatePresence>
   );
+
+  // Renderizar usando portal para que esté fuera de la jerarquía DOM
+  return typeof document !== 'undefined'
+    ? createPortal(modalContent, document.body)
+    : null;
 }

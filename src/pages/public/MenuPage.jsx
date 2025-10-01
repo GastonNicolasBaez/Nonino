@@ -45,43 +45,9 @@ export function MenuPage() {
     // Datos para las nuevas secciones
     const todaysPicks = products.slice(0, 6); // Los primeros 6 productos como destacados
 
-    const promotions = [
-        {
-            id: 1,
-            title: "2x1 en Empanadas",
-            description: "Lleva 2 docenas y paga solo 1",
-            discount: "50%",
-            image: "/api/placeholder/300/200",
-            validUntil: "2025-12-31"
-        },
-        {
-            id: 2,
-            title: "Combo Familiar",
-            description: "3 docenas + bebida grande",
-            discount: "25%",
-            image: "/api/placeholder/300/200",
-            validUntil: "2025-12-31"
-        }
-    ];
-
-    const combos = [
-        {
-            id: 1,
-            name: "Combo Ejecutivo",
-            description: "6 empanadas + bebida + postre",
-            price: 4500,
-            originalPrice: 5200,
-            image: "/api/placeholder/300/200"
-        },
-        {
-            id: 2,
-            name: "Combo Familiar",
-            description: "2 docenas + 2 bebidas + ensalada",
-            price: 12000,
-            originalPrice: 14000,
-            image: "/api/placeholder/300/200"
-        }
-    ];
+    // Las promociones y combos vendrán del backend (PublicDataProvider)
+    const promotions = [];
+    const combos = [];
 
     if (loading) {
         return (

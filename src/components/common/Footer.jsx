@@ -5,10 +5,7 @@ import {
   Phone,
   Mail,
   Clock,
-  Facebook,
   Instagram,
-  Twitter,
-  Youtube,
   Heart
 } from "lucide-react";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
@@ -17,10 +14,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Youtube, href: "#", label: "YouTube" },
+    { icon: Instagram, href: "#", label: "Instagram" }
   ];
 
   const quickLinks = [
@@ -42,15 +36,15 @@ export function Footer() {
   const stores = [
     {
       name: "Centro",
-      address: "Av. San Martín 123, Centro",
-      phone: "+54 11 1234-5678",
-      hours: "Lun-Dom: 11:00 - 23:00"
+      address: "General Villegas 745, Centro",
+      phone: "+54 2972 42-5072",
+      hours: "Lun-Dom: 11:00 15:00 / 19:00 - 23:00"
     },
     {
-      name: "Zona Norte",
-      address: "Calle Belgrano 456, Zona Norte",
-      phone: "+54 11 8765-4321",
-      hours: "Lun-Dom: 11:00 - 23:00"
+      name: "El Molino",
+      address: "Ruta 40",
+      phone: "+54 2972 41-0400",
+      hours: "Lun-Dom: 11:00 15:00 / 19:00 - 23:00"
     }
   ];
 
@@ -176,15 +170,6 @@ export function Footer() {
               Contacto
             </h4>
             <div className="space-y-2 sm:space-y-3 text-sm text-gray-400">
-              <div className="flex items-center justify-center lg:justify-start gap-2">
-                <Phone className="w-4 h-4 flex-shrink-0" />
-                <a
-                  href="tel:+541112345678"
-                  className="hover:text-white transition-colors text-sm"
-                >
-                  +54 11 1234-5678
-                </a>
-              </div>
               <div className="hidden lg:block">
                 <div className="flex items-center gap-2">
                   <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
@@ -197,8 +182,7 @@ export function Footer() {
                 </div>
                 <div className="pt-2">
                   <h5 className="font-medium text-white mb-2 text-sm sm:text-base">Horarios de Atención</h5>
-                  <p className="text-xs sm:text-sm">Lunes a Viernes: 11:00 - 23:00</p>
-                  <p className="text-xs sm:text-sm">Sábados y Domingos: 11:00 - 24:00</p>
+                  <p className="text-xs sm:text-sm">Lunes a Domingo: 11:00 - 23:00</p>
                 </div>
               </div>
             </div>

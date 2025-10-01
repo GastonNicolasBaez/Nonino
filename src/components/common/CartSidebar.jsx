@@ -3,6 +3,7 @@ import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useCart } from "../../context/CartProvider";
+import { usePublicData } from "@/context/PublicDataProvider";
 import { formatPrice } from "../../lib/utils";
 import { Link } from "react-router";
 import { StoreSelector } from "./StoreSelector";
@@ -24,6 +25,8 @@ export function CartSidebar() {
     selectedStore,
     updateStore,
   } = useCart();
+
+  const { sucursalSeleccionada } = usePublicData();
 
   const sidebarVariants = {
     closed: { x: "100%" },
@@ -90,7 +93,7 @@ export function CartSidebar() {
                   <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">
                     ¡Agrega algunas deliciosas empanadas!
                   </p>
-                  <Link to="/pedir" onClick={() => setIsOpen(false)}>
+                  <Link to={sucursalSeleccionada ? "/menu" : "/pedir"} onClick={() => setIsOpen(false)}>
                     <Button
                       variant="empanada"
                       className="w-full py-3 sm:py-4 text-sm sm:text-base"

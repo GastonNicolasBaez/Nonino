@@ -61,7 +61,7 @@ export function ProductCard({ product, className }) {
           <div className="aspect-[4/3] overflow-hidden">
             <motion.img
               src={product.image}
-              alt={product.name}
+              alt={`${product.name} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
               className="w-full h-full object-cover"
               animate={{ scale: isHovered ? 1.05 : 1 }}
               transition={{ duration: 0.3 }}

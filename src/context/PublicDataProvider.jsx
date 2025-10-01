@@ -12,7 +12,8 @@ import {
     getPublicStoreStatusQueryFunction,
 
     getAdminOrdersGetOrderByIdQueryFunction,
-    postPublicOrdersCreateOrderQueryFunction
+    postPublicOrdersCreateOrderQueryFunction,
+    postPublicOrdersCreatePreferenceQueryFunction
 } from '@/config/apiPublicQueryFunctions';
 import { getStorageItem, setStorageItem } from '@/lib/utils';
 import { STORAGE_KEYS } from '@/constants';
@@ -138,6 +139,11 @@ const PublicDataProvider = ({ children }) => {
         mutationFn: postPublicOrdersCreateOrderQueryFunction,
     });
 
+    const { mutateAsync: callPublicCreatePreference, isPending: callPublicCreatePreferenceLoading } = useMutation({
+        mutationKey: ['publicCreatePreference'],
+        mutationFn: postPublicOrdersCreatePreferenceQueryFunction,
+    });
+
 
     useEffect(() => {
         if (sucursalSeleccionada) {
@@ -181,6 +187,8 @@ const PublicDataProvider = ({ children }) => {
             callPublicOrderByIdLoading,
             callPublicCreateOrder,
             callPublicCreateOrderLoading,
+            callPublicCreatePreference,
+            callPublicCreatePreferenceLoading
         }}>
             {children}
         </PublicDataContext.Provider>

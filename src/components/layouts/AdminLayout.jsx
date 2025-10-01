@@ -40,7 +40,6 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 import { useTheme } from "@/context/ThemeProvider";
 import { useAdminData } from "@/context/AdminDataProvider";
-import { useOrders } from "@/context/OrdersContext";
 
 import logoNonino from '@/assets/logos/nonino.png';
 
@@ -57,8 +56,12 @@ const AdminLayout = () => {
         adminDataLoading,
         adminStartingLoading,
 
+        orders,
+
         refreshAll,
     } = useAdminData();
+
+    const pendingOrdersCount = orders.filter(order => order.status === 'pending').length;
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -80,7 +83,6 @@ const AdminLayout = () => {
         })) || [])
     ];
     const { toggleTheme, isDark } = useTheme();
-    const { pendingOrdersCount } = useOrders();
 
     // Automatically scroll to top when route changes
     useScrollToTop();

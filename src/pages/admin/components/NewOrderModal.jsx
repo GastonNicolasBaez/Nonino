@@ -180,7 +180,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
         {/* Información del Cliente */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
               <User className="w-4 h-4 inline mr-1" />
               Nombre *
             </label>
@@ -192,7 +192,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono *</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Teléfono *</label>
             <Input
               value={formData.customerPhone}
               onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
@@ -201,7 +201,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Email</label>
             <Input
               value={formData.customerEmail}
               onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
@@ -209,7 +209,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección *</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Dirección *</label>
             <Input
               value={formData.deliveryAddress}
               onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
@@ -221,18 +221,18 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
 
         {/* Notas */}
         <div>
-          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Notas del Pedido</label>
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Notas del Pedido</label>
           <textarea
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             placeholder="Notas adicionales del pedido..."
-            className="w-full h-20 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+            className="w-full h-20 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
           />
         </div>
 
         {/* Buscador de Productos */}
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="border border-gray-200 dark:border-empanada-light-gray rounded-lg">
+          <div className="p-4 bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
               <ShoppingBag className="w-5 h-5 text-empanada-golden" />
               Agregar Productos
@@ -266,7 +266,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
 
           {/* Resultados de búsqueda - Contenedor de altura fija */}
           <div className="p-4">
-            <div className="h-80 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div className="h-80 border border-gray-200 dark:border-empanada-light-gray rounded-lg overflow-hidden">
               {(productSearch.trim() || selectedCategory) ? (
                 // Lista de productos con selectors de cantidad
                 <div className="h-full flex flex-col">
@@ -282,7 +282,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
                       {filteredProducts.map((product) => (
                         <div
                           key={product.id}
-                          className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                          className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-empanada-light-gray last:border-b-0 hover:bg-gray-50 dark:hover:bg-empanada-medium/50 transition-colors"
                         >
                           {/* Información del producto */}
                           <div className="flex-1">
@@ -302,18 +302,18 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
                           {/* Controles */}
                           <div className="flex items-center gap-3">
                             {/* Selector de cantidad */}
-                            <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+                            <div className="flex items-center border border-gray-300 dark:border-empanada-light-gray rounded-md">
                               <Button
                                 type="button"
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => updateProductQuantity(product.id, getProductQuantity(product.id) - 1)}
                                 disabled={getProductQuantity(product.id) <= 1}
-                                className="w-8 h-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                className="w-8 h-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                               >
                                 <Minus className="w-3 h-3" />
                               </Button>
-                              <span className="w-12 text-center font-medium text-sm border-x border-gray-300 dark:border-gray-600 py-1">
+                              <span className="w-12 text-center font-medium text-sm border-x border-gray-300 dark:border-empanada-light-gray py-1">
                                 {getProductQuantity(product.id)}
                               </span>
                               <Button
@@ -321,7 +321,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => updateProductQuantity(product.id, getProductQuantity(product.id) + 1)}
-                                className="w-8 h-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                className="w-8 h-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                               >
                                 <Plus className="w-3 h-3" />
                               </Button>
@@ -368,8 +368,8 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
 
         {/* Items Agregados */}
         {formData.items.length > 0 ? (
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="border border-gray-200 dark:border-empanada-light-gray rounded-lg">
+            <div className="p-4 bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-empanada-golden" />
                 Items del Pedido ({formData.items.length})
@@ -378,7 +378,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
             <div className="p-4">
               <div className="space-y-3">
                 {formData.items.map((item, index) => (
-                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 hover:shadow-md transition-shadow">
+                  <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 dark:border-empanada-light-gray rounded-lg bg-white dark:bg-empanada-medium hover:shadow-md transition-shadow">
                     <div className="flex-1">
                       <span className="font-medium text-gray-900 dark:text-white text-lg">{item.name}</span>
                       <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -417,7 +417,7 @@ export function NewOrderModal({ onClose, onSave, availableProducts = [] }) {
             </div>
           </div>
         ) : (
-          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
+          <div className="border-2 border-dashed border-gray-300 dark:border-empanada-light-gray rounded-lg p-8 text-center">
             <ShoppingBag className="w-16 h-16 mx-auto mb-4 opacity-20 text-gray-400" />
             <p className="text-lg font-medium text-gray-500 dark:text-gray-400 mb-2">
               No hay productos en el pedido

@@ -59,7 +59,7 @@ export function BrandedModal({
             className={`relative bg-background border-2 border-empanada-golden/20 rounded-lg shadow-xl ${maxWidth} w-full ${maxHeight} overflow-hidden flex flex-col`}
           >
             {/* Header del modal */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark">
               <div className="flex items-center space-x-3">
                 {icon && (
                   <div className="w-12 h-12 rounded-full flex items-center justify-center bg-empanada-golden/10">
@@ -68,7 +68,7 @@ export function BrandedModal({
                 )}
                 <div>
                   {title && (
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
                       {title}
                     </h2>
                   )}
@@ -83,7 +83,7 @@ export function BrandedModal({
                 variant="ghost"
                 size="sm"
                 onClick={handleClose}
-                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium"
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -96,7 +96,7 @@ export function BrandedModal({
 
             {/* Footer del modal */}
             {footer && (
-              <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
+              <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark flex-shrink-0">
                 {footer}
               </div>
             )}

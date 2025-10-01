@@ -277,13 +277,13 @@ export function BranchManagement() {
 
                         {/* Columna 1: Información Básica */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                                 <Building2 className="w-4 h-4" />
                                 Información Básica
                             </h3>
 
                             <div>
-                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                     Nombre del Local *
                                 </label>
                                 <Input
@@ -295,7 +295,7 @@ export function BranchManagement() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                     Tipo *
                                 </label>
                                 <CustomSelect
@@ -307,7 +307,7 @@ export function BranchManagement() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                     Teléfono
                                 </label>
                                 <Input
@@ -319,7 +319,7 @@ export function BranchManagement() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                     WhatsApp
                                 </label>
                                 <Input
@@ -333,13 +333,13 @@ export function BranchManagement() {
 
                         {/* Columna 2: Ubicación */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                                 <MapPin className="w-4 h-4" />
                                 Ubicación
                             </h3>
 
                             <div>
-                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                     Calle *
                                 </label>
                                 <Input
@@ -352,7 +352,7 @@ export function BranchManagement() {
 
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                         Número *
                                     </label>
                                     <Input
@@ -364,7 +364,7 @@ export function BranchManagement() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                         Barrio *
                                     </label>
                                     <Input
@@ -378,7 +378,7 @@ export function BranchManagement() {
 
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                         Latitud *
                                     </label>
                                     <Input
@@ -392,7 +392,7 @@ export function BranchManagement() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-white">
                                         Longitud *
                                     </label>
                                     <Input
@@ -409,13 +409,13 @@ export function BranchManagement() {
 
                         {/* Columna 3: Configuración */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                                 <Settings className="w-4 h-4" />
                                 Configuración
                             </h3>
 
                             <div className="space-y-2">
-                                <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                <h4 className="text-xs font-medium text-gray-700 dark:text-white">
                                     Servicios Disponibles
                                 </h4>
                                 <div className="space-y-2">
@@ -426,7 +426,7 @@ export function BranchManagement() {
                                             onChange={(e) => handleInputChange("supportsPickup", e.target.checked)}
                                             className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
                                         />
-                                        <span className="text-xs text-gray-700 dark:text-gray-300">
+                                        <span className="text-xs text-gray-700 dark:text-white">
                                             Soporta Retiro en Local
                                         </span>
                                     </label>
@@ -437,7 +437,7 @@ export function BranchManagement() {
                                             onChange={(e) => handleInputChange("supportsDelivery", e.target.checked)}
                                             className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
                                         />
-                                        <span className="text-xs text-gray-700 dark:text-gray-300">
+                                        <span className="text-xs text-gray-700 dark:text-white">
                                             Soporta Delivery
                                         </span>
                                     </label>
@@ -452,14 +452,14 @@ export function BranchManagement() {
                                         onChange={(e) => handleInputChange("isOpen", e.target.checked)}
                                         className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
                                     />
-                                    <span className="text-xs text-gray-700 dark:text-gray-300">
+                                    <span className="text-xs text-gray-700 dark:text-white">
                                         Local abierto
                                     </span>
                                 </label>
                             </div> */}
 
                             {/* Botón de configuración de horarios */}
-                            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-empanada-light-gray">
                                 <Button
                                     variant="outline"
                                     size="sm"
@@ -554,7 +554,7 @@ export function BranchManagement() {
                                                     <Clock className="w-6 h-6 text-empanada-golden" />
                                                 </div>
                                                 <div>
-                                                    <CardTitle className="text-lg text-gray-800 dark:text-gray-200">
+                                                    <CardTitle className="text-lg text-gray-800 dark:text-white">
                                                         Configurar Horarios
                                                     </CardTitle>
                                                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -566,7 +566,7 @@ export function BranchManagement() {
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => setScheduleModalStore(null)}
-                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                             >
                                                 <X className="w-4 h-4" />
                                             </Button>
@@ -581,7 +581,7 @@ export function BranchManagement() {
                                         />
 
                                         {/* Botones de acción */}
-                                        <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-empanada-light-gray">
                                             <Button
                                                 variant="outline"
                                                 onClick={() => setScheduleModalStore(null)}

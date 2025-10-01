@@ -68,7 +68,7 @@ export function ImageUpload({
       setProcessedImage(null); // Limpiar imagen procesada anterior
       setIsImageEdited(false); // Resetear estado de edición
       setIsEditing(false); // NO entrar automáticamente en modo edición
-      // NO llamar onChange aquí - solo al finalizar todo el proceso
+      onChange?.(imageData); // Llamar onChange para guardar la imagen inmediatamente
     };
     reader.readAsDataURL(file);
   }, [onChange]);

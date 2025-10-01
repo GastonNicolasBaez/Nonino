@@ -46,19 +46,19 @@ export function CustomSelect({
       delivered: 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-200 dark:border-emerald-700',
       cancelled: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700',
       active: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700',
-      inactive: 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-800/30 dark:text-gray-200 dark:border-gray-600',
+      inactive: 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-empanada-medium dark:text-gray-200 dark:border-empanada-light-gray',
       ...statusColors
     };
 
-    return statusColorMap[optionValue] || 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-800/30 dark:text-gray-200 dark:border-gray-600';
+    return statusColorMap[optionValue] || 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-empanada-medium dark:text-gray-200 dark:border-empanada-light-gray';
   };
 
   const getButtonClasses = () => {
     const baseClasses = `
       w-full px-3 py-2 text-left rounded-md border transition-all duration-150
       focus:outline-none focus:ring-2 focus:ring-empanada-golden/20
-      ${disabled 
-        ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-700' 
+      ${disabled
+        ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-empanada-medium'
         : 'cursor-pointer hover:shadow-sm'
       }
     `;
@@ -67,13 +67,13 @@ export function CustomSelect({
       return `${baseClasses} ${getStatusClasses(value)}`;
     }
 
-    return `${baseClasses} bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:border-empanada-golden/50`;
+    return `${baseClasses} bg-white dark:bg-empanada-dark border-gray-300 dark:border-empanada-light-gray text-gray-900 dark:text-gray-100 hover:border-empanada-golden/50`;
   };
 
   const getOptionClasses = (optionValue) => {
     const baseClasses = `
       w-full px-3 py-2 text-left text-sm transition-colors duration-150
-      hover:bg-gray-50 dark:hover:bg-gray-700
+      hover:bg-gray-50 dark:hover:bg-empanada-medium
     `;
 
     if (variant === "status") {
@@ -108,7 +108,7 @@ export function CustomSelect({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-md shadow-lg overflow-hidden">
           <div className="py-1">
             {options.map((option) => (
               <button

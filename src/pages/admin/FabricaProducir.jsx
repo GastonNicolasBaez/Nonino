@@ -99,7 +99,7 @@ export function FabricaProducir() {
             />
 
             {/* Selector de productos */}
-            <Card className="admin-card">
+            <Card className="">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Plus className="w-5 h-5 text-empanada-golden" />
@@ -109,7 +109,7 @@ export function FabricaProducir() {
                 <CardContent className="space-y-4">
                     {/* Barra de búsqueda */}
                     <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                             Buscar Producto *
                         </label>
                         <div className="relative">
@@ -126,7 +126,7 @@ export function FabricaProducir() {
 
                         {/* Lista de productos filtrados */}
                         {searchTerm && (
-                            <div className="mt-2 max-h-64 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800">
+                            <div className="mt-2 max-h-64 overflow-y-auto border border-gray-300 dark:border-empanada-light-gray rounded-md bg-white dark:bg-empanada-dark">
                                 {filteredProducts.length > 0 ? (
                                     filteredProducts.map((product) => (
                                         <button
@@ -136,8 +136,8 @@ export function FabricaProducir() {
                                                 setSearchTerm("");
                                             }}
                                             disabled={selectedProducts.find(p => p.id === product.id)}
-                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${selectedProducts.find(p => p.id === product.id)
-                                                    ? 'bg-gray-100 dark:bg-gray-700 opacity-50 cursor-not-allowed'
+                                            className={`w-full text-left px-3 py-2 hover:bg-empanada-golden/10 dark:hover:bg-empanada-golden/20 transition-colors border-b border-gray-100 dark:border-empanada-light-gray last:border-b-0 ${selectedProducts.find(p => p.id === product.id)
+                                                    ? 'bg-gray-100 dark:bg-empanada-medium opacity-50 cursor-not-allowed'
                                                     : ''
                                                 }`}
                                         >
@@ -162,13 +162,13 @@ export function FabricaProducir() {
                     {/* Lista de productos seleccionados */}
                     {selectedProducts.length > 0 && (
                         <div className="space-y-3 mt-6">
-                            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            <h3 className="text-sm font-semibold text-gray-700 dark:text-white">
                                 Productos a producir ({selectedProducts.length})
                             </h3>
                             {selectedProducts.map((product) => (
                                 <div
                                     key={product.id}
-                                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                                    className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50 dark:bg-empanada-medium/50"
                                 >
                                     <div className="flex-1">
                                         <p className="font-medium text-gray-900 dark:text-white">
@@ -206,7 +206,7 @@ export function FabricaProducir() {
             </Card>
 
             {/* Notas */}
-            <Card className="admin-card">
+            <Card className="">
                 <CardHeader>
                     <CardTitle>Notas de producción</CardTitle>
                 </CardHeader>
@@ -216,7 +216,7 @@ export function FabricaProducir() {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Agrega notas sobre esta producción (opcional)..."
                         rows={4}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="w-full admin-input"
                     />
                 </CardContent>
             </Card>
@@ -243,7 +243,7 @@ export function FabricaProducir() {
             >
                 <div className="space-y-4">
                     <div className="bg-empanada-golden/10 border border-empanada-golden/30 rounded-lg p-4">
-                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        <p className="text-sm font-semibold text-gray-700 dark:text-white mb-1">
                             ID de Operación:
                         </p>
                         <p className="text-lg font-mono font-bold text-empanada-golden">
@@ -269,7 +269,7 @@ export function FabricaProducir() {
                             <h4 className="font-semibold text-gray-900 dark:text-white">
                                 Notas:
                             </h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-empanada-dark p-3 rounded">
                                 {notes}
                             </p>
                         </div>

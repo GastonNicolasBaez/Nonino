@@ -20,7 +20,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { toast } from "sonner";
-import { SectionHeader, CustomSelect, EmptyState } from "@/components/branding";
+import { SectionHeader, CustomSelect, EmptyState, StatsCards } from "@/components/branding";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
 
@@ -227,7 +227,7 @@ export function DeliveryManagement() {
             <div className="modal-overlay bg-black/60 backdrop-blur-sm flex items-center justify-center" style={{padding: '1rem'}}>
                 <div className="w-full max-w-2xl">
                     <Card className="shadow-2xl">
-                        <CardHeader className="pb-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                        <CardHeader className="pb-4 bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
@@ -246,7 +246,7 @@ export function DeliveryManagement() {
                         <CardContent className="p-6 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                         Código *
                                     </label>
                                     <Input
@@ -258,7 +258,7 @@ export function DeliveryManagement() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                         Nombre *
                                     </label>
                                     <Input
@@ -270,7 +270,7 @@ export function DeliveryManagement() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                         Tiempo de Delivery
                                     </label>
                                     <Input
@@ -282,7 +282,7 @@ export function DeliveryManagement() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                         Costo de Envío
                                     </label>
                                     <Input
@@ -295,7 +295,7 @@ export function DeliveryManagement() {
                                 </div>
 
                                 {/* <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                         Pedido Mínimo
                                     </label>
                                     <Input
@@ -308,7 +308,7 @@ export function DeliveryManagement() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
                                         Radio de Cobertura (km)
                                     </label>
                                     <Input
@@ -322,7 +322,7 @@ export function DeliveryManagement() {
                             </div>
 
                             {/* <div className="mt-4">
-                                <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                <label className="flex items-center gap-2 text-gray-700 dark:text-white">
                                     <input
                                         type="checkbox"
                                         checked={formData.isActive}
@@ -334,7 +334,7 @@ export function DeliveryManagement() {
                             </div> */}
                         </CardContent>
 
-                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark">
                             <Button variant="outline" onClick={onClose}>
                                 Cancelar
                             </Button>
@@ -360,31 +360,10 @@ export function DeliveryManagement() {
             />
 
             {/* Stats usando StatsCards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {statsData.map((stat) => (
-                    <Card key={stat.id} className="border-2">
-                        <CardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                        {stat.label}
-                                    </p>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                        {stat.value}
-                                    </p>
-                                </div>
-                                <div className={`p-2 rounded-lg ${stat.color === 'green' ? 'bg-green-100 dark:bg-green-900/30' :
-                                    stat.color === 'red' ? 'bg-red-100 dark:bg-red-900/30' :
-                                        stat.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900/30' :
-                                            'bg-gray-100 dark:bg-gray-800'
-                                    }`}>
-                                    {stat.icon}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+            <StatsCards
+                stats={statsData}
+                gridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+            />
 
             {/* Zonas de Delivery */}
             <Card>

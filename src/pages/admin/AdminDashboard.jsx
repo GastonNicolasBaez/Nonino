@@ -196,7 +196,7 @@ export function AdminDashboard() {
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
           <AlertCircle className="w-5 h-5 text-red-600" />
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
             Alertas Críticas
           </h2>
         </div>
@@ -300,10 +300,10 @@ export function AdminDashboard() {
               {metrics?.recentOrders?.slice(0, 5).map((order, index) => (
                 <div
                   key={order.id}
-                  className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-empanada-medium transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 bg-gray-100 dark:bg-empanada-medium rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
                         #{order.id.split('-')[1]}
                       </span>
@@ -326,7 +326,7 @@ export function AdminDashboard() {
                       order.status === "completed" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200" :
                       order.status === "preparing" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200" :
                       order.status === "pending" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200" :
-                      "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200"
+                      "bg-gray-100 text-gray-800 dark:bg-empanada-dark dark:text-white"
                     }`}>
                       {order.status === "completed" ? "Completado" : 
                        order.status === "preparing" ? "Preparando" : 
@@ -371,7 +371,7 @@ export function AdminDashboard() {
               {metrics?.topProducts?.map((item, index) => (
                 <div
                   key={item.name || index}
-                  className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-empanada-medium transition-colors"
                 >
                   <div className="w-6 h-6 bg-empanada-golden rounded text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
                     {index + 1}

@@ -275,7 +275,7 @@ const AdminLayout = () => {
     };
 
     return (
-        <div className="h-screen bg-gray-50 dark:bg-gray-900 admin-layout-light flex overflow-hidden">
+        <div className="h-screen bg-gray-50 dark:bg-empanada-dark admin-layout-light flex overflow-hidden">
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
                 <div
@@ -286,11 +286,11 @@ const AdminLayout = () => {
 
             {/* Sidebar */}
             <aside
-                className="hidden lg:flex lg:flex-col bg-white dark:bg-gray-800 admin-sidebar-light border-r border-gray-200 dark:border-gray-700 transition-all duration-300 h-screen"
+                className="hidden lg:flex lg:flex-col bg-white dark:bg-empanada-dark admin-sidebar-light border-r border-gray-200 dark:border-empanada-light-gray transition-all duration-300 h-screen"
                 style={{ width: sidebarCollapsed ? '5.5rem' : '16rem' }}
             >
                 {/* Desktop Sidebar Content */}
-                <div className={`flex items-center border-b border-gray-200 dark:border-gray-700 ${sidebarCollapsed ? 'justify-center p-4' : 'justify-between p-6'
+                <div className={`flex items-center border-b border-gray-200 dark:border-empanada-light-gray ${sidebarCollapsed ? 'justify-center p-4' : 'justify-between p-6'
                     }`}>
                     {sidebarCollapsed ? (
                         /* Layout colapsado: Logo centrado con botón debajo */
@@ -306,7 +306,7 @@ const AdminLayout = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={toggleSidebar}
-                                className="w-8 h-8 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                className="w-8 h-8 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                 title="Expandir sidebar"
                             >
                                 <ChevronRight className="w-4 h-4" />
@@ -332,7 +332,7 @@ const AdminLayout = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={toggleSidebar}
-                                className="w-8 h-8 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                className="w-8 h-8 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                 title="Colapsar sidebar"
                             >
                                 <ChevronLeft className="w-4 h-4" />
@@ -342,7 +342,7 @@ const AdminLayout = () => {
                 </div>
 
                 {/* Desktop Navigation */}
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-empanada-medium dark:scrollbar-track-empanada-dark">
 
                     {(session.userData.isAdmin) ? (
                         <CustomSelect
@@ -353,7 +353,7 @@ const AdminLayout = () => {
                             disabled={adminDataLoading}
                         />
                     ) : (
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
+                        <span className="text-sm font-medium text-gray-700 dark:text-white px-3 py-2">
                             {sucursales[0]?.name}
                         </span>
                     )}
@@ -388,7 +388,7 @@ const AdminLayout = () => {
                                         }}
                                         className={`w-full flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item)
                                             ? "bg-empanada-golden text-white active"
-                                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                             } ${sidebarCollapsed ? "justify-center" : "justify-between"}`}
                                         title={sidebarCollapsed ? item.name : undefined}
                                     >
@@ -438,7 +438,7 @@ const AdminLayout = () => {
                                                         end
                                                         className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${isActive
                                                             ? "bg-empanada-golden/20 text-empanada-golden font-medium"
-                                                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                                             }`}
                                                     >
                                                         <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
@@ -460,7 +460,7 @@ const AdminLayout = () => {
                                     }}
                                     className={`relative flex items-center px-4 py-3 rounded-lg admin-nav-item group ${isItemActive(item) && !shouldDeactivateOthers()
                                         ? "bg-empanada-golden text-white active"
-                                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                         } ${sidebarCollapsed ? "justify-center" : "justify-between"}`}
                                     title={sidebarCollapsed ? item.name : undefined}
                                 >
@@ -493,11 +493,11 @@ const AdminLayout = () => {
 
             {/* Mobile Sidebar */}
             <aside
-                className={`fixed lg:hidden inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-xl border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-200 flex flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                className={`fixed lg:hidden inset-y-0 left-0 z-40 w-64 bg-white dark:bg-empanada-dark shadow-xl border-r border-gray-200 dark:border-empanada-light-gray transform transition-transform duration-200 flex flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                     }`}
             >
                 {/* Sidebar Header */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-empanada-light-gray">
                     <Link to="/admin" className="flex items-center space-x-2">
                         <img
                             src={logoNonino}
@@ -522,7 +522,7 @@ const AdminLayout = () => {
                 </div>
 
                 {/* Navigation */}
-                <nav className="p-4 space-y-2 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+                <nav className="p-4 space-y-2 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-empanada-medium dark:scrollbar-track-empanada-dark">
                     {(session.userData.isAdmin) ? (
                         <CustomSelect
                             value={sucursalSeleccionada}
@@ -533,7 +533,7 @@ const AdminLayout = () => {
                         />
                     ) : (
                         <>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 py-2">
+                            <span className="text-sm font-medium text-gray-700 dark:text-white px-3 py-2">
                                 {sucursales[0]?.name}
                             </span>
                         </>
@@ -569,7 +569,7 @@ const AdminLayout = () => {
                                         }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item)
                                             ? "bg-empanada-golden text-white"
-                                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                             }`}
                                     >
                                         <div className="flex items-center space-x-3">
@@ -610,7 +610,7 @@ const AdminLayout = () => {
                                                         onClick={() => setSidebarOpen(false)}
                                                         className={({ isActive }) => `flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${isActive
                                                             ? "bg-empanada-golden/20 text-empanada-golden font-medium"
-                                                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                                             }`}
                                                     >
                                                         <subItem.icon className="w-4 h-4 mr-3 flex-shrink-0" />
@@ -633,7 +633,7 @@ const AdminLayout = () => {
                                     }}
                                     className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isItemActive(item) && !shouldDeactivateOthers()
                                         ? "bg-empanada-golden text-white"
-                                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-empanada-medium"
                                         }`}
                                 >
                                     <div className="flex items-center space-x-3">
@@ -659,7 +659,7 @@ const AdminLayout = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0 h-screen">
                 {/* Header */}
-                <header className="bg-white dark:bg-gray-800 admin-header shadow-sm border-b border-gray-200 dark:border-gray-700">
+                <header className="bg-white dark:bg-empanada-dark admin-header shadow-sm border-b border-gray-200 dark:border-empanada-light-gray">
                     <div className="px-4 sm:px-6 py-4">
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -685,7 +685,7 @@ const AdminLayout = () => {
                                     onClick={() => {
                                         refreshAll();
                                     }}
-                                    className="text-gray-600 hover:text-gray-700 hover:bg-red-50 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-900/20"
+                                    className="text-gray-600 hover:text-gray-700 hover:bg-red-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-empanada-medium"
                                 >
                                     <RefreshCcw className="w-4 h-4 mr-2" />
                                 </Button>
@@ -716,8 +716,8 @@ const AdminLayout = () => {
 
                                     {/* User Dropdown */}
                                     {userDropdownOpen && (
-                                        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
-                                            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                                        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-empanada-dark rounded-lg shadow-lg border border-gray-200 dark:border-empanada-light-gray z-50">
+                                            <div className="p-4 border-b border-gray-200 dark:border-empanada-light-gray">
                                                 <div className="flex items-center space-x-3 mb-2">
                                                     <div className="w-10 h-10 bg-empanada-golden rounded-full flex items-center justify-center">
                                                         <User className="w-5 h-5 text-white" />

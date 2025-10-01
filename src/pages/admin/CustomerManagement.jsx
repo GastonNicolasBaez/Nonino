@@ -406,7 +406,7 @@ function CustomerDetailModal({ customer, onClose }) {
         >
           <Card className="shadow-2xl h-full flex flex-col ">
             {/* Header */}
-            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -416,7 +416,7 @@ function CustomerDetailModal({ customer, onClose }) {
                     Información completa del cliente
                   </p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-empanada-medium">
                   <X className="w-5 h-5" />
                 </Button>
               </div>
@@ -435,29 +435,29 @@ function CustomerDetailModal({ customer, onClose }) {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre Completo</label>
-                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.name}</p>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre Completo</label>
+                      <p className="text-sm bg-white dark:bg-empanada-medium p-3 rounded-md text-gray-900 dark:text-white">{customer.name}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
-                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.email}</p>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Email</label>
+                      <p className="text-sm bg-white dark:bg-empanada-medium p-3 rounded-md text-gray-900 dark:text-white">{customer.email}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono</label>
-                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.phone}</p>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Teléfono</label>
+                      <p className="text-sm bg-white dark:bg-empanada-medium p-3 rounded-md text-gray-900 dark:text-white">{customer.phone}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección</label>
-                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">{customer.address}</p>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Dirección</label>
+                      <p className="text-sm bg-white dark:bg-empanada-medium p-3 rounded-md text-gray-900 dark:text-white">{customer.address}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Fecha de Registro</label>
-                      <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Fecha de Registro</label>
+                      <p className="text-sm bg-white dark:bg-empanada-medium p-3 rounded-md text-gray-900 dark:text-white">
                         {new Date(customer.registrationDate).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Estado</label>
                       <div className={`status-badge ${customer.status === 'active' ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.status === 'active' ? 'Activo' : 'Inactivo'}
                       </div>
@@ -476,15 +476,15 @@ function CustomerDetailModal({ customer, onClose }) {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-white dark:bg-gray-700 rounded-lg">
+                    <div className="text-center p-4 bg-white dark:bg-empanada-medium rounded-lg">
                       <p className="text-2xl font-bold text-blue-600">{customer.totalOrders}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Total Pedidos</p>
                     </div>
-                    <div className="text-center p-4 bg-white dark:bg-gray-700 rounded-lg">
+                    <div className="text-center p-4 bg-white dark:bg-empanada-medium rounded-lg">
                       <p className="text-2xl font-bold text-green-600">{formatPrice(customer.totalSpent)}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Total Gastado</p>
                     </div>
-                    <div className="text-center p-4 bg-white dark:bg-gray-700 rounded-lg">
+                    <div className="text-center p-4 bg-white dark:bg-empanada-medium rounded-lg">
                       <p className="text-2xl font-bold text-purple-600">
                         {formatPrice(customer.totalOrders > 0 ? customer.totalSpent / customer.totalOrders : 0)}
                       </p>
@@ -492,8 +492,8 @@ function CustomerDetailModal({ customer, onClose }) {
                     </div>
                   </div>
                   <div className="mt-4">
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Último Pedido</label>
-                    <p className="text-sm bg-white dark:bg-gray-700 p-3 rounded-md text-gray-900 dark:text-white">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Último Pedido</label>
+                    <p className="text-sm bg-white dark:bg-empanada-medium p-3 rounded-md text-gray-900 dark:text-white">
                       {new Date(customer.lastOrder).toLocaleString()}
                     </p>
                   </div>
@@ -510,20 +510,20 @@ function CustomerDetailModal({ customer, onClose }) {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
-                      <span className="text-gray-700 dark:text-gray-300">Notificaciones</span>
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-empanada-medium rounded-lg">
+                      <span className="text-gray-700 dark:text-white">Notificaciones</span>
                       <div className={`status-badge ${customer.preferences.notifications ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.preferences.notifications ? "Sí" : "No"}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
-                      <span className="text-gray-700 dark:text-gray-300">Promociones</span>
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-empanada-medium rounded-lg">
+                      <span className="text-gray-700 dark:text-white">Promociones</span>
                       <div className={`status-badge ${customer.preferences.promotions ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.preferences.promotions ? "Sí" : "No"}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
-                      <span className="text-gray-700 dark:text-gray-300">Newsletter</span>
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-empanada-medium rounded-lg">
+                      <span className="text-gray-700 dark:text-white">Newsletter</span>
                       <div className={`status-badge ${customer.preferences.newsletter ? 'status-badge-success' : 'status-badge-danger'}`}>
                         {customer.preferences.newsletter ? "Sí" : "No"}
                       </div>
@@ -546,9 +546,9 @@ function CustomerDetailModal({ customer, onClose }) {
             </CardContent>
 
             {/* Footer */}
-            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div className="flex-shrink-0 p-6 border-t border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark">
               <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                <Button variant="outline" onClick={onClose} className="hover:bg-gray-200 dark:hover:bg-empanada-medium">
                   Cerrar
                 </Button>
               </div>
@@ -622,7 +622,7 @@ function NewCustomerModal({ onClose, onSave }) {
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre Completo *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre Completo *</label>
                       <Input
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -633,7 +633,7 @@ function NewCustomerModal({ onClose, onSave }) {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email *</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Email *</label>
                         <Input
                           type="email"
                           value={formData.email}
@@ -644,7 +644,7 @@ function NewCustomerModal({ onClose, onSave }) {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono *</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Teléfono *</label>
                         <Input
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -655,7 +655,7 @@ function NewCustomerModal({ onClose, onSave }) {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Dirección</label>
                       <Input
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -677,7 +677,7 @@ function NewCustomerModal({ onClose, onSave }) {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-white">
                       <input
                         type="checkbox"
                         checked={formData.preferences.notifications}
@@ -685,11 +685,11 @@ function NewCustomerModal({ onClose, onSave }) {
                           ...formData,
                           preferences: { ...formData.preferences, notifications: e.target.checked }
                         })}
-                        className="rounded border-gray-300 dark:border-gray-600"
+                        className="rounded border-gray-300 dark:border-empanada-light-gray"
                       />
                       <span className="text-sm">Recibir notificaciones</span>
                     </label>
-                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-white">
                       <input
                         type="checkbox"
                         checked={formData.preferences.promotions}
@@ -697,11 +697,11 @@ function NewCustomerModal({ onClose, onSave }) {
                           ...formData,
                           preferences: { ...formData.preferences, promotions: e.target.checked }
                         })}
-                        className="rounded border-gray-300 dark:border-gray-600"
+                        className="rounded border-gray-300 dark:border-empanada-light-gray"
                       />
                       <span className="text-sm">Recibir promociones</span>
                     </label>
-                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-white">
                       <input
                         type="checkbox"
                         checked={formData.preferences.newsletter}
@@ -709,7 +709,7 @@ function NewCustomerModal({ onClose, onSave }) {
                           ...formData,
                           preferences: { ...formData.preferences, newsletter: e.target.checked }
                         })}
-                        className="rounded border-gray-300 dark:border-gray-600"
+                        className="rounded border-gray-300 dark:border-empanada-light-gray"
                       />
                       <span className="text-sm">Suscribirse al newsletter</span>
                     </label>
@@ -727,7 +727,7 @@ function NewCustomerModal({ onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el cliente..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card>
@@ -796,7 +796,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nombre Completo *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre Completo *</label>
                       <Input
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -807,7 +807,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email *</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Email *</label>
                         <Input
                           type="email"
                           value={formData.email}
@@ -818,7 +818,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Teléfono *</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Teléfono *</label>
                         <Input
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -829,7 +829,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Dirección</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Dirección</label>
                       <Input
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -838,7 +838,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Estado</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Estado</label>
                       <CustomSelect
                         value={formData.status}
                         onChange={(value) => setFormData({ ...formData, status: value })}
@@ -860,7 +860,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-white">
                       <input
                         type="checkbox"
                         checked={formData.preferences.notifications}
@@ -868,11 +868,11 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                           ...formData,
                           preferences: { ...formData.preferences, notifications: e.target.checked }
                         })}
-                        className="rounded border-gray-300 dark:border-gray-600"
+                        className="rounded border-gray-300 dark:border-empanada-light-gray"
                       />
                       <span className="text-sm">Recibir notificaciones</span>
                     </label>
-                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-white">
                       <input
                         type="checkbox"
                         checked={formData.preferences.promotions}
@@ -880,11 +880,11 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                           ...formData,
                           preferences: { ...formData.preferences, promotions: e.target.checked }
                         })}
-                        className="rounded border-gray-300 dark:border-gray-600"
+                        className="rounded border-gray-300 dark:border-empanada-light-gray"
                       />
                       <span className="text-sm">Recibir promociones</span>
                     </label>
-                    <label className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                    <label className="flex items-center space-x-3 text-gray-700 dark:text-white">
                       <input
                         type="checkbox"
                         checked={formData.preferences.newsletter}
@@ -892,7 +892,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                           ...formData,
                           preferences: { ...formData.preferences, newsletter: e.target.checked }
                         })}
-                        className="rounded border-gray-300 dark:border-gray-600"
+                        className="rounded border-gray-300 dark:border-empanada-light-gray"
                       />
                       <span className="text-sm">Suscribirse al newsletter</span>
                     </label>
@@ -910,7 +910,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Notas adicionales sobre el cliente..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                    className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
                   />
                 </CardContent>
               </Card>

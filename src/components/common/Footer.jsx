@@ -215,9 +215,7 @@ export function Footer() {
                 © {currentYear} Nonino Empanadas. Todos los derechos reservados.
               </p>
               <div className="flex items-center gap-1 justify-center sm:justify-start">
-                <span>Hecho con</span>
-                <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-red-500 fill-red-500" />
-                <span>en Argentina</span>
+                <span>Sitio Web desarrollado por zecLogic</span>
               </div>
             </div>
             <div className="hidden lg:flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-end text-xs sm:text-sm">

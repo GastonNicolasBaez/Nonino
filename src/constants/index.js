@@ -25,7 +25,8 @@ export const STORAGE_KEYS = {
   USER: 'user',
   AUTH_TOKEN: 'authToken',
   CART: 'cart',
-  THEME: 'theme'
+  THEME: 'theme',
+  SELECTED_STORE: 'selectedStore'
 };
 
 // Configuración de la aplicación

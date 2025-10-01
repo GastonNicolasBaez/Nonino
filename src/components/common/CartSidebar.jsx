@@ -164,10 +164,10 @@ export function CartSidebar() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8 text-red-500 hover:text-red-300 hover:bg-red-900/20"
+                          className="h-9 w-9 sm:h-10 sm:w-10 text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg"
                           onClick={() => removeItem(item.id, item.customizations)}
                         >
-                          <Trash2 className="w-2 h-2 sm:w-3 sm:h-3" />
+                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                         </Button>
                       </div>
                     </motion.div>

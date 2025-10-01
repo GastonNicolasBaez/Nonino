@@ -18,17 +18,17 @@ export function FloatingOrderButton() {
           className="relative"
         >
           {/* Sombra sutil */}
-          <div className="absolute inset-0 bg-empanada-golden/20 rounded-full blur-md" />
-          
+          <div className="absolute inset-0 bg-empanada-golden/30 rounded-full blur-lg" />
+
           {/* Botón principal */}
           <Button
             size="lg"
-            className="relative bg-gradient-to-r from-empanada-golden to-empanada-warm hover:from-empanada-warm hover:to-empanada-rich text-white font-semibold px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border-0"
+            className="relative bg-gradient-to-r from-empanada-golden to-empanada-warm hover:from-empanada-warm hover:to-empanada-rich text-white font-bold px-8 py-5 text-base sm:text-lg rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 border-0"
           >
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <ShoppingCart className="w-6 h-6" />
               <span>Pedir Ya</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-5 h-5" />
             </div>
           </Button>
         </motion.div>

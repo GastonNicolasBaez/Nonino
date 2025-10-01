@@ -239,7 +239,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                             >
                                 <div className="flex items-center gap-2">
                                     <ShoppingCart className="w-4 h-4" />
-                                    Ver en el Menú
+                                    Pedir Ya
                                 </div>
                             </Button>
                         </div>
@@ -582,7 +582,7 @@ function ProductMenuButton({ product }) {
             onClick={handleViewMenu}
             className="shadow-lg"
         >
-            Ver Menú
+            Pedir Ya
         </Button>
     );
 }

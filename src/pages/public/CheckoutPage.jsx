@@ -44,7 +44,6 @@ export function CheckoutPage() {
     customerInfo: {
       name: user?.name || "",
       phone: user?.phone || "",
-      email: user?.email || "",
     },
     address: {
       street: "",
@@ -345,17 +344,6 @@ export function CheckoutPage() {
               <p className="text-red-500 text-xs">{errors['customerInfo.phone']}</p>
             )}
           </div>
-        </div>
-
-        <div className="space-y-1">
-          <label className="block text-xs font-medium text-gray-300">Email (opcional)</label>
-          <Input
-            type="email"
-            value={orderData.customerInfo.email}
-            onChange={(e) => handleInputChange("customerInfo", "email", e.target.value)}
-            className="h-9 text-sm border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden"
-            placeholder="tu@email.com"
-          />
         </div>
       </div>
 

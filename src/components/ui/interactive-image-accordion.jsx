@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Clock, Phone, Factory, Calendar } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WordPullUp } from './word-pull-up';
+import { FranchiseModal } from './FranchiseModal';
 import localRuta40 from '../../assets/images/localRuta40.jpg';
 import localVillegas from '../../assets/images/LocalVillegas.jpg';
 import fabrica from '../../assets/images/Fabrica.jpg';
@@ -50,7 +51,7 @@ const accordionItems = [
   },
 ];
 
-// --- Accordion Item Component ---
+// --- Accordion Item Component (Desktop) ---
 const AccordionItem = ({ item, isActive, onMouseEnter }) => {
   return (
     <div
@@ -131,7 +132,7 @@ const AccordionItem = ({ item, isActive, onMouseEnter }) => {
         <div
           className="absolute left-1/2 -translate-x-1/2"
           style={{
-            bottom: '60px' // Posición fija en píxeles para todos
+            bottom: '60px'
           }}
         >
           <span
@@ -150,6 +151,73 @@ const AccordionItem = ({ item, isActive, onMouseEnter }) => {
   );
 };
 
+// --- Mobile/Tablet Card Component ---
+const MobileCard = ({ item }) => {
+  return (
+    <div className="relative h-[320px] md:h-[350px] rounded-2xl overflow-hidden shadow-xl">
+      {/* Background Image */}
+      <img
+        src={item.imageUrl}
+        alt={item.title}
+        className="absolute inset-0 w-full h-full object-cover"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = 'https://placehold.co/400x450/f59e0b/ffffff?text=Nonino+Empanadas';
+        }}
+      />
+
+      {/* Gradient overlay - más fuerte para legibilidad */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+
+      {/* Factory/Store/Coming Soon icon overlay */}
+      <div className={cn(
+        "absolute top-4 right-4 p-3 rounded-full",
+        item.type === 'factory'
+          ? "bg-empanada-golden/90 text-white"
+          : item.type === 'coming_soon'
+          ? "bg-gray-500/90 text-white"
+          : "bg-white/90 text-empanada-golden"
+      )}>
+        {item.type === 'factory' ? (
+          <Factory className="w-6 h-6" />
+        ) : item.type === 'coming_soon' ? (
+          <Calendar className="w-6 h-6" />
+        ) : (
+          <MapPin className="w-6 h-6" />
+        )}
+      </div>
+
+      {/* Content - siempre visible */}
+      <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
+        <h3 className="text-2xl md:text-3xl font-bold mb-2 text-empanada-golden">
+          {item.title}
+        </h3>
+
+        <p className="text-sm md:text-base mb-4 text-gray-200">
+          {item.description}
+        </p>
+
+        <div className="space-y-2 text-sm md:text-base">
+          <div className="flex items-center gap-3">
+            <MapPin className="w-5 h-5 text-empanada-golden flex-shrink-0" />
+            <span className="text-gray-200">{item.address}</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Clock className="w-5 h-5 text-empanada-golden flex-shrink-0" />
+            <span className="text-gray-200">{item.hours}</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Phone className="w-5 h-5 text-empanada-golden flex-shrink-0" />
+            <span className="text-gray-200">{item.phone}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Component ---
 export function InteractiveImageAccordion({
   title = "Nuestros Locales y Fábrica",
@@ -158,9 +226,14 @@ export function InteractiveImageAccordion({
   buttonHref = "/locales"
 }) {
   const [activeIndex, setActiveIndex] = useState(2); // Start with factory active
+  const [isFranchiseModalOpen, setIsFranchiseModalOpen] = useState(false);
 
   const handleItemHover = (index) => {
     setActiveIndex(index);
+  };
+
+  const handleButtonClick = () => {
+    setIsFranchiseModalOpen(true);
   };
 
   return (
@@ -206,18 +279,19 @@ export function InteractiveImageAccordion({
               }}
             />
             <div className="mt-8">
-              <a
-                href={buttonHref}
-                className="inline-block bg-empanada-golden text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-empanada-golden/90 transition-colors duration-300"
+              <button
+                onClick={handleButtonClick}
+                className="inline-block bg-empanada-golden text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-empanada-golden/90 transition-colors duration-300 cursor-pointer"
               >
                 {buttonText}
-              </a>
+              </button>
             </div>
           </div>
 
-          {/* Right Side: Image Accordion */}
+          {/* Right Side: Image Accordion (Desktop) / Cards (Mobile/Tablet) */}
           <div className="w-full lg:w-1/2 lg:flex-shrink-0">
-            <div className="flex flex-row items-center justify-center gap-4 overflow-x-auto p-4">
+            {/* Desktop: Accordion horizontal */}
+            <div className="hidden lg:flex flex-row items-center justify-center gap-4 overflow-x-auto p-4">
               {accordionItems.map((item, index) => (
                 <AccordionItem
                   key={item.id}
@@ -227,12 +301,25 @@ export function InteractiveImageAccordion({
                 />
               ))}
             </div>
+
+            {/* Mobile/Tablet: Cards apiladas verticalmente */}
+            <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+              {accordionItems.map((item) => (
+                <MobileCard key={item.id} item={item} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Degradado sutil hacia el footer */}
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-empanada-medium pointer-events-none"></div>
+
+      {/* Franchise Modal */}
+      <FranchiseModal
+        isOpen={isFranchiseModalOpen}
+        onClose={() => setIsFranchiseModalOpen(false)}
+      />
     </div>
   );
 }

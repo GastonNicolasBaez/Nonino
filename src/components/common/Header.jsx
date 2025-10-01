@@ -327,7 +327,7 @@ export function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   "lg:hidden h-10 w-10 sm:h-11 sm:w-11",
-                  "text-empanada-dark hover:text-empanada-golden hover:bg-empanada-golden/10"
+                  "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
                 )}
                 aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
                 aria-expanded={isMenuOpen}

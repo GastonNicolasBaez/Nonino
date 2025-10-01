@@ -127,7 +127,6 @@ const PublicDataProvider = ({ children }) => {
         }
     });
 
-<<<<<<< HEAD
     // orders
     const { mutateAsync: callPublicOrderById, isPending: callPublicOrderByIdLoading } = useMutation({
         mutationKey: ['publicOrderById'],
@@ -140,9 +139,6 @@ const PublicDataProvider = ({ children }) => {
     });
 
 
-=======
-    // Persistir sucursal seleccionada en localStorage
->>>>>>> development
     useEffect(() => {
         if (sucursalSeleccionada) {
             setStorageItem(STORAGE_KEYS.SELECTED_STORE, sucursalSeleccionada);

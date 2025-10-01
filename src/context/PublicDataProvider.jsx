@@ -9,7 +9,10 @@ import {
     getPublicProductosQueryFunction,
     getPublicCombosQueryFunction,
     getPublicCompanyInfoQueryFunction,
-    getPublicStoreStatusQueryFunction
+    getPublicStoreStatusQueryFunction,
+
+    getAdminOrdersGetOrderByIdQueryFunction,
+    postPublicOrdersCreateOrderQueryFunction
 } from '@/config/apiPublicQueryFunctions';
 
 const PublicDataContext = createContext();
@@ -119,6 +122,18 @@ export const PublicDataProvider = ({ children }) => {
         }
     });
 
+    // orders
+    const { mutateAsync: callPublicOrderById, isPending: callPublicOrderByIdLoading } = useMutation({
+        mutationKey: ['publicOrderById'],
+        mutationFn: getAdminOrdersGetOrderByIdQueryFunction,
+    });
+
+    const { mutateAsync: callPublicCreateOrder, isPending: callPublicCreateOrderLoading } = useMutation({
+        mutationKey: ['publicCreateOrder'],
+        mutationFn: postPublicOrdersCreateOrderQueryFunction,
+    });
+
+
     useEffect(() => {
         if (sucursalSeleccionada) {
             callPublicCatalog(sucursalSeleccionada);
@@ -152,6 +167,11 @@ export const PublicDataProvider = ({ children }) => {
             setSucursalSeleccionada,
 
             publicDataLoading,
+
+            callPublicOrderById,
+            callPublicOrderByIdLoading,
+            callPublicCreateOrder,
+            callPublicCreateOrderLoading,
         }}>
             {children}
         </PublicDataContext.Provider>

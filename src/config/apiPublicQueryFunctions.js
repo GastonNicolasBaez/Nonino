@@ -31,3 +31,57 @@ export const getPublicCompanyInfoQueryFunction = async () => {
     const response = await axios.get(`${ENDPOINTS.stores}/public/company`);
     return await response.data;
 }
+
+export const postPublicOrdersCreateOrderQueryFunction = async (_order) => {
+    const axiosSetup = {
+        axiosData: _order,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }
+    }
+
+    const structure = {
+        "storeId": 0,
+        "items": [
+            {
+                "productId": 0,
+                "comboId": 0,
+                "name": "string",
+                "unitPrice": 0,
+                "quantity": 0
+            }
+        ],
+        "paymentMethod": "MERCADO_PAGO",
+        "fulfillment": "PICKUP",
+        "deliveryAddress": {
+            "contactName": "string",
+            "contactPhone": "string",
+            "street": "string",
+            "number": "string",
+            "apartment": "string",
+            "neighborhood": "string",
+            "city": "string",
+            "notes": "string"
+        }
+    }
+
+    const response = await axios.post(`${ENDPOINTS.orders}/public/orders`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
+export const getAdminOrdersGetOrderByIdQueryFunction = async (_orderId) => {
+    const axiosSetup = {
+        axiosData: null,
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+    }
+
+    const response = await axios.get(`${ENDPOINTS.orders}/public/orders/${_orderId}/public-status`, axiosSetup.axiosConfig);
+    return await response.data;
+}
+

@@ -95,6 +95,7 @@ function App() {
                             <Route path="/carrito" element={<CartPage />} />
                             <Route path="/checkout" element={<CheckoutPage />} />
                             <Route path="/tracking/:orderId" element={<OrderTrackingPage />} />
+                            <Route path="/failed/:orderId" element={<OrderTrackingPage />} />
                         </Route>
 
                         {/* INTRANET */}

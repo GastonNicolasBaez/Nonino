@@ -132,7 +132,7 @@ export function ProductModal({ product, isOpen, onClose }) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-full max-w-md mx-0 md:mx-auto bg-empanada-dark rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[85vh] md:max-h-[80vh]"
+            className="relative w-full max-w-md mx-0 md:mx-auto bg-empanada-dark rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[90dvh] md:max-h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drag Handle - Mobile Only */}
@@ -145,7 +145,7 @@ export function ProductModal({ product, isOpen, onClose }) {
             {/* Header with Close Button */}
             <div className="relative flex-shrink-0">
               {/* Image */}
-              <div className="relative h-64 rounded-t-3xl overflow-hidden">
+              <div className="relative h-36 xs:h-40 sm:h-48 md:h-64 rounded-t-3xl overflow-hidden">
                 <img
                   src={product.image}
                   alt={`${product.name} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
@@ -197,41 +197,41 @@ export function ProductModal({ product, isOpen, onClose }) {
             </div>
 
             {/* Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto min-h-[300px]">
-              <div className="p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-6">
                 {/* Product Name and Price */}
                 <div>
-                  <h2 className="text-xl font-bold text-white mb-2">
+                  <h2 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
                     {product.name}
                   </h2>
-                  <div className="flex items-center gap-4 mb-3">
-                    <span className="text-2xl font-bold text-empanada-golden">
+                  <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
+                    <span className="text-xl sm:text-2xl font-bold text-empanada-golden">
                       {formatPrice(product.price)}
                     </span>
-                    <span className="text-sm text-gray-300">por unidad</span>
+                    <span className="text-xs sm:text-sm text-gray-300">por unidad</span>
                   </div>
                 </div>
 
 
                 {/* Description */}
                 <div>
-                  <h3 className="font-semibold text-white mb-3">Descripción</h3>
-                  <p className="text-gray-300 leading-relaxed mb-4">
+                  <h3 className="text-sm sm:text-base font-semibold text-white mb-2 sm:mb-3">Descripción</h3>
+                  <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-3 sm:mb-4">
                     {product.description || "Deliciosa empanada preparada con los mejores ingredientes seleccionados especialmente para ti. Una combinación perfecta de sabores tradicionales que te harán sentir como en casa."}
                   </p>
 
                   {/* Additional details section */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <span className="w-2 h-2 bg-empanada-golden rounded-full"></span>
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-300">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-empanada-golden rounded-full flex-shrink-0"></span>
                       <span>Masa artesanal preparada diariamente</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <span className="w-2 h-2 bg-empanada-golden rounded-full"></span>
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-300">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-empanada-golden rounded-full flex-shrink-0"></span>
                       <span>Ingredientes frescos y de primera calidad</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-300">
-                      <span className="w-2 h-2 bg-empanada-golden rounded-full"></span>
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-300">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-empanada-golden rounded-full flex-shrink-0"></span>
                       <span>Horneadas al momento para máxima frescura</span>
                     </div>
                   </div>
@@ -241,44 +241,44 @@ export function ProductModal({ product, isOpen, onClose }) {
             </div>
 
             {/* Footer - Quantity and Add Button */}
-            <div className="flex-shrink-0 p-6 bg-empanada-medium border-t border-empanada-light-gray pb-8 md:pb-6">
-              <div className="flex items-center justify-between mb-4">
+            <div className="flex-shrink-0 p-3 sm:p-4 md:p-6 bg-empanada-medium border-t border-empanada-light-gray pb-safe">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div>
-                  <span className="text-sm text-gray-300 block">Cantidad</span>
-                  <div className="flex items-center gap-3 mt-1">
+                  <span className="text-xs sm:text-sm text-gray-300 block">Cantidad</span>
+                  <div className="flex items-center gap-2 sm:gap-3 mt-1">
                     <Button
                       variant="outline"
                       size="icon"
                       onClick={decreaseQuantity}
                       disabled={quantity <= 1}
-                      className="h-10 w-10 rounded-full menu-category-button"
+                      className="h-8 w-8 sm:h-10 sm:w-10 rounded-full menu-category-button"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
-                    <span className="text-xl font-bold w-8 text-center text-white">
+                    <span className="text-lg sm:text-xl font-bold w-6 sm:w-8 text-center text-white">
                       {quantity}
                     </span>
                     <Button
                       variant="outline"
                       size="icon"
                       onClick={increaseQuantity}
-                      className="h-10 w-10 rounded-full menu-category-button"
+                      className="h-8 w-8 sm:h-10 sm:w-10 rounded-full menu-category-button"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-sm text-gray-300 block">Total</span>
-                  <span className="text-2xl font-bold text-empanada-golden">
+                  <span className="text-xs sm:text-sm text-gray-300 block">Total</span>
+                  <span className="text-xl sm:text-2xl font-bold text-empanada-golden">
                     {formatPrice(product.price * quantity)}
                   </span>
                 </div>
               </div>
 
               <Button
-                className="w-full h-12 text-base font-semibold"
+                className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold"
                 variant="empanada"
                 onClick={handleAddToCart}
                 disabled={!product.isAvailable}

@@ -19,19 +19,32 @@ export function HomePage() {
     const { productosTodos: productos, publicDataLoading: loading, sucursalSeleccionada } = usePublicData();
 
     const [promotions] = useState([]);
-    const [isMobile, setIsMobile] = useState(() => {
-        // Inicializar inmediatamente si estamos en el browser
+    const [isSmallMobile, setIsSmallMobile] = useState(() => {
+        // Mobile muy pequeño (< 475px)
         if (typeof window !== 'undefined') {
-            return window.innerWidth < 768;
+            return window.innerWidth < 475;
+        }
+        return false;
+    });
+    const [isMobile, setIsMobile] = useState(() => {
+        // Mobile (< 640px) - ajustado de 768px para mejor granularidad
+        if (typeof window !== 'undefined') {
+            return window.innerWidth < 640;
         }
         return false;
     });
     const [isTablet, setIsTablet] = useState(() => {
+        // Tablet (640px - 1024px)
         if (typeof window !== 'undefined') {
-            return window.innerWidth >= 768 && window.innerWidth < 1024;
+            return window.innerWidth >= 640 && window.innerWidth < 1024;
         }
         return false;
     });
+
+    // Force scroll to top on mount to ensure logo animation starts correctly
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     // Agregar clase al body para background transparente
     useEffect(() => {
@@ -97,30 +110,44 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen">
-            {/* Logo animado independiente - Optimizado para mobile/tablet */}
+            {/* Logo animado - Anclado al título del hero (~15px arriba) */}
             <motion.div
                 className="fixed z-[30] pointer-events-none"
                 style={{
                     left: "50%",
                     top: useTransform(
                         scrollY,
-                        isMobile
-                            ? [0, 100]      // Mobile: animación más rápida
+                        // Rangos de scroll para animación fluida (factor 1.89 - equilibrado)
+                        isSmallMobile
+                            ? [0, 169]      // 11.56rem → 4.5rem = 7.06rem (169px) de animación
+                            : isMobile
+                            ? [0, 215]      // 13.45rem → 4.5rem = 8.95rem (215px)
                             : isTablet
-                            ? [0, 120]      // Tablet: intermedia
-                            : [0, 200],     // Desktop: normal
-                        isMobile
-                            ? ["17vh", "3rem"]
+                            ? [0, 261]      // 15.39rem → 4.5rem = 10.89rem (261px)
+                            : [0, 308],     // 17.325rem → 4.5rem = 12.825rem (308px)
+                        // Posición ajustada (factor 1.89 - 30% menos que anterior) CON y: "-50%"
+                        isSmallMobile
+                            ? ["11.56rem", "4.5rem"]   // 4 + (12-4)/2*1.89 = 11.56rem
+                            : isMobile
+                            ? ["13.45rem", "4.5rem"]   // 4 + (14-4)/2*1.89 = 13.45rem
                             : isTablet
-                            ? ["10vh", "3.5rem"]
-                            : ["15vh", "4.5rem"]
+                            ? ["15.39rem", "4.5rem"]   // 4.5 + (16-4.5)/2*1.89 = 15.39rem
+                            : ["17.325rem", "4.5rem"]  // 5 + (18-5)/2*1.89 = 17.325rem
                     ),
                     x: "-50%",
                     y: "-50%",
                     scale: useTransform(
                         scrollY,
-                        isMobile ? [0, 100] : isTablet ? [0, 120] : [50, 200],
-                        isMobile ? [1, 0.5] : isTablet ? [1, 0.55] : [1, 0.35]
+                        // Mismos rangos de scroll que la posición para consistencia
+                        isSmallMobile ? [0, 169] : isMobile ? [0, 215] : isTablet ? [0, 261] : [0, 308],
+                        // Escalas conservadoras para transición suave
+                        isSmallMobile
+                            ? [1, 0.45]     // Small mobile
+                            : isMobile
+                            ? [1, 0.48]     // Mobile
+                            : isTablet
+                            ? [1, 0.5]      // Tablet
+                            : [1, 0.42]     // Desktop
                     ),
                     willChange: 'transform'
                 }}
@@ -128,7 +155,7 @@ export function HomePage() {
                 <img
                     src={logoNonino}
                     alt="Nonino Empanadas - Empanadas artesanales San Martín de los Andes Patagonia Argentina"
-                    className="w-40 h-40 xs:w-48 xs:h-48 sm:w-52 sm:h-52 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72"
+                    className="w-36 min-[375px]:w-40 xs:w-52 sm:w-64 md:w-64 lg:w-64"
                     loading="eager"
                 />
             </motion.div>
@@ -161,7 +188,7 @@ export function HomePage() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="mt-32 sm:mt-40 md:mt-48 lg:mt-56"
+                        className="mt-40 sm:mt-48 md:mt-56 lg:mt-64"
                     >
 
                         <TextAnimate

@@ -119,6 +119,9 @@ export default {
       backdropBlur: {
         xs: '2px',
       },
+      spacing: {
+        'safe': 'max(1.5rem, env(safe-area-inset-bottom))',
+      },
     },
   },
   plugins: [],

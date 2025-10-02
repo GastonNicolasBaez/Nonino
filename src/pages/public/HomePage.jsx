@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { ChevronRight, Clock, Truck, Shield, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,6 +22,7 @@ import {
 export function HomePage() {
 
     const { productosTodos: productos, publicDataLoading: loading, sucursalSeleccionada } = usePublicData();
+    const location = useLocation();
     const publicData = usePublicData();
 
     const [promotions] = useState([]);
@@ -67,6 +68,32 @@ export function HomePage() {
         };
     }, []);
 
+    // Desactivar restauración automática de scroll del navegador para esta vista
+    useEffect(() => {
+        const prev = typeof history !== 'undefined' && history.scrollRestoration;
+        if (typeof history !== 'undefined' && 'scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        return () => {
+            if (typeof history !== 'undefined' && 'scrollRestoration' in history && prev) {
+                history.scrollRestoration = prev;
+            }
+        };
+    }, []);
+
+    // Al cambiar de ruta, reestablecer posición/escala del logo y subir al tope
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            window.scrollTo(0, 0);
+            if (logoRef.current) {
+                logoRef.current.style.top = '';
+                logoRef.current.style.transform = '';
+            }
+            // Disparar scroll para recalcular inmediatamente
+            window.dispatchEvent(new Event('scroll'));
+        });
+    }, [location.pathname]);
+
     // Agregar clase al body para background transparente
     useEffect(() => {
         document.body.classList.add('homepage-background');
@@ -103,6 +130,12 @@ export function HomePage() {
         let maxScroll = isSmallMobile ? 169 : isMobile ? 215 : isTablet ? 261 : 308; // px
         const endScale = isSmallMobile ? 0.45 : isMobile ? 0.48 : isTablet ? 0.5 : 0.42;
 
+        // Reinicialización inmediata del logo al montar (evita estilos "pegados" al volver)
+        if (logoRef.current) {
+            logoRef.current.style.top = `${Math.round(startTopPx)}px`;
+            logoRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
+        }
+
         const getScrollY = () => {
             return (typeof window !== 'undefined' && (window.pageYOffset || window.scrollY))
                 || (document.scrollingElement && document.scrollingElement.scrollTop)
@@ -132,6 +165,14 @@ export function HomePage() {
             maxScroll = isSmallMobile ? 169 : isMobile ? 215 : isTablet ? 261 : 308;
             onScroll();
         };
+        const onPageShowOrFocus = () => {
+            // Al volver al tab o al historial, asegurar estado inicial correcto y forzar update
+            if (logoRef.current) {
+                logoRef.current.style.top = `${Math.round(startTopPx)}px`;
+                logoRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+            requestAnimationFrame(update);
+        };
         // Inicial y bindings
         requestAnimationFrame(update);
         const opts = { passive: true, capture: true };
@@ -142,6 +183,9 @@ export function HomePage() {
         window.addEventListener('resize', onResize, opts);
         window.addEventListener('orientationchange', onResize, opts);
         document.addEventListener('visibilitychange', update);
+        window.addEventListener('pageshow', onPageShowOrFocus, opts);
+        window.addEventListener('focus', onPageShowOrFocus, opts);
+        window.addEventListener('popstate', onPageShowOrFocus, opts);
         return () => {
             if (rafId) cancelAnimationFrame(rafId);
             window.removeEventListener('scroll', onScroll, opts);
@@ -151,6 +195,14 @@ export function HomePage() {
             window.removeEventListener('resize', onResize, opts);
             window.removeEventListener('orientationchange', onResize, opts);
             document.removeEventListener('visibilitychange', update);
+            window.removeEventListener('pageshow', onPageShowOrFocus, opts);
+            window.removeEventListener('focus', onPageShowOrFocus, opts);
+            window.removeEventListener('popstate', onPageShowOrFocus, opts);
+            // Limpiar estilos inline para no dejar estado residual al salir de la página
+            if (logoRef.current) {
+                logoRef.current.style.top = '';
+                logoRef.current.style.transform = '';
+            }
         };
     }, [isSmallMobile, isMobile, isTablet]);
 
@@ -165,11 +217,13 @@ export function HomePage() {
 
     // Helper para obtener imagen responsive según viewport
     const getResponsiveImage = (blur, img640, img1024, img1920, img2560) => {
-        const width = window.innerWidth;
-        if (width <= 640) return img640;
-        if (width <= 1024) return img1024;
-        if (width <= 1920) return img1920;
-        return img2560;
+        const width = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        const fallback = '/nonino.webp';
+        const pick = (img) => img || fallback;
+        if (width <= 640) return pick(img640);
+        if (width <= 1024) return pick(img1024);
+        if (width <= 1920) return pick(img1920);
+        return pick(img2560);
     };
 
     // Imágenes del hero según tamaño de pantalla
@@ -254,19 +308,20 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen">
-            {/* Logo animado - Anclado al título del hero (~15px arriba) */}
-            <motion.div
-                key={`logo-${initKey}`}
-                ref={logoRef}
-                className="fixed z-[30] pointer-events-none"
-                style={{ left: "50%" }}
-            >
-                <img
-                    src={logoNonino}
-                    alt="Nonino Empanadas - Empanadas artesanales San Martín de los Andes Patagonia Argentina"
-                    className="w-36 min-[375px]:w-40 xs:w-52 sm:w-64 md:w-64 lg:w-64"
-                    loading="eager"
-                />
+            {/* Logo animado - contenedor de Framer aislado del elemento que se transforma */}
+            <motion.div key={`logo-${initKey}`} className="pointer-events-none">
+                <div
+                    ref={logoRef}
+                    className="fixed z-[30]"
+                    style={{ left: "50%", top: "13.45rem", transform: 'translate(-50%, -50%) scale(1)' }}
+                >
+                    <img
+                        src={logoNonino}
+                        alt="Nonino Empanadas - Empanadas artesanales San Martín de los Andes Patagonia Argentina"
+                        className="w-48 min-[375px]:w-52 xs:w-60 sm:w-64 md:w-64 lg:w-64"
+                        loading="eager"
+                    />
+                </div>
             </motion.div>
             {/* Hero Section */}
             <section className="relative min-h-screen flex items-center justify-center">
@@ -277,7 +332,7 @@ export function HomePage() {
                     aria-label="Vista panorámica de San Martín de los Andes, Patagonia Argentina - Cordillera de los Andes"
                     role="img"
                     style={{
-                        backgroundImage: `url(${heroImage})`,
+                        backgroundImage: heroImage ? `url(${heroImage})` : undefined,
                         backgroundSize: "cover",
                         backgroundPosition: "center top",
                         y,
@@ -289,7 +344,7 @@ export function HomePage() {
                 />
 
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-black/30" />
+                {heroImage && <div className="absolute inset-0 bg-black/30" />}
                 {/* Background Elements */}
                 <div className="absolute inset-0">
                     <div className="absolute top-20 left-4 sm:left-20 w-16 h-16 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-xl animate-float" />
@@ -297,18 +352,18 @@ export function HomePage() {
                     <div className="absolute top-1/2 left-1/4 sm:left-1/3 w-8 h-8 sm:w-16 sm:h-16 bg-white/10 rounded-full blur-xl animate-float" style={{ animationDelay: "2s" }} />
                 </div>
 
-                <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-empanada-golden">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="mt-40 sm:mt-48 md:mt-56 lg:mt-64"
+                        className="mt-20 sm:mt-48 md:mt-56 lg:mt-64"
                     >
 
                         <TextAnimate
                             animation="slideUp"
                             by="word"
-                            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
+                            className="text-6xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-12xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >
                             Vas a volver

@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
 import { Heart, Award, Users, Clock } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { TextAnimate } from "../../components/ui/text-animate";
@@ -22,6 +22,8 @@ import {
 
 export function AboutPage() {
   const parallaxRef = useRef(null);
+  // Clave para re-inicializar efectos de scroll tras el montaje
+  const [initKey, setInitKey] = useState(0);
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.innerWidth < 768;
@@ -42,33 +44,109 @@ export function AboutPage() {
   }, []);
 
   // No forzar remount global aquí; el componente interno refresca al cargar imagen
+  // Asegurar inicialización de efectos de scroll al ingresar por primera vez
+  useEffect(() => {
+    // Volver al tope para que los observadores tomen el estado inicial
+    window.scrollTo(0, 0);
+    // Forzar un remount controlado de elementos que dependen de scroll
+    const id = requestAnimationFrame(() => setInitKey((k) => k + 1));
+    // Disparar un evento de scroll para que framer-motion calcule posiciones
+    const fire = () => window.dispatchEvent(new Event('scroll'));
+    const t = setTimeout(fire, 0);
+    document.addEventListener('visibilitychange', fire);
+    window.addEventListener('load', fire, { once: true });
+    // Doble nudge como fallback
+    const tt = setTimeout(() => {
+      const y = (window.pageYOffset || window.scrollY || 0);
+      window.scrollTo(0, Math.max(0, y + 1));
+      window.scrollTo(0, Math.max(0, y));
+      fire();
+    }, 50);
 
-  // Usar el scroll del viewport, referenciando el target de la sección
-  const { scrollYProgress } = useScroll({
-    target: parallaxRef,
-    offset: ["start start", "end start"],
-  });
+    return () => {
+      cancelAnimationFrame(id);
+      clearTimeout(t);
+      clearTimeout(tt);
+      document.removeEventListener('visibilitychange', fire);
+    };
+  }, []);
+
+  // Progreso manual robusto para sincronizar el título con el parallax
+  const manualProgress = useMotionValue(0);
+  useEffect(() => {
+    const clamp = (v) => Math.max(0, Math.min(1, v));
+    let rafId = 0;
+    let rafWarm = 0;
+    let warm = true;
+    const update = () => {
+      if (!parallaxRef.current) return;
+      const rect = parallaxRef.current.getBoundingClientRect();
+      const vh = window.innerHeight || 0;
+      const total = Math.max(1, rect.height - vh);
+      const progress = clamp((0 - rect.top) / total);
+      manualProgress.set(progress);
+    };
+    const onScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(update);
+    };
+    const onResize = onScroll;
+    requestAnimationFrame(update);
+    const warmup = () => { if (!warm) return; update(); rafWarm = requestAnimationFrame(warmup); };
+    rafWarm = requestAnimationFrame(warmup);
+    const opts = { passive: true };
+    window.addEventListener('scroll', onScroll, opts);
+    document.addEventListener('scroll', onScroll, opts);
+    window.addEventListener('resize', onResize, opts);
+    window.addEventListener('orientationchange', onResize, opts);
+    document.addEventListener('visibilitychange', update);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      if (rafWarm) cancelAnimationFrame(rafWarm);
+      warm = false;
+      window.removeEventListener('scroll', onScroll, opts);
+      document.removeEventListener('scroll', onScroll, opts);
+      window.removeEventListener('resize', onResize, opts);
+      window.removeEventListener('orientationchange', onResize, opts);
+      document.removeEventListener('visibilitychange', update);
+    };
+  }, [manualProgress]);
 
   // Transformaciones para el efecto sticky del título
-  const titleY = useTransform(scrollYProgress, [0, 0.3, 0.6, 0.75], [200, 0, 0, -200]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.2, 0.6, 0.7], [0, 1, 1, 0]);
+  // Que aparezca más tarde y se vaya justo al final del parallax
+  const titleY = useTransform(manualProgress, [0.2, 0.45, 0.85, 0.99], [200, 0, 0, -200]);
+  const titleOpacity = useTransform(manualProgress, [0.25, 0.45, 0.85, 0.99], [0, 1, 1, 0]);
 
   // Control de animación WordPullUp basado en scroll
   const [shouldAnimateTitle, setShouldAnimateTitle] = useState(false);
   const [shouldAnimateSubtitle, setShouldAnimateSubtitle] = useState(false);
+  const [hideTitle, setHideTitle] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (value) => {
-      if (value >= 0.25 && !shouldAnimateTitle) {
+    const unsubscribe = manualProgress.on("change", (value) => {
+      if (value >= 0.4 && !shouldAnimateTitle) {
         setShouldAnimateTitle(true);
       }
-      if (value >= 0.35 && !shouldAnimateSubtitle) {
+      if (value >= 0.5 && !shouldAnimateSubtitle) {
         setShouldAnimateSubtitle(true);
       }
     });
 
     return () => unsubscribe();
-  }, [scrollYProgress, shouldAnimateTitle, shouldAnimateSubtitle]);
+  }, [manualProgress, shouldAnimateTitle, shouldAnimateSubtitle]);
+
+  // Ocultar el título al finalizar el parallax o al entrar historia
+  useEffect(() => {
+    const t1 = document.getElementById('historia');
+    const t2 = document.getElementById('end-parallax');
+    const obs = new IntersectionObserver((entries) => {
+      const anyVisible = entries.some(e => e.isIntersecting && e.intersectionRatio > 0.01);
+      setHideTitle(anyVisible);
+    }, { threshold: [0, 0.01, 0.1] });
+    if (t1) obs.observe(t1);
+    if (t2) obs.observe(t2);
+    return () => obs.disconnect();
+  }, []);
 
   const values = [
     {
@@ -150,9 +228,9 @@ export function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Zoom Parallax */}
-      <section ref={parallaxRef} className="relative -mb-1" style={{ marginTop: '-80px' }}>
+      <section key={`about-parallax-${initKey}`} ref={parallaxRef} className="relative -mb-1" style={{ marginTop: '-80px' }}>
         {/* Zoom Parallax Component */}
-        <ZoomParallax images={parallaxImages} />
+        <ZoomParallax key={`zoom-${initKey}`} images={parallaxImages} />
       </section>
 
       {/* Unified Background Gradient Container */}
@@ -160,7 +238,7 @@ export function AboutPage() {
 
       {/* Título sticky que aparece durante el parallax */}
       <motion.div
-        className="fixed left-0 right-0 z-50 flex items-center justify-center pointer-events-none"
+        className={`fixed left-0 right-0 z-50 flex items-center justify-center pointer-events-none ${hideTitle ? 'opacity-0' : ''}`}
         style={{
           top: '35vh',
           transform: 'translateY(-50%)',
@@ -212,8 +290,8 @@ export function AboutPage() {
         </div>
       </motion.div>
 
-      {/* Anchor point for end of parallax */}
-      <div id="end-parallax" className="absolute" style={{ top: '200vh' }}></div>
+      {/* Anchor point for end of parallax (ajustado para cerrar sin gap) */}
+      <div id="end-parallax" className="absolute" style={{ top: '205vh' }}></div>
 
         {/* Story Section */}
         <section id="historia" className="py-8 sm:py-12 lg:py-16 -mt-1">

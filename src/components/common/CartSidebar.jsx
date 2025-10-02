@@ -49,7 +49,7 @@ export function CartSidebar() {
             animate="open"
             exit="closed"
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] md:hidden"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] lg:hidden"
           />
 
           {/* Sidebar */}
@@ -59,7 +59,7 @@ export function CartSidebar() {
             animate="open"
             exit="closed"
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-empanada-dark shadow-2xl z-[101] flex flex-col md:hidden"
+            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md lg:max-w-lg bg-empanada-dark shadow-2xl z-[101] flex flex-col lg:hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 sm:p-6 border-b border-empanada-light-gray bg-empanada-dark">

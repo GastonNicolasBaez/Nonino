@@ -30,7 +30,7 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
   const handleLike = (e) => {
     e.stopPropagation();
     setIsLiked(!isLiked);
-    toast.success(isLiked ? "Removido de favoritos" : "Agregado a favoritos");
+    // Toast removido para mejor UX
   };
 
   /**

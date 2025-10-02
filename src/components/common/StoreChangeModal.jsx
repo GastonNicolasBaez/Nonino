@@ -7,8 +7,8 @@ export function StoreChangeModal({ isOpen, onClose, onConfirm }) {
   const modalVariants = {
     hidden: {
       opacity: 0,
-      y: 50,
-      scale: 0.95
+      y: 30,
+      scale: 0.96
     },
     visible: {
       opacity: 1,
@@ -16,17 +16,17 @@ export function StoreChangeModal({ isOpen, onClose, onConfirm }) {
       scale: 1,
       transition: {
         type: "spring",
-        damping: 25,
-        stiffness: 300,
-        duration: 0.3
+        damping: 30,
+        stiffness: 400,
+        duration: 0.25
       }
     },
     exit: {
       opacity: 0,
-      y: 50,
-      scale: 0.95,
+      y: 30,
+      scale: 0.96,
       transition: {
-        duration: 0.2
+        duration: 0.15
       }
     }
   };
@@ -41,23 +41,31 @@ export function StoreChangeModal({ isOpen, onClose, onConfirm }) {
       y: 0,
       transition: {
         type: "spring",
-        damping: 30,
-        stiffness: 300
+        damping: 35,
+        stiffness: 400,
+        duration: 0.3
       }
     },
     exit: {
       opacity: 0,
       y: '100%',
       transition: {
-        duration: 0.25
+        duration: 0.2,
+        ease: "easeInOut"
       }
     }
   };
 
   const overlayVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    exit: { opacity: 0 }
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.15 }
+    },
+    exit: { 
+      opacity: 0,
+      transition: { duration: 0.1 }
+    }
   };
 
   const modalContent = (
@@ -70,12 +78,12 @@ export function StoreChangeModal({ isOpen, onClose, onConfirm }) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-md"
             onClick={onClose}
           />
 
           {/* Modal Container */}
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8 pointer-events-none">
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-8 pointer-events-none">
             <div className="pointer-events-auto">
 
           {/* Modal - Desktop/Tablet (≥768px) */}

@@ -288,7 +288,7 @@ export const Header = memo(function Header() {
                   )}
                 </Button>
 
-                {/* Desktop Cart Dropdown */}
+                {/* Desktop Cart Dropdown - Solo en desktop grande (lg+) */}
                 <div className="hidden lg:block">
                   <CartDropdown
                     isOpen={isCartDropdownOpen}

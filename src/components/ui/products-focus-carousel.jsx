@@ -469,7 +469,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                             {title}
                         </h2>
                         <p className="text-gray-300 max-w-2xl mx-auto text-sm md:text-base">
-                            Descubre nuestras deliciosas empanadas artesanales, preparadas con los mejores ingredientes.
+                            Descubri nuestras deliciosas empanadas artesanales, preparadas con los mejores ingredientes.
                         </p>
                     </div>
                 )}

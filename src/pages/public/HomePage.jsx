@@ -340,7 +340,7 @@ export function HomePage() {
                             <AnimatedGradientText>Nonino Empanadas</AnimatedGradientText>?
                         </h2>
                         <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto px-2 drop-shadow-md">
-                            Descubre lo que nos hace únicos y por qué miles de clientes confían en nosotros
+                            Descubri lo que nos hace únicos y por qué miles de clientes confían en nosotros
                         </p>
                     </motion.div>
 
@@ -538,7 +538,7 @@ export function HomePage() {
                             ¿Listo para disfrutar?
                         </h2>
                         <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-white/90 max-w-2xl mx-auto px-2">
-                            Haz tu pedido ahora y recibe nuestras deliciosas empanadas
+                            Hace tu pedido ahora y recibi nuestras deliciosas empanadas
                             en la comodidad de tu hogar
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">

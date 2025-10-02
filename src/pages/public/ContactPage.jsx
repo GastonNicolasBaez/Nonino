@@ -41,8 +41,8 @@ export function ContactPage() {
     {
       icon: Phone,
       title: "Teléfono",
-      details: ["+54 11 1234-5678", "+54 11 8765-4321"],
-      action: "tel:+541112345678"
+      details: ["+54 2972 42-5072", "+54 2972 41-0400"],
+      action: "tel:+542972425072"
     },
     {
       icon: Mail,
@@ -53,13 +53,13 @@ export function ContactPage() {
     {
       icon: MapPin,
       title: "Dirección",
-      details: ["Av. San Martín 123, Centro", "Calle Belgrano 456, Zona Norte"],
-      action: "https://maps.google.com"
+      details: ["General Villegas 745, Centro", "El Molino, Ruta 40"],
+      action: "https://share.google/A8WSr3Ic4LjFV2CUV"
     },
     {
       icon: Clock,
       title: "Horarios",
-      details: ["Lun-Vie: 11:00 - 23:00", "Sáb-Dom: 11:00 - 24:00"]
+      details: ["Lun-Dom:  11:00 - 15:00 / 19:00 - 23:00"]
     }
   ];
 

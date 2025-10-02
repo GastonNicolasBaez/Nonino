@@ -15,8 +15,8 @@ const accordionItems = [
     title: 'Local Ruta 40',
     type: 'store',
     address: 'Ruta Nacional 40, Km 1234, San Martín de los Andes',
-    phone: '(02972) 444-555',
-    hours: 'Lun a Dom: 11:00 - 23:00',
+    phone: '+54 2972 41-0400',
+    hours: 'Lun a Dom: 11:00 - 15:00 / 19:00 - 23:00',
     imageUrl: localRuta402560,
     srcSet: `${localRuta40640} 640w, ${localRuta401024} 1024w, ${localRuta401920} 1920w, ${localRuta402560} 2560w`,
     blurDataURL: localRuta40Blur,
@@ -27,8 +27,8 @@ const accordionItems = [
     title: 'Local Villegas',
     type: 'store',
     address: 'Av. Villegas 567, San Martín de los Andes',
-    phone: '(02972) 444-666',
-    hours: 'Lun a Dom: 12:00 - 00:00',
+    phone: '+54 2972 42-5072',
+    hours: 'Lun a Dom: 11:00 - 15:00 / 19:00 - 23:00',
     imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop',
     description: 'Ambiente acogedor en el centro de la ciudad'
   },
@@ -42,7 +42,7 @@ const accordionItems = [
     imageUrl: Fabrica2560,
     srcSet: `${Fabrica640} 640w, ${Fabrica1024} 1024w, ${Fabrica1920} 1920w, ${Fabrica2560} 2560w`,
     blurDataURL: FabricaBlur,
-    description: 'Centro de producción con más de 25 años de experiencia'
+    description: 'En nuestra fabrica cada empanada es preparada con el sabor de lo casero.'
   },
   {
     id: 4,

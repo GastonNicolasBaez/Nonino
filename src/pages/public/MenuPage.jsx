@@ -25,10 +25,18 @@ export function MenuPage() {
         };
 
         checkIfMobile();
-        window.addEventListener('resize', checkIfMobile);
+        // Throttling para mejor performance
+        let timeoutId;
+        const throttledResize = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(checkIfMobile, 100);
+        };
+
+        window.addEventListener('resize', throttledResize);
 
         return () => {
-            window.removeEventListener('resize', checkIfMobile);
+            clearTimeout(timeoutId);
+            window.removeEventListener('resize', throttledResize);
         };
     }, []);
 

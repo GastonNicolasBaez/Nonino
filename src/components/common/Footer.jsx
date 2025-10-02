@@ -81,9 +81,9 @@ export function Footer() {
 
       {/* Main Footer */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-12">
           {/* Brand - Simplificado en móvil */}
-          <div className="space-y-3 sm:space-y-4 col-span-1 lg:col-span-1 text-center lg:text-left">
+          <div className="space-y-3 sm:space-y-4 md:col-span-2 lg:col-span-1 text-center md:text-left lg:text-left">
             <div className="flex items-center justify-center lg:justify-start space-x-2">
               <motion.div
                 className="text-2xl sm:text-3xl"

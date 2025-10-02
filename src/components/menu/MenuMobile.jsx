@@ -121,11 +121,11 @@ export function MenuMobile({
                             <span className="text-sm text-gray-300">¡Apúrate que vuelan!</span>
                         </div>
 
-                        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                        <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide lg:overflow-x-visible pb-2 snap-x snap-mandatory">
                             {todaysPicks.map((product) => (
-                                <div key={product.id} className="flex-none w-44">
+                                <div key={product.id} className="flex-none w-40 xs:w-44 sm:w-48 snap-start">
                                     <Card
-                                        className="overflow-hidden hover:shadow-md transition-shadow h-[200px] flex flex-col cursor-pointer bg-empanada-dark border-empanada-light-gray"
+                                        className="overflow-hidden hover:shadow-md transition-all duration-200 hover:scale-105 h-[200px] flex flex-col cursor-pointer bg-empanada-dark border-empanada-light-gray"
                                         onClick={() => handleProductClick(product)}
                                     >
                                         <div className="h-24 bg-empanada-medium relative flex-shrink-0">
@@ -284,13 +284,14 @@ export function MenuMobile({
                                         </Button>
                                     </motion.div>
                                 ) : (
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                         {filteredProducts.map((product) => (
                                             <motion.div
                                                 key={product.id}
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ duration: 0.3 }}
+                                                className="snap-start"
                                             >
                                                 <ProductCard product={product} />
                                             </motion.div>

@@ -328,13 +328,14 @@ export function HomePage() {
                 {/* Background Image with Parallax Effect - OPTIMIZADO CON WEBP */}
                 <motion.div
                     key={`hero-${initKey}-${imagesReady ? 'ready' : 'loading'}`}
-                    className="absolute inset-0 w-full h-[180%] -top-[20%] md:-top-[30%] lg:-top-[40%] xl:-top-[50%] z-[-1]"
+                    className="absolute inset-0 w-full h-[180%] -top-[20%] md:-top-[25%] lg:-top-[35%] xl:-top-[45%] z-[-1]"
                     aria-label="Vista panorámica de San Martín de los Andes, Patagonia Argentina - Cordillera de los Andes"
                     role="img"
                     style={{
                         backgroundImage: heroImage ? `url(${heroImage})` : undefined,
                         backgroundSize: "cover",
                         backgroundPosition: "center top",
+                        backgroundRepeat: "no-repeat",
                         y,
                         // GPU acceleration para parallax suave
                         willChange: 'transform',
@@ -365,7 +366,7 @@ export function HomePage() {
                             by="word"
                             delay={0.3}
                             duration={0.8}
-                            className="text-6xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-12xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
+                            className="text-5xl xs:text-6xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl 2xl:text-12xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >
                             Vas a volver

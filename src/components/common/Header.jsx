@@ -343,7 +343,9 @@ export const Header = memo(function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   "lg:hidden h-10 w-10 sm:h-11 sm:w-11",
-                  "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
+                  "text-white hover:text-empanada-golden hover:bg-empanada-golden/10",
+                  "transition-all duration-200 ease-in-out",
+                  "focus:ring-2 focus:ring-empanada-golden/50 focus:outline-none"
                 )}
                 aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
                 aria-expanded={isMenuOpen}
@@ -373,8 +375,13 @@ export const Header = memo(function Header() {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="fixed right-0 top-0 h-full w-full max-w-sm bg-empanada-dark shadow-2xl"
+              transition={{ 
+                type: "spring", 
+                damping: 25, 
+                stiffness: 300,
+                duration: 0.4 
+              }}
+              className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-empanada-dark shadow-2xl border-l border-empanada-light-gray"
             >
               {/* Header */}
               <div className="p-4 sm:p-6 border-b border-empanada-light-gray bg-empanada-dark">

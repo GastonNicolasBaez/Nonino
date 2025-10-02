@@ -13,7 +13,9 @@ import {
 
     getAdminOrdersGetOrderByIdQueryFunction,
     postPublicOrdersCreateOrderQueryFunction,
-    postPublicOrdersCreatePreferenceQueryFunction
+    postPublicOrdersCreatePreferenceQueryFunction,
+
+    postPublicOrdersCreatePrintJobQueryFunction,
 } from '@/config/apiPublicQueryFunctions';
 import { getStorageItem, setStorageItem } from '@/lib/utils';
 import { STORAGE_KEYS } from '@/constants';
@@ -144,6 +146,11 @@ const PublicDataProvider = ({ children }) => {
         mutationFn: postPublicOrdersCreatePreferenceQueryFunction,
     });
 
+    // print job create
+    const { mutateAsync: callPublicCreatePrintJob, isPending: callPublicCreatePrintJobLoading } = useMutation({
+        mutationKey: ['publicCreatePrintJob'],
+        mutationFn: postPublicOrdersCreatePrintJobQueryFunction,
+    });
 
     useEffect(() => {
         if (sucursalSeleccionada) {
@@ -188,7 +195,10 @@ const PublicDataProvider = ({ children }) => {
             callPublicCreateOrder,
             callPublicCreateOrderLoading,
             callPublicCreatePreference,
-            callPublicCreatePreferenceLoading
+            callPublicCreatePreferenceLoading,
+
+            callPublicCreatePrintJob,
+            callPublicCreatePrintJobLoading,
         }}>
             {children}
         </PublicDataContext.Provider>

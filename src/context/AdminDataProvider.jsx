@@ -34,6 +34,7 @@ import {
 } from '@/config/apiStoresQueryFunctions';
 import {
     getPublicCatalogQueryFunction,
+    postPublicOrdersCreatePrintJobQueryFunction
 } from '@/config/apiPublicQueryFunctions';
 import {
     getAdminInventoryMaterialsQueryFunction,
@@ -620,6 +621,12 @@ const AdminDataProvider = ({ children }) => {
         }
     });
 
+    // public print job
+    const { mutateAsync: callPublicCreatePrintJob, isPending: callPublicCreatePrintJobLoading } = useMutation({
+            mutationKey: ['publicCreatePrintJob'],
+            mutationFn: postPublicOrdersCreatePrintJobQueryFunction,
+        });
+
 
 
     const showDebugStateInfo = () => {
@@ -761,6 +768,9 @@ const AdminDataProvider = ({ children }) => {
             callCreateOrder,
             callOrderPayCash,
             callOrderClose,
+
+            callPublicCreatePrintJob,
+            callPublicCreatePrintJobLoading
         }}>
             {children}
         </AdminDataContext.Provider>

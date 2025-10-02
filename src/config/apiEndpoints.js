@@ -4,4 +4,5 @@ export const ENDPOINTS = {
     "auth": 'https://nonino-auth.fly.dev',
     "inventory": 'https://nonino-inventory.fly.dev',
     "orders": 'https://nonino-orders.fly.dev',
+    "printer": 'https://nonino-printer.fly.dev',
 };

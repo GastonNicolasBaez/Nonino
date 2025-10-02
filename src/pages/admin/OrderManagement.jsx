@@ -47,8 +47,11 @@ import { generateOrdersReportPDF, downloadPDF } from "../../services/pdfService"
 import { SectionHeader, CustomSelect } from "@/components/branding";
 import { TicketPreview } from "../../components/common/TicketPreview";
 
+import { formatToEscPos } from "@/services/printFormatter";
+
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
+import { usePublicData } from "@/context/PublicDataProvider";
 
 // Función para generar HTML de la comanda para cocina
 function generateTicketHTML(order) {
@@ -286,8 +289,8 @@ function OrderViewModal({ order, onClose }) {
                                                             <tr key={index} className="border-t border-gray-200 dark:border-empanada-light-gray">
                                                                 <td className="p-3 text-gray-900 dark:text-white">{item.name}</td>
                                                                 <td className="text-center p-3 text-gray-900 dark:text-white">{item.quantity}</td>
-                                                                <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.price)}</td>
-                                                                <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.total || item.quantity * item.price)}</td>
+                                                                <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.unitPrice)}</td>
+                                                                <td className="text-right p-3 text-gray-900 dark:text-white">{formatPrice(item.quantity * item.unitPrice)}</td>
                                                             </tr>
                                                         ))
                                                     ) : (
@@ -359,6 +362,7 @@ export function OrderManagement() {
         callCreateOrder,
         callOrderPayCash,
         callOrderClose,
+        callPublicCreatePrintJob
     } = useAdminData();
 
     const session = useSession();
@@ -464,58 +468,74 @@ export function OrderManagement() {
     };
 
     const handlePrintOrder = async (order) => {
+        // try {
+        //     // Crear un componente temporal para la impresión
+        //     const tempDiv = document.createElement('div');
+        //     tempDiv.style.position = 'absolute';
+        //     tempDiv.style.left = '-9999px';
+        //     tempDiv.style.width = '384px';
+        //     tempDiv.style.fontFamily = 'monospace';
+        //     tempDiv.style.fontSize = '12px';
+        //     tempDiv.style.lineHeight = '1.4';
+        //     tempDiv.style.color = '#000';
+        //     tempDiv.style.backgroundColor = '#fff';
+
+        //     // Convertir orden al formato esperado por el sistema de impresión
+        //     const printableOrder = {
+        //         id: order.id,
+        //         table: order.table || `Cliente: ${order.customerName}`,
+        //         waiter: order.waiter || 'Sistema',
+        //         time: order.orderDate || order.date || new Date().toISOString(),
+        //         items: Array.isArray(order.items) ? order.items.map(item => ({
+        //             qty: item.quantity || item.qty || 1,
+        //             name: item.name,
+        //             notes: item.notes || ''
+        //         })) : [],
+        //         subtotal: order.subtotal,
+        //         tax: order.tax,
+        //         total: order.total,
+        //         payment: order.paymentMethod || 'Efectivo'
+        //     };
+
+        //     // Generar HTML del ticket
+        //     const ticketHTML = generateTicketHTML(printableOrder);
+        //     tempDiv.innerHTML = ticketHTML;
+        //     document.body.appendChild(tempDiv);
+
+        //     // Crear referencia para el elemento
+        //     const elementRef = { current: tempDiv };
+
+        //     const { printOrder } = await import("../../services/printerSender");
+        //     const mode = process.env.NODE_ENV === 'development' ? 'dev' : 'prod';
+
+        //     await printOrder(printableOrder, { mode, elementRef });
+
+        //     // Limpiar elemento temporal
+        //     document.body.removeChild(tempDiv);
+
+        //     if (mode === 'dev') {
+        //         toast.success("PDF del ticket descargado correctamente");
+        //     } else {
+        //         toast.success("Ticket enviado a impresora");
+        //     }
+        // } catch (error) {
+        //     console.error('Error al imprimir:', error);
+        //     toast.error("Error al procesar la impresión");
+        // }
+
+        const escFormattedOrder = formatToEscPos(order);
+        const base64Order = escFormattedOrder.toString("base64");
+        const encryptedId = btoa("AmiAmig0Fr4nki3L3GustalANaveg");
+
         try {
-            // Crear un componente temporal para la impresión
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.width = '384px';
-            tempDiv.style.fontFamily = 'monospace';
-            tempDiv.style.fontSize = '12px';
-            tempDiv.style.lineHeight = '1.4';
-            tempDiv.style.color = '#000';
-            tempDiv.style.backgroundColor = '#fff';
-
-            // Convertir orden al formato esperado por el sistema de impresión
-            const printableOrder = {
-                id: order.id,
-                table: order.table || `Cliente: ${order.customerName}`,
-                waiter: order.waiter || 'Sistema',
-                time: order.orderDate || order.date || new Date().toISOString(),
-                items: Array.isArray(order.items) ? order.items.map(item => ({
-                    qty: item.quantity || item.qty || 1,
-                    name: item.name,
-                    notes: item.notes || ''
-                })) : [],
-                subtotal: order.subtotal,
-                tax: order.tax,
-                total: order.total,
-                payment: order.paymentMethod || 'Efectivo'
-            };
-
-            // Generar HTML del ticket
-            const ticketHTML = generateTicketHTML(printableOrder);
-            tempDiv.innerHTML = ticketHTML;
-            document.body.appendChild(tempDiv);
-
-            // Crear referencia para el elemento
-            const elementRef = { current: tempDiv };
-
-            const { printOrder } = await import("../../services/printerSender");
-            const mode = process.env.NODE_ENV === 'development' ? 'dev' : 'prod';
-
-            await printOrder(printableOrder, { mode, elementRef });
-
-            // Limpiar elemento temporal
-            document.body.removeChild(tempDiv);
-
-            if (mode === 'dev') {
-                toast.success("PDF del ticket descargado correctamente");
-            } else {
-                toast.success("Ticket enviado a impresora");
-            }
-        } catch (error) {
-            console.error('Error al imprimir:', error);
+            console.log(base64Order);
+            console.log(encryptedId);
+            // callPublicCreatePrintJob({
+            //     _printJobBase64: base64Order,
+            //     _basic: encryptedId
+            // });
+            toast.success("Ticket enviado a impresora");
+        } catch {
             toast.error("Error al procesar la impresión");
         }
     };
@@ -612,9 +632,9 @@ export function OrderManagement() {
                         <table className="w-full">
                             <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                                 <tr>
-                                    <th className="text-left p-4">N° Orden</th>
-                                    {/* <th className="text-left p-4">Cliente</th> */}
+                                    <th className="text-left p-4">N°</th>
                                     <th className="text-left p-4">Fecha</th>
+                                    <th className="text-left p-4">Entrega</th>                                    
                                     <th className="text-left p-4">Estado</th>
                                     <th className="text-left p-4">Items</th>
                                     <th className="text-right p-4">Total</th>
@@ -632,18 +652,13 @@ export function OrderManagement() {
                                             className="border-b admin-table-row"
                                         >
                                             <td className="p-4">
-                                                <span className="font-mono text-sm">{order.id}</span>
+                                                <span className="font-mono text-sm">{order.orderNumber}</span>
                                             </td>
-                                            {/* <td className="p-4">
-                                            <div>
-                                                <p className="font-medium">{order.customerName}</p>
-                                                {order.customerEmail && (
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400">{order.customerEmail}</p>
-                                                )}
-                                            </div>
-                                        </td> */}
                                             <td className="p-4">
-                                                <span className="text-sm">{formatDateTime(order.orderDate)}</span>
+                                                <span className="text-sm">{new Date(order.createdAt).toLocaleTimeString()}</span>
+                                            </td>
+                                            <td className="p-4">
+                                                <span className="text-sm">{order.fulfillment}</span>
                                             </td>
                                             <td className="p-4">
                                                 {/* <CustomSelect

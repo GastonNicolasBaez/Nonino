@@ -118,6 +118,41 @@ export function ZoomParallax({ images }) {
         };
     }, []);
 
+    // Habilitar zoom para elementos interactivos del parallax
+    useEffect(() => {
+        const handleParallaxInteraction = (e) => {
+            const target = e.target;
+            const isInteractiveImage = target.closest('.interactive-image');
+            
+            if (isInteractiveImage) {
+                // Encontrarse en el parallax y es interactivo
+                if (window.enableZoom) {
+                    window.enableZoom();
+                }
+                
+                // Añadir listener para detectar salida del parallax
+                const handleParallaxExit = () => {
+                    if (!target.closest('.zoom-parallax-container')) {
+                        if (window.disableZoom) {
+                            window.disableZoom();
+                        }
+                        document.removeEventListener('touchmove', handleParallaxExit);
+                        document.removeEventListener('touchend', handleParallaxExit);
+                    }
+                };
+                
+                document.addEventListener('touchmove', handleParallaxExit, { passive: true });
+                document.addEventListener('touchend', handleParallaxExit, { passive: true });
+            }
+        };
+
+        document.addEventListener('touchstart', handleParallaxInteraction, { passive: true });
+        
+        return () => {
+            document.removeEventListener('touchstart', handleParallaxInteraction);
+        };
+    }, []);
+
     // Si la primera imagen ya está cacheada, marcarla como cargada y notificar scroll
     useEffect(() => {
         const img = firstImgRef.current;
@@ -208,7 +243,7 @@ export function ZoomParallax({ images }) {
     const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
 
     return (
-        <div ref={container} className={`relative ${isMobile ? 'min-h-[210vh]' : 'min-h-[310vh]'} pb-0 bg-gradient-to-b from-black via-empanada-darker via-empanada-dark to-empanada-medium`}>
+        <div ref={container} className={`relative zoom-parallax-container ${isMobile ? 'min-h-[210vh]' : 'min-h-[310vh]'} pb-0 bg-gradient-to-b from-black via-empanada-darker via-empanada-dark to-empanada-medium`}>
             {/* Degradado dinámico superpuesto que evoluciona con el scroll */}
             <motion.div
                 className="absolute inset-0 bg-gradient-to-b from-empanada-darker/60 via-empanada-dark/40 to-transparent"
@@ -284,7 +319,7 @@ export function ZoomParallax({ images }) {
                                     <img
                                         src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
                                         alt={alt || `Imagen ${index + 1}`}
-                                        className={`h-full w-full object-cover rounded-lg ${
+                                        className={`interactive-image h-full w-full object-cover rounded-lg ${
                                             isMobile ?
                                                 "transition-none" : // Sin transiciones en móvil
                                                 "transition-all duration-300 group-hover:brightness-75"

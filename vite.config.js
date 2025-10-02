@@ -44,9 +44,13 @@ export default defineConfig({
                         if (id.includes('embla-carousel')) {
                             return 'vendor-carousel';
                         }
-                        // Charts - solo Recharts (el resto no se usa)
+                        // Recharts - separado de Redux para evitar conflictos
                         if (id.includes('recharts')) {
-                            return 'vendor-charts';
+                            return 'vendor-recharts';
+                        }
+                        // Redux (viene con recharts) - chunk separado
+                        if (id.includes('redux') || id.includes('@reduxjs')) {
+                            return 'vendor-redux';
                         }
                         // Lucide icons
                         if (id.includes('lucide-react')) {
@@ -97,6 +101,10 @@ export default defineConfig({
             'react-dom',
             'react-router',
             'framer-motion',
+            'recharts',              // Pre-bundlear recharts
+            'react-is',              // Forzar versión única
+            '@reduxjs/toolkit',      // Dependencia de recharts
+            'react-redux'            // Dependencia de recharts
         ],
         exclude: [],
     },

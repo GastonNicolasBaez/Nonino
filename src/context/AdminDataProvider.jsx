@@ -623,9 +623,12 @@ const AdminDataProvider = ({ children }) => {
 
     // public print job
     const { mutateAsync: callPublicCreatePrintJob, isPending: callPublicCreatePrintJobLoading } = useMutation({
-            mutationKey: ['publicCreatePrintJob'],
-            mutationFn: postPublicOrdersCreatePrintJobQueryFunction,
-        });
+        mutationKey: ['publicCreatePrintJob'],
+        mutationFn: postPublicOrdersCreatePrintJobQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
+    });
 
 
 

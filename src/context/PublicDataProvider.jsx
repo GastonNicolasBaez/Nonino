@@ -134,22 +134,34 @@ const PublicDataProvider = ({ children }) => {
     const { mutateAsync: callPublicOrderById, isPending: callPublicOrderByIdLoading } = useMutation({
         mutationKey: ['publicOrderById'],
         mutationFn: getAdminOrdersGetOrderByIdQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     const { mutateAsync: callPublicCreateOrder, isPending: callPublicCreateOrderLoading } = useMutation({
         mutationKey: ['publicCreateOrder'],
         mutationFn: postPublicOrdersCreateOrderQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     const { mutateAsync: callPublicCreatePreference, isPending: callPublicCreatePreferenceLoading } = useMutation({
         mutationKey: ['publicCreatePreference'],
         mutationFn: postPublicOrdersCreatePreferenceQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     // print job create
     const { mutateAsync: callPublicCreatePrintJob, isPending: callPublicCreatePrintJobLoading } = useMutation({
         mutationKey: ['publicCreatePrintJob'],
         mutationFn: postPublicOrdersCreatePrintJobQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
     });
 
     useEffect(() => {

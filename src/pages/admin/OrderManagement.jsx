@@ -52,6 +52,7 @@ import { formatToEscPos } from "@/services/printFormatter";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
 import { usePublicData } from "@/context/PublicDataProvider";
+import html2canvas from "html2canvas";
 
 // Función para generar HTML de la comanda para cocina
 function generateTicketHTML(order) {
@@ -468,75 +469,53 @@ export function OrderManagement() {
     };
 
     const handlePrintOrder = async (order) => {
-        // try {
-        //     // Crear un componente temporal para la impresión
-        //     const tempDiv = document.createElement('div');
-        //     tempDiv.style.position = 'absolute';
-        //     tempDiv.style.left = '-9999px';
-        //     tempDiv.style.width = '384px';
-        //     tempDiv.style.fontFamily = 'monospace';
-        //     tempDiv.style.fontSize = '12px';
-        //     tempDiv.style.lineHeight = '1.4';
-        //     tempDiv.style.color = '#000';
-        //     tempDiv.style.backgroundColor = '#fff';
+        // Crear un componente temporal para la impresión
+        const tempDiv = document.createElement('div');
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.width = '384px';
+        tempDiv.style.fontFamily = 'monospace';
+        tempDiv.style.fontSize = '12px';
+        tempDiv.style.lineHeight = '1.4';
+        tempDiv.style.color = '#000';
+        tempDiv.style.backgroundColor = '#fff';
 
-        //     // Convertir orden al formato esperado por el sistema de impresión
-        //     const printableOrder = {
-        //         id: order.id,
-        //         table: order.table || `Cliente: ${order.customerName}`,
-        //         waiter: order.waiter || 'Sistema',
-        //         time: order.orderDate || order.date || new Date().toISOString(),
-        //         items: Array.isArray(order.items) ? order.items.map(item => ({
-        //             qty: item.quantity || item.qty || 1,
-        //             name: item.name,
-        //             notes: item.notes || ''
-        //         })) : [],
-        //         subtotal: order.subtotal,
-        //         tax: order.tax,
-        //         total: order.total,
-        //         payment: order.paymentMethod || 'Efectivo'
-        //     };
+        // Convertir orden al formato esperado por el sistema de impresión
+        const printableOrder = {
+            id: order.id,
+            table: order.table || `Cliente: ${order.customerName}`,
+            waiter: order.waiter || 'Sistema',
+            time: order.orderDate || order.date || new Date().toISOString(),
+            items: Array.isArray(order.items) ? order.items.map(item => ({
+                qty: item.quantity || item.qty || 1,
+                name: item.name,
+                notes: item.notes || ''
+            })) : [],
+            subtotal: order.subtotal,
+            tax: order.tax,
+            total: order.total,
+            payment: order.paymentMethod || 'Efectivo'
+        };
 
-        //     // Generar HTML del ticket
-        //     const ticketHTML = generateTicketHTML(printableOrder);
-        //     tempDiv.innerHTML = ticketHTML;
-        //     document.body.appendChild(tempDiv);
+        // Generar HTML del ticket
+        const ticketHTML = generateTicketHTML(printableOrder);
+        tempDiv.innerHTML = ticketHTML;
+        document.body.appendChild(tempDiv);
 
-        //     // Crear referencia para el elemento
-        //     const elementRef = { current: tempDiv };
-
-        //     const { printOrder } = await import("../../services/printerSender");
-        //     const mode = process.env.NODE_ENV === 'development' ? 'dev' : 'prod';
-
-        //     await printOrder(printableOrder, { mode, elementRef });
-
-        //     // Limpiar elemento temporal
-        //     document.body.removeChild(tempDiv);
-
-        //     if (mode === 'dev') {
-        //         toast.success("PDF del ticket descargado correctamente");
-        //     } else {
-        //         toast.success("Ticket enviado a impresora");
-        //     }
-        // } catch (error) {
-        //     console.error('Error al imprimir:', error);
-        //     toast.error("Error al procesar la impresión");
-        // }
-
-        const escFormattedOrder = formatToEscPos(order);
-        const base64Order = escFormattedOrder.toString("base64");
+        const canvas = await html2canvas(tempDiv, {width: 384, scale: 2});
+        const ticketEncoded = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
         const encryptedId = btoa("AmiAmig0Fr4nki3L3GustalANaveg");
 
         try {
-            console.log(base64Order);
-            console.log(encryptedId);
-            // callPublicCreatePrintJob({
-            //     _printJobBase64: base64Order,
-            //     _basic: encryptedId
-            // });
+            await callPublicCreatePrintJob({
+                _printJobBase64: ticketEncoded,
+                _basic: encryptedId
+            });
             toast.success("Ticket enviado a impresora");
         } catch {
             toast.error("Error al procesar la impresión");
+        } finally {
+            document.body.removeChild(tempDiv);
         }
     };
 
@@ -634,7 +613,7 @@ export function OrderManagement() {
                                 <tr>
                                     <th className="text-left p-4">N°</th>
                                     <th className="text-left p-4">Fecha</th>
-                                    <th className="text-left p-4">Entrega</th>                                    
+                                    <th className="text-left p-4">Entrega</th>
                                     <th className="text-left p-4">Estado</th>
                                     <th className="text-left p-4">Items</th>
                                     <th className="text-right p-4">Total</th>
@@ -645,6 +624,7 @@ export function OrderManagement() {
                                 {filteredOrders.map((order) => {
                                     const payCashEnabled = order.status == statuses.PENDING;
                                     const closeOrderEnabled = order.status != statuses.COMPLETED;
+                                    const printEnabled = true;
 
                                     return (
                                         <tr
@@ -705,6 +685,7 @@ export function OrderManagement() {
                                                         size="sm"
                                                         onClick={() => handlePrintOrder(order)}
                                                         title="Imprimir"
+                                                        disabled={!printEnabled}
                                                     >
                                                         <Printer className="w-4 h-4" />
                                                     </Button>

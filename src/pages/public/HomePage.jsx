@@ -22,6 +22,7 @@ import {
 export function HomePage() {
 
     const { productosTodos: productos, publicDataLoading: loading, sucursalSeleccionada } = usePublicData();
+    const publicData = usePublicData();
 
     const [promotions] = useState([]);
     const [isSmallMobile, setIsSmallMobile] = useState(() => {
@@ -204,6 +205,23 @@ export function HomePage() {
         return () => { cancelled = true; };
     }, [heroImage, featuresImage]);
 
+    // Prefetch de Menú (chunk y datos) cuando hay tiempo o ya hay sucursal
+    useEffect(() => {
+        const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1500));
+        const cancelIdle = window.cancelIdleCallback || clearTimeout;
+        const id = idle(async () => {
+            try {
+                // Prefetch del chunk de MenuPage en background
+                import('@/pages/public/MenuPage.jsx').catch(() => {});
+                // Prefetch de datos si hay sucursal o igualmente para calentar caches
+                if (publicData?.callPublicProductos) publicData.callPublicProductos().catch(() => {});
+                if (publicData?.callPublicCombos) publicData.callPublicCombos().catch(() => {});
+                if (sucursalSeleccionada && publicData?.callPublicCatalog) publicData.callPublicCatalog(sucursalSeleccionada).catch(() => {});
+            } catch {}
+        });
+        return () => cancelIdle(id);
+    }, [sucursalSeleccionada]);
+
     const features = [
         {
             icon: Clock,
@@ -369,7 +387,7 @@ export function HomePage() {
             </div>
 
             {/* Features Section */}
-            <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
+            <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' }}>
                 {/* Background Image with Parallax Effect - OPTIMIZADO CON WEBP */}
                 <motion.div
                     key={`features-${initKey}-${imagesReady ? 'ready' : 'loading'}`}

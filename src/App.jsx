@@ -4,7 +4,6 @@ import PublicDataProvider from "./context/PublicDataProvider";
 import AdminDataProvider from "./context/AdminDataProvider";
 import ThemeProvider from "@/context/ThemeProvider";
 import SessionProvider from "@/context/SessionProvider";
-import { OrdersProvider } from "@/context/OrdersContext";
 import { Toaster } from "sonner";
 import { Suspense, lazy } from "react";
 
@@ -149,9 +148,7 @@ function App() {
                                     <AuthProvider allowedRole={'ADMIN'}>
                                         <ThemeProvider>
                                             <AdminDataProvider>
-                                                <OrdersProvider>
-                                                    <AdminLayout />
-                                                </OrdersProvider>
+                                                <AdminLayout />
                                             </AdminDataProvider>
                                         </ThemeProvider>
                                     </AuthProvider>
@@ -182,9 +179,7 @@ function App() {
                                     <AuthProvider allowedRole={'LOCAL'}>
                                         <ThemeProvider>
                                             <AdminDataProvider>
-                                                <OrdersProvider>
-                                                    <AdminLayout />
-                                                </OrdersProvider>
+                                                <AdminLayout />
                                             </AdminDataProvider>
                                         </ThemeProvider>
                                     </AuthProvider>
@@ -206,9 +201,7 @@ function App() {
                                     <AuthProvider allowedRole={'FABRICA'}>
                                         <ThemeProvider>
                                             <AdminDataProvider>
-                                                <OrdersProvider>
-                                                    <AdminLayout />
-                                                </OrdersProvider>
+                                                <AdminLayout />
                                             </AdminDataProvider>
                                         </ThemeProvider>
                                     </AuthProvider>

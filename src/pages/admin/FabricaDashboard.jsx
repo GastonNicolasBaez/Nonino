@@ -41,7 +41,6 @@ import {
 import { adminService } from "@/services/api";
 import { mockDashboardData } from "@/lib/mockData";
 import { formatPrice, formatDateTime } from "@/lib/utils";
-import { useOrders } from "@/context/OrdersContext";
 import { SectionHeader, StatsCards } from "@/components/branding";
 
 // ------------------ IMPORT ------------------ //
@@ -68,7 +67,7 @@ export function FabricaDashboard() {
   const navigate = useNavigate();
 
   // Usar el contexto de pedidos
-  const { pendingOrdersCount } = useOrders();
+  const pendingOrdersCount = 33;
 
   useEffect(() => {
     const fetchMetrics = async () => {

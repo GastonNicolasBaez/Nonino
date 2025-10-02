@@ -586,13 +586,14 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminOrders'],
         mutationFn: getAdminOrdersGetOrdersQueryFunction,
         onSuccess: (data) => {
-            if (session.userData.isAdmin) {
-                setOrders(data);
-            } else {
-                const filteredOrdersByStoreId = data.filter((o) => o.storeId == sucursalSeleccionada);
-                setOrders(filteredOrdersByStoreId);
-            }
-
+            // if (session.userData.isAdmin) {
+            //     setOrders(data);
+            // } else {
+            //     const filteredOrdersByStoreId = data.filter((o) => o.storeId == sucursalSeleccionada);
+            //     setOrders(filteredOrdersByStoreId);
+            // }
+            const filteredOrdersByStoreId = data.filter((o) => o.storeId == sucursalSeleccionada);
+            setOrders(filteredOrdersByStoreId);
         },
         onError: (error) => {
             console.log(error);
@@ -638,6 +639,7 @@ const AdminDataProvider = ({ children }) => {
             INVENTARIO_MATERIALES_SUCURSAL: inventarioMaterialesSucursal,
             INVENTARIO_PROODUCTOS_SUCURSAL: inventarioProductosSucursal,
             USERDATA: session.userData,
+            ORDERS: orders,
         }
         console.log(debugInfo);
     }

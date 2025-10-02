@@ -19,10 +19,12 @@ import { useSession } from "@/context/SessionProvider";
 import { usePublicData } from "@/context/PublicDataProvider";
 
 export function CheckoutPage() {
-    const { items, total, subtotal, discount, deliveryFee, createOrder, selectedStore } = useCart();
+    const { items, total, subtotal, discount, deliveryFee, clearCart, selectedStore } = useCart();
     const {
         callPublicCreateOrder,
         callPublicCreateOrderLoading,
+        callPublicCreatePreference,
+        callPublicCreatePreferenceLoading,
     } = usePublicData();
 
 
@@ -131,21 +133,24 @@ export function CheckoutPage() {
             }
 
             // crear la orden aca
-            const order = await callPublicCreateOrder(newOrder);
-
-            console.log(order);
+            const createdOrder = await callPublicCreateOrder(newOrder);
 
             // Si el método de pago es MercadoPago, aquí el backend se encargará
             // de generar el link de pago y redirigir al usuario
             if (orderData.paymentMethod === "mercadopago") {
+                const createdPreference = await callPublicCreatePreference({
+                    _orderId: createdOrder.id,
+                    _proof: createdOrder.proof
+                });
+                
                 toast.success("¡Pedido creado! Serás redirigido al pago...");
-                // En producción, el backend retornará el link de MercadoPago
-                // window.location.href = order.paymentUrl;
+                clearCart();
+                window.location.href = createdPreference.initPoint;
             } else {
+                clearCart();
                 toast.success("¡Pedido realizado exitosamente!");
+                navigate(`/tracking/${createdOrder.id}`);
             }
-
-            //navigate(`/tracking/${order.id}`);
         } catch (error) {
             console.error("Error al procesar el pedido:", error);
             toast.error("Error al procesar el pedido. Intenta nuevamente.");

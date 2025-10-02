@@ -110,9 +110,9 @@ export function CustomSelect({
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-md shadow-lg overflow-hidden">
           <div className="py-1">
-            {options.map((option) => (
+            {options.map((option, index) => (
               <button
-                key={option.value}
+                key={index}
                 type="button"
                 onClick={() => handleSelect(option.value)}
                 className={getOptionClasses(option.value)}

@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Store, TrendingUp, Users, Award, Phone, Mail } from 'lucide-react';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
-import fabrica from '@/assets/images/nonino_lateral.jpg';
+import {
+  nonino_lateralBlur,
+  nonino_lateral640,
+  nonino_lateral1024,
+  nonino_lateral1920,
+  nonino_lateral2560
+} from '@/assets/images/optimized';
 
 export function FranchiseModal({ isOpen, onClose }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const modalVariants = {
     hidden: {
       opacity: 0,
@@ -101,12 +109,33 @@ export function FranchiseModal({ isOpen, onClose }) {
 
             {/* Left Side - Image (Desktop only) */}
             <div className="hidden lg:block relative w-2/5 overflow-hidden">
-              <img
-                src={fabrica}
-                alt="Fábrica Nonino Empanadas San Martín de los Andes - Tradición artesanal patagónica"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: '40% center' }}
-              />
+              {/* Blur placeholder */}
+              {nonino_lateralBlur && !isLoaded && (
+                <img
+                  src={nonino_lateralBlur}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ filter: 'blur(20px)', transform: 'scale(1.1)', objectPosition: '40% center' }}
+                  aria-hidden="true"
+                />
+              )}
+
+              {/* Main responsive image */}
+              <picture>
+                <source
+                  type="image/webp"
+                  srcSet={`${nonino_lateral640} 640w, ${nonino_lateral1024} 1024w, ${nonino_lateral1920} 1920w, ${nonino_lateral2560} 2560w`}
+                  sizes="40vw"
+                />
+                <img
+                  src={nonino_lateral2560}
+                  alt="Fábrica Nonino Empanadas San Martín de los Andes - Tradición artesanal patagónica"
+                  className={`absolute inset-0 w-full h-full object-cover ${!isLoaded && nonino_lateralBlur ? 'opacity-0' : 'opacity-100'}`}
+                  style={{ objectPosition: '40% center', transition: 'opacity 0.3s ease-in-out' }}
+                  onLoad={() => setIsLoaded(true)}
+                />
+              </picture>
+
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-empanada-dark"></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             </div>
@@ -214,12 +243,33 @@ export function FranchiseModal({ isOpen, onClose }) {
 
             {/* Header Image */}
             <div className="relative h-48 overflow-hidden flex-shrink-0">
-              <img
-                src={fabrica}
-                alt="Fábrica Nonino Empanadas San Martín de los Andes - Tradición artesanal patagónica"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: '60% center' }}
-              />
+              {/* Blur placeholder */}
+              {nonino_lateralBlur && !isLoaded && (
+                <img
+                  src={nonino_lateralBlur}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ filter: 'blur(20px)', transform: 'scale(1.1)', objectPosition: '60% center' }}
+                  aria-hidden="true"
+                />
+              )}
+
+              {/* Main responsive image */}
+              <picture>
+                <source
+                  type="image/webp"
+                  srcSet={`${nonino_lateral640} 640w, ${nonino_lateral1024} 1024w, ${nonino_lateral1920} 1920w, ${nonino_lateral2560} 2560w`}
+                  sizes="100vw"
+                />
+                <img
+                  src={nonino_lateral2560}
+                  alt="Fábrica Nonino Empanadas San Martín de los Andes - Tradición artesanal patagónica"
+                  className={`absolute inset-0 w-full h-full object-cover ${!isLoaded && nonino_lateralBlur ? 'opacity-0' : 'opacity-100'}`}
+                  style={{ objectPosition: '60% center', transition: 'opacity 0.3s ease-in-out' }}
+                  onLoad={() => setIsLoaded(true)}
+                />
+              </picture>
+
               <div className="absolute inset-0 bg-gradient-to-t from-empanada-dark via-black/30 to-transparent"></div>
             </div>
 

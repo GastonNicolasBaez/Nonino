@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { motion } from "framer-motion";
 import { Heart, Plus, Star, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../ui/card";
@@ -9,7 +9,7 @@ import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
 
-export function ProductCard({ product, className }) {
+export const ProductCard = memo(function ProductCard({ product, className }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -181,4 +181,12 @@ export function ProductCard({ product, className }) {
       />
     </>
   );
-}
+}, (prevProps, nextProps) => {
+  // Custom comparador para evitar re-renders innecesarios
+  return (
+    prevProps.product.id === nextProps.product.id &&
+    prevProps.product.price === nextProps.product.price &&
+    prevProps.product.isAvailable === nextProps.product.isAvailable &&
+    prevProps.className === nextProps.className
+  );
+});

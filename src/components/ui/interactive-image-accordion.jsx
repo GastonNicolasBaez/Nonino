@@ -3,9 +3,10 @@ import { MapPin, Clock, Phone, Factory, Calendar } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WordPullUp } from './word-pull-up';
 import { FranchiseModal } from './FranchiseModal';
-import localRuta40 from '../../assets/images/localRuta40.jpg';
-import localVillegas from '../../assets/images/LocalVillegas.jpg';
-import fabrica from '../../assets/images/Fabrica.jpg';
+import {
+  localRuta40Blur, localRuta40640, localRuta401024, localRuta401920, localRuta402560,
+  FabricaBlur, Fabrica640, Fabrica1024, Fabrica1920, Fabrica2560
+} from '../../assets/images/optimized';
 
 // --- Data for the empanadas locations accordion ---
 const accordionItems = [
@@ -16,7 +17,9 @@ const accordionItems = [
     address: 'Ruta Nacional 40, Km 1234, San Martín de los Andes',
     phone: '(02972) 444-555',
     hours: 'Lun a Dom: 11:00 - 23:00',
-    imageUrl: localRuta40,
+    imageUrl: localRuta402560,
+    srcSet: `${localRuta40640} 640w, ${localRuta401024} 1024w, ${localRuta401920} 1920w, ${localRuta402560} 2560w`,
+    blurDataURL: localRuta40Blur,
     description: 'Nuestro local principal con vista a la cordillera'
   },
   {
@@ -26,7 +29,7 @@ const accordionItems = [
     address: 'Av. Villegas 567, San Martín de los Andes',
     phone: '(02972) 444-666',
     hours: 'Lun a Dom: 12:00 - 00:00',
-    imageUrl: localVillegas,
+    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop',
     description: 'Ambiente acogedor en el centro de la ciudad'
   },
   {
@@ -36,7 +39,9 @@ const accordionItems = [
     address: 'Parque Industrial, San Martín de los Andes',
     phone: '(02972) 444-888',
     hours: 'Lun a Vie: 06:00 - 18:00',
-    imageUrl: fabrica,
+    imageUrl: Fabrica2560,
+    srcSet: `${Fabrica640} 640w, ${Fabrica1024} 1024w, ${Fabrica1920} 1920w, ${Fabrica2560} 2560w`,
+    blurDataURL: FabricaBlur,
     description: 'Centro de producción con más de 25 años de experiencia'
   },
   {
@@ -53,6 +58,8 @@ const accordionItems = [
 
 // --- Accordion Item Component (Desktop) ---
 const AccordionItem = ({ item, isActive, onMouseEnter }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     <div
       className={cn(
@@ -63,16 +70,48 @@ const AccordionItem = ({ item, isActive, onMouseEnter }) => {
       )}
       onMouseEnter={onMouseEnter}
     >
+      {/* Blur placeholder */}
+      {item.blurDataURL && !isLoaded && (
+        <img
+          src={item.blurDataURL}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: 'blur(20px)', transform: 'scale(1.1)' }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Background Image */}
-      <img
-        src={item.imageUrl}
-        alt={item.title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = 'https://placehold.co/400x450/f59e0b/ffffff?text=Nonino+Empanadas';
-        }}
-      />
+      {item.srcSet ? (
+        <picture>
+          <source
+            type="image/webp"
+            srcSet={item.srcSet}
+            sizes="(max-width: 1024px) 400px, 400px"
+          />
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${!isLoaded && item.blurDataURL ? 'opacity-0' : 'opacity-100'}`}
+            style={{ transition: 'opacity 0.3s ease-in-out, transform 0.7s ease-in-out' }}
+            onLoad={() => setIsLoaded(true)}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://placehold.co/400x450/f59e0b/ffffff?text=Nonino+Empanadas';
+            }}
+          />
+        </picture>
+      ) : (
+        <img
+          src={item.imageUrl}
+          alt={item.title}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://placehold.co/400x450/f59e0b/ffffff?text=Nonino+Empanadas';
+          }}
+        />
+      )}
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -153,18 +192,52 @@ const AccordionItem = ({ item, isActive, onMouseEnter }) => {
 
 // --- Mobile/Tablet Card Component ---
 const MobileCard = ({ item }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     <div className="relative h-[320px] md:h-[350px] rounded-2xl overflow-hidden shadow-xl">
+      {/* Blur placeholder */}
+      {item.blurDataURL && !isLoaded && (
+        <img
+          src={item.blurDataURL}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: 'blur(20px)', transform: 'scale(1.1)' }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Background Image */}
-      <img
-        src={item.imageUrl}
-        alt={item.title}
-        className="absolute inset-0 w-full h-full object-cover"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = 'https://placehold.co/400x450/f59e0b/ffffff?text=Nonino+Empanadas';
-        }}
-      />
+      {item.srcSet ? (
+        <picture>
+          <source
+            type="image/webp"
+            srcSet={item.srcSet}
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className={`absolute inset-0 w-full h-full object-cover ${!isLoaded && item.blurDataURL ? 'opacity-0' : 'opacity-100'}`}
+            style={{ transition: 'opacity 0.3s ease-in-out' }}
+            onLoad={() => setIsLoaded(true)}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://placehold.co/400x450/f59e0b/ffffff?text=Nonino+Empanadas';
+            }}
+          />
+        </picture>
+      ) : (
+        <img
+          src={item.imageUrl}
+          alt={item.title}
+          className="absolute inset-0 w-full h-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://placehold.co/400x450/f59e0b/ffffff?text=Nonino+Empanadas';
+          }}
+        />
+      )}
 
       {/* Gradient overlay - más fuerte para legibilidad */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>

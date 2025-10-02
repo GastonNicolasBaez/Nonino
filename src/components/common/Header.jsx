@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useCallback } from "react";
 import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
@@ -23,7 +23,7 @@ import { cn } from "../../lib/utils";
 import { CartDropdown } from "./CartDropdown";
 import logoNonino from '@/assets/logos/nonino.png';
 
-export function Header() {
+export const Header = memo(function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
@@ -116,8 +116,8 @@ export function Header() {
 
   const isActive = (href) => location.pathname === href;
 
-  // Función para manejar click del carrito
-  const handleCartClick = () => {
+  // Función para manejar click del carrito - memoizada
+  const handleCartClick = useCallback(() => {
     if (windowWidth >= 1024) {
       // Desktop: usar dropdown
       setIsCartDropdownOpen(!isCartDropdownOpen);
@@ -125,10 +125,10 @@ export function Header() {
       // Mobile: usar sidebar
       setCartOpen(true);
     }
-  };
+  }, [windowWidth, isCartDropdownOpen, setCartOpen]);
 
-  // Función para manejar clicks en navegación
-  const handleNavClick = (e, href) => {
+  // Función para manejar clicks en navegación - memoizada
+  const handleNavClick = useCallback((e, href) => {
     // Si ya estamos en la página y hacemos click en el mismo enlace
     if (location.pathname === href) {
       e.preventDefault();
@@ -138,7 +138,7 @@ export function Header() {
         behavior: 'smooth'
       });
     }
-  };
+  }, [location.pathname]);
 
 
   return (
@@ -458,4 +458,4 @@ export function Header() {
       <div className="h-16 lg:h-20" />
     </>
   );
-}
+});

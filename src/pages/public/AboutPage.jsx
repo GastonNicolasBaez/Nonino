@@ -9,14 +9,16 @@ import { ZoomParallax } from "../../components/ui/zoom-parallax";
 import { AnimatedGradientText } from "../../components/ui/animated-gradient-text";
 import { WordPullUp } from "../../components/ui/word-pull-up";
 
-// Importar imágenes locales del parallax
-import parallax0 from "../../assets/images/parallax0.jpg";
-import parallax1 from "../../assets/images/parallax1.JPG";
-import parallax2 from "../../assets/images/parallax2.jpg";
-import parallax3 from "../../assets/images/parallax3.jpg";
-import parallax4 from "../../assets/images/parallax4.jpg";
-import parallax5 from "../../assets/images/parallax5.jpg";
-import parallax6 from "../../assets/images/parallax6.jpg";
+// Importar imágenes optimizadas del parallax
+import {
+  parallax0Blur, parallax0640, parallax01024, parallax01920, parallax02560,
+  parallax2Blur, parallax2640, parallax21024, parallax21920, parallax22560,
+  parallax3Blur, parallax3640, parallax31024, parallax31920, parallax32560,
+  parallax4Blur, parallax4640, parallax41024, parallax41920, parallax42560,
+  parallax5Blur, parallax5640, parallax51024, parallax51920, parallax52560,
+  parallax6Blur, parallax6640, parallax61024, parallax61920, parallax62560,
+  SanMartinBlur, SanMartin640, SanMartin1024, SanMartin1920, SanMartin2560
+} from "../../assets/images/optimized";
 
 export function AboutPage() {
   const parallaxRef = useRef(null);
@@ -100,31 +102,45 @@ export function AboutPage() {
 
   const parallaxImages = [
     {
-      src: parallax0,
+      src: parallax02560,
+      srcSet: `${parallax0640} 640w, ${parallax01024} 1024w, ${parallax01920} 1920w, ${parallax02560} 2560w`,
+      blurDataURL: parallax0Blur,
       alt: 'Empanadas doradas y crujientes - Index 0',
     },
     {
-      src: parallax1,
+      src: SanMartin2560,
+      srcSet: `${SanMartin640} 640w, ${SanMartin1024} 1024w, ${SanMartin1920} 1920w, ${SanMartin2560} 2560w`,
+      blurDataURL: SanMartinBlur,
       alt: 'Local principal de Nonino Empanadas - Index 1',
     },
     {
-      src: parallax2,
+      src: parallax22560,
+      srcSet: `${parallax2640} 640w, ${parallax21024} 1024w, ${parallax21920} 1920w, ${parallax22560} 2560w`,
+      blurDataURL: parallax2Blur,
       alt: 'Ingredientes frescos y naturales - Index 2',
     },
     {
-      src: parallax3,
+      src: parallax32560,
+      srcSet: `${parallax3640} 640w, ${parallax31024} 1024w, ${parallax31920} 1920w, ${parallax32560} 2560w`,
+      blurDataURL: parallax3Blur,
       alt: 'Cocina tradicional argentina - Index 3',
     },
     {
-      src: parallax4,
+      src: parallax42560,
+      srcSet: `${parallax4640} 640w, ${parallax41024} 1024w, ${parallax41920} 1920w, ${parallax42560} 2560w`,
+      blurDataURL: parallax4Blur,
       alt: 'Ambiente familiar y acogedor - Index 4',
     },
     {
-      src: parallax5,
+      src: parallax52560,
+      srcSet: `${parallax5640} 640w, ${parallax51024} 1024w, ${parallax51920} 1920w, ${parallax52560} 2560w`,
+      blurDataURL: parallax5Blur,
       alt: 'Tradición culinaria argentina - Index 5',
     },
     {
-      src: parallax6,
+      src: parallax62560,
+      srcSet: `${parallax6640} 640w, ${parallax61024} 1024w, ${parallax61920} 1920w, ${parallax62560} 2560w`,
+      blurDataURL: parallax6Blur,
       alt: 'Cocina profesional argentina - Index 6',
     },
   ];

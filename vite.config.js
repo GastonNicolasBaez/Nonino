@@ -14,5 +14,82 @@ export default defineConfig({
         https: true,
         port: 3000,
     },
-    base: "/demo/nonino/"
+    base: "/demo/nonino/",
+
+    // OPTIMIZACIONES DE BUILD
+    build: {
+        // Aumentar chunk size warning limit
+        chunkSizeWarningLimit: 1000,
+
+        // Configuración de Rollup para chunks optimizados
+        rollupOptions: {
+            output: {
+                // Manual chunks para mejor code splitting
+                manualChunks: (id) => {
+                    // Vendor chunks separados por categoría
+                    if (id.includes('node_modules')) {
+                        // React core
+                        if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+                            return 'vendor-react';
+                        }
+                        // Framer Motion (pesado)
+                        if (id.includes('framer-motion')) {
+                            return 'vendor-motion';
+                        }
+                        // Radix UI components
+                        if (id.includes('@radix-ui')) {
+                            return 'vendor-ui';
+                        }
+                        // Carousels
+                        if (id.includes('embla-carousel')) {
+                            return 'vendor-carousel';
+                        }
+                        // Charts y visualizaciones
+                        if (id.includes('@nivo') || id.includes('recharts') || id.includes('victory')) {
+                            return 'vendor-charts';
+                        }
+                        // Resto de vendors
+                        return 'vendor-other';
+                    }
+                },
+                // Nombres de chunks más descriptivos
+                chunkFileNames: 'assets/js/[name]-[hash].js',
+                entryFileNames: 'assets/js/[name]-[hash].js',
+                assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+            }
+        },
+
+        // Minificación agresiva
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true, // Remover console.log en producción
+                drop_debugger: true,
+                pure_funcs: ['console.log', 'console.info'], // Remover funciones específicas
+            },
+        },
+
+        // Source maps solo para errores
+        sourcemap: false,
+
+        // CSS code splitting
+        cssCodeSplit: true,
+
+        // Reportar tamaño comprimido
+        reportCompressedSize: true,
+
+        // Target moderno para mejor compresión
+        target: 'es2015',
+    },
+
+    // Optimizaciones de dependencies
+    optimizeDeps: {
+        include: [
+            'react',
+            'react-dom',
+            'react-router',
+            'framer-motion',
+        ],
+        exclude: [],
+    },
 })

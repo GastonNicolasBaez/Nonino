@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 export function ZoomParallax({ images }) {
     const container = useRef(null);
     const [isMobile, setIsMobile] = useState(false);
+    const [loadedImages, setLoadedImages] = useState({});
 
     const { scrollYProgress } = useScroll({
         target: container,
@@ -106,13 +107,14 @@ export function ZoomParallax({ images }) {
             {/* Degradado de transición para el final */}
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-empanada-medium to-transparent"></div>
             <div className="sticky top-0 h-screen overflow-hidden relative" style={{ transform: 'translateY(0)' }}>
-                {images.map(({ src, alt }, index) => {
+                {images.map(({ src, srcSet, blurDataURL, alt }, index) => {
                     const scale = scales[index % scales.length];
+                    const isLoaded = loadedImages[index];
 
                     return (
                         <motion.div
                             key={index}
-                            style={{ 
+                            style={{
                                 scale,
                                 // Optimizaciones para móvil
                                 ...(isMobile && {
@@ -151,28 +153,52 @@ export function ZoomParallax({ images }) {
                                     handleImageClick(index);
                                 } : undefined}
                             >
-                                <img
-                                    src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
-                                    alt={alt || `Imagen ${index + 1}`}
-                                    className={`h-full w-full object-cover rounded-lg ${
-                                        isMobile ?
-                                            "transition-none" : // Sin transiciones en móvil
-                                            "transition-all duration-300 group-hover:brightness-75"
-                                    }`}
-                                    loading="lazy"
-                                    decoding="async"
-                                    style={{
-                                        // Optimizaciones adicionales para móvil
-                                        ...(isMobile && {
-                                            willChange: 'auto',
-                                            transform: 'translateZ(0)' // Force hardware acceleration
-                                        })
-                                    }}
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1);
-                                    }}
-                                />
+                                {/* Blur placeholder */}
+                                {blurDataURL && !isLoaded && (
+                                    <img
+                                        src={blurDataURL}
+                                        alt=""
+                                        className="absolute inset-0 h-full w-full object-cover rounded-lg"
+                                        style={{ filter: 'blur(20px)', transform: 'scale(1.1)' }}
+                                        aria-hidden="true"
+                                    />
+                                )}
+
+                                {/* Main responsive image */}
+                                <picture>
+                                    <source
+                                        type="image/webp"
+                                        srcSet={srcSet || `${src} 2560w`}
+                                        sizes="(max-width: 768px) 35vw, 25vw"
+                                    />
+                                    <img
+                                        src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
+                                        alt={alt || `Imagen ${index + 1}`}
+                                        className={`h-full w-full object-cover rounded-lg ${
+                                            isMobile ?
+                                                "transition-none" : // Sin transiciones en móvil
+                                                "transition-all duration-300 group-hover:brightness-75"
+                                        } ${!isLoaded && blurDataURL ? 'opacity-0' : 'opacity-100'}`}
+                                        loading="lazy"
+                                        decoding="async"
+                                        style={{
+                                            // Optimizaciones adicionales para móvil
+                                            ...(isMobile && {
+                                                willChange: 'auto',
+                                                transform: 'translateZ(0)' // Force hardware acceleration
+                                            }),
+                                            transition: 'opacity 0.3s ease-in-out'
+                                        }}
+                                        onLoad={() => {
+                                            setLoadedImages(prev => ({ ...prev, [index]: true }));
+                                        }}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1);
+                                        }}
+                                    />
+                                </picture>
+
                                 {/* Overlay con título al hover */}
                                 {isImageInteractive(index) && (
                                     <div className={`absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex items-center justify-center z-20 ${index === 6 ? '' : 'backdrop-blur-sm'}`}>

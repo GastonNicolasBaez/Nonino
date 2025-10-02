@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router";
 import { ChevronRight, Clock, Truck, Shield, Award } from "lucide-react";
@@ -10,9 +10,14 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
+import { useRAFThrottle } from "@/hooks/useThrottle";
 import logoNonino from '@/assets/logos/nonino.png';
-import sanMartinBgImage from '@/assets/images/SanMartin.jpg'
-import sanMartin2 from "@/assets/images/SanMartin2.jpg";
+
+// Imágenes optimizadas con WebP responsive
+import {
+    SanMartinBlur, SanMartin640, SanMartin1024, SanMartin1920, SanMartin2560,
+    SanMartin2Blur, SanMartin2640, SanMartin21024, SanMartin21920, SanMartin22560
+} from '@/assets/images/optimized';
 
 export function HomePage() {
 
@@ -69,13 +74,39 @@ export function HomePage() {
     }, []);
 
     // Parallax scroll effect con custom scroll source para móvil
+    // OPTIMIZACIÓN: Throttle scroll con RAF para 60fps consistente
     const { scrollY } = useScroll({
         // En móvil, usar document.body como fuente de scroll
         container: isMobile ? { current: document.body } : undefined
     });
+
+    // Throttle scroll values para mejor performance
+    const throttledScrollY = useRAFThrottle(scrollY.get());
+
+    // Parallax transforms optimizados con GPU acceleration
     const y = useTransform(scrollY, [0, 800], [0, -200]);
     const featuresParallaxY = useTransform(scrollY,
         value => value * (isMobile ? -0.15 : -0.3)
+    );
+
+    // Helper para obtener imagen responsive según viewport
+    const getResponsiveImage = (blur, img640, img1024, img1920, img2560) => {
+        const width = window.innerWidth;
+        if (width <= 640) return img640;
+        if (width <= 1024) return img1024;
+        if (width <= 1920) return img1920;
+        return img2560;
+    };
+
+    // Imágenes del hero según tamaño de pantalla
+    const heroImage = useMemo(() =>
+        getResponsiveImage(SanMartinBlur, SanMartin640, SanMartin1024, SanMartin1920, SanMartin2560),
+        [isMobile, isTablet]
+    );
+
+    const featuresImage = useMemo(() =>
+        getResponsiveImage(SanMartin2Blur, SanMartin2640, SanMartin21024, SanMartin21920, SanMartin22560),
+        [isMobile, isTablet]
     );
 
     const features = [
@@ -161,16 +192,20 @@ export function HomePage() {
             </motion.div>
             {/* Hero Section */}
             <section className="relative min-h-screen flex items-center justify-center">
-                {/* Background Image with Parallax Effect */}
+                {/* Background Image with Parallax Effect - OPTIMIZADO CON WEBP */}
                 <motion.div
                     className="absolute inset-0 w-full h-[180%] -top-[20%] md:-top-[30%] lg:-top-[40%] xl:-top-[50%] z-[-1]"
                     aria-label="Vista panorámica de San Martín de los Andes, Patagonia Argentina - Cordillera de los Andes"
                     role="img"
                     style={{
-                        backgroundImage: `url(${sanMartinBgImage})`,
+                        backgroundImage: `url(${heroImage})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center top",
-                        y
+                        y,
+                        // GPU acceleration para parallax suave
+                        willChange: 'transform',
+                        transform: 'translate3d(0, 0, 0)',
+                        backfaceVisibility: 'hidden'
                     }}
                 />
 
@@ -274,17 +309,21 @@ export function HomePage() {
 
             {/* Features Section */}
             <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
-                {/* Background Image with Parallax Effect */}
+                {/* Background Image with Parallax Effect - OPTIMIZADO CON WEBP */}
                 <motion.div
                     className={`absolute inset-0 w-full ${isMobile ? 'h-[220%] -top-[25%]' : 'h-[300%] -top-[40%]'}`}
                     aria-label="Bosque patagónico en San Martín de los Andes - Naturaleza Patagonia Argentina"
                     role="img"
                     style={{
-                        backgroundImage: `url(${sanMartin2})`,
+                        backgroundImage: `url(${featuresImage})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center bottom",
                         backgroundRepeat: "no-repeat",
-                        y: featuresParallaxY
+                        y: featuresParallaxY,
+                        // GPU acceleration para parallax suave
+                        willChange: 'transform',
+                        transform: 'translate3d(0, 0, 0)',
+                        backfaceVisibility: 'hidden'
                     }}
                 />
 

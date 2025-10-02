@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Quote, Star } from "lucide-react";
-import somos1 from "@/assets/images/somos.jpg";
-import somos2 from "@/assets/images/somos2.jpg";
-import somos3 from "@/assets/images/somos3.jpg";
+import {
+  somosBlur, somos640, somos1024, somos1920, somos2560,
+  somos2Blur, somos2640, somos21024, somos21920, somos22560,
+  somos3Blur, somos3640, somos31024, somos31920, somos32560
+} from "@/assets/images/optimized";
 
 const teamMembers = [
   {
@@ -11,35 +13,45 @@ const teamMembers = [
       "Fundé Nonino hace más de 25 años con el sueño de compartir las recetas familiares de mi abuela. Cada empanada que sale de nuestra cocina lleva mi pasión y dedicación por mantener viva esta tradición.",
     name: "Carlos Nonino",
     designation: "Fundador y Chef Principal",
-    src: somos1,
+    src: somos2560,
+    srcSet: `${somos640} 640w, ${somos1024} 1024w, ${somos1920} 1920w, ${somos2560} 2560w`,
+    blurDataURL: somosBlur,
   },
   {
     quote:
       "Como gerente general, me aseguro de que cada cliente reciba el mejor servicio. Coordino todos nuestros locales y mantengo los estándares de calidad que nos han caracterizado durante tantos años.",
     name: "María Nonino",
     designation: "Gerente General",
-    src: somos2,
+    src: somos22560,
+    srcSet: `${somos2640} 640w, ${somos21024} 1024w, ${somos21920} 1920w, ${somos22560} 2560w`,
+    blurDataURL: somos2Blur,
   },
   {
     quote:
       "En la cocina central, superviso la producción diaria de miles de empanadas. Mi equipo y yo nos aseguramos de que cada masa tenga la textura perfecta y cada relleno el sabor auténtico que nos distingue.",
     name: "José Martínez",
     designation: "Chef de Producción",
-    src: somos3,
+    src: somos32560,
+    srcSet: `${somos3640} 640w, ${somos31024} 1024w, ${somos31920} 1920w, ${somos32560} 2560w`,
+    blurDataURL: somos3Blur,
   },
   {
     quote:
       "Manejo toda la logística de delivery y me aseguro de que nuestras empanadas lleguen calientes a cada hogar. La puntualidad y calidad en el servicio son mi prioridad número uno.",
     name: "Ana Morales",
     designation: "Coordinadora de Delivery",
-    src: somos1,
+    src: somos2560,
+    srcSet: `${somos640} 640w, ${somos1024} 1024w, ${somos1920} 1920w, ${somos2560} 2560w`,
+    blurDataURL: somosBlur,
   },
   {
     quote:
       "Como encargada del local Centro, recibo a nuestros clientes con una sonrisa y me aseguro de que vivan la experiencia Nonino completa. Conozco las preferencias de cada cliente regular.",
     name: "Laura Vega",
     designation: "Encargada Local Centro",
-    src: somos2,
+    src: somos22560,
+    srcSet: `${somos2640} 640w, ${somos21024} 1024w, ${somos21920} 1920w, ${somos22560} 2560w`,
+    blurDataURL: somos2Blur,
   },
 ];
 
@@ -48,6 +60,7 @@ export function AnimatedTestimonials({ autoplay = false }) {
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [loadedImages, setLoadedImages] = useState({});
 
   const handleNext = () => {
     setActive((prev) => (prev + 1) % teamMembers.length);
@@ -150,14 +163,37 @@ export function AnimatedTestimonials({ autoplay = false }) {
                   }}
                   className="absolute inset-0 origin-bottom"
                 >
-                  <img
-                    src={member.src}
-                    alt={member.name}
-                    width={500}
-                    height={500}
-                    draggable={false}
-                    className="h-full w-full rounded-3xl object-cover object-center"
-                  />
+                  {/* Blur placeholder */}
+                  {member.blurDataURL && !loadedImages[index] && (
+                    <img
+                      src={member.blurDataURL}
+                      alt=""
+                      className="absolute inset-0 h-full w-full rounded-3xl object-cover"
+                      style={{ filter: 'blur(20px)', transform: 'scale(1.1)' }}
+                      aria-hidden="true"
+                    />
+                  )}
+
+                  {/* Main responsive image */}
+                  <picture>
+                    <source
+                      type="image/webp"
+                      srcSet={member.srcSet || `${member.src} 2560w`}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <img
+                      src={member.src}
+                      alt={member.name}
+                      width={500}
+                      height={500}
+                      draggable={false}
+                      className={`h-full w-full rounded-3xl object-cover object-center ${!loadedImages[index] && member.blurDataURL ? 'opacity-0' : 'opacity-100'}`}
+                      style={{ transition: 'opacity 0.3s ease-in-out' }}
+                      onLoad={() => {
+                        setLoadedImages(prev => ({ ...prev, [index]: true }));
+                      }}
+                    />
+                  </picture>
                 </motion.div>
               ))}
             </AnimatePresence>

@@ -6,59 +6,55 @@ import ThemeProvider from "@/context/ThemeProvider";
 import SessionProvider from "@/context/SessionProvider";
 import { OrdersProvider } from "@/context/OrdersContext";
 import { Toaster } from "sonner";
+import { Suspense, lazy } from "react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 
-// LAYOUTS
+// LAYOUTS (no lazy - necesarios inmediatamente)
 import PublicLayout from "@/components/layouts/PublicLayout";
 import AdminLayout from "@/components/layouts/AdminLayout";
 
-// GATES
+// GATES (no lazy - necesarios inmediatamente)
 import IntranetPortal from "@/context/IntranetPortal";
 
-// UNIVERSALES
+// UNIVERSALES (no lazy - pequeño)
 import NotFound from "@/pages/NotFound";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
-// PUBLICS
-import { HomePage } from "@/pages/public/HomePage";
-import { MenuPage } from "@/pages/public/MenuPage";
-import { PromotionsPage } from "@/pages/public/PromotionsPage";
-import { StoresPage } from "@/pages/public/StoresPage";
-import { AboutPage } from "@/pages/public/AboutPage";
-import { ContactPage } from "@/pages/public/ContactPage";
-//import { LoginPage } from "@/pages/LoginPage";
-//import { RegisterPage } from "@/pages/public/RegisterPage";
-import { CartPage } from "@/pages/public/CartPage";
-import { CheckoutPage } from "@/pages/public/CheckoutPage";
-import { OrderTrackingPage } from "@/pages/public/OrderTrackingPage";
-import { StoreSelectionPage } from "@/pages/public/StoreSelectionPage";
-//import { ProfilePage } from "@/pages/public/ProfilePage";
+// PUBLICS - CODE SPLITTING con Lazy Loading
+const HomePage = lazy(() => import("@/pages/public/HomePage").then(m => ({ default: m.HomePage })));
+const MenuPage = lazy(() => import("@/pages/public/MenuPage").then(m => ({ default: m.MenuPage })));
+const PromotionsPage = lazy(() => import("@/pages/public/PromotionsPage").then(m => ({ default: m.PromotionsPage })));
+const StoresPage = lazy(() => import("@/pages/public/StoresPage").then(m => ({ default: m.StoresPage })));
+const AboutPage = lazy(() => import("@/pages/public/AboutPage").then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import("@/pages/public/ContactPage").then(m => ({ default: m.ContactPage })));
+const CartPage = lazy(() => import("@/pages/public/CartPage").then(m => ({ default: m.CartPage })));
+const CheckoutPage = lazy(() => import("@/pages/public/CheckoutPage").then(m => ({ default: m.CheckoutPage })));
+const OrderTrackingPage = lazy(() => import("@/pages/public/OrderTrackingPage").then(m => ({ default: m.OrderTrackingPage })));
+const StoreSelectionPage = lazy(() => import("@/pages/public/StoreSelectionPage").then(m => ({ default: m.StoreSelectionPage })));
 
-// DASHBOARDS
-import { AdminDashboard } from "@/pages/admin/AdminDashboard";
-import { FabricaDashboard } from "@/pages/admin/FabricaDashboard";
-import { LocalDashboard } from "@/pages/admin/LocalDashboard";
-
-// ADMINS
-
-import { AdminLogin } from "@/pages/admin/AdminLogin";
-import { OrderManagement } from "@/pages/admin/OrderManagement";
-import { ProductManagement } from "@/pages/admin/ProductManagement";
-import { RecipeManagement } from "@/pages/admin/RecipeManagement";
-import { CustomerManagement } from "@/pages/admin/CustomerManagement";
-import { SettingsPage } from "@/pages/admin/SettingsPage";
-import { BranchManagement } from "@/pages/admin/BranchManagement";
-import { DeliveryManagement } from "@/pages/admin/DeliveryManagement";
-import { ProductStockManagement } from "@/pages/admin/ProductStockManagement";
-import { ComboManagement } from "@/pages/admin/ComboManagement";
-import { MaterialManagement } from "@/pages/admin/MaterialManagement";
-import { MaterialStockManagement } from "@/pages/admin/MaterialStockManagement";
-import { MenuManagement } from "@/pages/admin/MenuManagement";
-import { MetricsManagement } from "@/pages/admin/MetricsManagement";
-import { FabricaProducir } from "@/pages/admin/FabricaProducir";
-import { FabricaTransferir } from "@/pages/admin/FabricaTransferir";
-import { CategoryManagement } from "@/pages/admin/CategoryManagement";
+// DASHBOARDS & ADMIN - CODE SPLITTING (solo cargan si accedes al admin)
+const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin").then(m => ({ default: m.AdminLogin })));
+const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
+const FabricaDashboard = lazy(() => import("@/pages/admin/FabricaDashboard").then(m => ({ default: m.FabricaDashboard })));
+const LocalDashboard = lazy(() => import("@/pages/admin/LocalDashboard").then(m => ({ default: m.LocalDashboard })));
+const OrderManagement = lazy(() => import("@/pages/admin/OrderManagement").then(m => ({ default: m.OrderManagement })));
+const ProductManagement = lazy(() => import("@/pages/admin/ProductManagement").then(m => ({ default: m.ProductManagement })));
+const RecipeManagement = lazy(() => import("@/pages/admin/RecipeManagement").then(m => ({ default: m.RecipeManagement })));
+const CustomerManagement = lazy(() => import("@/pages/admin/CustomerManagement").then(m => ({ default: m.CustomerManagement })));
+const SettingsPage = lazy(() => import("@/pages/admin/SettingsPage").then(m => ({ default: m.SettingsPage })));
+const BranchManagement = lazy(() => import("@/pages/admin/BranchManagement").then(m => ({ default: m.BranchManagement })));
+const DeliveryManagement = lazy(() => import("@/pages/admin/DeliveryManagement").then(m => ({ default: m.DeliveryManagement })));
+const ProductStockManagement = lazy(() => import("@/pages/admin/ProductStockManagement").then(m => ({ default: m.ProductStockManagement })));
+const ComboManagement = lazy(() => import("@/pages/admin/ComboManagement").then(m => ({ default: m.ComboManagement })));
+const MaterialManagement = lazy(() => import("@/pages/admin/MaterialManagement").then(m => ({ default: m.MaterialManagement })));
+const MaterialStockManagement = lazy(() => import("@/pages/admin/MaterialStockManagement").then(m => ({ default: m.MaterialStockManagement })));
+const MenuManagement = lazy(() => import("@/pages/admin/MenuManagement").then(m => ({ default: m.MenuManagement })));
+const MetricsManagement = lazy(() => import("@/pages/admin/MetricsManagement").then(m => ({ default: m.MetricsManagement })));
+const FabricaProducir = lazy(() => import("@/pages/admin/FabricaProducir").then(m => ({ default: m.FabricaProducir })));
+const FabricaTransferir = lazy(() => import("@/pages/admin/FabricaTransferir").then(m => ({ default: m.FabricaTransferir })));
+const CategoryManagement = lazy(() => import("@/pages/admin/CategoryManagement").then(m => ({ default: m.CategoryManagement })));
 
 // Crear cliente de React Query
 const queryClient = new QueryClient({
@@ -77,7 +73,7 @@ function App() {
                 <SessionProvider>
 
                     <Routes>
-                        {/* PUBLIC */}
+                        {/* PUBLIC - Con Suspense para Code Splitting */}
                         <Route
                             element={
                                 <PublicDataProvider>
@@ -85,17 +81,61 @@ function App() {
                                 </PublicDataProvider>
                             }
                         >
-                            <Route index element={<HomePage />} />
-                            <Route path="/menu" element={<MenuPage />} />
-                            <Route path="/promociones" element={<PromotionsPage />} />
-                            <Route path="/locales" element={<StoresPage />} />
-                            <Route path="/nosotros" element={<AboutPage />} />
-                            <Route path="/contacto" element={<ContactPage />} />
-                            <Route path="/pedir" element={<StoreSelectionPage />} />
-                            <Route path="/carrito" element={<CartPage />} />
-                            <Route path="/checkout" element={<CheckoutPage />} />
-                            <Route path="/tracking/:orderId" element={<OrderTrackingPage />} />
-                            <Route path="/failed/:orderId" element={<OrderTrackingPage />} />
+                            <Route index element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <HomePage />
+                                </Suspense>
+                            } />
+                            <Route path="/menu" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <MenuPage />
+                                </Suspense>
+                            } />
+                            <Route path="/promociones" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <PromotionsPage />
+                                </Suspense>
+                            } />
+                            <Route path="/locales" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <StoresPage />
+                                </Suspense>
+                            } />
+                            <Route path="/nosotros" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <AboutPage />
+                                </Suspense>
+                            } />
+                            <Route path="/contacto" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <ContactPage />
+                                </Suspense>
+                            } />
+                            <Route path="/pedir" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <StoreSelectionPage />
+                                </Suspense>
+                            } />
+                            <Route path="/carrito" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <CartPage />
+                                </Suspense>
+                            } />
+                            <Route path="/checkout" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <CheckoutPage />
+                                </Suspense>
+                            } />
+                            <Route path="/tracking/:orderId" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <OrderTrackingPage />
+                                </Suspense>
+                            } />
+                            <Route path="/failed/:orderId" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <OrderTrackingPage />
+                                </Suspense>
+                            } />
                         </Route>
 
                         {/* INTRANET */}

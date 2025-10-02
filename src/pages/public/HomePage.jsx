@@ -363,6 +363,8 @@ export function HomePage() {
                         <TextAnimate
                             animation="slideUp"
                             by="word"
+                            delay={0.3}
+                            duration={0.8}
                             className="text-6xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-12xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >

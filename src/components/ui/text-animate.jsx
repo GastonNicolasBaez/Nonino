@@ -31,14 +31,31 @@ const defaultContainerVariants = {
 
 const defaultItemAnimationVariants = {
   fadeIn: {
-    container: defaultContainerVariants,
+    container: {
+      hidden: { opacity: 1 },
+      show: {
+        opacity: 1,
+        transition: {
+          delayChildren: 0,
+          staggerChildren: 0.05,
+        },
+      },
+      exit: {
+        opacity: 0,
+        transition: {
+          staggerChildren: 0.05,
+          staggerDirection: -1,
+        },
+      },
+    },
     item: {
       hidden: { opacity: 0, y: 20 },
       show: {
         opacity: 1,
         y: 0,
         transition: {
-          duration: 0.3,
+          duration: 0.4,
+          ease: "easeOut",
         },
       },
       exit: {
@@ -67,14 +84,31 @@ const defaultItemAnimationVariants = {
     },
   },
   slideUp: {
-    container: defaultContainerVariants,
+    container: {
+      hidden: { opacity: 1 },
+      show: {
+        opacity: 1,
+        transition: {
+          delayChildren: 0,
+          staggerChildren: 0.05,
+        },
+      },
+      exit: {
+        opacity: 0,
+        transition: {
+          staggerChildren: 0.05,
+          staggerDirection: -1,
+        },
+      },
+    },
     item: {
-      hidden: { y: 20, opacity: 0 },
+      hidden: { y: 30, opacity: 0 },
       show: {
         y: 0,
         opacity: 1,
         transition: {
-          duration: 0.3,
+          duration: 0.5,
+          ease: "easeOut",
         },
       },
       exit: {
@@ -168,7 +202,7 @@ const TextAnimateBase = ({
       : { container: defaultContainerVariants, item: defaultItemAnimationVariants.fadeIn.item };
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence mode="wait">
       <MotionComponent
         variants={finalVariants.container}
         initial="hidden"
@@ -176,7 +210,7 @@ const TextAnimateBase = ({
         animate={startOnView ? undefined : "show"}
         exit="exit"
         className={cn("whitespace-pre-wrap", className)}
-        viewport={{ once }}
+        viewport={{ once: true, amount: 0.1 }}
         aria-label={accessible ? children : undefined}
         {...props}
       >

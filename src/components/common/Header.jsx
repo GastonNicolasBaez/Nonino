@@ -106,13 +106,13 @@ export const Header = memo(function Header() {
   // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
   const leftNavInitial = getResponsivePosition(60, 30, 20); // Progresivo: 60 → 30 → 20
   const leftNavEnd = getResponsivePosition(-30, -30, -15); // Progresivo: -30 → -20 → -15
-  const leftNavX = useTransform(scrollY, [0, 300], isStaticPage ? [leftNavInitial, leftNavInitial] : [leftNavInitial, leftNavEnd]);
+  const leftNavX = useTransform(scrollY, [0, 400], isStaticPage ? [leftNavInitial, leftNavInitial] : [leftNavInitial, leftNavEnd]);
 
   // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
   // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
   const rightNavInitial = getResponsivePosition(-115, -60, -40); // Progresivo: -80 → -60 → -40
   const rightNavEnd = getResponsivePosition(-55, -45, 40); // Progresivo: -55 → -45 → 40
-  const rightNavX = useTransform(scrollY, [0, 300], isStaticPage ? [rightNavInitial, rightNavInitial] : [rightNavInitial, rightNavEnd]);
+  const rightNavX = useTransform(scrollY, [0, 400], isStaticPage ? [rightNavInitial, rightNavInitial] : [rightNavInitial, rightNavEnd]);
 
   const isActive = (href) => location.pathname === href;
 
@@ -204,13 +204,20 @@ export const Header = memo(function Header() {
                     )}
                   >
                     {item.name}
-                    {isActive(item.href) && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
-                        initial={false}
-                      />
-                    )}
+                    <AnimatePresence>
+                      {isActive(item.href) && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          exit={{ scaleX: 0 }}
+                          transition={{ 
+                            duration: 0.3,
+                            ease: "easeOut"
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
                   </Link>
                 ))}
             </motion.nav>
@@ -233,13 +240,20 @@ export const Header = memo(function Header() {
                     )}
                   >
                     {item.name}
-                    {isActive(item.href) && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
-                        initial={false}
-                      />
-                    )}
+                    <AnimatePresence>
+                      {isActive(item.href) && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          exit={{ scaleX: 0 }}
+                          transition={{ 
+                            duration: 0.3,
+                            ease: "easeOut"
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
                   </Link>
                 ))}
             </motion.nav>

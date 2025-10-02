@@ -41,11 +41,12 @@ export function AboutPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // No forzar remount global aquí; el componente interno refresca al cargar imagen
+
+  // Usar el scroll del viewport, referenciando el target de la sección
   const { scrollYProgress } = useScroll({
     target: parallaxRef,
     offset: ["start start", "end start"],
-    // En móvil, usar document.body como fuente de scroll
-    container: isMobile ? { current: document.body } : undefined
   });
 
   // Transformaciones para el efecto sticky del título

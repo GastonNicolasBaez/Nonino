@@ -6,11 +6,10 @@ export function ZoomParallax({ images }) {
     const [isMobile, setIsMobile] = useState(false);
     const [loadedImages, setLoadedImages] = useState({});
 
+    // Usar el scroll del viewport para todas las plataformas
     const { scrollYProgress } = useScroll({
         target: container,
-        offset: ['start start', 'end end'],
-        // En móvil, usar document.body como fuente de scroll
-        container: isMobile ? { current: document.body } : undefined
+        offset: ['start start', 'end end']
     });
 
     // Detectar si es dispositivo móvil
@@ -24,6 +23,8 @@ export function ZoomParallax({ images }) {
 
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    // No forzar remount global aquí; refrescaremos al cargar imágenes
 
     // Títulos y navegación para las imágenes interactivas
     const imageNavigation = {
@@ -191,6 +192,12 @@ export function ZoomParallax({ images }) {
                                         }}
                                         onLoad={() => {
                                             setLoadedImages(prev => ({ ...prev, [index]: true }));
+                                            // Al cargar la primera imagen, forzar un refresh del scroll
+                                            if (index === 0) {
+                                                requestAnimationFrame(() => {
+                                                    window.dispatchEvent(new Event('scroll'));
+                                                });
+                                            }
                                         }}
                                         onError={(e) => {
                                             e.target.onerror = null;

@@ -48,8 +48,16 @@ export default defineConfig({
                         if (id.includes('@nivo') || id.includes('recharts') || id.includes('victory')) {
                             return 'vendor-charts';
                         }
-                        // Resto de vendors
-                        return 'vendor-other';
+                        // Lucide icons
+                        if (id.includes('lucide-react')) {
+                            return 'vendor-icons';
+                        }
+                        // Axios y utilidades HTTP
+                        if (id.includes('axios')) {
+                            return 'vendor-http';
+                        }
+                        // NO agrupar el resto - dejar que Vite lo maneje automáticamente
+                        // Esto evita dependencias circulares
                     }
                 },
                 // Nombres de chunks más descriptivos

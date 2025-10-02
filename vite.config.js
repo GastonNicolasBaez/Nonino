@@ -44,8 +44,8 @@ export default defineConfig({
                         if (id.includes('embla-carousel')) {
                             return 'vendor-carousel';
                         }
-                        // Charts y visualizaciones
-                        if (id.includes('@nivo') || id.includes('recharts') || id.includes('victory')) {
+                        // Charts - solo Recharts (el resto no se usa)
+                        if (id.includes('recharts')) {
                             return 'vendor-charts';
                         }
                         // Lucide icons

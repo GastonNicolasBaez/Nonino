@@ -12,6 +12,7 @@ import { WordPullUp } from "../../components/ui/word-pull-up";
 // Importar imágenes optimizadas del parallax
 import {
   parallax0Blur, parallax0640, parallax01024, parallax01920, parallax02560,
+  parallax1Blur, parallax1640, parallax11024, parallax11920, parallax12560,
   parallax2Blur, parallax2640, parallax21024, parallax21920, parallax22560,
   parallax3Blur, parallax3640, parallax31024, parallax31920, parallax32560,
   parallax4Blur, parallax4640, parallax41024, parallax41920, parallax42560,
@@ -187,10 +188,13 @@ export function AboutPage() {
       alt: 'Empanadas doradas y crujientes - Index 0',
     },
     {
-      src: SanMartin2560,
-      srcSet: `${SanMartin640} 640w, ${SanMartin1024} 1024w, ${SanMartin1920} 1920w, ${SanMartin2560} 2560w`,
-      blurDataURL: SanMartinBlur,
-      alt: 'Local principal de Nonino Empanadas - Index 1',
+      src: parallax12560,
+      srcSet: `${parallax1640} 640w, ${parallax11024} 1024w, ${parallax11920} 1920w, ${parallax12560} 2560w`,
+      blurDataURL: parallax1Blur,
+      alt: 'Empanadas tradicionales argentinas - Index 1',
+      // Configuración especial para alta calidad
+      quality: 'high',
+      priority: true
     },
     {
       src: parallax22560,

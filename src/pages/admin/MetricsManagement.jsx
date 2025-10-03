@@ -52,110 +52,37 @@ export function MetricsManagement() {
     { value: "inventory", label: "Inventario" }
   ];
 
-  // Mock data para reportes
+  // Datos vacíos para reportes - obtener desde API
   const salesData = {
-    totalSales: 125000,
-    totalOrders: 450,
-    averageOrderValue: 2780,
-    growth: 15.4,
-    dailySales: [
-      { day: 'Lun', sales: 18500, orders: 67 },
-      { day: 'Mar', sales: 22000, orders: 78 },
-      { day: 'Mié', sales: 19800, orders: 71 },
-      { day: 'Jue', sales: 25200, orders: 89 },
-      { day: 'Vie', sales: 21700, orders: 76 },
-      { day: 'Sáb', sales: 17800, orders: 62 },
-      { day: 'Dom', sales: 20000, orders: 72 }
-    ],
-    topProducts: [
-      { name: "Empanada de Carne", sales: 890, revenue: 400500, color: "#f59e0b" },
-      { name: "Empanada de Pollo", sales: 756, revenue: 317520, color: "#10b981" },
-      { name: "Empanada de Dulce de Leche", sales: 634, revenue: 221900, color: "#8b5cf6" },
-      { name: "Empanada de Jamón y Queso", sales: 445, revenue: 169100, color: "#3b82f6" },
-      { name: "Empanada de Cordero", sales: 234, revenue: 152100, color: "#ef4444" }
-    ],
-    salesByCategory: [
-      { name: "Tradicionales", value: 60, color: "#f59e0b" },
-      { name: "Gourmet", value: 20, color: "#10b981" },
-      { name: "Dulces", value: 15, color: "#8b5cf6" },
-      { name: "Vegetarianas", value: 5, color: "#ef4444" }
-    ],
-    salesByHour: [
-      { hour: "11:00", sales: 8500 },
-      { hour: "12:00", sales: 15200 },
-      { hour: "13:00", sales: 18700 },
-      { hour: "14:00", sales: 12300 },
-      { hour: "15:00", sales: 9800 },
-      { hour: "16:00", sales: 7200 },
-      { hour: "17:00", sales: 6500 },
-      { hour: "18:00", sales: 11200 },
-      { hour: "19:00", sales: 16800 },
-      { hour: "20:00", sales: 14500 },
-      { hour: "21:00", sales: 10300 },
-      { hour: "22:00", sales: 8000 }
-    ]
+    totalSales: 0,
+    totalOrders: 0,
+    averageOrderValue: 0,
+    growth: 0,
+    dailySales: [],
+    topProducts: [],
+    salesByCategory: [],
+    salesByHour: []
   };
 
   const customerData = {
-    totalCustomers: 1230,
-    newCustomers: 45,
-    returningCustomers: 312,
-    customerRetention: 78.5,
-    topCustomers: [
-      { name: "Roberto Miguel Díaz", orders: 31, spent: 22150 },
-      { name: "Juan Carlos Pérez", orders: 23, spent: 15450 },
-      { name: "María García Rodríguez", orders: 15, spent: 8750 },
-      { name: "Carlos Alberto Fernández", orders: 8, spent: 3240 },
-      { name: "Ana Patricia López", orders: 5, spent: 1890 }
-    ],
-    customersByLevel: [
-      { name: "Platino", value: 15, color: "#8b5cf6" },
-      { name: "Oro", value: 25, color: "#ffd700" },
-      { name: "Plata", value: 35, color: "#c0c0c0" },
-      { name: "Bronce", value: 25, color: "#cd7f32" }
-    ],
-    acquisitionChannels: [
-      { channel: "Orgánico", customers: 456, percentage: 37 },
-      { channel: "Recomendaciones", customers: 369, percentage: 30 },
-      { channel: "Redes Sociales", customers: 246, percentage: 20 },
-      { channel: "Publicidad", customers: 159, percentage: 13 }
-    ]
+    totalCustomers: 0,
+    newCustomers: 0,
+    returningCustomers: 0,
+    customerRetention: 0,
+    topCustomers: [],
+    customersByLevel: [],
+    acquisitionChannels: []
   };
 
   const inventoryData = {
-    totalProducts: 25,
-    lowStockItems: 6,
-    outOfStockItems: 2,
-    totalInventoryValue: 45600,
-    stockMovement: [
-      { product: "Carne Picada", movement: -15, type: "out", currentStock: 5, minStock: 20 },
-      { product: "Harina 000", movement: +25, type: "in", currentStock: 45, minStock: 30 },
-      { product: "Queso Mozzarella", movement: -8, type: "out", currentStock: 12, minStock: 15 },
-      { product: "Aceitunas", movement: +10, type: "in", currentStock: 25, minStock: 20 },
-      { product: "Cebolla", movement: -12, type: "out", currentStock: 8, minStock: 15 },
-      { product: "Tomate", movement: -5, type: "out", currentStock: 18, minStock: 20 },
-      { product: "Aceite", movement: +15, type: "in", currentStock: 35, minStock: 25 }
-    ],
-    categoryDistribution: [
-      { category: "Proteínas", value: 18500, percentage: 40.6, items: 8 },
-      { category: "Masa", value: 12300, percentage: 27.0, items: 5 },
-      { category: "Lácteos", value: 8900, percentage: 19.5, items: 6 },
-      { category: "Verduras", value: 3600, percentage: 7.9, items: 4 },
-      { category: "Condimentos", value: 2300, percentage: 5.0, items: 2 }
-    ],
-    lowStockAlerts: [
-      { product: "Carne Picada", current: 5, minimum: 20, urgency: "high" },
-      { product: "Queso Mozzarella", current: 12, minimum: 15, urgency: "medium" },
-      { product: "Cebolla", current: 8, minimum: 15, urgency: "high" },
-      { product: "Tomate", current: 18, minimum: 20, urgency: "medium" }
-    ],
-    topMovingProducts: [
-      { product: "Carne Picada", unitsSold: 156, revenue: 46800 },
-      { product: "Harina 000", unitsSold: 89, revenue: 13350 },
-      { product: "Queso Mozzarella", unitsSold: 78, revenue: 23400 },
-      { product: "Cebolla", unitsSold: 45, revenue: 4500 },
-      { product: "Aceitunas", unitsSold: 34, revenue: 5100 }
-    ]
+    totalProducts: 0,
+    lowStockItems: 0,
+    outOfStockItems: 0,
+    totalInventoryValue: 0,
+    stockMovement: [],
+    categoryDistribution: [],
+    lowStockAlerts: [],
+    topMovingProducts: []
   };
 
   useEffect(() => {
@@ -242,7 +169,7 @@ export function MetricsManagement() {
       {
         id: "productos-activos",
         label: "Productos Activos",
-        value: 25,
+        value: 0,
         color: "gray",
         icon: <Package className="w-5 h-5" />
       }

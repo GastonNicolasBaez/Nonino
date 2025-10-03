@@ -39,7 +39,6 @@ import {
 
 // UTILIDADES Y SERVICIOS
 import { adminService } from "@/services/api";
-import { mockDashboardData } from "@/lib/mockData";
 import { formatPrice, formatDateTime } from "@/lib/utils";
 import { SectionHeader, StatsCards } from "@/components/branding";
 
@@ -50,37 +49,23 @@ import { SectionHeader, StatsCards } from "@/components/branding";
 export function LocalDashboard() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [usingMockData, setUsingMockData] = useState(false);
-  const [lowStockProducts, setLowStockProducts] = useState([
-    { id: 1, name: "Empanada de Carne", currentStock: 5, minStock: 20 },
-    { id: 2, name: "Empanada de Pollo", currentStock: 8, minStock: 15 },
-    { id: 3, name: "Empanada de Jamón y Queso", currentStock: 3, minStock: 10 },
-    { id: 4, name: "Empanada de Verdura", currentStock: 12, minStock: 15 },
-    { id: 5, name: "Empanada de Cebolla", currentStock: 7, minStock: 12 },
-    { id: 6, name: "Empanada de Espinaca", currentStock: 4, minStock: 8 },
-    { id: 7, name: "Empanada de Choclo", currentStock: 9, minStock: 15 },
-    { id: 8, name: "Empanada de Atún", currentStock: 6, minStock: 10 },
-    { id: 9, name: "Empanada de Ricotta", currentStock: 2, minStock: 8 },
-    { id: 10, name: "Empanada de Caprese", currentStock: 11, minStock: 15 }
-  ]);
+  const [lowStockProducts, setLowStockProducts] = useState([]);
 
   const navigate = useNavigate();
 
   // Usar el contexto de pedidos
-  const pendingOrdersCount = 33;
+  const pendingOrdersCount = 0;
 
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
         const response = await adminService.getDashboardMetrics();
         setMetrics(response.data);
-        setUsingMockData(false);
       } catch (error) {
         console.error("Error fetching metrics:", error);
-        // Si hay error de red, usar datos mock
+        // Si hay error de red, mostrar estado vacío
         if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
-          setMetrics(mockDashboardData.metrics);
-          setUsingMockData(true);
+          setMetrics(null);
         }
       } finally {
         setLoading(false);
@@ -103,32 +88,43 @@ export function LocalDashboard() {
     }
   ];
 
+  // Validar que los datos estén disponibles - mostrar valores en 0 si no hay datos
+  const displayMetrics = metrics || {
+    totalSales: 0,
+    totalOrders: 0,
+    averageOrderValue: 0,
+    customerCount: 0,
+    recentOrders: [],
+    topProducts: [],
+    salesData: []
+  };
+
   const statsData = [
     {
       id: "ventas-totales",
       label: "Ventas Totales",
-      value: metrics?.totalSales ? formatPrice(metrics.totalSales) : "$0",
+      value: displayMetrics?.totalSales ? formatPrice(displayMetrics.totalSales) : "$0",
       color: "gray",
       icon: <DollarSign className="w-5 h-5" />
     },
     {
       id: "pedidos-totales",
       label: "Pedidos Totales",
-      value: metrics?.totalOrders || 0,
+      value: displayMetrics?.totalOrders || 0,
       color: "gray",
       icon: <ShoppingCart className="w-5 h-5" />
     },
     {
       id: "clientes-activos",
       label: "Clientes Activos",
-      value: metrics?.customerCount || 0,
+      value: displayMetrics?.customerCount || 0,
       color: "gray",
       icon: <Users className="w-5 h-5" />
     },
     {
       id: "valor-promedio",
       label: "Valor Promedio",
-      value: metrics?.averageOrderValue ? formatPrice(metrics.averageOrderValue) : "$0",
+      value: displayMetrics?.averageOrderValue ? formatPrice(displayMetrics.averageOrderValue) : "$0",
       color: "gray",
       icon: <TrendingUp className="w-5 h-5" />
     }
@@ -145,32 +141,6 @@ export function LocalDashboard() {
           </div>
           <p className="text-lg font-medium text-gray-600 dark:text-gray-400">Cargando dashboard...</p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Preparando datos en tiempo real</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Validar que los datos estén disponibles
-  if (!metrics) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertTriangle className="w-10 h-10 text-red-600 dark:text-red-400" />
-          </div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            Error al cargar datos
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            No se pudieron cargar los datos del dashboard. Verifica tu conexión o contacta al administrador.
-          </p>
-          <Button 
-            onClick={() => window.location.reload()} 
-            variant="empanada"
-            className="px-6"
-          >
-            Reintentar
-          </Button>
         </div>
       </div>
     );
@@ -296,7 +266,7 @@ export function LocalDashboard() {
             </CardHeader>
             
             <CardContent className="space-y-2">
-              {metrics?.recentOrders?.slice(0, 5).map((order, index) => (
+              {displayMetrics?.recentOrders?.slice(0, 5).map((order, index) => (
                 <div
                   key={order.id}
                   className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-empanada-medium transition-colors"
@@ -335,7 +305,7 @@ export function LocalDashboard() {
                 </div>
               ))}
               
-              {(!metrics?.recentOrders || metrics.recentOrders.length === 0) && (
+              {(!displayMetrics?.recentOrders || displayMetrics.recentOrders.length === 0) && (
                 <div className="text-center py-8">
                   <ShoppingCart className="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-500 dark:text-gray-400">No hay pedidos recientes</p>
@@ -367,7 +337,7 @@ export function LocalDashboard() {
             </CardHeader>
             
             <CardContent className="space-y-2">
-              {metrics?.topProducts?.map((item, index) => (
+              {displayMetrics?.topProducts?.map((item, index) => (
                 <div
                   key={item.name || index}
                   className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-empanada-medium transition-colors"
@@ -393,7 +363,7 @@ export function LocalDashboard() {
                 </div>
               ))}
               
-              {(!metrics?.topProducts || metrics.topProducts.length === 0) && (
+              {(!displayMetrics?.topProducts || displayMetrics.topProducts.length === 0) && (
                 <div className="text-center py-8">
                   <Package className="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-500 dark:text-gray-400">No hay productos para mostrar</p>
@@ -432,7 +402,7 @@ export function LocalDashboard() {
           </CardHeader>
           
           <CardContent>
-            <SalesChart data={metrics?.salesData} />
+            <SalesChart data={displayMetrics?.salesData} />
           </CardContent>
         </Card>
       </div>

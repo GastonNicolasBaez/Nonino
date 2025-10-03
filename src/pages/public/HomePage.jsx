@@ -8,6 +8,7 @@ import { TextAnimate } from "@/components/ui/text-animate";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
+import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
 import { useRAFThrottle } from "@/hooks/useThrottle";
@@ -636,10 +637,12 @@ export function HomePage() {
                                 >
                                     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                                         <div className="aspect-[16/9] relative">
-                                            <img
+                                            <OptimizedImage
                                                 src={promotion.image}
                                                 alt={promotion.title}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full"
+                                                quality="high"
+                                                priority={false}
                                             />
                                             <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
                                                 <Badge variant="empanada" className="text-xs sm:text-sm">

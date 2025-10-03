@@ -5,7 +5,8 @@ import { WordPullUp } from './word-pull-up';
 import { FranchiseModal } from './FranchiseModal';
 import {
   localRuta40Blur, localRuta40640, localRuta401024, localRuta401920, localRuta402560,
-  FabricaBlur, Fabrica640, Fabrica1024, Fabrica1920, Fabrica2560
+  FabricaBlur, Fabrica640, Fabrica1024, Fabrica1920, Fabrica2560,
+  localVillegas640, localVillegas1024, localVillegas1920, localVillegas2560
 } from '../../assets/images/optimized';
 
 // --- Data for the empanadas locations accordion ---
@@ -29,7 +30,8 @@ const accordionItems = [
     address: 'Av. Villegas 567, San Martín de los Andes',
     phone: '+54 2972 42-5072',
     hours: 'Lun a Dom: 11:00 - 15:00 / 19:00 - 23:00',
-    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop',
+    imageUrl: localVillegas2560,
+    srcSet: `${localVillegas640} 640w, ${localVillegas1024} 1024w, ${localVillegas1920} 1920w, ${localVillegas2560} 2560w`,
     description: 'Ambiente acogedor en el centro de la ciudad'
   },
   {

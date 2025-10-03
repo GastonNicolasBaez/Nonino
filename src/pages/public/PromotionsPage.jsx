@@ -4,6 +4,7 @@ import { Calendar, Clock, Tag, Gift } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
+import { OptimizedImage } from "../../components/ui/OptimizedImage";
 import { TextAnimate } from "../../components/ui/text-animate";
 import { LoadingSpinner } from "../../components/common/LoadingSpinner";
 import { FloatingOrderButton } from "../../components/common/FloatingOrderButton";
@@ -74,10 +75,12 @@ export function PromotionsPage() {
               >
                 <Card className="overflow-hidden hover:shadow-xl transition-shadow h-full">
                   <div className="relative">
-                    <img
+                    <OptimizedImage
                       src={promotion.image}
                       alt={promotion.title}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-48"
+                      quality="high"
+                      priority={false}
                     />
                     <div className="absolute top-4 left-4">
                       <Badge variant="empanada" className="text-lg px-3 py-1">

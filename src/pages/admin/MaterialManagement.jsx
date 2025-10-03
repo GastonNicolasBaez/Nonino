@@ -448,7 +448,7 @@ function AddMaterialModal({ onClose, onSave }) {
             title="Agregar Nuevo Material"
             subtitle="Agrega un nuevo material al inventario"
             icon={<Package className="w-6 h-6" />}
-            maxWidth="max-w-6xl"
+            maxWidth="max-w-7xl"
             maxHeight="max-h-[95vh]"
             footer={
                 <BrandedModalFooter

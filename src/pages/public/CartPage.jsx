@@ -4,6 +4,7 @@ import { Plus, Minus, Trash2, ShoppingBag, ArrowLeft, Tag, X } from "lucide-reac
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
+import { IntegratedCartItem } from "../../components/ui/IntegratedCartItem";
 import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { useState } from "react";
@@ -46,6 +47,7 @@ export function CartPage() {
     promoCode,
     applyPromoCode,
     removePromoCode,
+    isOpen: isCartSidebarOpen,
   } = useCart();
 
   const [showPromoInput, setShowPromoInput] = useState(false);
@@ -149,233 +151,54 @@ export function CartPage() {
         </div>
       </div>
 
-      {/* MOBILE CONTENT - Vista actual optimizada para mobile */}
+      {/* MOBILE CONTENT - Diseño integrado sin cards */}
       <div
-        className="md:hidden absolute top-32 left-0 right-0 px-4"
+        className="md:hidden absolute top-32 left-0 right-0"
         style={{
-          height: 'calc(100vh - 128px - 280px)',
-          overflow: 'hidden',
-          touchAction: 'none',
-          overscrollBehavior: 'none'
+          height: `calc(100vh - 128px - ${isCartSidebarOpen ? '0px' : '280px'})`,
+          overflow: 'auto',
+          touchAction: 'auto',
+          overscrollBehavior: 'auto',
+          transition: 'height 0.3s ease-in-out'
         }}
       >
-        <AnimatePresence>
-          {items.map((item, index) => (
-            <motion.div
-              key={`${item.id}-${index}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ delay: index * 0.05 }}
-              className="mb-4"
-            >
-              <div className="bg-empanada-dark rounded-2xl border border-empanada-light-gray p-4 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="flex gap-4">
-                  {/* Image - más prominente */}
-                  <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-empanada-light-gray">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-white text-base leading-tight mb-1 truncate">
-                          {item.name}
-                        </h3>
-                        <div className="flex items-center gap-2 mb-2">
-                          <p className="text-empanada-golden font-semibold text-sm">
-                            {formatPrice(item.price)}
-                          </p>
-                          <span className="text-gray-300 text-xs">c/u</span>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-300 hover:text-red-500 hover:bg-red-500/10 p-2 h-auto rounded-full transition-colors"
-                        onClick={() => removeItem(item.id, item.customizations)}
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-
-                    {/* Customizations */}
-                    {item.customizations && Object.keys(item.customizations).length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {Object.entries(item.customizations).map(([key, value]) => (
-                          <Badge key={key} variant="secondary" className="text-xs px-2 py-1 bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30">
-                            {value}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Quantity Controls & Total */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center bg-empanada-medium rounded-xl p-1 shadow-inner">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
-                          onClick={() =>
-                            updateQuantity(
-                              item.id,
-                              item.customizations,
-                              item.quantity - 1
-                            )
-                          }
-                        >
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <div className="px-4 py-1 font-bold text-white min-w-[3rem] text-center">
-                          {item.quantity}
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
-                          onClick={() =>
-                            updateQuantity(
-                              item.id,
-                              item.customizations,
-                              item.quantity + 1
-                            )
-                          }
-                        >
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-
-                      <div className="text-right">
-                        <div className="font-bold text-empanada-golden text-lg">
-                          {formatPrice(item.price * item.quantity)}
-                        </div>
-                        <div className="text-xs text-gray-300">Total</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        {/* Contenedor de lista integrada */}
+        <div className="bg-gradient-to-b from-empanada-dark to-empanada-darker rounded-t-3xl mx-4 overflow-hidden shadow-2xl">
+          <AnimatePresence mode="popLayout">
+            {items.map((item, index) => (
+              <IntegratedCartItem
+                key={`${item.id}-${index}`}
+                item={item}
+                index={index}
+                isMobile={true}
+                isLast={index === items.length - 1}
+                onUpdateQuantity={updateQuantity}
+                onRemove={removeItem}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* DESKTOP CONTENT - Layout de 2 columnas */}
       <div className="hidden md:block">
         <div className="container mx-auto px-6 pb-12">
           <div className="grid grid-cols-12 gap-8">
-            {/* Columna izquierda - Lista de productos */}
+            {/* Columna izquierda - Lista integrada sin cards */}
             <div className="col-span-8">
-              <div className="space-y-4">
-                <AnimatePresence>
+              {/* Contenedor de lista integrada para desktop */}
+              <div className="bg-gradient-to-b from-empanada-dark to-empanada-darker rounded-2xl overflow-hidden shadow-2xl">
+                <AnimatePresence mode="popLayout">
                   {items.map((item, index) => (
-                    <motion.div
+                    <IntegratedCartItem
                       key={`${item.id}-${index}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, x: -100 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="bg-empanada-dark rounded-xl border border-empanada-light-gray p-6 shadow-lg hover:shadow-xl transition-all duration-300"
-                    >
-                      <div className="flex gap-6">
-                        {/* Imagen más prominente para desktop */}
-                        <div className="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-empanada-light-gray">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-
-                        {/* Contenido expandido */}
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex-1">
-                              <h3 className="text-xl font-bold text-white mb-2">
-                                {item.name}
-                              </h3>
-                              <div className="flex items-center gap-3 mb-2">
-                                <p className="text-empanada-golden font-bold text-lg">
-                                  {formatPrice(item.price)}
-                                </p>
-                                <span className="text-gray-300 text-sm">por unidad</span>
-                              </div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-gray-300 hover:text-red-500 hover:bg-red-500/10 p-3 rounded-full transition-colors"
-                              onClick={() => removeItem(item.id, item.customizations)}
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </Button>
-                          </div>
-
-                          {/* Personalizaciones mejoradas */}
-                          {item.customizations && Object.keys(item.customizations).length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {Object.entries(item.customizations).map(([key, value]) => (
-                                <Badge key={key} variant="secondary" className="px-3 py-1 bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30">
-                                  {value}
-                                </Badge>
-                              ))}
-                            </div>
-                          )}
-
-                          {/* Controles de cantidad y precio mejorados */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center bg-empanada-medium rounded-xl p-1 shadow-inner">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-10 w-10 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
-                                onClick={() =>
-                                  updateQuantity(
-                                    item.id,
-                                    item.customizations,
-                                    item.quantity - 1
-                                  )
-                                }
-                              >
-                                <Minus className="w-4 h-4" />
-                              </Button>
-                              <div className="px-6 py-2 font-bold text-white text-lg min-w-[4rem] text-center">
-                                {item.quantity}
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-10 w-10 p-0 rounded-lg hover:bg-empanada-light-gray text-gray-300 hover:text-white transition-colors"
-                                onClick={() =>
-                                  updateQuantity(
-                                    item.id,
-                                    item.customizations,
-                                    item.quantity + 1
-                                  )
-                                }
-                              >
-                                <Plus className="w-4 h-4" />
-                              </Button>
-                            </div>
-
-                            <div className="text-right">
-                              <div className="text-2xl font-bold text-empanada-golden">
-                                {formatPrice(item.price * item.quantity)}
-                              </div>
-                              <div className="text-sm text-gray-300">
-                                Total del producto
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
+                      item={item}
+                      index={index}
+                      isMobile={false}
+                      isLast={index === items.length - 1}
+                      onUpdateQuantity={updateQuantity}
+                      onRemove={removeItem}
+                    />
                   ))}
                 </AnimatePresence>
               </div>
@@ -514,8 +337,8 @@ export function CartPage() {
         </div>
       </div>
 
-      {/* MOBILE FOOTER - Solo visible en mobile */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-empanada-dark border-t border-empanada-light-gray z-50">
+      {/* MOBILE FOOTER - Solo visible en mobile, se oculta cuando el menú lateral está abierto */}
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-empanada-dark border-t border-empanada-light-gray z-40 transition-transform duration-300 ${isCartSidebarOpen ? 'translate-y-full' : 'translate-y-0'}`}>
         <div className="p-4 pb-16">
         {/* Promo Code Section */}
         <AnimatePresence>

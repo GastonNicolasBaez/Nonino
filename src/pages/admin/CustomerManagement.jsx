@@ -32,7 +32,6 @@ import { toast } from "sonner";
 import { generateCustomersReportPDF, downloadPDF } from "../../services/pdfService";
 import { useConfirmModal } from "../../components/common/ConfirmModal";
 import { Portal } from "../../components/common/Portal";
-import { mockCustomers } from "../../lib/mockData";
 import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 
 export function CustomerManagement() {
@@ -60,10 +59,24 @@ export function CustomerManagement() {
   // Hook para modal de confirmación
   const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
 
-  // Cargar datos mock al inicializar
+  // Cargar datos desde API al inicializar
   useEffect(() => {
-    setCustomers(mockCustomers);
-    setLoading(false);
+    const fetchCustomers = async () => {
+      try {
+        setLoading(true);
+        // Aquí se llamaría a la API real
+        // const response = await adminService.getCustomers();
+        // setCustomers(response.data);
+        setCustomers([]); // Estado vacío hasta conectar con API
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+        setCustomers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
   }, []);
 
   // Cerrar modales con ESC
@@ -597,7 +610,7 @@ function NewCustomerModal({ onClose, onSave }) {
       title="Nuevo Cliente"
       subtitle="Agrega un nuevo cliente al sistema"
       icon={<User className="w-6 h-6" />}
-      maxWidth="max-w-6xl"
+      maxWidth="max-w-7xl"
       maxHeight="max-h-[95vh]"
       footer={
         <BrandedModalFooter
@@ -771,7 +784,7 @@ function EditCustomerModal({ customer, onClose, onSave }) {
       title="Editar Cliente"
       subtitle="Modifica la información del cliente"
       icon={<User className="w-6 h-6" />}
-      maxWidth="max-w-6xl"
+      maxWidth="max-w-7xl"
       maxHeight="max-h-[95vh]"
       footer={
         <BrandedModalFooter

@@ -252,7 +252,7 @@ export function ZoomParallax({ images }) {
             {/* Degradado de transición para el final (extendido para cubrir uniones) */}
             <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-empanada-medium to-transparent pointer-events-none"></div>
             <div className={`sticky top-0 h-screen overflow-hidden relative ${isSmallScreen ? 'z-0' : ''} lg:z-auto`} style={{ transform: 'translateY(0)' }}>
-                {images.map(({ src, srcSet, blurDataURL, alt }, index) => {
+                {images.map(({ src, srcSet, blurDataURL, alt, quality, priority }, index) => {
                     const scale = scales[index % scales.length];
                     const isLoaded = loadedImages[index];
 
@@ -290,7 +290,14 @@ export function ZoomParallax({ images }) {
                                     isImageInteractive(index) ? `${isSmallScreen ? 'cursor-pointer z-0' : 'cursor-pointer z-10'} touch-manipulation` : 'z-0'
                                 }`}
                                 style={{
-                                    filter: index === 6 ? "blur(0px)" : imageBlur
+                                    filter: index === 6 ? "blur(0px)" : imageBlur,
+                                    // Optimizaciones de calidad para imágenes escaladas
+                                    ...(quality === 'high' && {
+                                        imageRendering: 'high-quality',
+                                        imageRendering: '-webkit-optimize-contrast',
+                                        backfaceVisibility: 'hidden',
+                                        transform: 'translateZ(0)'
+                                    })
                                 }}
                                 onClick={isImageInteractive(index) ? () => handleImageClick(index) : undefined}
                                 onTouchStart={isImageInteractive(index) ? (e) => {
@@ -314,7 +321,7 @@ export function ZoomParallax({ images }) {
                                     <source
                                         type="image/webp"
                                         srcSet={srcSet || `${src} 2560w`}
-                                        sizes="(max-width: 768px) 35vw, 25vw"
+                                        sizes="(max-width: 768px) 35vw, (max-width: 1024px) 50vw, 100vw"
                                     />
                                     <img
                                         src={src || 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+' + (index + 1)}
@@ -324,14 +331,20 @@ export function ZoomParallax({ images }) {
                                                 "transition-none" : // Sin transiciones en móvil
                                                 "transition-all duration-300 group-hover:brightness-75"
                                         } ${!isLoaded && blurDataURL ? 'opacity-0' : 'opacity-100'}`}
-                                        loading={index === 0 ? "eager" : "lazy"}
-                                        decoding={index === 0 ? "sync" : "async"}
-                                        fetchpriority={index === 0 ? "high" : undefined}
+                                        loading={index === 0 || priority ? "eager" : "lazy"}
+                                        decoding={index === 0 || priority ? "sync" : "async"}
+                                        fetchpriority={index === 0 || priority ? "high" : undefined}
                                         style={{
                                             // Optimizaciones adicionales para móvil
                                             ...(isMobile && {
                                                 willChange: 'auto',
                                                 transform: 'translateZ(0)' // Force hardware acceleration
+                                            }),
+                                            // Optimizaciones de calidad para desktop
+                                            ...(!isMobile && {
+                                                imageRendering: 'high-quality',
+                                                imageRendering: '-webkit-optimize-contrast',
+                                                imageRendering: 'crisp-edges'
                                             }),
                                             transition: 'opacity 0.3s ease-in-out'
                                         }}

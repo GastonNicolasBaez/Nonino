@@ -9,100 +9,19 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
-import noninoEmpanada from '@/assets/empanada1.webp';
+import { ProductImage } from '@/components/ui/OptimizedImage';
 
 const PARALLAX_FACTOR = 0.4;
 
-// Componente optimizado para imágenes de productos
-const OptimizedProductImage = React.memo(({ product, onImageLoad }) => {
-    const [imageLoaded, setImageLoaded] = useState(false);
-    const [imageError, setImageError] = useState(false);
-
-    // Determinar la mejor fuente de imagen disponible
-    // Ahora con prioridad para imágenes procesadas por el admin
-    const getImageSrc = () => {
-        // Priorizar imageBase64 (desde admin) o imageUrl procesadas
-        if (product.imageBase64) return `data:image/webp;base64,${product.imageBase64}`;
-        if (product.imageUrl) return product.imageUrl;
-        if (product.image) return product.image;
-        if (product.foto) return product.foto;
-        if (product.imagen) return product.imagen;
-        return noninoEmpanada;
-    };
-
-    const handleImageLoad = (e) => {
-        setImageLoaded(true);
-        setImageError(false);
-        e.target.style.opacity = '1';
-        if (onImageLoad) onImageLoad();
-    };
-
-    const handleImageError = (e) => {
-        setImageError(true);
-        // Intentar fuentes alternativas antes del fallback
-        const currentSrc = e.target.src;
-
-        // Intentar alternativas en orden de prioridad
-        if (product.imageBase64 && !currentSrc.includes(product.imageBase64)) {
-            e.target.src = product.imageBase64;
-            return;
-        }
-        if (product.imageUrl && !currentSrc.includes(product.imageUrl)) {
-            e.target.src = product.imageUrl;
-            return;
-        }
-        if (product.image && !currentSrc.includes(product.image)) {
-            e.target.src = product.image;
-            return;
-        }
-        if (product.foto && !currentSrc.includes(product.foto)) {
-            e.target.src = product.foto;
-            return;
-        }
-        if (product.imagen && !currentSrc.includes(product.imagen)) {
-            e.target.src = product.imagen;
-            return;
-        }
-
-        // Fallback final
-        e.target.src = noninoEmpanada;
-        setImageLoaded(true);
-    };
-
+// Componente optimizado para imágenes de productos - ahora usa ProductImage
+const OptimizedProductImage = React.memo(({ product, onImageLoad, priority = false }) => {
     return (
-        <div className="w-full h-full relative overflow-hidden bg-gray-100">
-            <img
-                className={cn(
-                    "w-full h-full transition-all duration-300 group-hover:scale-105",
-                    // Usar object-cover por defecto, ya que las imágenes del admin ahora tienen mejor formato
-                    // object-contain solo en caso de error crítico
-                    imageError ? "object-contain p-1" : "object-cover object-center"
-                )}
-                src={getImageSrc()}
-                alt={`${product.name || 'Producto'} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
-                loading="lazy"
-                onLoad={handleImageLoad}
-                onError={handleImageError}
-                style={{
-                    opacity: imageLoaded ? 1 : 0,
-                    transition: 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out',
-                    // Las nuevas imágenes del admin (320x240) se ven mejor con object-cover
-                    minWidth: imageError ? 'auto' : '100%',
-                    minHeight: imageError ? 'auto' : '100%',
-                }}
-            />
-
-            {/* Loading spinner mejorado */}
-            {!imageLoaded && (
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 animate-pulse flex flex-col items-center justify-center">
-                    <div className="w-8 h-8 border-3 border-empanada-golden border-t-transparent rounded-full animate-spin mb-2"></div>
-                    <span className="text-xs text-gray-500 font-medium">Cargando...</span>
-                </div>
-            )}
-
-            {/* Gradient overlay para mejorar contraste del texto */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-        </div>
+        <ProductImage 
+            product={product} 
+            priority={priority}
+            onLoad={onImageLoad}
+            className="group-hover:scale-105"
+        />
     );
 });
 

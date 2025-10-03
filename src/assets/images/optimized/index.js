@@ -59,6 +59,13 @@ export const parallax51024 = new URL('./parallax5-1024w.webp', import.meta.url).
 export const parallax51920 = new URL('./parallax5-1920w.webp', import.meta.url).href;
 export const parallax52560 = new URL('./parallax5-2560w.webp', import.meta.url).href;
 
+// parallax1.jpg    
+export const parallax1Blur = new URL('./parallax1-blur.webp', import.meta.url).href;
+export const parallax1640 = new URL('./parallax1-640w.webp', import.meta.url).href;
+export const parallax11024 = new URL('./parallax1-1024w.webp', import.meta.url).href;
+export const parallax11920 = new URL('./parallax1-1920w.webp', import.meta.url).href;
+export const parallax12560 = new URL('./parallax1-2560w.webp', import.meta.url).href;
+
 // parallax2.jpg
 export const parallax2Blur = new URL('./parallax2-blur.webp', import.meta.url).href;
 export const parallax2640 = new URL('./parallax2-640w.webp', import.meta.url).href;
@@ -100,4 +107,11 @@ export const somos3640 = new URL('./somos3-640w.webp', import.meta.url).href;
 export const somos31024 = new URL('./somos3-1024w.webp', import.meta.url).href;
 export const somos31920 = new URL('./somos3-1920w.webp', import.meta.url).href;
 export const somos32560 = new URL('./somos3-2560w.webp', import.meta.url).href;
+
+// localVillegas.jpg
+
+export const localVillegas640 = new URL('./localVillegas640w.webp', import.meta.url).href;
+export const localVillegas1024 = new URL('./localVillegas1024w.webp', import.meta.url).href;
+export const localVillegas1920 = new URL('./localVillegas1920w.webp', import.meta.url).href;
+export const localVillegas2560 = new URL('./localVillegas2560w.webp', import.meta.url).href;
 

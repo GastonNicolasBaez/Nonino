@@ -181,7 +181,7 @@ export function BrandedModal({
             </div>
 
             {/* Contenido del modal */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
               <div className="p-6">
                 {children}
               </div>
@@ -249,7 +249,7 @@ export function BrandedModal({
             </div>
 
             {/* Contenido del modal mobile */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
               <div className="p-4 pb-safe">
                 {children}
               </div>

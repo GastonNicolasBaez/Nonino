@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import {
   X, Package, CookingPot, Upload, Check, AlertTriangle,
-  ChevronLeft, ChevronRight, Search, Plus, Trash2, Calculator, Image as ImageIcon
+  ChevronLeft, ChevronRight, Plus, Trash2, Calculator, Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { CustomSelect } from '../branding';
+import { SearchableInput } from '../ui/searchable-input';
 import { Portal } from '../common/Portal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -72,6 +73,9 @@ export function AddProductModal({
     );
 
     const handleInputChange = (field, value) => {
+        console.log('AddProductModal: Cambiando campo:', field, 'a valor:', value);
+        console.log('AddProductModal: Estado anterior:', formData);
+        
         setFormData(prev => ({
             ...prev,
             [field]: value
@@ -84,6 +88,8 @@ export function AddProductModal({
                 [field]: ''
             }));
         }
+        
+        console.log('AddProductModal: Después del cambio, formData.category será:', value);
     };
 
     // Agregar ingrediente a la receta
@@ -349,8 +355,8 @@ export function AddProductModal({
                         transition={{ duration: 0.15, ease: "easeOut" }}
                         className="relative w-full max-w-7xl max-h-[95vh]"
                     >
-                        <Card className="shadow-xl border-2 border-empanada-golden/20">
-                            <CardHeader className="pb-4">
+                        <Card className="shadow-xl border-2 border-empanada-golden/20 flex flex-col max-h-[95vh]">
+                            <CardHeader className="pb-4 flex-shrink-0">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
                                         {currentStep > 1 && (
@@ -401,7 +407,7 @@ export function AddProductModal({
                                 </div>
                             </CardHeader>
 
-                            <CardContent className="space-y-6 max-h-[70vh] overflow-y-auto">
+                            <CardContent className="space-y-6 flex-1 overflow-y-auto px-6 py-0">
                                 {/* PASO 1: INFORMACIÓN BÁSICA */}
                                 {currentStep === 1 && (
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -435,6 +441,7 @@ export function AddProductModal({
                                                     options={categoryOptions}
                                                     placeholder="Seleccionar categoría"
                                                     disabled={isLoading}
+                                                    usePortal={true}
                                                 />
                                                 {errors.category && (
                                                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -505,61 +512,20 @@ export function AddProductModal({
                                                 Agregar Ingredientes
                                             </h3>
 
-                                            {/* Buscador tipo Google con autocomplete */}
+                                            {/* Buscador mejorado con Portal */}
                                             <div className="space-y-4">
-                                                <div className="relative">
-                                                    <div className="relative">
-                                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
-                                                        <Input
-                                                            value={searchIngredient}
-                                                            onChange={(e) => setSearchIngredient(e.target.value)}
-                                                            onKeyDown={(e) => {
-                                                                if (e.key === 'Enter' && filteredIngredients.length > 0) {
-                                                                    e.preventDefault();
-                                                                    const firstIngredient = filteredIngredients[0];
-                                                                    handleQuickAddIngredient(firstIngredient);
-                                                                }
-                                                                if (e.key === 'Escape') {
-                                                                    setSearchIngredient('');
-                                                                }
-                                                            }}
-                                                            placeholder="Buscar ingrediente y presionar Enter para agregar..."
-                                                            className="pl-10 pr-4 text-base"
-                                                        />
-                                                    </div>
-
-                                                    {/* Sugerencias instantáneas */}
-                                                    {searchIngredient.trim() && filteredIngredients.length > 0 && (
-                                                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                                            {filteredIngredients.slice(0, 5).map((ingredient, index) => (
-                                                                <button
-                                                                    key={ingredient.id}
-                                                                    type="button"
-                                                                    onClick={() => handleQuickAddIngredient(ingredient)}
-                                                                    className={`w-full text-left px-4 py-3 hover:bg-empanada-golden/10 dark:hover:bg-empanada-golden/20 flex items-center justify-between border-b border-gray-100 dark:border-empanada-light-gray last:border-b-0 transition-colors ${
-                                                                        index === 0 ? 'bg-gray-50 dark:bg-empanada-medium/50' : ''
-                                                                    }`}
-                                                                >
-                                                                    <div className="flex flex-col">
-                                                                        <span className="font-medium text-gray-900 dark:text-gray-100">
-                                                                            {ingredient.name}
-                                                                        </span>
-                                                                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                                                                            Enter para agregar → especificar cantidad
-                                                                        </span>
-                                                                    </div>
-                                                                </button>
-                                                            ))}
-                                                        </div>
-                                                    )}
-
-                                                    {/* Mensaje si no hay resultados */}
-                                                    {searchIngredient.trim() && filteredIngredients.length === 0 && (
-                                                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-lg shadow-lg p-4 text-center text-gray-500 dark:text-gray-400">
-                                                            No se encontró "{searchIngredient}"
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                <SearchableInput
+                                                    value={searchIngredient}
+                                                    onChange={setSearchIngredient}
+                                                    options={filteredIngredients}
+                                                    onSelect={handleQuickAddIngredient}
+                                                    placeholder="Buscar ingrediente y presionar Enter para agregar..."
+                                                    maxResults={5}
+                                                    noResultsText="No se encontró '{query}'"
+                                                    getOptionKey={(ingredient) => ingredient.id}
+                                                    getOptionLabel={(ingredient) => ingredient.name}
+                                                    getOptionSubtitle={() => "Enter para agregar → especificar cantidad"}
+                                                />
 
                                                 {/* Ingredientes seleccionados como chips/tags editables */}
                                                 {formData.recipe.length > 0 && (

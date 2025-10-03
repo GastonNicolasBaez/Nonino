@@ -917,7 +917,7 @@ export function ProductManagement() {
                     title={`Editar Receta: ${editingRecipe.name}`}
                     subtitle="Modifica los ingredientes y cantidades de esta empanada"
                     icon={<ChefHat className="w-5 h-5 text-empanada-golden" />}
-                    maxWidth="max-w-2xl"
+                    maxWidth="max-w-4xl"
                     footer={
                         <div className="flex justify-end gap-3">
                             <Button

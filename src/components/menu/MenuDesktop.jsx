@@ -211,9 +211,9 @@ export function MenuDesktop({
                                     <p className="text-gray-400">¡Los más pedidos del día!</p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-6">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
                                 {todaysPicks.slice(0, 6).map((product) => (
-                                    <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray flex flex-col">
+                                    <Card key={product.id} className="overflow-hidden hover:shadow-lg transition duration-300 hover:scale-105 bg-empanada-dark border-empanada-light-gray flex flex-col">
                                         <div className="aspect-[10/11] bg-empanada-medium relative">
                                             <img
                                                 src={product.image || "/api/placeholder/200/200"}
@@ -255,7 +255,7 @@ export function MenuDesktop({
                                     <p className="text-gray-400">Ofertas que no puedes perderte</p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                 {promotions.map((promo) => (
                                     <Card key={promo.id} className="overflow-hidden bg-gradient-to-r from-red-500 to-orange-500 text-white hover:shadow-lg transition-shadow">
                                         <CardContent className="p-6">

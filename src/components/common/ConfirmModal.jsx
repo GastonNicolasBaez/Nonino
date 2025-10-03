@@ -60,21 +60,49 @@ export function ConfirmModal({
     <Portal>
       <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[999999] flex items-center justify-center p-4"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1 },
+            exit: { opacity: 0 }
+          }}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="fixed inset-0 z-[999999] flex items-center justify-center p-4 md:p-6"
         >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
         
-        {/* Modal */}
+        {/* Modal Desktop/Tablet (≥768px) */}
         <motion.div
-          initial={{ scale: 0.96, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.96, opacity: 0 }}
-          transition={{ duration: 0.15, ease: "easeOut" }}
-          className="relative w-full max-w-md"
+          variants={{
+            hidden: {
+              opacity: 0,
+              scale: 0.95,
+              y: 20
+            },
+            visible: {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              transition: {
+                type: "spring",
+                damping: 25,
+                stiffness: 300,
+                duration: 0.3
+              }
+            },
+            exit: {
+              opacity: 0,
+              scale: 0.95,
+              y: 20,
+              transition: { duration: 0.2 }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="hidden md:block relative w-full max-w-md"
         >
           <Card className={`shadow-xl border-2 ${styles.borderColor}`}>
             <CardHeader className="pb-4">
@@ -131,6 +159,91 @@ export function ConfirmModal({
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Modal Mobile (<768px) */}
+        <motion.div
+          variants={{
+            hidden: {
+              opacity: 0,
+              y: '100%'
+            },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: {
+                type: "spring",
+                damping: 30,
+                stiffness: 300,
+                duration: 0.36
+              }
+            },
+            exit: {
+              opacity: 0,
+              y: '100%',
+              transition: { duration: 0.25 }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="md:hidden absolute inset-x-0 bottom-0 bg-background rounded-t-3xl shadow-2xl max-h-[95vh] overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Drag Handle */}
+          <div className="flex justify-center pt-3 pb-2">
+            <div className="w-12 h-1.5 bg-gray-400 dark:bg-gray-600 rounded-full"></div>
+          </div>
+
+          {/* Mobile Content */}
+          <div className="flex-shrink-0 p-6 pb-8">
+            {/* Header */}
+            <div className="flex items-center justify-center mb-5">
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${styles.iconBg}`}>
+                {styles.icon}
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white text-center mb-4">
+              {title}
+            </h2>
+
+            {/* Message */}
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-center mb-8">
+              {message}
+            </p>
+
+            {/* Buttons */}
+            <div className="space-y-3">
+              <Button 
+                onClick={() => {
+                  onConfirm();
+                  onClose();
+                }}
+                disabled={isLoading}
+                className={`w-full py-4 ${styles.confirmButton}`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Procesando...</span>
+                  </div>
+                ) : (
+                  confirmText
+                )}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={onClose}
+                disabled={isLoading}
+                className="w-full py-4"
+              >
+                {cancelText}
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
         </motion.div>
       </AnimatePresence>
     </Portal>

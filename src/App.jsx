@@ -219,13 +219,14 @@ function App() {
                         <Route path="*" element={<NotFound />} />
                     </Routes>
 
-                    <Toaster
+                    {/* Toaster deshabilitado para una UX más limpia */}
+                    {/* <Toaster
                         position="bottom-right"
                         toastOptions={{
                             style: { background: '#f7a82a', color: 'white' },
                             className: 'empanada-toast',
                         }}
-                    />
+                    /> */}
 
                 </SessionProvider>
             </QueryClientProvider>

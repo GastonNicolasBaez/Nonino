@@ -544,7 +544,7 @@ export function BranchManagement() {
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.96, opacity: 0 }}
                                 transition={{ duration: 0.15, ease: "easeOut" }}
-                                className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                                className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto"
                             >
                                 <Card className="shadow-xl border-2 border-empanada-golden/20">
                                     <CardHeader className="pb-4">

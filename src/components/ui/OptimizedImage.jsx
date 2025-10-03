@@ -1,217 +1,138 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, memo } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * Componente OptimizedImage
- *
- * Imagen responsive optimizada con:
- * - Lazy loading con IntersectionObserver
- * - Blur placeholder (LQIP)
- * - Srcset responsive
- * - GPU acceleration
- * - Transición suave al cargar
- *
- * @example
- * <OptimizedImage
- *   src={image1920}
- *   srcSet={{
- *     '640w': image640,
- *     '1024w': image1024,
- *     '1920w': image1920
- *   }}
- *   blurDataURL={imageBlur}
- *   alt="Descripción"
- *   priority={false}
- * />
+ * Componente optimizado para imágenes de productos con alta calidad
+ * Incluye optimizaciones de renderizado, carga progresiva y responsive
  */
-export function OptimizedImage({
-  src,
-  srcSet = {},
-  blurDataURL,
-  alt = '',
-  className = '',
-  priority = false,
-  sizes = '100vw',
-  objectFit = 'cover',
-  onLoad,
-  ...props
-}) {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(priority); // Si es priority, cargar inmediatamente
-  const imgRef = useRef(null);
+export const OptimizedImage = memo(({ 
+    src, 
+    alt, 
+    className = '', 
+    priority = false,
+    quality = 'high',
+    loading = 'lazy',
+    decoding = 'async',
+    onLoad,
+    onError,
+    fallbackSrc,
+    ...props 
+}) => {
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [imageError, setImageError] = useState(false);
+    const [currentSrc, setCurrentSrc] = useState(src);
 
-  // IntersectionObserver para lazy loading
-  useEffect(() => {
-    if (priority || !imgRef.current) return;
+    const handleImageLoad = (e) => {
+        setImageLoaded(true);
+        setImageError(false);
+        e.target.style.opacity = '1';
+        if (onLoad) onLoad(e);
+    };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
+    const handleImageError = (e) => {
+        setImageError(true);
+        
+        // Intentar fallback si está disponible
+        if (fallbackSrc && currentSrc !== fallbackSrc) {
+            setCurrentSrc(fallbackSrc);
+            return;
         }
-      },
-      {
-        rootMargin: '50px', // Cargar 50px antes de entrar al viewport
-        threshold: 0.01
-      }
-    );
+        
+        // Fallback final a imagen placeholder
+        e.target.src = 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+No+Disponible';
+        setImageLoaded(true);
+        
+        if (onError) onError(e);
+    };
 
-    observer.observe(imgRef.current);
+    // Configuración de carga optimizada
+    const loadingConfig = priority ? 'eager' : loading;
+    const decodingConfig = priority ? 'sync' : decoding;
+    const fetchPriority = priority ? 'high' : undefined;
 
-    return () => observer.disconnect();
-  }, [priority]);
-
-  // Generar srcSet string
-  const srcSetString = Object.entries(srcSet)
-    .map(([size, url]) => `${url} ${size}`)
-    .join(', ');
-
-  const handleLoad = (e) => {
-    setIsLoaded(true);
-    if (onLoad) onLoad(e);
-  };
-
-  return (
-    <div
-      ref={imgRef}
-      className={cn('relative overflow-hidden', className)}
-      style={{
-        // GPU acceleration
-        willChange: isInView && !isLoaded ? 'opacity' : 'auto',
-        transform: 'translate3d(0, 0, 0)'
-      }}
-    >
-      {/* Blur Placeholder */}
-      {blurDataURL && !isLoaded && (
-        <img
-          src={blurDataURL}
-          alt=""
-          aria-hidden="true"
-          className={cn(
-            'absolute inset-0 w-full h-full',
-            objectFit === 'cover' ? 'object-cover' : 'object-contain'
-          )}
-          style={{
-            filter: 'blur(20px)',
-            transform: 'scale(1.1)', // Evitar bordes del blur
-            transition: 'opacity 0.3s ease-in-out'
-          }}
-        />
-      )}
-
-      {/* Imagen principal */}
-      {isInView && (
-        <picture>
-          {srcSetString && (
-            <source
-              srcSet={srcSetString}
-              sizes={sizes}
-              type="image/webp"
+    return (
+        <div className="w-full h-full relative overflow-hidden bg-gray-100">
+            <img
+                className={cn(
+                    "w-full h-full transition-all duration-300",
+                    // Optimizaciones de calidad para desktop
+                    quality === 'high' && "image-rendering: high-quality",
+                    imageError ? "object-contain p-1" : "object-cover object-center",
+                    className
+                )}
+                src={currentSrc}
+                alt={alt}
+                loading={loadingConfig}
+                decoding={decodingConfig}
+                fetchpriority={fetchPriority}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                style={{
+                    opacity: imageLoaded ? 1 : 0,
+                    transition: 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out',
+                    // Optimizaciones de renderizado para alta calidad
+                    ...(quality === 'high' && {
+                        imageRendering: 'high-quality',
+                        imageRendering: '-webkit-optimize-contrast',
+                        backfaceVisibility: 'hidden',
+                        transform: 'translateZ(0)'
+                    }),
+                    minWidth: imageError ? 'auto' : '100%',
+                    minHeight: imageError ? 'auto' : '100%',
+                }}
+                {...props}
             />
-          )}
-          <img
-            src={src}
-            alt={alt}
-            loading={priority ? 'eager' : 'lazy'}
-            onLoad={handleLoad}
-            className={cn(
-              'w-full h-full transition-opacity duration-300',
-              objectFit === 'cover' ? 'object-cover' : 'object-contain',
-              isLoaded ? 'opacity-100' : 'opacity-0'
-            )}
-            style={{
-              // GPU acceleration
-              transform: 'translate3d(0, 0, 0)',
-              backfaceVisibility: 'hidden'
-            }}
-            {...props}
-          />
-        </picture>
-      )}
 
-      {/* Loading indicator (opcional) */}
-      {!isLoaded && isInView && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50">
-          <div className="w-8 h-8 border-3 border-empanada-golden border-t-transparent rounded-full animate-spin" />
+            {/* Loading spinner mejorado */}
+            {!imageLoaded && (
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 animate-pulse flex flex-col items-center justify-center">
+                    <div className="w-8 h-8 border-3 border-empanada-golden border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <span className="text-xs text-gray-500 font-medium">Cargando...</span>
+                </div>
+            )}
+
+            {/* Gradient overlay para mejorar contraste del texto */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
         </div>
-      )}
-    </div>
-  );
-}
+    );
+});
+
+OptimizedImage.displayName = "OptimizedImage";
 
 /**
- * Variante para backgrounds con parallax
+ * Hook para obtener la mejor fuente de imagen de un producto
  */
-export function OptimizedBackgroundImage({
-  src,
-  srcSet = {},
-  blurDataURL,
-  className = '',
-  priority = false,
-  parallaxY,
-  children,
-  ...props
-}) {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(priority);
-  const bgRef = useRef(null);
+export const useProductImage = (product) => {
+    return React.useMemo(() => {
+        // Priorizar imageBase64 (desde admin) o imageUrl procesadas
+        if (product.imageBase64) return `data:image/webp;base64,${product.imageBase64}`;
+        if (product.imageUrl) return product.imageUrl;
+        if (product.image) return product.image;
+        if (product.foto) return product.foto;
+        if (product.imagen) return product.imagen;
+        
+        // Fallback a imagen por defecto
+        return 'https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+No+Disponible';
+    }, [product.imageBase64, product.imageUrl, product.image, product.foto, product.imagen]);
+};
 
-  useEffect(() => {
-    if (priority || !bgRef.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '100px', threshold: 0 }
-    );
-
-    observer.observe(bgRef.current);
-    return () => observer.disconnect();
-  }, [priority]);
-
-  // Generar srcSet para CSS background
-  const backgroundImage = isLoaded && src
-    ? `url(${src})`
-    : blurDataURL
-    ? `url(${blurDataURL})`
-    : 'none';
-
-  return (
-    <div
-      ref={bgRef}
-      className={cn('relative', className)}
-      style={{
-        backgroundImage,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        filter: isLoaded ? 'blur(0)' : 'blur(20px)',
-        transition: 'filter 0.3s ease-in-out',
-        // GPU acceleration + parallax
-        willChange: parallaxY ? 'transform' : 'auto',
-        transform: parallaxY ? `translate3d(0, ${parallaxY}px, 0)` : 'translate3d(0, 0, 0)',
-        backfaceVisibility: 'hidden',
-        ...props.style
-      }}
-      {...props}
-    >
-      {/* Preload image */}
-      {isInView && (
-        <link
-          rel="preload"
-          as="image"
-          href={src}
-          onLoad={() => setIsLoaded(true)}
+/**
+ * Componente específico para imágenes de productos con configuración optimizada
+ */
+export const ProductImage = memo(({ product, className = '', priority = false, ...props }) => {
+    const imageSrc = useProductImage(product);
+    
+    return (
+        <OptimizedImage
+            src={imageSrc}
+            alt={`${product.name || 'Producto'} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
+            className={cn("group-hover:scale-105", className)}
+            priority={priority}
+            quality="high"
+            fallbackSrc="https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+No+Disponible"
+            {...props}
         />
-      )}
+    );
+});
 
-      {children}
-    </div>
-  );
-}
-
-export default OptimizedImage;
+ProductImage.displayName = "ProductImage";

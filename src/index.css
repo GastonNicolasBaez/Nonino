@@ -98,6 +98,26 @@
     }
   }
 
+  /* Optimizaciones específicas para tablets */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    /* Mejor experiencia touch para elementos interactivos */
+    .touch-friendly {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Spacing optimizado para tablets */
+    .tablet-spaced {
+      padding: 1rem 1.5rem;
+    }
+
+    /* Scroll más suave en tablets */
+    .scroll-smooth-tablet {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   /* Ocultar scrollbar en WebKit browsers (Chrome, Safari, Edge) */
   body::-webkit-scrollbar {
     display: none;
@@ -132,6 +152,34 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+  }
+
+  /* Snap Utilities para mejor scroll en móvil */
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
+  .snap-mandatory {
+    scroll-snap-type: mandatory;
+  }
+
+  /* Responsive Grid utilities */
+  .responsive-grid-sm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .responsive-grid-md {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  .responsive-grid-lg {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
   }
 
   /* Ocultar scrollbar en todos los elementos */

@@ -223,7 +223,7 @@ function RecipeManagement() {
       {isEditModalOpen && selectedRecipe && (
         <Portal>
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
-            <div className="bg-background border border-border rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div className="bg-background border border-border rounded-lg shadow-xl max-w-6xl w-full max-h-[80vh] overflow-hidden">
               {/* Header del modal */}
               <div className="flex items-center justify-between p-6 border-b">
                 <div>

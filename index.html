@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/webp" href="/nonino.webp" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Nonino Empanadas | Empanadas Artesanales San Martín de los Andes - Patagonia Argentina</title>
 
     <!-- SEO Meta Tags -->
@@ -60,14 +60,88 @@
         padding: 0;
         height: 100%;
         background-color: #000000; /* 👈 negro */
+        /* Prevenir zoom en interactivos */
+        touch-action: manipulation;
+        -webkit-text-size-adjust: 100%;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
       }
       #root {
         height: 100%;
+        /* Permitir zoom solo en elementos específicos del parallax */
+        touch-action: pan-x pan-y;
+      }
+      /* Permitir zoom en zoom-parallax específicamente */
+      .zoom-parallax-container {
+        touch-action: auto !important;
+      }
+      /* Evitar zoom accidental en botones e interactivos */
+      button, a, input, textarea, select {
+        touch-action: manipulation;
+      }
+      /* Mantener formateo responsive */
+      @media (max-width: 768px) {
+        .zoom-parallax-container {
+          -webkit-overflow-scrolling: auto;
+        }
       }
     </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Script para prevenir zoom accidental -->
+    <script>
+      // Prevenir zoom en doble tap
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+
+      // Manejar viewport dinámicamente para parallax
+      function updateViewport(allowZoom) {
+        const viewport = document.querySelector('meta[name="viewport"]');
+        if (viewport) {
+          if (allowZoom) {
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover');
+          } else {
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+          }
+        }
+      }
+
+      // Prevenir zoom por gestos si no es el parallax
+      document.addEventListener('touchstart', function(e) {
+        const target = e.target;
+        const isParallax = target.closest('.zoom-parallax-container');
+        
+        if (!isParallax && (e.touches.length > 1 || e.targetTouches.length > 1)) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      // Configurar viewport inicialmente como no-zoom
+      updateViewport(false);
+      
+      // Exponer función globalmente para componentes React
+      window.enableZoom = () => updateViewport(true);
+      window.disableZoom = () => updateViewport(false);
+
+      // Manejar resize para mantener viewport estable
+      let isResizing = false;
+      window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+          isResizing = false;
+          window.scrollTo(0, 0);
+        }, 100);
+      });
+    </script>
   </body>
 </html>

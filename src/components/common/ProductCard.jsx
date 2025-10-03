@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { ProductModal } from "../ui/ProductModal";
+import { ProductImage } from "../ui/OptimizedImage";
 import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
@@ -30,7 +31,7 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
   const handleLike = (e) => {
     e.stopPropagation();
     setIsLiked(!isLiked);
-    toast.success(isLiked ? "Removido de favoritos" : "Agregado a favoritos");
+    // Toast removido para mejor UX
   };
 
   /**
@@ -59,12 +60,11 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
         <div>
         <div className="relative">
           <div className="aspect-[4/3] overflow-hidden">
-            <motion.img
-              src={product.image}
-              alt={`${product.name} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
-              className="w-full h-full object-cover"
-              animate={{ scale: isHovered ? 1.05 : 1 }}
-              transition={{ duration: 0.3 }}
+            <ProductImage
+              product={product}
+              className="w-full h-full"
+              priority={false}
+              quality="high"
             />
           </div>
           

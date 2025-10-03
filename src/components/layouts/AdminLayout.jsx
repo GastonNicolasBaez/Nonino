@@ -281,7 +281,7 @@ const AdminLayout = () => {
     // Abrir/cerrar dropdowns basado en la ruta actual
     useEffect(() => {
         if (location.pathname.includes('/productos') || location.pathname.includes('/materiales') ||
-            location.pathname.includes('/combos')) {
+            location.pathname.includes('/combos') || location.pathname.includes('/categorias')) {
             setDefinitionsDropdownOpen(true);
         } else {
             setDefinitionsDropdownOpen(false);

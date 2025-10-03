@@ -137,7 +137,7 @@ export function AnimatedTestimonials({ autoplay = false }) {
             <AnimatePresence>
               {teamMembers.map((member, index) => (
                 <motion.div
-                  key={member.src}
+                  key={`${member.name}-${index}`}
                   initial={{
                     opacity: 0,
                     scale: 0.9,

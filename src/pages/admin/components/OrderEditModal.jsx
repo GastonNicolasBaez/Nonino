@@ -28,17 +28,8 @@ import { formatPrice } from "../../../lib/utils";
 import { toast } from "sonner";
 import { CustomSelect, BrandedModal, BrandedModalFooter } from "../../../components/branding";
 
-// Datos mock de productos disponibles
-const mockProducts = [
-  { id: 1, name: "Empanada de Carne", price: 150 },
-  { id: 2, name: "Empanada de Pollo", price: 150 },
-  { id: 3, name: "Empanada de Jamón y Queso", price: 150 },
-  { id: 4, name: "Empanada de Verdura", price: 150 },
-  { id: 5, name: "Empanada de Humita", price: 150 },
-  { id: 6, name: "Empanada de Caprese", price: 150 },
-  { id: 7, name: "Empanada de Atún", price: 150 },
-  { id: 8, name: "Empanada de Espinaca", price: 150 }
-];
+// Datos de productos disponibles - obtener desde API
+const availableProducts = [];
 
 export function OrderEditModal({ order, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -115,7 +106,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
   }, [formData.items, formData.deliveryType]);
 
   // Filtrar productos para búsqueda
-  const filteredProducts = mockProducts.filter(product =>
+  const filteredProducts = availableProducts.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -218,7 +209,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
       title={`Editar Pedido #${order?.id}`}
       subtitle="Modifica los detalles del pedido"
       icon={<ShoppingBag className="w-5 h-5" />}
-      maxWidth="max-w-6xl"
+      maxWidth="max-w-7xl"
       maxHeight="max-h-[95vh]"
       footer={
         <BrandedModalFooter

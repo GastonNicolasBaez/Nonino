@@ -216,7 +216,7 @@ export function FabricaProducir() {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Agrega notas sobre esta producción (opcional)..."
                         rows={4}
-                        className="w-full admin-input"
+                        className="w-full admin-input rounded-md"
                     />
                 </CardContent>
             </Card>

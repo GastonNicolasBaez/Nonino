@@ -202,6 +202,11 @@ const PublicDataProvider = ({ children }) => {
 
             publicDataLoading,
 
+            // Exponer funciones para prefetch desde la UI
+            callPublicCatalog,
+            callPublicProductos,
+            callPublicCombos,
+
             callPublicOrderById,
             callPublicOrderByIdLoading,
             callPublicCreateOrder,

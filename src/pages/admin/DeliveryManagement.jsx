@@ -225,7 +225,7 @@ export function DeliveryManagement() {
 
         return (
             <div className="modal-overlay bg-black/60 backdrop-blur-sm flex items-center justify-center" style={{padding: '1rem'}}>
-                <div className="w-full max-w-2xl">
+                <div className="w-full max-w-6xl">
                     <Card className="shadow-2xl">
                         <CardHeader className="pb-4 bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                             <div className="flex items-center justify-between">

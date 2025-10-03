@@ -37,21 +37,49 @@ export function UpdateStockModal({
     <Portal>
       <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[999999] flex items-center justify-center p-4"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1 },
+            exit: { opacity: 0 }
+          }}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="fixed inset-0 z-[999999] flex items-center justify-center p-4 md:p-6"
         >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/60" onClick={handleClose} />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
         
-        {/* Modal */}
+        {/* Modal Desktop/Tablet (≥768px) */}
         <motion.div
-          initial={{ scale: 0.96, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.96, opacity: 0 }}
-          transition={{ duration: 0.15, ease: "easeOut" }}
-          className="relative w-full max-w-md"
+          variants={{
+            hidden: {
+              opacity: 0,
+              scale: 0.95,
+              y: 20
+            },
+            visible: {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              transition: {
+                type: "spring",
+                damping: 25,
+                stiffness: 300,
+                duration: 0.3
+              }
+            },
+            exit: {
+              opacity: 0,
+              scale: 0.95,
+              y: 20,
+              transition: { duration: 0.2 }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="hidden md:block relative w-full max-w-md"
         >
           <Card className="shadow-xl border-2 border-empanada-golden/20">
             <CardHeader className="pb-4">
@@ -134,6 +162,115 @@ export function UpdateStockModal({
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Modal Mobile (<768px) */}
+        <motion.div
+          variants={{
+            hidden: {
+              opacity: 0,
+              y: '100%'
+            },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: {
+                type: "spring",
+                damping: 30,
+                stiffness: 300,
+                duration: 0.36
+              }
+            },
+            exit: {
+              opacity: 0,
+              y: '100%',
+              transition: { duration: 0.25 }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="md:hidden absolute inset-x-0 bottom-0 bg-background rounded-t-3xl shadow-2xl overflow-hidden max-h-[95vh]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Drag Handle */}
+          <div className="flex justify-center pt-3 pb-2">
+            <div className="w-12 h-1.5 bg-gray-400 dark:bg-gray-600 rounded-full"></div>
+          </div>
+
+          {/* Mobile Content */}
+          <div className="flex-shrink-0 p-6">
+            {/* Header */}
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-empanada-golden/10 rounded-full flex items-center justify-center">
+                <Package className="w-6 h-6 text-empanada-golden" />
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white text-center mb-2">
+              Actualizar Stock
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-6">
+              {productName}
+            </p>
+
+            {/* Form */}
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Stock Actual
+                </label>
+                <div className="px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400">
+                  {currentStock} unidades
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nuevo Stock
+                </label>
+                <Input
+                  type="number"
+                  value={newStock}
+                  onChange={(e) => setNewStock(e.target.value)}
+                  placeholder="Ingresa la nueva cantidad"
+                  min="0"
+                  className="w-full text-lg py-3"
+                />
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 mt-8">
+              <Button 
+                variant="outline" 
+                onClick={handleClose}
+                disabled={isLoading}
+                className="flex-1 py-4"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSave}
+                disabled={isLoading || newStock === currentStock.toString()}
+                className="flex-1 py-4 bg-empanada-golden hover:bg-empanada-golden/90 text-white"
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Guardando...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Actualizar
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
         </motion.div>
       </AnimatePresence>
     </Portal>

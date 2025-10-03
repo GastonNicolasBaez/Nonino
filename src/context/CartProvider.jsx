@@ -68,7 +68,7 @@ export const CartProvider = ({ children }) => {
       setItems([...items, newItem]);
     }
 
-    toast.success(`${product.name} agregado al carrito`);
+    // Toast removido para mejor fluidez UX
   };
 
   const removeItem = (itemId, customizations = {}) => {
@@ -79,7 +79,7 @@ export const CartProvider = ({ children }) => {
       )
     );
     setItems(updatedItems);
-    toast.info('Producto eliminado del carrito');
+    // Toast removido para mejor fluidez UX
   };
 
   const updateQuantity = (itemId, customizations, newQuantity) => {
@@ -104,19 +104,19 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => {
     setItems([]);
     setPromoCode(null);
-    toast.info('Carrito vaciado');
+    // Toast removido para mejor fluidez UX
   };
 
   const applyPromoCode = (code) => {
     // Los códigos promocionales se validarán contra el backend
     setPromoCode({ code: code.toUpperCase() });
-    toast.success(`Código promocional aplicado: ${code.toUpperCase()}`);
+    // Toast removido para mejor fluidez UX
     return true;
   };
 
   const removePromoCode = () => {
     setPromoCode(null);
-    toast.info('Código promocional removido');
+    // Toast removido para mejor fluidez UX
   };
 
   const updateStore = (store) => {
@@ -144,7 +144,7 @@ export const CartProvider = ({ children }) => {
       // Enviar al backend real
       const response = await orderService.createOrder(orderData);
       
-      toast.success('Pedido enviado exitosamente');
+      // Toast removido para mejor fluidez UX
       clearCart();
       return response.data;
     } catch (error) {

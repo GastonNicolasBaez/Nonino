@@ -149,7 +149,7 @@ export function NewOrderModal({ onClose, onSave }) {
             title="Nuevo Pedido Manual"
             subtitle="Crea un nuevo pedido manualmente"
             icon={<Plus className="w-5 h-5" />}
-            maxWidth="max-w-6xl"
+            maxWidth="max-w-7xl"
             maxHeight="max-h-[95vh]"
             footer={
                 <div className="flex justify-between items-center w-full">

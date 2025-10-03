@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Link } from "react-router";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
+import { Link, useLocation } from "react-router";
 import { ChevronRight, Clock, Truck, Shield, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { TextAnimate } from "@/components/ui/text-animate";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { ProductsFocusCarousel } from "@/components/ui/products-focus-carousel";
+import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import { FloatingOrderButton } from "@/components/common/FloatingOrderButton";
 import { usePublicData } from "@/context/PublicDataProvider";
 import { useRAFThrottle } from "@/hooks/useThrottle";
@@ -22,6 +23,8 @@ import {
 export function HomePage() {
 
     const { productosTodos: productos, publicDataLoading: loading, sucursalSeleccionada } = usePublicData();
+    const location = useLocation();
+    const publicData = usePublicData();
 
     const [promotions] = useState([]);
     const [isSmallMobile, setIsSmallMobile] = useState(() => {
@@ -46,10 +49,51 @@ export function HomePage() {
         return false;
     });
 
+    // Clave para re-inicializar efectos de scroll tras el montaje
+    const [initKey, setInitKey] = useState(0);
+    const [imagesReady, setImagesReady] = useState(false);
+
     // Force scroll to top on mount to ensure logo animation starts correctly
     useEffect(() => {
         window.scrollTo(0, 0);
+        const id = requestAnimationFrame(() => setInitKey((k) => k + 1));
+        // Forzar recálculo de observadores de scroll en el primer render
+        const fire = () => window.dispatchEvent(new Event('scroll'));
+        const t = setTimeout(fire, 0);
+        document.addEventListener('visibilitychange', fire);
+        window.addEventListener('load', fire, { once: true });
+        return () => {
+            cancelAnimationFrame(id);
+            clearTimeout(t);
+            document.removeEventListener('visibilitychange', fire);
+        };
     }, []);
+
+    // Desactivar restauración automática de scroll del navegador para esta vista
+    useEffect(() => {
+        const prev = typeof history !== 'undefined' && history.scrollRestoration;
+        if (typeof history !== 'undefined' && 'scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        return () => {
+            if (typeof history !== 'undefined' && 'scrollRestoration' in history && prev) {
+                history.scrollRestoration = prev;
+            }
+        };
+    }, []);
+
+    // Al cambiar de ruta, reestablecer posición/escala del logo y subir al tope
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            window.scrollTo(0, 0);
+            if (logoRef.current) {
+                logoRef.current.style.top = '';
+                logoRef.current.style.transform = '';
+            }
+            // Disparar scroll para recalcular inmediatamente
+            window.dispatchEvent(new Event('scroll'));
+        });
+    }, [location.pathname]);
 
     // Agregar clase al body para background transparente
     useEffect(() => {
@@ -73,12 +117,95 @@ export function HomePage() {
         return () => window.removeEventListener('resize', checkDevice);
     }, []);
 
-    // Parallax scroll effect con custom scroll source para móvil
-    // OPTIMIZACIÓN: Throttle scroll con RAF para 60fps consistente
-    const { scrollY } = useScroll({
-        // En móvil, usar document.body como fuente de scroll
-        container: isMobile ? { current: document.body } : undefined
-    });
+    // Parallax scroll effect para fondos (viewport)
+    const { scrollY } = useScroll();
+
+    // Control manual del logo (evita congelado en mobile/tablet)
+    const logoRef = useRef(null);
+    useEffect(() => {
+        const remToPx = (rem) => rem * parseFloat(getComputedStyle(document.documentElement).fontSize || '16');
+        const startTopRem = isSmallMobile ? 11.56 : isMobile ? 13.45 : isTablet ? 15.39 : 17.325;
+        const endTopRem = 4.5;
+        let startTopPx = remToPx(startTopRem);
+        let endTopPx = remToPx(endTopRem);
+        let maxScroll = isSmallMobile ? 169 : isMobile ? 215 : isTablet ? 261 : 308; // px
+        const endScale = isSmallMobile ? 0.45 : isMobile ? 0.48 : isTablet ? 0.5 : 0.42;
+
+        // Reinicialización inmediata del logo al montar (evita estilos "pegados" al volver)
+        if (logoRef.current) {
+            logoRef.current.style.top = `${Math.round(startTopPx)}px`;
+            logoRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
+        }
+
+        const getScrollY = () => {
+            return (typeof window !== 'undefined' && (window.pageYOffset || window.scrollY))
+                || (document.scrollingElement && document.scrollingElement.scrollTop)
+                || (document.documentElement && document.documentElement.scrollTop)
+                || (document.body && document.body.scrollTop)
+                || 0;
+        };
+
+        let rafId = 0;
+        const update = () => {
+            const y = getScrollY();
+            const t = Math.min(Math.max(y / maxScroll, 0), 1);
+            const top = startTopPx + (endTopPx - startTopPx) * t;
+            const scale = 1 + (endScale - 1) * t;
+            if (logoRef.current) {
+                logoRef.current.style.top = `${Math.round(top)}px`;
+                logoRef.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            }
+        };
+        const onScroll = () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(update);
+        };
+        const onResize = () => {
+            startTopPx = remToPx(startTopRem);
+            endTopPx = remToPx(endTopRem);
+            maxScroll = isSmallMobile ? 169 : isMobile ? 215 : isTablet ? 261 : 308;
+            onScroll();
+        };
+        const onPageShowOrFocus = () => {
+            // Al volver al tab o al historial, asegurar estado inicial correcto y forzar update
+            if (logoRef.current) {
+                logoRef.current.style.top = `${Math.round(startTopPx)}px`;
+                logoRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+            requestAnimationFrame(update);
+        };
+        // Inicial y bindings
+        requestAnimationFrame(update);
+        const opts = { passive: true, capture: true };
+        window.addEventListener('scroll', onScroll, opts);
+        document.addEventListener('scroll', onScroll, opts);
+        document.addEventListener('touchmove', onScroll, opts);
+        window.addEventListener('touchmove', onScroll, opts);
+        window.addEventListener('resize', onResize, opts);
+        window.addEventListener('orientationchange', onResize, opts);
+        document.addEventListener('visibilitychange', update);
+        window.addEventListener('pageshow', onPageShowOrFocus, opts);
+        window.addEventListener('focus', onPageShowOrFocus, opts);
+        window.addEventListener('popstate', onPageShowOrFocus, opts);
+        return () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            window.removeEventListener('scroll', onScroll, opts);
+            document.removeEventListener('scroll', onScroll, opts);
+            document.removeEventListener('touchmove', onScroll, opts);
+            window.removeEventListener('touchmove', onScroll, opts);
+            window.removeEventListener('resize', onResize, opts);
+            window.removeEventListener('orientationchange', onResize, opts);
+            document.removeEventListener('visibilitychange', update);
+            window.removeEventListener('pageshow', onPageShowOrFocus, opts);
+            window.removeEventListener('focus', onPageShowOrFocus, opts);
+            window.removeEventListener('popstate', onPageShowOrFocus, opts);
+            // Limpiar estilos inline para no dejar estado residual al salir de la página
+            if (logoRef.current) {
+                logoRef.current.style.top = '';
+                logoRef.current.style.transform = '';
+            }
+        };
+    }, [isSmallMobile, isMobile, isTablet]);
 
     // Throttle scroll values para mejor performance
     const throttledScrollY = useRAFThrottle(scrollY.get());
@@ -91,11 +218,13 @@ export function HomePage() {
 
     // Helper para obtener imagen responsive según viewport
     const getResponsiveImage = (blur, img640, img1024, img1920, img2560) => {
-        const width = window.innerWidth;
-        if (width <= 640) return img640;
-        if (width <= 1024) return img1024;
-        if (width <= 1920) return img1920;
-        return img2560;
+        const width = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        const fallback = '/nonino.webp';
+        const pick = (img) => img || fallback;
+        if (width <= 640) return pick(img640);
+        if (width <= 1024) return pick(img1024);
+        if (width <= 1920) return pick(img1920);
+        return pick(img2560);
     };
 
     // Imágenes del hero según tamaño de pantalla
@@ -108,6 +237,45 @@ export function HomePage() {
         getResponsiveImage(SanMartin2Blur, SanMartin2640, SanMartin21024, SanMartin21920, SanMartin22560),
         [isMobile, isTablet]
     );
+
+    // Precarga de imágenes de fondo (hero y features) y refresh seguro del scroll al estar listas
+    useEffect(() => {
+        let cancelled = false;
+        const load = (src) => new Promise((resolve) => {
+            if (!src) return resolve();
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            img.src = src;
+        });
+        Promise.all([load(heroImage), load(featuresImage)]).then(() => {
+            if (cancelled) return;
+            setImagesReady(true);
+            // Remontar fondos dependientes e informar a framer del scroll actual
+            requestAnimationFrame(() => {
+                setInitKey((k) => k + 1);
+                window.dispatchEvent(new Event('scroll'));
+            });
+        });
+        return () => { cancelled = true; };
+    }, [heroImage, featuresImage]);
+
+    // Prefetch de Menú (chunk y datos) cuando hay tiempo o ya hay sucursal
+    useEffect(() => {
+        const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1500));
+        const cancelIdle = window.cancelIdleCallback || clearTimeout;
+        const id = idle(async () => {
+            try {
+                // Prefetch del chunk de MenuPage en background
+                import('@/pages/public/MenuPage.jsx').catch(() => {});
+                // Prefetch de datos si hay sucursal o igualmente para calentar caches
+                if (publicData?.callPublicProductos) publicData.callPublicProductos().catch(() => {});
+                if (publicData?.callPublicCombos) publicData.callPublicCombos().catch(() => {});
+                if (sucursalSeleccionada && publicData?.callPublicCatalog) publicData.callPublicCatalog(sucursalSeleccionada).catch(() => {});
+            } catch {}
+        });
+        return () => cancelIdle(id);
+    }, [sucursalSeleccionada]);
 
     const features = [
         {
@@ -141,66 +309,34 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen">
-            {/* Logo animado - Anclado al título del hero (~15px arriba) */}
-            <motion.div
-                className="fixed z-[30] pointer-events-none"
-                style={{
-                    left: "50%",
-                    top: useTransform(
-                        scrollY,
-                        // Rangos de scroll para animación fluida (factor 1.89 - equilibrado)
-                        isSmallMobile
-                            ? [0, 169]      // 11.56rem → 4.5rem = 7.06rem (169px) de animación
-                            : isMobile
-                            ? [0, 215]      // 13.45rem → 4.5rem = 8.95rem (215px)
-                            : isTablet
-                            ? [0, 261]      // 15.39rem → 4.5rem = 10.89rem (261px)
-                            : [0, 308],     // 17.325rem → 4.5rem = 12.825rem (308px)
-                        // Posición ajustada (factor 1.89 - 30% menos que anterior) CON y: "-50%"
-                        isSmallMobile
-                            ? ["11.56rem", "4.5rem"]   // 4 + (12-4)/2*1.89 = 11.56rem
-                            : isMobile
-                            ? ["13.45rem", "4.5rem"]   // 4 + (14-4)/2*1.89 = 13.45rem
-                            : isTablet
-                            ? ["15.39rem", "4.5rem"]   // 4.5 + (16-4.5)/2*1.89 = 15.39rem
-                            : ["17.325rem", "4.5rem"]  // 5 + (18-5)/2*1.89 = 17.325rem
-                    ),
-                    x: "-50%",
-                    y: "-50%",
-                    scale: useTransform(
-                        scrollY,
-                        // Mismos rangos de scroll que la posición para consistencia
-                        isSmallMobile ? [0, 169] : isMobile ? [0, 215] : isTablet ? [0, 261] : [0, 308],
-                        // Escalas conservadoras para transición suave
-                        isSmallMobile
-                            ? [1, 0.45]     // Small mobile
-                            : isMobile
-                            ? [1, 0.48]     // Mobile
-                            : isTablet
-                            ? [1, 0.5]      // Tablet
-                            : [1, 0.42]     // Desktop
-                    ),
-                    willChange: 'transform'
-                }}
-            >
-                <img
-                    src={logoNonino}
-                    alt="Nonino Empanadas - Empanadas artesanales San Martín de los Andes Patagonia Argentina"
-                    className="w-36 min-[375px]:w-40 xs:w-52 sm:w-64 md:w-64 lg:w-64"
-                    loading="eager"
-                />
+            {/* Logo animado - contenedor de Framer aislado del elemento que se transforma */}
+            <motion.div key={`logo-${initKey}`} className="pointer-events-none">
+                <div
+                    ref={logoRef}
+                    className="fixed z-[30]"
+                    style={{ left: "50%", top: "13.45rem", transform: 'translate(-50%, -50%) scale(1)' }}
+                >
+                    <img
+                        src={logoNonino}
+                        alt="Nonino Empanadas - Empanadas artesanales San Martín de los Andes Patagonia Argentina"
+                        className="w-48 min-[375px]:w-52 xs:w-60 sm:w-64 md:w-64 lg:w-64"
+                        loading="eager"
+                    />
+                </div>
             </motion.div>
             {/* Hero Section */}
             <section className="relative min-h-screen flex items-center justify-center">
                 {/* Background Image with Parallax Effect - OPTIMIZADO CON WEBP */}
                 <motion.div
-                    className="absolute inset-0 w-full h-[180%] -top-[20%] md:-top-[30%] lg:-top-[40%] xl:-top-[50%] z-[-1]"
+                    key={`hero-${initKey}-${imagesReady ? 'ready' : 'loading'}`}
+                    className="absolute inset-0 w-full h-[180%] -top-[20%] md:-top-[25%] lg:-top-[35%] xl:-top-[45%] z-[-1]"
                     aria-label="Vista panorámica de San Martín de los Andes, Patagonia Argentina - Cordillera de los Andes"
                     role="img"
                     style={{
-                        backgroundImage: `url(${heroImage})`,
+                        backgroundImage: heroImage ? `url(${heroImage})` : undefined,
                         backgroundSize: "cover",
                         backgroundPosition: "center top",
+                        backgroundRepeat: "no-repeat",
                         y,
                         // GPU acceleration para parallax suave
                         willChange: 'transform',
@@ -210,7 +346,7 @@ export function HomePage() {
                 />
 
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-black/30" />
+                {heroImage && <div className="absolute inset-0 bg-black/30" />}
                 {/* Background Elements */}
                 <div className="absolute inset-0">
                     <div className="absolute top-20 left-4 sm:left-20 w-16 h-16 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-xl animate-float" />
@@ -218,18 +354,20 @@ export function HomePage() {
                     <div className="absolute top-1/2 left-1/4 sm:left-1/3 w-8 h-8 sm:w-16 sm:h-16 bg-white/10 rounded-full blur-xl animate-float" style={{ animationDelay: "2s" }} />
                 </div>
 
-                <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-empanada-golden">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="mt-40 sm:mt-48 md:mt-56 lg:mt-64"
+                        className="mt-20 sm:mt-48 md:mt-56 lg:mt-64"
                     >
 
                         <TextAnimate
                             animation="slideUp"
                             by="word"
-                            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
+                            delay={0.3}
+                            duration={0.8}
+                            className="text-5xl xs:text-6xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl 2xl:text-12xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >
                             Vas a volver
@@ -308,9 +446,10 @@ export function HomePage() {
             </div>
 
             {/* Features Section */}
-            <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
+            <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' }}>
                 {/* Background Image with Parallax Effect - OPTIMIZADO CON WEBP */}
                 <motion.div
+                    key={`features-${initKey}-${imagesReady ? 'ready' : 'loading'}`}
                     className={`absolute inset-0 w-full ${isMobile ? 'h-[220%] -top-[25%]' : 'h-[300%] -top-[40%]'}`}
                     aria-label="Bosque patagónico en San Martín de los Andes - Naturaleza Patagonia Argentina"
                     role="img"
@@ -498,10 +637,12 @@ export function HomePage() {
                                 >
                                     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                                         <div className="aspect-[16/9] relative">
-                                            <img
+                                            <OptimizedImage
                                                 src={promotion.image}
                                                 alt={promotion.title}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full"
+                                                quality="high"
+                                                priority={false}
                                             />
                                             <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
                                                 <Badge variant="empanada" className="text-xs sm:text-sm">

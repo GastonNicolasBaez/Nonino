@@ -106,13 +106,13 @@ export const Header = memo(function Header() {
   // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
   const leftNavInitial = getResponsivePosition(60, 30, 20); // Progresivo: 60 → 30 → 20
   const leftNavEnd = getResponsivePosition(-30, -30, -15); // Progresivo: -30 → -20 → -15
-  const leftNavX = useTransform(scrollY, [0, 300], isStaticPage ? [leftNavInitial, leftNavInitial] : [leftNavInitial, leftNavEnd]);
+  const leftNavX = useTransform(scrollY, [0, 400], isStaticPage ? [leftNavInitial, leftNavInitial] : [leftNavInitial, leftNavEnd]);
 
   // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
   // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
   const rightNavInitial = getResponsivePosition(-115, -60, -40); // Progresivo: -80 → -60 → -40
   const rightNavEnd = getResponsivePosition(-55, -45, 40); // Progresivo: -55 → -45 → 40
-  const rightNavX = useTransform(scrollY, [0, 300], isStaticPage ? [rightNavInitial, rightNavInitial] : [rightNavInitial, rightNavEnd]);
+  const rightNavX = useTransform(scrollY, [0, 400], isStaticPage ? [rightNavInitial, rightNavInitial] : [rightNavInitial, rightNavEnd]);
 
   const isActive = (href) => location.pathname === href;
 
@@ -204,13 +204,20 @@ export const Header = memo(function Header() {
                     )}
                   >
                     {item.name}
-                    {isActive(item.href) && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
-                        initial={false}
-                      />
-                    )}
+                    <AnimatePresence>
+                      {isActive(item.href) && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          exit={{ scaleX: 0 }}
+                          transition={{ 
+                            duration: 0.3,
+                            ease: "easeOut"
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
                   </Link>
                 ))}
             </motion.nav>
@@ -233,13 +240,20 @@ export const Header = memo(function Header() {
                     )}
                   >
                     {item.name}
-                    {isActive(item.href) && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
-                        initial={false}
-                      />
-                    )}
+                    <AnimatePresence>
+                      {isActive(item.href) && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-empanada-golden"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          exit={{ scaleX: 0 }}
+                          transition={{ 
+                            duration: 0.3,
+                            ease: "easeOut"
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
                   </Link>
                 ))}
             </motion.nav>
@@ -288,7 +302,7 @@ export const Header = memo(function Header() {
                   )}
                 </Button>
 
-                {/* Desktop Cart Dropdown */}
+                {/* Desktop Cart Dropdown - Solo en desktop grande (lg+) */}
                 <div className="hidden lg:block">
                   <CartDropdown
                     isOpen={isCartDropdownOpen}
@@ -329,7 +343,9 @@ export const Header = memo(function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   "lg:hidden h-10 w-10 sm:h-11 sm:w-11",
-                  "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
+                  "text-white hover:text-empanada-golden hover:bg-empanada-golden/10",
+                  "transition-all duration-200 ease-in-out",
+                  "focus:ring-2 focus:ring-empanada-golden/50 focus:outline-none"
                 )}
                 aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
                 aria-expanded={isMenuOpen}
@@ -359,8 +375,13 @@ export const Header = memo(function Header() {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="fixed right-0 top-0 h-full w-full max-w-sm bg-empanada-dark shadow-2xl"
+              transition={{ 
+                type: "spring", 
+                damping: 25, 
+                stiffness: 300,
+                duration: 0.4 
+              }}
+              className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-empanada-dark shadow-2xl border-l border-empanada-light-gray"
             >
               {/* Header */}
               <div className="p-4 sm:p-6 border-b border-empanada-light-gray bg-empanada-dark">

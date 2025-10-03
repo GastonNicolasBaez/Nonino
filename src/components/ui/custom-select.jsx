@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
+import { Portal } from "../common/Portal";
 
 export function CustomSelect({ 
   value, 
@@ -9,29 +10,90 @@ export function CustomSelect({
   className = "",
   disabled = false,
   variant = "default", // "default" | "status"
-  statusColors = {} // Para colores personalizados por estado
+  statusColors = {}, // Para colores personalizados por estado
+  usePortal = true // Nueva prop para controlar si usar Portal
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
 
-  const selectedOption = options.find(option => option.value == value);
+  const selectedOption = options.find(option => String(option.value) === String(value));
+
+  // Calcular posición del dropdown cuando se abre
+  useEffect(() => {
+    if (isOpen && selectRef.current && usePortal) {
+      const rect = selectRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const dropdownHeight = Math.min(options.length * 40 + 8, 200);
+      const dropdownWidth = Math.max(rect.width, 200); // Ancho mínimo
+      
+      // Determinar si mostrar arriba o abajo
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      let top = rect.bottom + window.scrollY + 4; // Pequeño margen
+      if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
+        top = rect.top + window.scrollY - dropdownHeight - 4; // Pequeño margen
+      }
+      
+      // Calcular posición horizontal
+      let left = rect.left + window.scrollX;
+      
+      // Ajustar si se sale por la derecha
+      if (left + dropdownWidth > viewportWidth + window.scrollX) {
+        left = viewportWidth + window.scrollX - dropdownWidth - 10;
+      }
+      
+      // Ajustar si se sale por la izquierda
+      if (left < window.scrollX) {
+        left = window.scrollX + 10;
+      }
+      
+      setDropdownPosition({
+        top,
+        left,
+        width: dropdownWidth
+      });
+    }
+  }, [isOpen, options.length, usePortal]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (selectRef.current && !selectRef.current.contains(event.target)) {
+      // Verificar si el click fue fuera del select y del dropdown
+      const isClickInsideSelect = selectRef.current && selectRef.current.contains(event.target);
+      const isClickInsideDropdown = event.target.closest('[data-dropdown-portal]');
+      
+      if (!isClickInsideSelect && !isClickInsideDropdown) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
     };
-  }, []);
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen]);
 
   const handleSelect = (optionValue) => {
+    console.log('CustomSelect: Seleccionando valor:', optionValue);
+    console.log('CustomSelect: Valor actual:', value);
+    
+    // Asegurar que el valor se pase correctamente
     onChange(optionValue);
     setIsOpen(false);
+    
+    console.log('CustomSelect: Después de onChange');
   };
 
   // Función para obtener clases de color basadas en el estado (simplificada)
@@ -78,10 +140,10 @@ export function CustomSelect({
 
     if (variant === "status") {
       const statusClasses = getStatusClasses(optionValue);
-      return `${baseClasses} ${statusClasses} ${value === optionValue ? 'bg-empanada-golden/10 font-medium' : ''}`;
+      return `${baseClasses} ${statusClasses} ${String(value) === String(optionValue) ? 'bg-empanada-golden/10 font-medium' : ''}`;
     }
 
-    return `${baseClasses} text-gray-700 dark:text-gray-300 ${value === optionValue 
+    return `${baseClasses} text-gray-700 dark:text-gray-300 ${String(value) === String(optionValue) 
       ? 'bg-empanada-golden/10 text-empanada-golden font-medium' 
       : ''
     }`;
@@ -108,25 +170,74 @@ export function CustomSelect({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-md shadow-lg overflow-hidden">
-          <div className="py-1">
-            {options.map((option, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => handleSelect(option.value)}
-                className={getOptionClasses(option.value)}
+        <>
+          {usePortal ? (
+            <Portal>
+              <div 
+                data-dropdown-portal
+                className="fixed z-[999999] bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-md shadow-xl overflow-hidden max-h-60 overflow-y-auto"
+                style={{
+                  top: dropdownPosition.top,
+                  left: dropdownPosition.left,
+                  width: dropdownPosition.width,
+                  minWidth: dropdownPosition.width
+                }}
               >
-                <div className="flex items-center justify-between">
-                  <span className="truncate">{option.label}</span>
-                  {value === option.value && (
-                    <Check className="w-3 h-3 text-empanada-golden flex-shrink-0" />
-                  )}
+                <div className="py-1">
+                  {options.map((option, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSelect(option.value);
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                      }}
+                      className={getOptionClasses(option.value)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="truncate">{option.label}</span>
+                        {String(value) === String(option.value) && (
+                          <Check className="w-3 h-3 text-empanada-golden flex-shrink-0" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
                 </div>
-              </button>
-            ))}
-          </div>
-        </div>
+              </div>
+            </Portal>
+          ) : (
+            <div className="absolute z-50 w-full mt-1 bg-white dark:bg-empanada-dark border border-gray-200 dark:border-empanada-light-gray rounded-md shadow-lg overflow-hidden">
+              <div className="py-1">
+                {options.map((option, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSelect(option.value);
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                    }}
+                    className={getOptionClasses(option.value)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="truncate">{option.label}</span>
+                      {String(value) === String(option.value) && (
+                        <Check className="w-3 h-3 text-empanada-golden flex-shrink-0" />
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

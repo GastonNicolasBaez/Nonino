@@ -55,78 +55,78 @@ import { usePublicData } from "@/context/PublicDataProvider";
 import html2canvas from "html2canvas";
 
 // Función para generar HTML de la comanda para cocina
-function generateTicketHTML(order) {
-    const orderTime = new Date(order.time || order.orderDate || Date.now());
-    const formattedDate = orderTime.toLocaleDateString('es-AR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-    const formattedTime = orderTime.toLocaleTimeString('es-AR', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+// function generateTicketHTML(order) {
+//     const orderTime = new Date(order.time || order.orderDate || Date.now());
+//     const formattedDate = orderTime.toLocaleDateString('es-AR', {
+//         day: '2-digit',
+//         month: '2-digit',
+//         year: 'numeric'
+//     });
+//     const formattedTime = orderTime.toLocaleTimeString('es-AR', {
+//         hour: '2-digit',
+//         minute: '2-digit'
+//     });
 
-    return `
-    <div style="width: 384px; font-family: 'Courier New', monospace; font-size: 16px; line-height: 1.6; color: #000; background-color: #fff;">
-      <!-- Header -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div style="font-size: 26px; font-weight: bold; letter-spacing: 2px;">COMANDA DE COCINA</div>
-        <div style="font-size: 20px; font-weight: bold; margin-top: 8px;">NONINO EMPANADAS</div>
-      </div>
+//     return `
+//     <div style="width: 384px; font-family: 'Courier New', monospace; font-size: 16px; line-height: 1.6; color: #000; background-color: #fff;">
+//       <!-- Header -->
+//       <div style="text-align: center; margin-bottom: 24px;">
+//         <div style="font-size: 26px; font-weight: bold; letter-spacing: 2px;">COMANDA DE COCINA</div>
+//         <div style="font-size: 20px; font-weight: bold; margin-top: 8px;">NONINO EMPANADAS</div>
+//       </div>
 
-      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
+//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
-      <!-- Número de Orden -->
-      <div style="margin-bottom: 16px;">
-        <div style="font-size: 20px; font-weight: bold; text-align: center; letter-spacing: 1px;">
-          ORDEN #
-        </div>
-        <div style="font-size: 80px; font-weight: bold; text-align: center; letter-spacing: 1px;">
-          ${order.id}
-        </div>
-      </div>
+//       <!-- Número de Orden -->
+//       <div style="margin-bottom: 16px;">
+//         <div style="font-size: 20px; font-weight: bold; text-align: center; letter-spacing: 1px;">
+//           ORDEN #
+//         </div>
+//         <div style="font-size: 80px; font-weight: bold; text-align: center; letter-spacing: 1px;">
+//           ${order.id}
+//         </div>
+//       </div>
 
-      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
+//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
-      <!-- Fecha y Hora -->
-      <div style="margin-bottom: 24px;">
-        <div style="font-size: 20px; text-align: center; margin-bottom: 4px;">
-          <strong>${formattedDate} - ${formattedTime}</strong> 
-        </div>
-      </div>
+//       <!-- Fecha y Hora -->
+//       <div style="margin-bottom: 24px;">
+//         <div style="font-size: 20px; text-align: center; margin-bottom: 4px;">
+//           <strong>${formattedDate} - ${formattedTime}</strong> 
+//         </div>
+//       </div>
 
-      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
+//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
-      <!-- Items de la orden -->
-      <div style="margin-bottom: 24px;">
-        ${order.items && order.items.map((item, index) => `
-          <div style="margin-bottom: 20px; padding: 12px 0; ${index > 0 ? 'border-top: 1px dashed #999;' : ''}">
-            <div style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">
-              ${item.qty || item.quantity || 1}x ${item.name.toUpperCase()}
-            </div>
-            ${item.notes ? `
-            <div style="font-size: 18px; margin-left: 20px; font-style: italic; color: #333; margin-top: 8px;">
-              Nota: ${item.notes}
-            </div>` : ''}
-          </div>
-        `).join('') || ''}
-      </div>
+//       <!-- Items de la orden -->
+//       <div style="margin-bottom: 24px;">
+//         ${order.items && order.items.map((item, index) => `
+//           <div style="margin-bottom: 20px; padding: 12px 0; ${index > 0 ? 'border-top: 1px dashed #999;' : ''}">
+//             <div style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">
+//               ${item.qty || item.quantity || 1}x ${item.name.toUpperCase()}
+//             </div>
+//             ${item.notes ? `
+//             <div style="font-size: 18px; margin-left: 20px; font-style: italic; color: #333; margin-top: 8px;">
+//               Nota: ${item.notes}
+//             </div>` : ''}
+//           </div>
+//         `).join('') || ''}
+//       </div>
 
-      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
+//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
-      <!-- Notas especiales generales -->
-      ${order.notes ? `
-      <div style="margin-bottom: 24px; padding: 12px; background-color: #f9f9f9; border: 2px solid #000;">
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">⚠️ NOTAS ESPECIALES:</div>
-        <div style="font-size: 18px;">${order.notes}</div>
-      </div>` : ''}
+//       <!-- Notas especiales generales -->
+//       ${order.notes ? `
+//       <div style="margin-bottom: 24px; padding: 12px; background-color: #f9f9f9; border: 2px solid #000;">
+//         <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">⚠️ NOTAS ESPECIALES:</div>
+//         <div style="font-size: 18px;">${order.notes}</div>
+//       </div>` : ''}
 
-      <!-- Espacio para corte -->
-      <div style="height: 40px;"></div>
-    </div>
-  `;
-}
+//       <!-- Espacio para corte -->
+//       <div style="height: 40px;"></div>
+//     </div>
+//   `;
+// }
 
 const statuses = {
     PENDING: 'AWAITING_PAYMENT',
@@ -474,15 +474,15 @@ export function OrderManagement() {
         const printingWidth = 384;
 
         // Crear un componente temporal para la impresión
-        const tempDiv = document.createElement('div');
-        tempDiv.style.position = 'absolute';
-        tempDiv.style.left = '-9999px';
-        tempDiv.style.width = `${printingWidth}px`;
-        tempDiv.style.fontFamily = 'monospace';
-        tempDiv.style.fontSize = '12px';
-        tempDiv.style.lineHeight = '1.4';
-        tempDiv.style.color = '#000';
-        tempDiv.style.backgroundColor = '#fff';
+        // const tempDiv = document.createElement('div');
+        // tempDiv.style.position = 'absolute';
+        // tempDiv.style.left = '-9999px';
+        // tempDiv.style.width = `${printingWidth}px`;
+        // tempDiv.style.fontFamily = 'monospace';
+        // tempDiv.style.fontSize = '12px';
+        // tempDiv.style.lineHeight = '1.4';
+        // tempDiv.style.color = '#000';
+        // tempDiv.style.backgroundColor = '#fff';
 
         // Convertir orden al formato esperado por el sistema de impresión
         const printableOrder = {
@@ -502,16 +502,19 @@ export function OrderManagement() {
         };
 
         // Generar HTML del ticket
-        const ticketHTML = generateTicketHTML(printableOrder);
-        tempDiv.innerHTML = ticketHTML;
-        document.body.appendChild(tempDiv);
+        // const ticketHTML = generateTicketHTML(printableOrder);
+        // tempDiv.innerHTML = ticketHTML;
+        // document.body.appendChild(tempDiv);
 
-        const canvas = await html2canvas(tempDiv, { width: printingWidth, scale: 2 });
-        const ticketEncoded = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
+        // const canvas = await html2canvas(tempDiv, { width: printingWidth, scale: 2 });
+        // const ticketEncoded = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
+
+        const ticketJsoned = JSON.stringify(printableOrder);
+
         const encryptedId = btoa("AmiAmig0Fr4nki3L3GustalANaveg");
 
         const constructedPrintJob = {
-            dataB64: ticketEncoded,
+            dataB64: ticketJsoned,
             basic: encryptedId,
             storeId: sucursalSeleccionada,
             orderId: order.id,
@@ -520,12 +523,9 @@ export function OrderManagement() {
 
         try {
             await callPublicCreatePrintJob(constructedPrintJob);
-            console.log(ticketHTML);
             toast.success("Ticket enviado a impresora");
         } catch {
             toast.error("Error al procesar la impresión");
-        } finally {
-            document.body.removeChild(tempDiv);
         }
     };
 

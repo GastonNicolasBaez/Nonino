@@ -68,34 +68,35 @@ function generateTicketHTML(order) {
     });
 
     return `
-    <div style="width: 400px; font-family: 'Courier New', monospace; font-size: 16px; line-height: 1.6; color: #000; background-color: #fff; padding: 20px;">
+    <div style="width: 384px; font-family: 'Courier New', monospace; font-size: 16px; line-height: 1.6; color: #000; background-color: #fff;">
       <!-- Header -->
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">COMANDA DE COCINA</div>
-        <div style="font-size: 16px; margin-top: 8px;">NONINO EMPANADAS</div>
-        <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
+        <div style="font-size: 26px; font-weight: bold; letter-spacing: 2px;">COMANDA DE COCINA</div>
+        <div style="font-size: 20px; font-weight: bold; margin-top: 8px;">NONINO EMPANADAS</div>
       </div>
+
+      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
       <!-- Número de Orden -->
       <div style="margin-bottom: 16px;">
-        <div style="font-size: 32px; font-weight: bold; text-align: center; letter-spacing: 1px;">
-          ORDEN #${order.id}
+        <div style="font-size: 20px; font-weight: bold; text-align: center; letter-spacing: 1px;">
+          ORDEN #
+        </div>
+        <div style="font-size: 80px; font-weight: bold; text-align: center; letter-spacing: 1px;">
+          ${order.id}
         </div>
       </div>
 
-      <div style="border-top: 2px solid #000; border-bottom: 2px solid #000; margin: 20px 0;"></div>
+      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
       <!-- Fecha y Hora -->
       <div style="margin-bottom: 24px;">
-        <div style="font-size: 18px; text-align: center; margin-bottom: 4px;">
-          <strong>Fecha:</strong> ${formattedDate}
-        </div>
-        <div style="font-size: 20px; font-weight: bold; text-align: center;">
-          <strong>Hora:</strong> ${formattedTime}
+        <div style="font-size: 20px; text-align: center; margin-bottom: 4px;">
+          <strong>${formattedDate} - ${formattedTime}</strong> 
         </div>
       </div>
 
-      <div style="border-top: 2px solid #000; border-bottom: 2px solid #000; margin: 20px 0;"></div>
+      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
       <!-- Items de la orden -->
       <div style="margin-bottom: 24px;">
@@ -112,7 +113,7 @@ function generateTicketHTML(order) {
         `).join('') || ''}
       </div>
 
-      <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
+      <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
 
       <!-- Notas especiales generales -->
       ${order.notes ? `
@@ -358,6 +359,7 @@ function OrderViewModal({ order, onClose }) {
 export function OrderManagement() {
     const {
         orders,
+        sucursalSeleccionada,
         adminDataLoading: loading,
         callOrders,
         callCreateOrder,
@@ -469,11 +471,13 @@ export function OrderManagement() {
     };
 
     const handlePrintOrder = async (order) => {
+        const printingWidth = 384;
+
         // Crear un componente temporal para la impresión
         const tempDiv = document.createElement('div');
         tempDiv.style.position = 'absolute';
         tempDiv.style.left = '-9999px';
-        tempDiv.style.width = '384px';
+        tempDiv.style.width = `${printingWidth}px`;
         tempDiv.style.fontFamily = 'monospace';
         tempDiv.style.fontSize = '12px';
         tempDiv.style.lineHeight = '1.4';
@@ -482,7 +486,7 @@ export function OrderManagement() {
 
         // Convertir orden al formato esperado por el sistema de impresión
         const printableOrder = {
-            id: order.id,
+            id: order.orderNumber,
             table: order.table || `Cliente: ${order.customerName}`,
             waiter: order.waiter || 'Sistema',
             time: order.orderDate || order.date || new Date().toISOString(),
@@ -502,15 +506,21 @@ export function OrderManagement() {
         tempDiv.innerHTML = ticketHTML;
         document.body.appendChild(tempDiv);
 
-        const canvas = await html2canvas(tempDiv, {width: 384, scale: 2});
+        const canvas = await html2canvas(tempDiv, { width: printingWidth, scale: 2 });
         const ticketEncoded = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
         const encryptedId = btoa("AmiAmig0Fr4nki3L3GustalANaveg");
 
+        const constructedPrintJob = {
+            dataB64: ticketEncoded,
+            basic: encryptedId,
+            storeId: sucursalSeleccionada,
+            orderId: order.id,
+            origin: 'admin' // no se guarda. si public, chequear si existe. si existe, no meter. si es admin, meter si o si
+        }
+
         try {
-            await callPublicCreatePrintJob({
-                _printJobBase64: ticketEncoded,
-                _basic: encryptedId
-            });
+            await callPublicCreatePrintJob(constructedPrintJob);
+            console.log(ticketHTML);
             toast.success("Ticket enviado a impresora");
         } catch {
             toast.error("Error al procesar la impresión");

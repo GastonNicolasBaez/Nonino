@@ -76,12 +76,9 @@ export const postPublicOrdersCreatePreferenceQueryFunction = async ({_orderId, _
     return await response.data;
 }
 
-export const postPublicOrdersCreatePrintJobQueryFunction = async ({_printJobBase64, _basic}) => {
+export const postPublicOrdersCreatePrintJobQueryFunction = async (_printJob) => {
     const axiosSetup = {
-        axiosData: {
-            dataB64: _printJobBase64,
-            basic: _basic
-        },
+        axiosData: _printJob,
         axiosConfig: {
             headers: {
                 "Content-Type": "application/json",

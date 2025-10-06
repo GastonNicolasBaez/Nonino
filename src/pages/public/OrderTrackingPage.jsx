@@ -26,7 +26,7 @@ export function OrderTrackingPage() {
         const fetchOrder = async () => {
             try {
                 const response = await callPublicOrderById(orderId);
-                setOrder(response.data);
+                setOrder(response);
             } catch (error) {
                 console.error("Error fetching order:", error);
             }
@@ -161,7 +161,7 @@ export function OrderTrackingPage() {
                                         {order.items.map((item, index) => (
                                             <div key={index} className="flex justify-between text-sm">
                                                 <span>{item.quantity}x {item.name}</span>
-                                                <span>{formatPrice(item.price * item.quantity)}</span>
+                                                <span>{formatPrice(item.unitPrice * item.quantity)}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -170,7 +170,7 @@ export function OrderTrackingPage() {
                                 <div className="border-t pt-4">
                                     <div className="flex justify-between font-bold">
                                         <span>Total</span>
-                                        <span className="text-empanada-golden">{formatPrice(order.total)}</span>
+                                        <span className="text-empanada-golden">{formatPrice(order.totalAmount)}</span>
                                     </div>
                                 </div>
 
@@ -198,13 +198,13 @@ export function OrderTrackingPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3">
+                                {/* <div className="flex items-start gap-3">
                                     <Phone className="w-5 h-5 text-empanada-golden mt-1" />
                                     <div>
                                         <h4 className="font-medium">Contacto del Local</h4>
                                         <p className="text-sm text-gray-600">{order.store.phone}</p>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 {order.status === "inDelivery" && (
                                     <div className="bg-blue-50 p-4 rounded-lg">

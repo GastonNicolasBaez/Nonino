@@ -34,99 +34,19 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { formatPrice, formatDateTime } from "../../lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { formatPrice, formatDateTime } from "@/lib/utils";
 import { toast } from "sonner";
-import { useConfirmModal } from "../../components/common/ConfirmModal";
-import { Portal } from "../../components/common/Portal";
+import { useConfirmModal } from "@/components/common/ConfirmModal";
+import { Portal } from "@/components/common/Portal";
 import { NewOrderModal } from "./components/NewOrderModal";
 import { OrderEditModal } from "./components/OrderEditModal";
-import { generateOrdersReportPDF, downloadPDF } from "../../services/pdfService";
 import { SectionHeader, CustomSelect } from "@/components/branding";
-import { TicketPreview } from "../../components/common/TicketPreview";
-
-import { formatToEscPos } from "@/services/printFormatter";
+import { TicketPreview } from "@/components/common/TicketPreview";
 
 import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
-import { usePublicData } from "@/context/PublicDataProvider";
-import html2canvas from "html2canvas";
-
-// Función para generar HTML de la comanda para cocina
-// function generateTicketHTML(order) {
-//     const orderTime = new Date(order.time || order.orderDate || Date.now());
-//     const formattedDate = orderTime.toLocaleDateString('es-AR', {
-//         day: '2-digit',
-//         month: '2-digit',
-//         year: 'numeric'
-//     });
-//     const formattedTime = orderTime.toLocaleTimeString('es-AR', {
-//         hour: '2-digit',
-//         minute: '2-digit'
-//     });
-
-//     return `
-//     <div style="width: 384px; font-family: 'Courier New', monospace; font-size: 16px; line-height: 1.6; color: #000; background-color: #fff;">
-//       <!-- Header -->
-//       <div style="text-align: center; margin-bottom: 24px;">
-//         <div style="font-size: 26px; font-weight: bold; letter-spacing: 2px;">COMANDA DE COCINA</div>
-//         <div style="font-size: 20px; font-weight: bold; margin-top: 8px;">NONINO EMPANADAS</div>
-//       </div>
-
-//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
-
-//       <!-- Número de Orden -->
-//       <div style="margin-bottom: 16px;">
-//         <div style="font-size: 20px; font-weight: bold; text-align: center; letter-spacing: 1px;">
-//           ORDEN #
-//         </div>
-//         <div style="font-size: 80px; font-weight: bold; text-align: center; letter-spacing: 1px;">
-//           ${order.id}
-//         </div>
-//       </div>
-
-//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
-
-//       <!-- Fecha y Hora -->
-//       <div style="margin-bottom: 24px;">
-//         <div style="font-size: 20px; text-align: center; margin-bottom: 4px;">
-//           <strong>${formattedDate} - ${formattedTime}</strong> 
-//         </div>
-//       </div>
-
-//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
-
-//       <!-- Items de la orden -->
-//       <div style="margin-bottom: 24px;">
-//         ${order.items && order.items.map((item, index) => `
-//           <div style="margin-bottom: 20px; padding: 12px 0; ${index > 0 ? 'border-top: 1px dashed #999;' : ''}">
-//             <div style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">
-//               ${item.qty || item.quantity || 1}x ${item.name.toUpperCase()}
-//             </div>
-//             ${item.notes ? `
-//             <div style="font-size: 18px; margin-left: 20px; font-style: italic; color: #333; margin-top: 8px;">
-//               Nota: ${item.notes}
-//             </div>` : ''}
-//           </div>
-//         `).join('') || ''}
-//       </div>
-
-//       <div style="border-bottom: 2px solid #000; margin: 16px 0;"></div>
-
-//       <!-- Notas especiales generales -->
-//       ${order.notes ? `
-//       <div style="margin-bottom: 24px; padding: 12px; background-color: #f9f9f9; border: 2px solid #000;">
-//         <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">⚠️ NOTAS ESPECIALES:</div>
-//         <div style="font-size: 18px;">${order.notes}</div>
-//       </div>` : ''}
-
-//       <!-- Espacio para corte -->
-//       <div style="height: 40px;"></div>
-//     </div>
-//   `;
-// }
 
 const statuses = {
     PENDING: 'AWAITING_PAYMENT',
@@ -471,43 +391,24 @@ export function OrderManagement() {
     };
 
     const handlePrintOrder = async (order) => {
-        const printingWidth = 384;
-
-        // Crear un componente temporal para la impresión
-        // const tempDiv = document.createElement('div');
-        // tempDiv.style.position = 'absolute';
-        // tempDiv.style.left = '-9999px';
-        // tempDiv.style.width = `${printingWidth}px`;
-        // tempDiv.style.fontFamily = 'monospace';
-        // tempDiv.style.fontSize = '12px';
-        // tempDiv.style.lineHeight = '1.4';
-        // tempDiv.style.color = '#000';
-        // tempDiv.style.backgroundColor = '#fff';
-
         // Convertir orden al formato esperado por el sistema de impresión
         const printableOrder = {
             id: order.orderNumber,
-            table: order.table || `Cliente: ${order.customerName}`,
-            waiter: order.waiter || 'Sistema',
             time: order.orderDate || order.date || new Date().toISOString(),
-            items: Array.isArray(order.items) ? order.items.map(item => ({
+            total: order.total,
+            payment: order.paymentMethod || 'Efectivo',
+            items: order.items.map(item => ({
                 qty: item.quantity || item.qty || 1,
                 name: item.name,
-                notes: item.notes || ''
-            })) : [],
+                notes: item.notes || '',
+                sku: 'SS',
+            })),
+
+            table: order.table || `Cliente: ${order.customerName}`,
+            waiter: order.waiter || 'Sistema',
             subtotal: order.subtotal,
             tax: order.tax,
-            total: order.total,
-            payment: order.paymentMethod || 'Efectivo'
         };
-
-        // Generar HTML del ticket
-        // const ticketHTML = generateTicketHTML(printableOrder);
-        // tempDiv.innerHTML = ticketHTML;
-        // document.body.appendChild(tempDiv);
-
-        // const canvas = await html2canvas(tempDiv, { width: printingWidth, scale: 2 });
-        // const ticketEncoded = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
 
         const ticketJsoned = JSON.stringify(printableOrder);
 

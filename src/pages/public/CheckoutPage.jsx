@@ -110,7 +110,8 @@ export function CheckoutPage() {
                 comboId: 0,
                 name: item.name,
                 unitPrice: item.price,
-                quantity: item.quantity
+                quantity: item.quantity,
+                sku: item.sku,
             }));
 
             const newDeliveryAddress = {

@@ -279,6 +279,7 @@ function OrderViewModal({ order, onClose }) {
 export function OrderManagement() {
     const {
         orders,
+        productos,
         sucursalSeleccionada,
         adminDataLoading: loading,
         callOrders,
@@ -390,24 +391,24 @@ export function OrderManagement() {
         });
     };
 
+
     const handlePrintOrder = async (order) => {
+
         // Convertir orden al formato esperado por el sistema de impresión
         const printableOrder = {
             id: order.orderNumber,
             time: order.orderDate || order.date || new Date().toISOString(),
-            total: order.total,
+            total: order.totalAmount,
             payment: order.paymentMethod || 'Efectivo',
+            deliveryTo: order.deliveryShort,
+            fullfillment: order.fullfillment,
+            totalUnits: order.totalUnits,
             items: order.items.map(item => ({
                 qty: item.quantity || item.qty || 1,
                 name: item.name,
                 notes: item.notes || '',
-                sku: 'SS',
+                sku: item.sku,
             })),
-
-            table: order.table || `Cliente: ${order.customerName}`,
-            waiter: order.waiter || 'Sistema',
-            subtotal: order.subtotal,
-            tax: order.tax,
         };
 
         const ticketJsoned = JSON.stringify(printableOrder);
@@ -422,8 +423,11 @@ export function OrderManagement() {
             origin: 'admin' // no se guarda. si public, chequear si existe. si existe, no meter. si es admin, meter si o si
         }
 
+
+        console.log(constructedPrintJob);
+
         try {
-            await callPublicCreatePrintJob(constructedPrintJob);
+            //await callPublicCreatePrintJob(constructedPrintJob);
             toast.success("Ticket enviado a impresora");
         } catch {
             toast.error("Error al procesar la impresión");

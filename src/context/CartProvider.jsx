@@ -43,7 +43,27 @@ export const CartProvider = ({ children }) => {
     });
   }, [items, selectedStore, deliveryInfo, promoCode]);
 
-  const addItem = (product, quantity = 1, customizations = {}) => {
+  const addItem = (product, quantity = 1, customizations = {}, isCombo = false) => {
+    // Manejo especial para combos
+    if (isCombo) {
+      const comboItem = {
+        id: `combo-${product.id}-${Date.now()}`,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        category: 'combo',
+        quantity: 1,
+        isCombo: true,
+        comboDetails: customizations.comboDetails || [],
+        comboId: product.id,
+        addedAt: new Date().toISOString(),
+      };
+      setItems([...items, comboItem]);
+      toast.success(`${product.name} agregado al carrito`);
+      return;
+    }
+
+    // Lógica existente para productos normales
     const existingItemIndex = items.findIndex(
       item => 
         item.id === product.id && 
@@ -72,12 +92,17 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeItem = (itemId, customizations = {}) => {
-    const updatedItems = items.filter(
-      item => !(
+    const updatedItems = items.filter(item => {
+      // Para combos, el ID ya es único (combo-${id}-${timestamp})
+      if (item.isCombo) {
+        return item.id !== itemId;
+      }
+      // Para productos normales, comparar ID y customizations
+      return !(
         item.id === itemId && 
         JSON.stringify(item.customizations) === JSON.stringify(customizations)
-      )
-    );
+      );
+    });
     setItems(updatedItems);
     // Toast removido para mejor fluidez UX
   };

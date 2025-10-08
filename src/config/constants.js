@@ -154,6 +154,38 @@ export const DELIVERY_ZONES = {
 };
 
 /**
+ * IDs de categorías del backend
+ * Estos IDs deben coincidir con los IDs reales del backend
+ */
+export const CATEGORY_IDS = {
+  EMPANADAS_TRADICIONALES: 1,
+  EMPANADAS_ESPECIALES: 2,
+  BEBIDAS: 3,
+  POSTRES: 4,
+  COMBOS: 100
+};
+
+/**
+ * Agrupación de categorías por tipo
+ */
+export const CATEGORY_TYPES = {
+  EMPANADAS: [CATEGORY_IDS.EMPANADAS_TRADICIONALES, CATEGORY_IDS.EMPANADAS_ESPECIALES],
+  BEBIDAS: [CATEGORY_IDS.BEBIDAS],
+  POSTRES: [CATEGORY_IDS.POSTRES]
+};
+
+/**
+ * Nombres legibles de categorías
+ */
+export const CATEGORY_NAMES = {
+  [CATEGORY_IDS.EMPANADAS_TRADICIONALES]: 'Empanadas Tradicionales',
+  [CATEGORY_IDS.EMPANADAS_ESPECIALES]: 'Empanadas Especiales',
+  [CATEGORY_IDS.BEBIDAS]: 'Bebidas',
+  [CATEGORY_IDS.POSTRES]: 'Postres',
+  [CATEGORY_IDS.COMBOS]: 'Combos'
+};
+
+/**
  * Configuración de UI
  */
 export const UI_CONFIG = {

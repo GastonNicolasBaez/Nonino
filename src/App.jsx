@@ -24,6 +24,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 // PUBLICS - CODE SPLITTING con Lazy Loading
 const HomePage = lazy(() => import("@/pages/public/HomePage").then(m => ({ default: m.HomePage })));
 const MenuPage = lazy(() => import("@/pages/public/MenuPage").then(m => ({ default: m.MenuPage })));
+const ComboBuilderPage = lazy(() => import("@/pages/public/ComboBuilderPage").then(m => ({ default: m.ComboBuilderPage })));
 const PromotionsPage = lazy(() => import("@/pages/public/PromotionsPage").then(m => ({ default: m.PromotionsPage })));
 const StoresPage = lazy(() => import("@/pages/public/StoresPage").then(m => ({ default: m.StoresPage })));
 const AboutPage = lazy(() => import("@/pages/public/AboutPage").then(m => ({ default: m.AboutPage })));
@@ -88,6 +89,11 @@ function App() {
                             <Route path="/menu" element={
                                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
                                     <MenuPage />
+                                </Suspense>
+                            } />
+                            <Route path="/menu/combo-builder" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <ComboBuilderPage />
                                 </Suspense>
                             } />
                             <Route path="/promociones" element={

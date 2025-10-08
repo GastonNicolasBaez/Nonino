@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ChevronDown, Clock, Truck, Star, MapPin } from "lucide-react";
+import { Search, X, ChevronDown, Clock, Truck, Star, MapPin, Sparkles, Package } from "lucide-react";
+import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +14,6 @@ import { useCart } from "@/context/CartProvider";
 export function MenuDesktop({
     products,
     categories,
-    todaysPicks,
     promotions,
     combos,
     selectedStore = null
@@ -22,6 +22,7 @@ export function MenuDesktop({
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [sortBy, setSortBy] = useState("popular");
     const { addItem } = useCart();
+    const navigate = useNavigate();
 
     const handleAddToCart = (product) => {
         addItem(product);
@@ -200,52 +201,8 @@ export function MenuDesktop({
                         {/* Secciones principales - Solo cuando no hay búsqueda */}
                         {!searchTerm && (
                             <>
-                        {/* Los Elegidos de Hoy */}
-                        <section id="elegidos-hoy" className="mb-12">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="bg-orange-500/20 p-2 rounded-lg">
-                                    <Star className="w-6 h-6 text-orange-600" />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-bold text-white">Los Elegidos de Hoy</h2>
-                                    <p className="text-gray-400">¡Los más pedidos del día!</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
-                                {todaysPicks.slice(0, 6).map((product) => (
-                                    <Card key={product.id} className="overflow-hidden hover:shadow-lg transition duration-300 hover:scale-105 bg-empanada-dark border-empanada-light-gray flex flex-col">
-                                        <div className="aspect-[10/11] bg-empanada-medium relative">
-                                            <img
-                                                src={product.image || "/api/placeholder/200/200"}
-                                                alt={product.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                            <Badge className="absolute top-3 right-3 bg-orange-500 text-white">
-                                                Popular
-                                            </Badge>
-                                        </div>
-                                        <CardContent className="p-4 bg-empanada-dark flex-1">
-                                            <h3 className="font-semibold text-lg text-white mb-1">{product.name}</h3>
-                                            <p className="text-2xl font-bold text-empanada-golden">${product.price}</p>
-                                        </CardContent>
-                                        <CardFooter className="p-4 pt-0">
-                                            <Button
-                                                className="w-full text-sm"
-                                                variant="empanada"
-                                                onClick={() => handleAddToCart(product)}
-                                                // disabled={!product.isAvailable}
-                                            >
-                                                {/* {product.isAvailable ? "Agregar al Carrito" : "No Disponible"} */}
-                                                Agregar al carrito
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
-                                ))}
-                            </div>
-                        </section>
-
-                        {/* Promociones */}
-                        <section id="promociones" className="mb-12">
+                        {/* Promociones - Comentado para implementación futura */}
+                        {/* <section id="promociones" className="mb-12">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="bg-red-500/20 p-2 rounded-lg">
                                     <Badge className="bg-red-500 text-white">%</Badge>
@@ -275,7 +232,7 @@ export function MenuDesktop({
                                     </Card>
                                 ))}
                             </div>
-                        </section>
+                        </section> */}
 
                         {/* Combos */}
                         <section id="combos" className="mb-12">
@@ -293,31 +250,33 @@ export function MenuDesktop({
                                     <Card key={combo.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray">
                                         <div className="flex">
                                             <div className="w-32 h-32 bg-empanada-medium flex-shrink-0">
-                                                <img
-                                                    src={combo.image}
-                                                    alt={combo.name}
-                                                    className="w-full h-full object-cover"
-                                                />
+                                                {combo.imageBase64 ? (
+                                                    <img
+                                                        src={combo.imageBase64.startsWith('data:') ? combo.imageBase64 : `data:image/webp;base64,${combo.imageBase64}`}
+                                                        alt={combo.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <Package className="w-12 h-12 text-empanada-golden opacity-30" />
+                                                    </div>
+                                                )}
                                             </div>
                                             <CardContent className="flex-1 p-6 flex flex-col justify-between bg-empanada-dark">
                                                 <div>
                                                     <h3 className="font-bold text-xl text-white mb-2">{combo.name}</h3>
-                                                    <p className="text-gray-400 mb-3">{combo.description}</p>
+                                                    <p className="text-gray-400 mb-3 text-sm line-clamp-2">{combo.description}</p>
                                                     <div className="flex items-center gap-3 mb-4">
                                                         <span className="text-2xl font-bold text-empanada-golden">${combo.price}</span>
-                                                        <span className="text-lg text-gray-400 line-through">${combo.originalPrice}</span>
-                                                        <Badge variant="empanada">
-                                                            Ahorra ${combo.originalPrice - combo.price}
-                                                        </Badge>
                                                     </div>
                                                 </div>
                                                 <Button
                                                     className="w-full"
                                                     variant="empanada"
-                                                    onClick={() => handleAddToCart(combo)}
-                                                    disabled={!combo.isAvailable}
+                                                    onClick={() => navigate(`/menu/combo-builder?comboId=${combo.id}`)}
                                                 >
-                                                    {combo.isAvailable ? "Agregar al Carrito" : "No Disponible"}
+                                                    <Package className="w-4 h-4 mr-2" />
+                                                    Armar este Combo
                                                 </Button>
                                             </CardContent>
                                         </div>

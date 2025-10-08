@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, Clock, Truck, Star, Flame, MapPin, Plus } from "lucide-react";
+import { Search, X, Clock, Truck, Star, Flame, MapPin, Plus, Package } from "lucide-react";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,6 @@ import { useCart } from "@/context/CartProvider";
 export function MenuMobile({
     products,
     categories,
-    todaysPicks,
     promotions,
     combos,
     selectedStore = null
@@ -22,6 +22,7 @@ export function MenuMobile({
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const { addItem } = useCart();
+    const navigate = useNavigate();
 
     const filteredProducts = products.filter((product) => {
         const matchesSearch = product.name
@@ -169,8 +170,8 @@ export function MenuMobile({
                     </div>
                 </section>
 
-                {/* Promociones */}
-                <section className="py-6 bg-black mb-4">
+                {/* Promociones - Comentado para implementación futura */}
+                {/* <section className="py-6 bg-black mb-4">
                     <div className="px-4">
                         <h2 className="text-lg font-bold text-white mb-4">Promociones</h2>
 
@@ -199,7 +200,7 @@ export function MenuMobile({
                             ))}
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 {/* Combos */}
                 <section className="py-6 bg-black mb-4">
@@ -210,35 +211,35 @@ export function MenuMobile({
                             {combos.map((combo) => (
                                 <Card
                                     key={combo.id}
-                                    className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer bg-empanada-dark border-empanada-light-gray"
-                                    onClick={() => handleProductClick(combo)}
+                                    className="overflow-hidden hover:shadow-md transition-shadow bg-empanada-dark border-empanada-light-gray"
                                 >
                                     <div className="flex">
                                         <div className="w-24 h-24 bg-empanada-medium flex-shrink-0">
-                                            <img
-                                                src={combo.image}
-                                                alt={combo.name}
-                                                className="w-full h-full object-cover"
-                                            />
+                                            {combo.imageBase64 ? (
+                                                <img
+                                                    src={combo.imageBase64.startsWith('data:') ? combo.imageBase64 : `data:image/webp;base64,${combo.imageBase64}`}
+                                                    alt={combo.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <Package className="w-8 h-8 text-empanada-golden opacity-30" />
+                                                </div>
+                                            )}
                                         </div>
                                         <CardContent className="flex-1 p-4 flex flex-col">
                                             <h3 className="font-semibold text-white">{combo.name}</h3>
-                                            <p className="text-sm text-gray-300 mb-2 line-clamp-2 flex-1">{combo.description}</p>
+                                            <p className="text-xs text-gray-300 mb-2 line-clamp-2 flex-1">{combo.description}</p>
                                             <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-lg font-bold text-empanada-golden">${combo.price}</span>
-                                                    <span className="text-sm text-gray-400 line-through">${combo.originalPrice}</span>
-                                                </div>
+                                                <span className="text-lg font-bold text-empanada-golden">${combo.price}</span>
                                                 <Button
                                                     size="sm"
                                                     variant="empanada"
                                                     className="text-xs px-3 py-1"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        addItem(combo, 1);
-                                                    }}
+                                                    onClick={() => navigate(`/menu/combo-builder?comboId=${combo.id}`)}
                                                 >
-                                                    Agregar
+                                                    <Package className="w-3 h-3 mr-1" />
+                                                    Armar Combo
                                                 </Button>
                                             </div>
                                         </CardContent>

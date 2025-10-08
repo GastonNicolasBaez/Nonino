@@ -11,6 +11,7 @@ export function MenuPage() {
         categorias: categories,
         sucursales: stores,
         sucursalSeleccionada: selectedStoreId,
+        combosTodos: combos,
         publicDataLoading: loading
     } = usePublicData();
 
@@ -50,12 +51,8 @@ export function MenuPage() {
         }
     }, [selectedStore, updateStore]);
 
-    // Datos para las nuevas secciones
-    const todaysPicks = products.slice(0, 6); // Los primeros 6 productos como destacados
-
-    // Las promociones y combos vendrán del backend (PublicDataProvider)
+    // Las promociones vendrán del backend (PublicDataProvider)
     const promotions = [];
-    const combos = [];
 
     if (loading) {
         return (
@@ -71,7 +68,6 @@ export function MenuPage() {
                 <MenuMobile
                     products={products}
                     categories={categories}
-                    todaysPicks={todaysPicks}
                     promotions={promotions}
                     combos={combos}
                     selectedStore={selectedStore}
@@ -80,7 +76,6 @@ export function MenuPage() {
                 <MenuDesktop
                     products={products}
                     categories={categories}
-                    todaysPicks={todaysPicks}
                     promotions={promotions}
                     combos={combos}
                     selectedStore={selectedStore}

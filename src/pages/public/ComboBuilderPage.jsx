@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Smartphone } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ProductStepSelector } from "@/components/menu/ProductStepSelector";
 import { ComboSummaryPanel } from "@/components/menu/ComboSummaryPanel";
+import { StepperNav } from "@/components/menu/mobile/StepperNav";
+import { ComboSummarySheet } from "@/components/menu/mobile/ComboSummarySheet";
 import { usePublicData } from "@/context/PublicDataProvider";
 import { useCart } from "@/context/CartProvider";
+import { useIsMobile } from "@/hooks/useMediaQuery";
 import { CATEGORY_TYPES } from "@/config/constants";
 import { getStorageItem, setStorageItem, removeStorageItem } from "@/lib/utils";
 import { STORAGE_KEYS } from "@/constants";
@@ -24,7 +27,7 @@ export function ComboBuilderPage() {
   } = usePublicData();
   const { addItem } = useCart();
 
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const [selectedCombo, setSelectedCombo] = useState(null);
   const [currentStep, setCurrentStep] = useState(null);
   const [selections, setSelections] = useState({
@@ -33,16 +36,6 @@ export function ComboBuilderPage() {
     POSTRES: {}
   });
   const [addingToCart, setAddingToCart] = useState(false);
-
-  // Detectar si es mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Verificar que hay sucursal seleccionada
   useEffect(() => {
@@ -139,16 +132,24 @@ export function ComboBuilderPage() {
 
   const requiredSteps = getRequiredSteps();
 
+  // Obtener pasos completados
+  const getCompletedSteps = () => {
+    return requiredSteps.filter(step => {
+      const required = getRequiredQuantity(step);
+      const selected = Object.values(selections[step]).reduce((sum, qty) => sum + qty, 0);
+      return selected >= required;
+    });
+  };
+
   // Obtener cantidad requerida para un paso
   const getRequiredQuantity = (step) => {
     if (!selectedCombo || !selectedCombo.components) return 0;
-    
+
     const categoryIds = CATEGORY_TYPES[step] || [];
     return selectedCombo.components
       .filter(c => categoryIds.includes(c.categoryId))
       .reduce((sum, c) => sum + c.quantity, 0);
   };
-
 
   // Agregar producto
   const handleProductAdd = (product) => {
@@ -186,6 +187,10 @@ export function ComboBuilderPage() {
     const currentIndex = requiredSteps.indexOf(currentStep);
     if (currentIndex < requiredSteps.length - 1) {
       setCurrentStep(requiredSteps[currentIndex + 1]);
+      // Scroll to top en mobile
+      if (isMobile) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
@@ -194,10 +199,21 @@ export function ComboBuilderPage() {
     const currentIndex = requiredSteps.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(requiredSteps[currentIndex - 1]);
+      if (isMobile) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } else {
       // Clear persisted state when returning to menu
       removeStorageItem(STORAGE_KEYS.COMBO_BUILDER);
       navigate('/menu');
+    }
+  };
+
+  // Navegar a un paso específico (desde stepper)
+  const handleStepClick = (step) => {
+    setCurrentStep(step);
+    if (isMobile) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -277,34 +293,45 @@ export function ComboBuilderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-empanada-dark py-8">
-      <div className="max-w-[1400px] mx-auto px-4">
-        {/* Breadcrumb / Back button */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
+    <div className="min-h-screen bg-empanada-dark">
+      {/* Header con botón volver */}
+      <div className="bg-empanada-medium border-b border-empanada-light-gray sticky top-16 z-30">
+        <div className={`${isMobile ? 'px-4 py-3' : 'container mx-auto px-6 py-4'}`}>
           <Button
             variant="ghost"
             onClick={() => navigate('/menu')}
             className="text-gray-400 hover:text-white"
+            size={isMobile ? 'sm' : 'default'}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver al Menú
           </Button>
-        </motion.div>
+        </div>
+      </div>
 
-        {/* Layout principal */}
-        <div className="flex gap-8">
+      {/* Stepper Navigation - Solo mobile */}
+      {isMobile && (
+        <StepperNav
+          steps={requiredSteps}
+          currentStep={currentStep}
+          completedSteps={getCompletedSteps()}
+          onStepClick={handleStepClick}
+        />
+      )}
+
+      {/* Layout principal */}
+      <div className={isMobile ? '' : 'container mx-auto px-4 py-8'}>
+        <div className={isMobile ? '' : 'flex gap-8'}>
           {/* Columna izquierda - Selección */}
-          <div className="flex-1">
+          <div className={isMobile ? '' : 'flex-1'}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={`step-${currentStep}`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 20 : 0 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? -20 : 0 }}
+                transition={{ duration: 0.3 }}
+                className={isMobile ? 'pb-32' : ''}
               >
                 <ProductStepSelector
                   categoryType={currentStep}
@@ -314,14 +341,15 @@ export function ComboBuilderPage() {
                   onProductAdd={handleProductAdd}
                   onProductRemove={handleProductRemove}
                   loading={loading}
+                  isMobile={isMobile}
                 />
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Columna derecha - Resumen (sticky) */}
-          <div className="w-[400px] flex-shrink-0">
-            <ComboSummaryPanel
+          {/* Columna derecha - Resumen (sticky en desktop, bottom sheet en mobile) */}
+          {isMobile ? (
+            <ComboSummarySheet
               selectedCombo={selectedCombo}
               currentStep={currentStep}
               selections={selections}
@@ -332,7 +360,21 @@ export function ComboBuilderPage() {
               isComplete={isComboComplete()}
               loading={addingToCart}
             />
-          </div>
+          ) : (
+            <div className="w-[400px] flex-shrink-0">
+              <ComboSummaryPanel
+                selectedCombo={selectedCombo}
+                currentStep={currentStep}
+                selections={selections}
+                products={products}
+                onContinue={handleContinue}
+                onAddToCart={handleAddToCart}
+                onBack={handleBack}
+                isComplete={isComboComplete()}
+                loading={addingToCart}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

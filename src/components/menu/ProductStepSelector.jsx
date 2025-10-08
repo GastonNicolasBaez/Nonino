@@ -16,7 +16,8 @@ export function ProductStepSelector({
   currentSelections,
   onProductAdd,
   onProductRemove,
-  loading
+  loading,
+  isMobile = false
 }) {
   const [hoveredProduct, setHoveredProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,21 +75,31 @@ export function ProductStepSelector({
   }
 
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", isMobile ? "px-4 py-6" : "")}>
       {/* Header con progreso */}
-      <div className="bg-empanada-medium rounded-lg p-6 border border-empanada-light-gray">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-1">
+      <div className={cn(
+        "bg-empanada-medium rounded-lg border border-empanada-light-gray",
+        isMobile ? "p-4" : "p-6"
+      )}>
+        <div className={cn(
+          "flex items-center justify-between mb-4",
+          isMobile && "flex-col gap-4"
+        )}>
+          <div className={isMobile ? "text-center" : ""}>
+            <h2 className={cn(
+              "font-bold text-white mb-1",
+              isMobile ? "text-xl" : "text-2xl"
+            )}>
               Seleccioná tus {getCategoryLabel()}
             </h2>
             <p className="text-gray-400 text-sm">
               Elegí los sabores que más te gusten
             </p>
           </div>
-          <div className="text-right">
+          <div className={isMobile ? "text-center" : "text-right"}>
             <div className={cn(
-              "text-4xl font-bold transition-colors",
+              "font-bold transition-colors",
+              isMobile ? "text-3xl" : "text-4xl",
               isOverLimit ? "text-red-500" : isComplete ? "text-green-500" : "text-empanada-golden"
             )}>
               {totalSelected}/{maxQuantity}
@@ -152,7 +163,10 @@ export function ProductStepSelector({
       </div>
 
       {/* Grid de productos */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className={cn(
+        "grid gap-4",
+        isMobile ? "grid-cols-2 gap-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+      )}>
         <AnimatePresence mode="popLayout">
           {filteredProducts.map((product, index) => {
             const quantity = currentSelections[product.id] || 0;
@@ -177,7 +191,10 @@ export function ProductStepSelector({
                   )}
                 >
                   {/* Imagen del producto */}
-                  <div className="relative h-32 bg-empanada-medium overflow-hidden">
+                  <div className={cn(
+                    "relative bg-empanada-medium overflow-hidden",
+                    isMobile ? "h-28" : "h-32"
+                  )}>
                     {product.image ? (
                       <img
                         src={product.image}
@@ -206,10 +223,13 @@ export function ProductStepSelector({
                     )}
                   </div>
 
-                  <CardContent className="p-3">
+                  <CardContent className={isMobile ? "p-2" : "p-3"}>
                     {/* Nombre y precio */}
-                    <div className="mb-3 min-h-[60px]">
-                      <h3 className="text-sm font-semibold text-white mb-1 line-clamp-2">
+                    <div className={cn("mb-3", isMobile ? "min-h-[50px]" : "min-h-[60px]")}>
+                      <h3 className={cn(
+                        "font-semibold text-white mb-1 line-clamp-2",
+                        isMobile ? "text-xs" : "text-sm"
+                      )}>
                         {product.name}
                       </h3>
                       <p className="text-xs text-empanada-golden">

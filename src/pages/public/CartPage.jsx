@@ -110,20 +110,22 @@ export function CartPage() {
 
   return (
     <div className="min-h-screen bg-black dark">
-      {/* MOBILE HEADER - Solo visible en mobile */}
-      <div className="md:hidden fixed top-16 left-0 right-0 bg-empanada-dark/95 backdrop-blur-sm border-b border-empanada-light-gray z-30">
-        <div className="flex items-center justify-between px-4 py-3">
+      {/* MOBILE HEADER - Simplificado y compacto */}
+      <div className="md:hidden fixed top-16 left-0 right-0 bg-empanada-dark/98 backdrop-blur-lg border-b border-empanada-light-gray/30 z-30 shadow-lg">
+        <div className="flex items-center justify-between px-4 py-2.5">
           <Link to="/menu">
-            <Button variant="ghost" size="sm" className="p-2">
-              <ArrowLeft className="w-5 h-5" />
+            <Button variant="ghost" size="sm" className="p-2 hover:bg-empanada-medium rounded-full">
+              <ArrowLeft className="w-5 h-5 text-white" />
             </Button>
           </Link>
-          <div className="text-center">
-            <h1 className="font-semibold text-white">Mi Carrito</h1>
-            <p className="text-xs text-gray-300">{itemCount} productos</p>
+          <div className="flex items-center gap-2">
+            <h1 className="font-bold text-white text-base">Mi Carrito</h1>
+            <div className="w-5 h-5 bg-empanada-golden text-black text-xs font-bold rounded-full flex items-center justify-center">
+              {itemCount}
+            </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => setShowClearConfirm(true)} className="p-2 text-red-500">
-            <Trash2 className="w-5 h-5" />
+          <Button variant="ghost" size="sm" onClick={() => setShowClearConfirm(true)} className="p-2 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-full">
+            <Trash2 className="w-4.5 h-4.5" />
           </Button>
         </div>
       </div>
@@ -151,19 +153,27 @@ export function CartPage() {
         </div>
       </div>
 
-      {/* MOBILE CONTENT - Diseño integrado sin cards */}
-      <div
-        className="md:hidden absolute top-32 left-0 right-0"
+      {/* MOBILE CONTENT - Diseño integrado sin cards con animaciones mejoradas */}
+      <motion.div
+        className="md:hidden absolute top-[120px] left-0 right-0"
         style={{
-          height: `calc(100vh - 128px - ${isCartSidebarOpen ? '0px' : '280px'})`,
+          height: `calc(100vh - 120px - ${isCartSidebarOpen ? '0px' : '220px'})`,
           overflow: 'auto',
           touchAction: 'auto',
           overscrollBehavior: 'auto',
           transition: 'height 0.3s ease-in-out'
         }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
       >
-        {/* Contenedor de lista integrada */}
-        <div className="bg-gradient-to-b from-empanada-dark to-empanada-darker rounded-t-3xl mx-4 overflow-hidden shadow-2xl">
+        {/* Contenedor de lista integrada con glassmorphism */}
+        <motion.div
+          className="bg-gradient-to-b from-empanada-dark/90 to-empanada-darker/90 backdrop-blur-sm rounded-t-3xl mx-3 overflow-hidden shadow-2xl border border-empanada-light-gray/10"
+          initial={{ scale: 0.98, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2, type: 'spring', damping: 25 }}
+        >
           <AnimatePresence mode="popLayout">
             {items.map((item, index) => (
               <IntegratedCartItem
@@ -177,8 +187,8 @@ export function CartPage() {
               />
             ))}
           </AnimatePresence>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* DESKTOP CONTENT - Layout de 2 columnas */}
       <div className="hidden md:block">
@@ -337,117 +347,127 @@ export function CartPage() {
         </div>
       </div>
 
-      {/* MOBILE FOOTER - Solo visible en mobile, se oculta cuando el menú lateral está abierto */}
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-empanada-dark border-t border-empanada-light-gray z-40 transition-transform duration-300 ${isCartSidebarOpen ? 'translate-y-full' : 'translate-y-0'}`}>
-        <div className="p-4 pb-16">
-        {/* Promo Code Section */}
-        <AnimatePresence>
-          {promoCode ? (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-4"
-            >
-              <div className="flex items-center justify-between p-3 bg-empanada-dark border border-green-600 rounded-xl">
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm font-medium text-green-400 block truncate">
-                    {promoCode.code}
-                  </span>
-                  <p className="text-xs text-green-300">
-                    {promoCode.description}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={removePromoCode}
-                  className="text-green-400 hover:text-green-300 p-1 h-auto"
+      {/* MOBILE FOOTER - Integrado y siempre visible */}
+      <motion.div
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 transition-transform duration-300 ${isCartSidebarOpen ? 'translate-y-full' : 'translate-y-0'}`}
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.3, type: 'spring', damping: 25 }}
+      >
+        <div className="bg-gradient-to-t from-empanada-dark via-empanada-dark/98 to-empanada-dark/95 backdrop-blur-xl border-t border-empanada-light-gray/20 shadow-2xl">
+          <div className="px-4 pt-3 pb-6">
+            {/* Promo Code Section - Compacto */}
+            <AnimatePresence>
+              {promoCode ? (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-3"
                 >
-                  <X className="w-4 h-4" />
-                </Button>
+                  <div className="flex items-center justify-between p-2.5 bg-green-900/20 border border-green-600/40 rounded-xl backdrop-blur-sm">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <Tag className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <span className="text-xs font-bold text-green-400 block truncate">
+                          {promoCode.code}
+                        </span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={removePromoCode}
+                      className="text-green-400 hover:text-green-300 p-1.5 h-auto rounded-full"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                </motion.div>
+              ) : showPromoInput ? (
+                <motion.form
+                  onSubmit={handlePromoCode}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex gap-2 mb-3"
+                >
+                  <Input
+                    name="promoCode"
+                    placeholder="Código"
+                    className="flex-1 rounded-xl border-empanada-light-gray/40 bg-empanada-medium/50 text-white backdrop-blur-sm h-9 text-sm"
+                    autoFocus
+                  />
+                  <Button type="submit" variant="outline" size="sm" className="px-3 rounded-xl h-9 text-xs">
+                    Aplicar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPromoInput(false)}
+                    className="p-2 rounded-full h-9 w-9"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </Button>
+                </motion.form>
+              ) : (
+                <button
+                  onClick={() => setShowPromoInput(true)}
+                  className="mb-3 w-full flex items-center justify-start gap-2 py-2 px-3 text-xs text-gray-400 hover:text-gray-300 hover:bg-empanada-medium/40 rounded-xl transition-all duration-200"
+                >
+                  <Tag className="w-3.5 h-3.5" />
+                  ¿Tienes un código promocional?
+                </button>
+              )}
+            </AnimatePresence>
+
+            {/* Desglose de Precios - Siempre visible */}
+            <div className="space-y-2 mb-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Subtotal</span>
+                <span className="text-white font-medium">{formatPrice(subtotal)}</span>
               </div>
-            </motion.div>
-          ) : showPromoInput ? (
-            <motion.form
-              onSubmit={handlePromoCode}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="flex gap-2 mb-4"
-            >
-              <Input
-                name="promoCode"
-                placeholder="Código promocional"
-                className="flex-1 rounded-xl border-empanada-light-gray bg-empanada-medium text-white"
-                autoFocus
-              />
-              <Button type="submit" variant="outline" size="sm" className="px-4 rounded-xl">
-                Aplicar
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowPromoInput(false)}
-                className="p-2"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </motion.form>
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowPromoInput(true)}
-              className="mb-4 w-full justify-start text-gray-300"
-            >
-              <Tag className="w-4 h-4 mr-2" />
-              ¿Tienes un código promocional?
-            </Button>
-          )}
-        </AnimatePresence>
+              {discount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-400">Descuento</span>
+                  <span className="text-green-400 font-medium">-{formatPrice(discount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Envío</span>
+                <span className="text-white font-medium">
+                  {deliveryFee > 0 ? formatPrice(deliveryFee) : <span className="text-green-400 font-semibold">GRATIS</span>}
+                </span>
+              </div>
 
-        {/* Order Summary */}
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-300">Subtotal</span>
-            <span className="text-white font-medium">{formatPrice(subtotal)}</span>
-          </div>
-          {discount > 0 && (
-            <div className="flex justify-between text-sm text-green-600">
-              <span>Descuento</span>
-              <span>-{formatPrice(discount)}</span>
+              {/* Separador sutil */}
+              <div className="h-px bg-gradient-to-r from-transparent via-empanada-light-gray/30 to-transparent my-2"></div>
+
+              {/* Total destacado */}
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-sm text-gray-300 font-medium">Total a pagar</span>
+                <span className="text-2xl font-black text-empanada-golden drop-shadow-lg">{formatPrice(total)}</span>
+              </div>
             </div>
-          )}
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-300">Envío</span>
-            <span className="text-white font-medium">{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
-          </div>
-          <div className="border-t border-empanada-light-gray pt-2">
-            <div className="flex justify-between font-bold text-lg">
-              <span className="text-white">Total</span>
-              <span className="text-empanada-golden">{formatPrice(total)}</span>
-            </div>
+
+            {/* Checkout Button Hero */}
+            <Link to="/checkout" className="block w-full mb-2.5">
+              <Button variant="empanada" className="w-full py-3.5 rounded-xl font-bold text-base shadow-lg shadow-empanada-golden/20 hover:shadow-xl hover:shadow-empanada-golden/30 transition-all duration-300">
+                Proceder al Pago
+              </Button>
+            </Link>
+
+            {/* Add More Products Button - Secundario */}
+            <Link to="/menu" className="block w-full">
+              <Button variant="outline" className="w-full py-2.5 rounded-xl border-empanada-light-gray/30 hover:bg-empanada-medium/40 text-sm">
+                <Plus className="w-3.5 h-3.5 mr-2" />
+                Añadir más productos
+              </Button>
+            </Link>
           </div>
         </div>
-
-        {/* Checkout Button */}
-        <Link to="/checkout" className="block w-full mb-3">
-          <Button variant="empanada" className="w-full py-4 rounded-xl font-semibold">
-            Proceder al Pago
-          </Button>
-        </Link>
-
-        {/* Add More Products Button */}
-        <Link to="/menu" className="block w-full">
-          <Button variant="outline" className="w-full py-4 rounded-xl">
-            <Plus className="w-4 h-4 mr-2" />
-            ¿Deseas añadir más productos?
-          </Button>
-        </Link>
-        </div>
-      </div>
+      </motion.div>
 
       {/* Confirmation Modal */}
       <ConfirmDialog

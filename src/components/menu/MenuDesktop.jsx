@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ChevronDown, Clock, Truck, Star, MapPin, Sparkles, Package } from "lucide-react";
+import { Search, X, ChevronDown, Clock, Truck, Star, MapPin, Sparkles, Package, Info } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ProductCard } from "@/components/common/ProductCard";
+import { ComboModal } from "@/components/ui/ComboModal";
 import { StoreChangeButton } from "@/components/common/StoreChangeButton";
 import { useCart } from "@/context/CartProvider";
 
@@ -21,11 +22,25 @@ export function MenuDesktop({
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [sortBy, setSortBy] = useState("popular");
+    const [selectedCombo, setSelectedCombo] = useState(null);
+    const [showComboModal, setShowComboModal] = useState(false);
     const { addItem } = useCart();
     const navigate = useNavigate();
 
     const handleAddToCart = (product) => {
         addItem(product);
+    };
+
+    const handleShowComboInfo = (combo) => {
+        setSelectedCombo(combo);
+        setShowComboModal(true);
+    };
+
+    const handleCloseComboModal = () => {
+        setShowComboModal(false);
+        setTimeout(() => {
+            setSelectedCombo(null);
+        }, 300);
     };
 
     // Productos filtrados para búsqueda en tiempo real
@@ -247,9 +262,9 @@ export function MenuDesktop({
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 {combos.map((combo) => (
-                                    <Card key={combo.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray">
+                                    <Card key={combo.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray group">
                                         <div className="flex">
-                                            <div className="w-32 h-32 bg-empanada-medium flex-shrink-0">
+                                            <div className="w-32 h-32 bg-empanada-medium flex-shrink-0 relative">
                                                 {combo.imageBase64 ? (
                                                     <img
                                                         src={combo.imageBase64.startsWith('data:') ? combo.imageBase64 : `data:image/webp;base64,${combo.imageBase64}`}
@@ -261,6 +276,15 @@ export function MenuDesktop({
                                                         <Package className="w-12 h-12 text-empanada-golden opacity-30" />
                                                     </div>
                                                 )}
+                                                {/* Botón info en hover */}
+                                                <button
+                                                    onClick={() => handleShowComboInfo(combo)}
+                                                    className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <div className="bg-empanada-golden rounded-full p-2">
+                                                        <Info className="w-6 h-6 text-white" />
+                                                    </div>
+                                                </button>
                                             </div>
                                             <CardContent className="flex-1 p-6 flex flex-col justify-between bg-empanada-dark">
                                                 <div>
@@ -270,14 +294,25 @@ export function MenuDesktop({
                                                         <span className="text-2xl font-bold text-empanada-golden">${combo.price}</span>
                                                     </div>
                                                 </div>
-                                                <Button
-                                                    className="w-full"
-                                                    variant="empanada"
-                                                    onClick={() => navigate(`/menu/combo-builder?comboId=${combo.id}`)}
-                                                >
-                                                    <Package className="w-4 h-4 mr-2" />
-                                                    Armar este Combo
-                                                </Button>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleShowComboInfo(combo)}
+                                                        className="border-empanada-light-gray hover:border-empanada-golden text-gray-300 hover:text-white"
+                                                    >
+                                                        <Info className="w-4 h-4 mr-2" />
+                                                        Ver Info
+                                                    </Button>
+                                                    <Button
+                                                        className="flex-1"
+                                                        variant="empanada"
+                                                        onClick={() => navigate(`/menu/combo-builder?comboId=${combo.id}`)}
+                                                    >
+                                                        <Package className="w-4 h-4 mr-2" />
+                                                        Armar Combo
+                                                    </Button>
+                                                </div>
                                             </CardContent>
                                         </div>
                                     </Card>
@@ -389,6 +424,13 @@ export function MenuDesktop({
                     </main>
                 </div>
             </div>
+
+            {/* Combo Modal */}
+            <ComboModal
+                combo={selectedCombo}
+                isOpen={showComboModal}
+                onClose={handleCloseComboModal}
+            />
         </div>
     );
 }

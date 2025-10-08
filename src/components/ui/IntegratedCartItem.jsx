@@ -92,80 +92,102 @@ export const IntegratedCartItem = ({
         onHoverEnd={() => setIsHovered(false)}
       >
         {!isLast && (
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-empanada-golden/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-empanada-light-gray/10 to-transparent" />
         )}
-        
+
         <div className={`
-          relative bg-gradient-to-r from-empanada-dark via-empanada-medium to-empanada-dark
-          ${isMobile ? 'py-4 px-4' : 'py-6 px-6'}
-          transition-all duration-300 border border-empanada-golden/30 rounded-lg
+          relative backdrop-blur-md bg-gradient-to-br from-empanada-dark/80 via-empanada-medium/50 to-empanada-dark/80
+          ${isMobile ? 'py-5 px-4' : 'py-6 px-6'}
+          transition-all duration-300
+          ${isMobile ? 'rounded-2xl' : 'rounded-xl'}
           ${isRemoving ? 'opacity-50 scale-95' : ''}
-          ${isHovered ? 'border-empanada-golden shadow-lg shadow-empanada-golden/20' : ''}
+          ${isHovered ? 'shadow-2xl shadow-empanada-golden/20' : 'shadow-lg'}
+          border border-empanada-golden/20
         `}>
-          <div className="flex items-start gap-4">
-            {/* Icono de combo */}
-            <div className={`relative ${isMobile ? 'w-16 h-16' : 'w-20 h-20'} rounded-xl bg-empanada-golden/10 flex items-center justify-center flex-shrink-0 ring-2 ring-empanada-golden/50`}>
-              <Package className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} text-empanada-golden`} />
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-empanada-golden text-black text-xs font-bold rounded-full flex items-center justify-center shadow-lg">
-                <Sparkles className="w-3 h-3" />
+          {/* Fila 1: Icono + Nombre + Precio + Delete */}
+          <div className="flex items-center gap-3 mb-3">
+            {/* Icono de combo con glassmorphism */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative ${isMobile ? 'w-14 h-14' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-empanada-golden/30 to-empanada-warm/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 ring-2 ring-empanada-golden/40 shadow-lg`}
+            >
+              <Package className={`${isMobile ? 'w-7 h-7' : 'w-8 h-8'} text-empanada-golden drop-shadow-lg`} />
+              <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-empanada-golden text-black text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg">
+                <Sparkles className="w-2.5 h-2.5" />
               </div>
+            </motion.div>
+
+            {/* Nombre y badge */}
+            <div className="flex-1 min-w-0">
+              <Badge className="mb-1.5 bg-empanada-golden/90 text-black text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-md">
+                ✨ COMBO PERSONALIZADO
+              </Badge>
+              <h3 className={`font-bold text-white ${isMobile ? 'text-base' : 'text-lg'} leading-tight line-clamp-1 drop-shadow-sm`}>
+                {item.name}
+              </h3>
             </div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1 min-w-0">
-                  <Badge className="mb-2 bg-empanada-golden text-black text-xs">
-                    ✨ Combo Personalizado
-                  </Badge>
-                  <h3 className={`font-bold text-white ${isMobile ? 'text-base' : 'text-xl'} leading-tight mb-1`}>
-                    {item.name}
-                  </h3>
-                  <p className="text-xs text-gray-400 mb-2">Combo armado a tu medida</p>
-                </div>
-
-                <div className="text-right ml-3">
-                  <div className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-empanada-golden`}>
-                    {formatPrice(item.price)}
-                  </div>
-                  <div className="text-xs text-gray-400">Total</div>
-                </div>
+            {/* Precio y botón eliminar */}
+            <div className="flex flex-col items-end gap-1">
+              <div className={`${isMobile ? 'text-xl' : 'text-2xl'} font-black text-empanada-golden drop-shadow-lg`}>
+                {formatPrice(item.price)}
               </div>
-
-              {/* Detalle de productos del combo */}
-              {item.comboDetails && item.comboDetails.length > 0 && (
-                <div className="mb-3 p-3 bg-empanada-dark/50 rounded-lg border border-empanada-light-gray/30">
-                  <p className="text-xs font-semibold text-empanada-golden mb-2 uppercase">
-                    Incluye:
-                  </p>
-                  <div className="space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
-                    {item.comboDetails.map((detail, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-300 flex items-center gap-2">
-                          <span className="w-1 h-1 bg-empanada-golden rounded-full"></span>
-                          {detail.name}
-                        </span>
-                        <Badge variant="outline" className="text-xs border-empanada-golden/50 text-empanada-golden">
-                          {detail.quantity}x
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Botón de eliminar - Los combos no tienen stepper de cantidad */}
-              <div className="flex justify-end">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleRemove}
-                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all duration-200"
-                >
-                  <Trash2 className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
-                </motion.button>
-              </div>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleRemove}
+                className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200"
+              >
+                <Trash2 className={`${isMobile ? 'w-4 h-4' : 'w-4.5 h-4.5'}`} />
+              </motion.button>
             </div>
           </div>
+
+          {/* Fila 2: Chips horizontales scrollables con productos del combo */}
+          {item.comboDetails && item.comboDetails.length > 0 && (
+            <div className="relative">
+              {/* Gradient fade izquierdo */}
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-empanada-dark/80 to-transparent pointer-events-none z-10 rounded-l-xl"></div>
+
+              {/* Contenedor scrollable */}
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory -mx-1 px-1">
+                {item.comboDetails.map((detail, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="flex-shrink-0 snap-start"
+                  >
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-empanada-golden/15 to-empanada-warm/10 backdrop-blur-sm rounded-full border border-empanada-golden/30 shadow-sm">
+                      <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-empanada-golden`}>
+                        {detail.quantity}x
+                      </span>
+                      <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-white font-medium whitespace-nowrap`}>
+                        {detail.name}
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Gradient fade derecho */}
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-empanada-dark/80 to-transparent pointer-events-none z-10 rounded-r-xl"></div>
+            </div>
+          )}
+
+          {/* Glow effect en hover */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-empanada-golden/10 via-transparent to-empanada-golden/5 pointer-events-none"
+              />
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
     );

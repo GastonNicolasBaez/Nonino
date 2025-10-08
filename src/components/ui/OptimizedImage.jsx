@@ -72,7 +72,6 @@ export const OptimizedImage = memo(({
                     transition: 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out',
                     // Optimizaciones de renderizado para alta calidad
                     ...(quality === 'high' && {
-                        imageRendering: 'high-quality',
                         imageRendering: '-webkit-optimize-contrast',
                         backfaceVisibility: 'hidden',
                         transform: 'translateZ(0)'

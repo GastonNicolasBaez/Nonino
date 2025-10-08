@@ -11,8 +11,6 @@ import {
     Settings,
     Menu,
     X,
-    Moon,
-    Sun,
     LogOut,
     Bell,
     ChevronLeft,
@@ -38,7 +36,6 @@ import { NotificationsDropdown } from "../common/NotificationsDropdown";
 import { Avatar } from "../ui/avatar";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
-import { useTheme } from "@/context/ThemeProvider";
 import { useAdminData } from "@/context/AdminDataProvider";
 
 import logoNonino from '@/assets/logos/nonino.png';
@@ -82,7 +79,6 @@ const AdminLayout = () => {
             label: `${store.name}`
         })) || [])
     ];
-    const { toggleTheme, isDark } = useTheme();
 
     // Automatically scroll to top when route changes
     useScrollToTop();
@@ -802,18 +798,6 @@ const AdminLayout = () => {
                                                     onClick={() => showDebugStateInfo()}
                                                 >
                                                     DEBUG STATE INFO
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => {
-                                                        toggleTheme();
-                                                        setUserDropdownOpen(false);
-                                                    }}
-                                                    className="w-full justify-start mb-1"
-                                                >
-                                                    {isDark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                                                    {isDark ? "Modo Claro" : "Modo Oscuro"}
                                                 </Button>
                                                 <Button
                                                     variant="ghost"

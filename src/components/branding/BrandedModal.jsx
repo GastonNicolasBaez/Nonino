@@ -136,7 +136,7 @@ export function BrandedModal({
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed inset-0 z-[999999] flex items-end md:items-center justify-center md:p-4"
+          className="fixed inset-0 z-[999999] flex items-end md:items-center justify-center md:p-4 bg-black/60 backdrop-blur-sm"
           onClick={handleClose}
         >
           {/* Modal Desktop/Tablet (≥768px) */}
@@ -145,12 +145,11 @@ export function BrandedModal({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="hidden md:flex relative bg-background border-2 border-empanada-golden/20 rounded-2xl shadow-2xl overflow-hidden"
-            style={{ maxWidth: maxWidth === "max-w-4xl" ? "42rem" : null, maxHeight, width: '100%' }}
+            className={`hidden md:flex md:flex-col relative bg-gray-50 dark:bg-empanada-dark border-2 border-empanada-golden/20 rounded-2xl shadow-2xl overflow-hidden w-full ${maxWidth} ${maxHeight}`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del modal */}
-            <div className="w-full flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark flex-shrink-0">
+            <div className="w-full flex items-center justify-between px-6 py-4 bg-gray-50 dark:bg-empanada-dark flex-shrink-0">
               <div className="flex items-center space-x-3 min-w-0 flex-1">
                 {icon && (
                   <div className="w-10 h-10 rounded-full flex items-center justify-center bg-empanada-golden/10 flex-shrink-0">
@@ -181,8 +180,8 @@ export function BrandedModal({
             </div>
 
             {/* Contenido del modal */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden">
-              <div className="p-6">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden bg-inherit">
+              <div className="p-6 bg-inherit">
                 {children}
               </div>
             </div>
@@ -207,7 +206,7 @@ export function BrandedModal({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="md:hidden absolute inset-x-0 bottom-0 bg-background rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh]"
+            className={`md:hidden absolute inset-x-0 bottom-0 bg-gray-50 dark:bg-empanada-dark rounded-t-3xl shadow-2xl overflow-hidden flex flex-col w-full ${maxWidth} ${maxHeight}`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drag Handle */}
@@ -218,7 +217,7 @@ export function BrandedModal({
             )}
 
             {/* Header del modal mobile */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-empanada-light-gray bg-gray-50 dark:bg-empanada-dark flex-shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-empanada-dark flex-shrink-0">
               <div className="flex items-center space-x-3 min-w-0 flex-1">
                 {icon && (
                   <div className="w-8 h-8 rounded-full flex items-center justify-center bg-empanada-golden/10 flex-shrink-0">
@@ -249,8 +248,8 @@ export function BrandedModal({
             </div>
 
             {/* Contenido del modal mobile */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden">
-              <div className="p-4 pb-safe">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden bg-inherit">
+              <div className="p-4 pb-safe bg-inherit">
                 {children}
               </div>
             </div>

@@ -3,6 +3,7 @@ import AuthProvider from "@/context/AuthProvider";
 import PublicDataProvider from "./context/PublicDataProvider";
 import AdminDataProvider from "./context/AdminDataProvider";
 import ThemeProvider from "@/context/ThemeProvider";
+import AdminThemeProvider from "@/context/AdminThemeProvider";
 import SessionProvider from "@/context/SessionProvider";
 import { Toaster } from "sonner";
 import { Suspense, lazy } from "react";
@@ -152,11 +153,11 @@ function App() {
                             <Route path="admin"
                                 element={
                                     <AuthProvider allowedRole={'ADMIN'}>
-                                        <ThemeProvider>
+                                        <AdminThemeProvider>
                                             <AdminDataProvider>
                                                 <AdminLayout />
                                             </AdminDataProvider>
-                                        </ThemeProvider>
+                                        </AdminThemeProvider>
                                     </AuthProvider>
                                 }
                             >
@@ -183,11 +184,11 @@ function App() {
                             <Route path="local"
                                 element={
                                     <AuthProvider allowedRole={'LOCAL'}>
-                                        <ThemeProvider>
+                                        <AdminThemeProvider>
                                             <AdminDataProvider>
                                                 <AdminLayout />
                                             </AdminDataProvider>
-                                        </ThemeProvider>
+                                        </AdminThemeProvider>
                                     </AuthProvider>
                                 }
                             >
@@ -205,11 +206,11 @@ function App() {
                             <Route path="fabrica"
                                 element={
                                     <AuthProvider allowedRole={'FABRICA'}>
-                                        <ThemeProvider>
+                                        <AdminThemeProvider>
                                             <AdminDataProvider>
                                                 <AdminLayout />
                                             </AdminDataProvider>
-                                        </ThemeProvider>
+                                        </AdminThemeProvider>
                                     </AuthProvider>
                                 }
                             >

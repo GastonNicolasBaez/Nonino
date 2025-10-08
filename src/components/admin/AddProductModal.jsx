@@ -41,6 +41,7 @@ export function AddProductModal({
         category: '',
         price: '',
         sku: '',
+        noRecipe: false,
 
         // Paso 2: Receta
         recipe: [],
@@ -255,13 +256,21 @@ export function AddProductModal({
         }
 
         if (isValid && currentStep < 4) {
-            setCurrentStep(currentStep + 1);
+            if (currentStep === 1 && formData.noRecipe) {
+                setCurrentStep(3); // Saltar al paso 3 (imagen)
+            } else {
+                setCurrentStep(currentStep + 1);
+            }
         }
     };
 
     const prevStep = () => {
         if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
+            if (currentStep === 3 && formData.noRecipe) {
+                setCurrentStep(1); // Saltar al paso 1 (omitir paso 2)
+            } else {
+                setCurrentStep(currentStep - 1);
+            }
         }
     };
 
@@ -295,6 +304,7 @@ export function AddProductModal({
             category: '',
             price: '',
             sku: '',
+            noRecipe: false,
             recipe: [],
             preparationTime: '',
             imageUrl: '',
@@ -395,10 +405,10 @@ export function AddProductModal({
 
                                 {/* Progress bar */}
                                 <div className="flex items-center mt-4 space-x-2">
-                                    {[1, 2, 3, 4].map((step) => (
+                                    {(formData.noRecipe ? [1, 3, 4] : [1, 2, 3, 4]).map((step) => (
                                         <div key={step} className="flex-1">
                                             <div className={`h-2 rounded-full ${
-                                                step <= currentStep
+                                                currentStep >= step
                                                     ? 'bg-empanada-golden'
                                                     : 'bg-gray-200 dark:bg-empanada-medium'
                                             }`} />
@@ -407,10 +417,11 @@ export function AddProductModal({
                                 </div>
                             </CardHeader>
 
-                            <CardContent className="space-y-6 flex-1 overflow-y-auto px-6 py-0">
+                            <CardContent className="space-y-6 flex-1 overflow-y-auto px-6 py-0 pb-6">
                                 {/* PASO 1: INFORMACIÓN BÁSICA */}
                                 {currentStep === 1 && (
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <>
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
@@ -471,6 +482,7 @@ export function AddProductModal({
                                                     </p>
                                                 )}
                                             </div>
+
                                         </div>
 
                                         <div className="space-y-4">
@@ -501,6 +513,27 @@ export function AddProductModal({
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Checkbox para productos sin receta */}
+                                    <div className="border-2 border-empanada-golden/30 bg-empanada-golden/10 dark:bg-empanada-golden/20 rounded-lg p-4 mt-6 mb-12">
+                                        <label className="flex items-center gap-3 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.noRecipe}
+                                                onChange={(e) => handleInputChange('noRecipe', e.target.checked)}
+                                                className="w-5 h-5 rounded border-gray-300 dark:border-empanada-light-gray text-empanada-golden focus:ring-empanada-golden"
+                                            />
+                                            <div>
+                                                <span className="text-base font-semibold text-gray-900 dark:text-white">
+                                                    Este producto no tiene receta
+                                                </span>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                                    Los productos sin receta pasan directamente al paso de imagen.
+                                                </p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    </>
                                 )}
 
                                 {/* PASO 2: RECETA E INGREDIENTES */}

@@ -138,45 +138,65 @@ export function CartSidebar() {
                           )}
                       </div>
                       <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8 cart-quantity-button"
-                          onClick={() =>
-                            updateQuantity(
-                              item.id,
-                              item.customizations,
-                              item.quantity - 1
-                            )
-                          }
-                        >
-                          <Minus className="w-2 h-2 sm:w-3 sm:h-3" />
-                        </Button>
-                        <span className="text-xs sm:text-sm w-6 sm:w-8 text-center font-medium">
-                          {item.quantity}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8 cart-quantity-button"
-                          onClick={() =>
-                            updateQuantity(
-                              item.id,
-                              item.customizations,
-                              item.quantity + 1
-                            )
-                          }
-                        >
-                          <Plus className="w-2 h-2 sm:w-3 sm:h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-9 w-9 sm:h-10 sm:w-10 text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg"
-                          onClick={() => removeItem(item.id, item.customizations)}
-                        >
-                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                        </Button>
+                        {item.isCombo ? (
+                          // Para combos: solo mostrar cantidad y botón eliminar
+                          <>
+                            <span className="text-xs sm:text-sm px-3 py-1 bg-empanada-medium border border-empanada-light-gray rounded-md text-gray-300">
+                              {item.quantity}x
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9 sm:h-10 sm:w-10 text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg"
+                              onClick={() => removeItem(item.id, item.customizations)}
+                            >
+                              <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </Button>
+                          </>
+                        ) : (
+                          // Para productos normales: botones +/-
+                          <>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-7 w-7 sm:h-8 sm:w-8 cart-quantity-button"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.id,
+                                  item.customizations,
+                                  item.quantity - 1
+                                )
+                              }
+                            >
+                              <Minus className="w-2 h-2 sm:w-3 sm:h-3" />
+                            </Button>
+                            <span className="text-xs sm:text-sm w-6 sm:w-8 text-center font-medium">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-7 w-7 sm:h-8 sm:w-8 cart-quantity-button"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.id,
+                                  item.customizations,
+                                  item.quantity + 1
+                                )
+                              }
+                            >
+                              <Plus className="w-2 h-2 sm:w-3 sm:h-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9 sm:h-10 sm:w-10 text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg"
+                              onClick={() => removeItem(item.id, item.customizations)}
+                            >
+                              <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </motion.div>
                   ))}

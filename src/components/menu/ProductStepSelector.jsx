@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, AlertCircle, CheckCircle2, Search, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Portal } from "@/components/common/Portal";
+import { SimpleTooltip } from "@/components/ui/SimpleTooltip";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { CATEGORY_TYPES, CATEGORY_NAMES } from "@/config/constants";
@@ -19,8 +21,9 @@ export function ProductStepSelector({
   loading,
   isMobile = false
 }) {
-  const [hoveredProduct, setHoveredProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+  const buttonRefs = useRef({});
 
   // Calcular cantidad total seleccionada
   const totalSelected = Object.values(currentSelections).reduce(
@@ -30,6 +33,21 @@ export function ProductStepSelector({
   const remaining = maxQuantity - totalSelected;
   const isOverLimit = totalSelected > maxQuantity;
   const isComplete = totalSelected >= maxQuantity;
+
+  // Lógica simple: mostrar tooltip cuando se hace hover y se alcanzó el límite (solo en desktop)
+  const shouldShowTooltip = (productId) => {
+    return !isMobile && hoveredProduct === productId && totalSelected >= maxQuantity;
+  };
+
+  // En móvil no mostramos tooltip, solo manejamos el estado para consistencia
+  const handleTouchStart = (productId) => {
+    // No hacer nada en móvil - el tooltip está deshabilitado
+  };
+
+  const handleTouchEnd = () => {
+    // No hacer nada en móvil - el tooltip está deshabilitado
+  };
+
 
   // Filtrar productos por tipo de categoría y búsqueda
   const filteredProducts = products.filter((product) => {
@@ -76,71 +94,63 @@ export function ProductStepSelector({
 
   return (
     <div className={cn("space-y-6", isMobile ? "px-4 py-6" : "")}>
-      {/* Header con progreso */}
-      <div className={cn(
-        "bg-empanada-medium rounded-lg border border-empanada-light-gray",
-        isMobile ? "p-4" : "p-6"
-      )}>
-        <div className={cn(
-          "flex items-center justify-between mb-4",
-          isMobile && "flex-col gap-4"
-        )}>
-          <div className={isMobile ? "text-center" : ""}>
-            <h2 className={cn(
-              "font-bold text-white mb-1",
-              isMobile ? "text-xl" : "text-2xl"
-            )}>
-              Seleccioná tus {getCategoryLabel()}
-            </h2>
-            <p className="text-gray-400 text-sm">
-              Elegí los sabores que más te gusten
-            </p>
-          </div>
-          <div className={isMobile ? "text-center" : "text-right"}>
-            <div className={cn(
-              "font-bold transition-colors",
-              isMobile ? "text-3xl" : "text-4xl",
-              isOverLimit ? "text-red-500" : isComplete ? "text-green-500" : "text-empanada-golden"
-            )}>
-              {totalSelected}/{maxQuantity}
+      {/* Header con progreso - Solo Desktop */}
+      {!isMobile && (
+        <div className="bg-empanada-medium rounded-lg border border-empanada-light-gray p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-1">
+                Seleccioná tus {getCategoryLabel()}
+              </h2>
+              <p className="text-gray-400 text-sm">
+                Elegí los sabores que más te gusten
+              </p>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
-              {isOverLimit ? (
-                <span className="text-red-400 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />
-                  {Math.abs(remaining)} de más
-                </span>
-              ) : isComplete ? (
-                <span className="text-green-400 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" />
-                  Completado
-                </span>
-              ) : (
-                `Faltan ${remaining}`
+            <div className="text-right">
+              <div className={cn(
+                "text-4xl font-bold transition-colors",
+                isOverLimit ? "text-red-500" : isComplete ? "text-green-500" : "text-empanada-golden"
+              )}>
+                {totalSelected}/{maxQuantity}
+              </div>
+              <p className="text-xs text-gray-400 mt-1">
+                {isOverLimit ? (
+                  <span className="text-red-400 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {Math.abs(remaining)} de más
+                  </span>
+                ) : isComplete ? (
+                  <span className="text-green-400 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Completado
+                  </span>
+                ) : (
+                  `Faltan ${remaining}`
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Barra de progreso */}
+          <div className="w-full bg-empanada-dark rounded-full h-3 overflow-hidden">
+            <motion.div
+              className={cn(
+                "h-full rounded-full transition-colors",
+                isOverLimit
+                  ? "bg-gradient-to-r from-red-600 to-red-400"
+                  : isComplete
+                  ? "bg-gradient-to-r from-green-600 to-green-400"
+                  : "bg-gradient-to-r from-empanada-golden to-empanada-warm"
               )}
-            </p>
+              initial={{ width: 0 }}
+              animate={{
+                width: `${Math.min((totalSelected / maxQuantity) * 100, 100)}%`
+              }}
+              transition={{ duration: 0.3 }}
+            />
           </div>
         </div>
-
-        {/* Barra de progreso */}
-        <div className="w-full bg-empanada-dark rounded-full h-3 overflow-hidden">
-          <motion.div
-            className={cn(
-              "h-full rounded-full transition-colors",
-              isOverLimit
-                ? "bg-gradient-to-r from-red-600 to-red-400"
-                : isComplete
-                ? "bg-gradient-to-r from-green-600 to-green-400"
-                : "bg-gradient-to-r from-empanada-golden to-empanada-warm"
-            )}
-            initial={{ width: 0 }}
-            animate={{
-              width: `${Math.min((totalSelected / maxQuantity) * 100, 100)}%`
-            }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
-      </div>
+      )}
 
       {/* Barra de búsqueda */}
       <div className="relative">
@@ -180,10 +190,11 @@ export function ProductStepSelector({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2, delay: index * 0.03 }}
+                className="relative"
               >
                 <Card
                   className={cn(
-                    "transition-all duration-300 h-full",
+                    "transition-all duration-300 h-full overflow-visible",
                     "bg-empanada-dark border-2",
                     isSelected
                       ? "border-empanada-golden shadow-lg shadow-empanada-golden/20"
@@ -267,51 +278,44 @@ export function ProductStepSelector({
                         </motion.span>
                       </div>
 
-                      <div 
-                        className="relative inline-block group/tooltip"
-                        onMouseEnter={() => {
-                          if (totalSelected >= maxQuantity) {
-                            setHoveredProduct(product.id);
-                          }
-                        }}
-                        onMouseLeave={() => setHoveredProduct(null)}
+                      <SimpleTooltip
+                        isVisible={shouldShowTooltip(product.id)}
+                        triggerElement={buttonRefs.current[product.id]}
+                        content={isMobile ? "Completá el combo primero" : "Agrega al carrito para continuar comprando"}
+                        isMobile={isMobile}
                       >
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={cn(
-                            "h-8 w-8 p-0 rounded-full flex-shrink-0",
-                            "border-empanada-light-gray hover:border-empanada-golden",
-                            "hover:bg-empanada-golden hover:text-white",
-                            totalSelected >= maxQuantity && "opacity-50 cursor-not-allowed"
-                          )}
-                          onClick={() => onProductAdd(product)}
-                          disabled={totalSelected >= maxQuantity}
+                        <div
+                          onMouseEnter={() => {
+                            if (totalSelected >= maxQuantity && !isMobile) {
+                              setHoveredProduct(product.id);
+                            }
+                          }}
+                          onMouseLeave={() => {
+                            if (!isMobile) {
+                              setHoveredProduct(null);
+                            }
+                          }}
+                          onTouchStart={() => handleTouchStart(product.id)}
+                          onTouchEnd={handleTouchEnd}
                         >
-                          <Plus className="w-4 h-4" />
-                        </Button>
-
-                        {/* Tooltip inline con z-index alto */}
-                        {totalSelected >= maxQuantity && hoveredProduct === product.id && (
-                          <div
-                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200"
-                            style={{ zIndex: 99999 }}
+                          <Button
+                            ref={(el) => buttonRefs.current[product.id] = el}
+                            variant="outline"
+                            size="sm"
+                            className={cn(
+                              "h-8 w-8 p-0 rounded-full flex-shrink-0",
+                              "border-empanada-light-gray hover:border-empanada-golden",
+                              "hover:bg-empanada-golden hover:text-white",
+                              "transition-all duration-200",
+                              totalSelected >= maxQuantity && "opacity-50 cursor-not-allowed"
+                            )}
+                            onClick={() => onProductAdd(product)}
+                            disabled={totalSelected >= maxQuantity}
                           >
-                            <div className="bg-gray-700 rounded-md px-3 py-2 shadow-2xl whitespace-nowrap text-center">
-                              <p className="text-xs text-white">
-                                Completá el combo y agrégalo al carrito
-                              </p>
-                              <p className="text-xs text-gray-300">
-                                para seguir comprando
-                              </p>
-                            </div>
-                            {/* Flecha centrada apuntando hacia abajo */}
-                            <div className="absolute left-1/2 top-full -translate-x-1/2" style={{ marginTop: '-1px' }}>
-                              <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-gray-700"></div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </SimpleTooltip>
                     </div>
                   </CardContent>
                 </Card>
@@ -343,6 +347,7 @@ export function ProductStepSelector({
           </motion.div>
         )}
       </AnimatePresence>
+
     </div>
   );
 }

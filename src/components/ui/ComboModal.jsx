@@ -100,17 +100,24 @@ export function ComboModal({ combo, isOpen, onClose }) {
       y: 0,
       transition: {
         type: "spring",
-        damping: 30,
+        damping: 25,
         stiffness: 300,
-        duration: 0.36
+        duration: 0.2
       }
     },
     exit: {
       opacity: 0,
       y: '100%',
       transition: {
-        duration: 0.25
+        duration: 0.2
       }
+    }
+  };
+
+  const handleDragEnd = (event, info) => {
+    // Cerrar modal si se arrastra más de 150px hacia abajo
+    if (info.offset.y > 150) {
+      onClose();
     }
   };
 
@@ -131,6 +138,10 @@ export function ComboModal({ combo, isOpen, onClose }) {
             initial="hidden"
             animate="visible"
             exit="exit"
+            drag={isMobile ? "y" : false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.7 }}
+            onDragEnd={handleDragEnd}
             className="relative w-full max-w-md bg-empanada-dark rounded-2xl md:rounded-2xl rounded-b-none md:rounded-b-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]"
             onClick={(e) => e.stopPropagation()}
           >

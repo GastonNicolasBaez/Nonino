@@ -309,16 +309,6 @@ export function ComboBuilderPage() {
         </div>
       </div>
 
-      {/* Stepper Navigation - Solo mobile */}
-      {isMobile && (
-        <StepperNav
-          steps={requiredSteps}
-          currentStep={currentStep}
-          completedSteps={getCompletedSteps()}
-          onStepClick={handleStepClick}
-        />
-      )}
-
       {/* Layout principal */}
       <div className={isMobile ? '' : 'container mx-auto px-4 py-8'}>
         <div className={isMobile ? '' : 'flex gap-8'}>
@@ -359,6 +349,7 @@ export function ComboBuilderPage() {
               onBack={handleBack}
               isComplete={isComboComplete()}
               loading={addingToCart}
+              requiredSteps={requiredSteps}
             />
           ) : (
             <div className="w-[400px] flex-shrink-0">
@@ -377,6 +368,7 @@ export function ComboBuilderPage() {
           )}
         </div>
       </div>
+
     </div>
   );
 }

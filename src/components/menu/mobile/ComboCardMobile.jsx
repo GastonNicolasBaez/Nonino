@@ -83,10 +83,6 @@ export function ComboCarousel({ combos = [], onSelectCombo, onShowInfo }) {
         ))}
       </div>
 
-      {/* Info del contador */}
-      <p className="text-center text-sm text-gray-400">
-        {currentIndex + 1} de {combos.length} combos
-      </p>
     </div>
   );
 }
@@ -273,15 +269,6 @@ function ComboCard({ combo, onSwipe, onSelect, onShowInfo, direction }) {
         </CardContent>
       </Card>
 
-      {/* Hint de swipe (solo en primer render) */}
-      <motion.div
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 0 }}
-        transition={{ delay: 2, duration: 0.5 }}
-        className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-xs text-gray-500 whitespace-nowrap pointer-events-none"
-      >
-        👆 Deslizá para ver más combos
-      </motion.div>
     </motion.div>
   );
 }

@@ -5,7 +5,8 @@ import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { useAuth } from "../../context/AuthContext";
+// TODO: Implementar AuthContext para usuarios públicos
+// import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
 
 export function RegisterPage() {
@@ -20,7 +21,8 @@ export function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const { register } = useAuth();
+  // const { register } = useAuth();
+  const register = async () => ({ success: false, error: 'Auth not implemented' }); // TODO: Implementar autenticación
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

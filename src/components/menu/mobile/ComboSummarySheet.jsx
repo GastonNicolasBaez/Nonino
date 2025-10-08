@@ -30,7 +30,8 @@ export function ComboSummarySheet({
   onAddToCart,
   onBack,
   isComplete,
-  loading
+  loading,
+  requiredSteps = []
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const dragControls = useDragControls();
@@ -140,14 +141,19 @@ export function ComboSummarySheet({
         dragConstraints={{ top: 0, bottom: 0 }}
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
+        initial={false}
         animate={{
           bottom: 0,
-          height: isExpanded ? '80vh' : 'auto'
+          height: isExpanded ? '75vh' : 'auto'
         }}
         transition={{
           type: 'spring',
           damping: 30,
-          stiffness: 300
+          stiffness: 300,
+          duration: 0.3
+        }}
+        style={{
+          overflow: 'hidden'
         }}
         className="fixed left-0 right-0 z-50 bg-empanada-medium rounded-t-3xl shadow-2xl border-t-2 border-empanada-golden"
       >
@@ -160,70 +166,89 @@ export function ComboSummarySheet({
         </div>
 
         {/* Peek View - Siempre visible */}
-        <div
-          className="px-4 pb-4 cursor-pointer"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-empanada-golden/10 rounded-full flex items-center justify-center">
-                <Package className="w-5 h-5 text-empanada-golden" />
-              </div>
-              <div>
-                <h3 className="font-bold text-white text-sm">
-                  {selectedCombo.name}
-                </h3>
-                <p className="text-xs text-gray-400">
-                  {totalItems} {totalItems === 1 ? 'producto' : 'productos'} seleccionados
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-xl font-bold text-empanada-golden">
-                  {formatPrice(totalPrice)}
-                </p>
+        <div className="px-4 pb-3">
+          {/* Información del paso actual */}
+          <div className="mb-2">
+            {/* Header del paso */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xl">{getStepInfo(currentStep).icon}</span>
+                <span className="text-xs text-gray-400">
+                  Paso {requiredSteps.indexOf(currentStep) + 1} de {requiredSteps.filter(s => getStepInfo(s).required > 0).length}
+                </span>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white h-8 w-8"
+                onClick={() => setIsExpanded(!isExpanded)}
               >
                 {isExpanded ? (
-                  <ChevronDown className="w-5 h-5" />
+                  <ChevronDown className="w-4 h-4" />
                 ) : (
-                  <ChevronUp className="w-5 h-5" />
+                  <ChevronUp className="w-4 h-4" />
                 )}
               </Button>
             </div>
-          </div>
 
-          {/* Progress bar inline */}
-          {!isExpanded && (
-            <div className="flex items-center gap-2 mb-3">
-              {['EMPANADAS', 'BEBIDAS', 'POSTRES'].map((step) => {
-                const stepInfo = getStepInfo(step);
-                if (stepInfo.required === 0) return null;
+            {/* Título y descripción */}
+            <h3 className="font-bold text-white text-base mb-0.5">
+              Seleccioná tus {getStepInfo(currentStep).label}
+            </h3>
+            <p className="text-xs text-gray-400 mb-2">
+              Elegí los sabores que más te gusten
+            </p>
 
-                const complete = isStepComplete(step);
-                const isCurrent = currentStep === step;
-
-                return (
-                  <div
-                    key={step}
-                    className={cn(
-                      "flex-1 h-1.5 rounded-full transition-all",
-                      isCurrent
-                        ? "bg-empanada-golden"
-                        : complete
-                        ? "bg-green-600"
-                        : "bg-empanada-dark"
-                    )}
-                  />
-                );
-              })}
+            {/* Contador grande */}
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <div className={cn(
+                  "text-3xl font-bold transition-colors",
+                  getSelectionCount(currentStep) > getStepInfo(currentStep).required
+                    ? "text-red-500"
+                    : isStepComplete(currentStep)
+                    ? "text-green-500"
+                    : "text-empanada-golden"
+                )}>
+                  {getSelectionCount(currentStep)}/{getStepInfo(currentStep).required}
+                </div>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {getSelectionCount(currentStep) > getStepInfo(currentStep).required ? (
+                    <span className="text-red-400 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {getSelectionCount(currentStep) - getStepInfo(currentStep).required} de más
+                    </span>
+                  ) : isStepComplete(currentStep) ? (
+                    <span className="text-green-400 flex items-center gap-1">
+                      <Check className="w-3 h-3" />
+                      Completado
+                    </span>
+                  ) : (
+                    `Faltan ${getStepInfo(currentStep).required - getSelectionCount(currentStep)}`
+                  )}
+                </p>
+              </div>
             </div>
-          )}
+
+            {/* Barra de progreso del paso actual */}
+            <div className="w-full bg-empanada-dark rounded-full h-1.5 overflow-hidden mb-2">
+              <motion.div
+                className={cn(
+                  "h-full rounded-full transition-colors",
+                  getSelectionCount(currentStep) > getStepInfo(currentStep).required
+                    ? "bg-gradient-to-r from-red-600 to-red-400"
+                    : isStepComplete(currentStep)
+                    ? "bg-gradient-to-r from-green-600 to-green-400"
+                    : "bg-gradient-to-r from-empanada-golden to-empanada-warm"
+                )}
+                initial={{ width: 0 }}
+                animate={{
+                  width: `${Math.min((getSelectionCount(currentStep) / getStepInfo(currentStep).required) * 100, 100)}%`
+                }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </div>
 
           {/* Botón CTA principal - Peek view */}
           {!isExpanded && (
@@ -280,16 +305,33 @@ export function ComboSummarySheet({
         </div>
 
         {/* Expanded View - Solo cuando está expandido */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="px-4 pb-6 overflow-y-auto max-h-[calc(80vh-180px)]"
-            >
+        {isExpanded && (
+          <div className="px-4 pb-6 overflow-y-auto max-h-[calc(75vh-140px)]">
+
+              {/* Nombre del combo y precio */}
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-empanada-light-gray">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 bg-empanada-golden/10 rounded-full flex items-center justify-center">
+                    <Package className="w-5 h-5 text-empanada-golden" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white text-sm">
+                      {selectedCombo.name}
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      {totalItems} {totalItems === 1 ? 'producto' : 'productos'} seleccionados
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xl font-bold text-empanada-golden">
+                    {formatPrice(totalPrice)}
+                  </p>
+                </div>
+              </div>
+
               {/* Indicadores de progreso por paso */}
-              <div className="space-y-3 mb-6">
+              <div className="space-y-2 mb-4">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
                   Progreso del Combo
                 </p>
@@ -306,8 +348,8 @@ export function ComboSummarySheet({
                     <div
                       key={step}
                       className={cn(
-                        "flex items-center justify-between p-3 rounded-lg transition-all",
-                        "border-2",
+                        "flex items-center justify-between p-2.5 rounded-lg transition-all",
+                        "border",
                         isCurrent
                           ? "bg-empanada-golden/10 border-empanada-golden"
                           : complete
@@ -316,10 +358,10 @@ export function ComboSummarySheet({
                       )}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">{stepInfo.icon}</span>
+                        <span className="text-base">{stepInfo.icon}</span>
                         <span
                           className={cn(
-                            "text-sm font-medium",
+                            "text-xs font-medium",
                             isCurrent
                               ? "text-empanada-golden"
                               : complete
@@ -333,7 +375,7 @@ export function ComboSummarySheet({
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
-                            "text-sm font-bold",
+                            "text-xs font-bold",
                             isCurrent
                               ? "text-empanada-golden"
                               : complete
@@ -344,7 +386,7 @@ export function ComboSummarySheet({
                           {count}/{stepInfo.required}
                         </span>
                         {complete && (
-                          <Check className="w-4 h-4 text-green-400" />
+                          <Check className="w-3.5 h-3.5 text-green-400" />
                         )}
                       </div>
                     </div>
@@ -354,21 +396,21 @@ export function ComboSummarySheet({
 
               {/* Lista de productos seleccionados */}
               {groupedSelections.length > 0 && (
-                <div className="space-y-3 mb-6">
+                <div className="space-y-2 mb-4">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
                     Tu Selección
                   </p>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {groupedSelections.map((group) => (
                       <div
                         key={group.categoryType}
-                        className="bg-empanada-dark rounded-lg p-3"
+                        className="bg-empanada-dark rounded-lg p-2.5"
                       >
-                        <p className="text-xs font-semibold text-empanada-golden mb-2">
+                        <p className="text-xs font-semibold text-empanada-golden mb-1.5">
                           {group.icon} {group.label}
                         </p>
-                        <ul className="space-y-1">
+                        <ul className="space-y-0.5">
                           {group.items.map((item) => (
                             <li
                               key={item.productId}
@@ -394,7 +436,7 @@ export function ComboSummarySheet({
               )}
 
               {/* Botones de acción */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {!isComplete ? (
                   <Button
                     variant="empanada"
@@ -450,13 +492,12 @@ export function ComboSummarySheet({
               </div>
 
               {!isComplete && (
-                <div className="text-xs text-gray-400 text-center p-3 bg-empanada-dark rounded-lg mt-4">
+                <div className="text-xs text-gray-400 text-center p-2.5 bg-empanada-dark rounded-lg mt-3">
                   💡 Completá todos los pasos para agregar tu combo al carrito
                 </div>
               )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
       </motion.div>
     </>
   );

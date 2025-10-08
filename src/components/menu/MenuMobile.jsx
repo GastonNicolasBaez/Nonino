@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/common/ProductCard";
 import { ProductModal } from "@/components/ui/ProductModal";
 import { ComboModal } from "@/components/ui/ComboModal";
@@ -152,8 +153,8 @@ export function MenuMobile({
                 </div>
             </div>
 
-            {/* Buscador y filtros - Sticky */}
-            <div className="bg-empanada-dark border-b border-empanada-light-gray sticky z-30" style={{top: '140px'}}>
+            {/* Buscador y filtros - Fixed en posición exacta */}
+            <div className="bg-empanada-dark border-b border-empanada-light-gray fixed w-full z-30" style={{top: '159px'}}>
                 <div className="px-4 py-3">
                     <div className="flex gap-2 mb-3">
                         {/* Buscador */}
@@ -185,15 +186,29 @@ export function MenuMobile({
                     </div>
 
                     {/* Category Tabs - Solo cuando NO hay búsqueda */}
-                    {!isSearching && (
-                        <CategoryTabs
-                            categories={categories}
-                            selectedCategory={selectedCategory}
-                            onSelectCategory={setSelectedCategory}
-                        />
+                    {!searchTerm && (
+                        <div className="flex gap-2 overflow-x-auto pb-2">
+                            {categories.map((category) => (
+                                <button
+                                    key={category.id}
+                                    onClick={() => setSelectedCategory(category.id)}
+                                    className={cn(
+                                        "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
+                                        selectedCategory === category.id
+                                            ? "bg-empanada-golden text-white"
+                                            : "bg-empanada-medium text-gray-300 hover:bg-empanada-light-gray"
+                                    )}
+                                >
+                                    {category.name}
+                                </button>
+                            ))}
+                        </div>
                     )}
                 </div>
             </div>
+
+            {/* Espaciador para compensar el elemento fixed */}
+            <div style={{height: '100px'}}></div>
 
             {/* Contenido principal */}
             <div className="pb-20 relative">

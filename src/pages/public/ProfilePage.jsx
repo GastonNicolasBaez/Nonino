@@ -5,12 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
-import { useAuth } from "../../context/AuthContext";
+// TODO: Implementar AuthContext para usuarios públicos
+// import { useAuth } from "../../context/AuthContext";
 import { formatPrice, formatDateTime } from "../../lib/utils";
 import { toast } from "sonner";
 
 export function ProfilePage() {
-  const { user, logout, updateUser } = useAuth();
+  // const { user, logout, updateUser } = useAuth();
+  const user = null; // TODO: Implementar autenticación
+  const logout = () => {}; // TODO: Implementar autenticación
+  const updateUser = () => {}; // TODO: Implementar autenticación
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({

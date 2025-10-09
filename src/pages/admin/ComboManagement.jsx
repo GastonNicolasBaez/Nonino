@@ -372,32 +372,14 @@ export function ComboManagement() {
             return;
         }
 
-        if (allSelectedProducts.length === 0) {
-            toast.error("Debe agregar productos al combo según las categorías definidas");
+        if (categoryRequirements.length === 0) {
+            toast.error("Debe agregar categorías al combo");
             return;
         }
-
-        // Validar que todos los productos tengan datos válidos
-        const invalidProduct = allSelectedProducts.find(product =>
-            !product.id || !product.name || product.quantity < 1 || product.price < 0
-        );
-
-        if (invalidProduct) {
-            toast.error("Todos los productos deben tener datos válidos");
-            return;
-        }
-
-        // Calcular precio original
-        const originalPrice = allSelectedProducts.reduce((sum, product) => {
-            const price = parseFloat(product.price) || 0;
-            const quantity = parseInt(product.quantity) || 0;
-            return sum + (price * quantity);
-        }, 0);
 
         const comboData = {
             ...comboForm,
             id: editingCombo?.id || `combo-${Date.now()}`,
-            originalPrice: Math.round(originalPrice),
             createdAt: editingCombo?.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -409,19 +391,28 @@ export function ComboManagement() {
                 ));
                 toast.success("Combo actualizado correctamente");
             } else {
-                const newComponents = allSelectedProducts.map((component) => ({
-                    productId: component.id,
-                    quantity: component.quantity,
+
+                console.log(categoryRequirements);
+
+                const newCategoryList = categoryRequirements.map((c) => (c.categoryId));
+
+                const newSelectionRules = categoryRequirements.map((c) => ({
+                    categoryId: c.categoryId,
+                    units: c.requiredQuantity,
                 }));
+
                 const newCombo = {
                     code: `MAT-${Date.now()}`,
                     name: comboData.name,
                     description: comboData.description,
                     price: comboData.price,
                     active: true,
-                    categoryId: 100,
-                    components: newComponents,
-                    imageBase64: ""
+                    kind: 'CATEGORY_PICKER',
+                    categoryIds: newCategoryList,
+                    selectionRules: newSelectionRules,
+                    allowRepeats: true,
+                    components: [],
+                    imageBase64: "",
                 }
 
                 await callCrearCombo({
@@ -618,16 +609,16 @@ export function ComboManagement() {
                                                     <Badge variant={combo.active ? "default" : "secondary"}>
                                                         {combo.active ? "Activo" : "Inactivo"}
                                                     </Badge>
-                                                    <Badge variant="outline" className="text-green-600">
+                                                    {/* <Badge variant="outline" className="text-green-600">
                                                         -{calculateDiscountPrice(combo)}%
-                                                    </Badge>
+                                                    </Badge> */}
                                                 </div>
 
                                                 <p className="text-sm text-muted-foreground mb-4">
                                                     {combo.description}
                                                 </p>
 
-                                                <div className="space-y-2">
+                                                {/* <div className="space-y-2">
                                                     <p className="text-sm font-medium text-empanada-golden">Productos incluidos:</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                                                         {combo.components.map((product, index) => (
@@ -639,27 +630,27 @@ export function ComboManagement() {
                                                             </div>
                                                         ))}
                                                     </div>
-                                                </div>
+                                                </div> */}
 
                                                 <div className="flex items-center gap-6 mt-4">
-                                                    <div>
+                                                    {/* <div>
                                                         <p className="text-sm text-muted-foreground">Precio original</p>
                                                         <p className="text-lg line-through text-gray-500">
                                                             {formatPrice(calculateOriginalPrice(combo))}
                                                         </p>
-                                                    </div>
+                                                    </div> */}
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">Precio combo</p>
                                                         <p className="text-xl font-bold text-empanada-golden">
                                                             {formatPrice(combo.price)}
                                                         </p>
                                                     </div>
-                                                    <div>
+                                                    {/* <div>
                                                         <p className="text-sm text-muted-foreground">Ahorro</p>
                                                         <p className="text-lg font-semibold text-green-600">
                                                             {formatPrice(calculateOriginalPrice(combo) - combo.price)}
                                                         </p>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
 
@@ -711,7 +702,7 @@ export function ComboManagement() {
                         onConfirm={handleSaveCombo}
                         confirmText={editingCombo ? 'Actualizar Combo' : 'Crear Combo'}
                         confirmIcon={<Save className="w-4 h-4" />}
-                        isConfirmDisabled={!comboForm.name.trim() || comboForm.products.length === 0}
+                        isConfirmDisabled={!comboForm.name.trim() || categoryRequirements.length == 0}
                     />
                 }
             >
@@ -744,7 +735,7 @@ export function ComboManagement() {
                                         className="admin-input"
                                     />
                                 </div>
-                                <div>
+                                {/* <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Descuento (%)</label>
                                     <Input
                                         type="number"
@@ -755,7 +746,7 @@ export function ComboManagement() {
                                         placeholder="15"
                                         className="admin-input"
                                     />
-                                </div>
+                                </div> */}
                                 <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio Final</label>
                                     <Input
@@ -841,7 +832,8 @@ export function ComboManagement() {
                             </div>
 
                             {/* Productos por categoría */}
-                            {categoryRequirements.length > 0 && (
+
+                            {/* {categoryRequirements.length > 0 && (
                                 <div className="space-y-6 mt-6">
                                     {categoryRequirements.filter(r => r.categoryId).map((req) => {
                                         const available = getAvailableProductsForCategory(req.categoryId, searchByCategory[req.categoryId] || '');
@@ -860,10 +852,10 @@ export function ComboManagement() {
                                                             className="pl-10"
                                                         />
                                                     </div>
-                                                </div>
+                                                </div> */}
 
-                                                {/* Lista de productos disponibles */}
-                                                <div className="space-y-2 max-h-48 overflow-y-auto">
+                            {/* Lista de productos disponibles */}
+                            {/* <div className="space-y-2 max-h-48 overflow-y-auto">
                                                     {available.length === 0 ? (
                                                         <p className="text-xs text-muted-foreground text-center py-4">No hay productos disponibles</p>
                                                     ) : available.map(product => {
@@ -894,7 +886,7 @@ export function ComboManagement() {
                                         );
                                     })}
                                 </div>
-                            )}
+                            )} */}
 
                             {/* Resumen de precios */}
                             {allSelectedProducts.length > 0 && (

@@ -111,28 +111,28 @@ export function ProductManagement() {
     // Función para calcular la prioridad del producto
     const calculatePriority = (product) => {
         let priority = 0;
-        
+
         // Stock bajo = alta prioridad (usando un valor mínimo por defecto de 10)
         const minStock = product.minStock || 10;
         if (product.stock <= minStock && product.stock > 0) {
             priority += 3;
         }
-        
+
         // Sin stock = máxima prioridad
         if (product.stock <= 0) {
             priority += 5;
         }
-        
+
         // Producto popular = prioridad adicional
         if (product.isPopular) {
             priority += 2;
         }
-        
+
         // No disponible = prioridad alta
         if (!product.isAvailable) {
             priority += 1;
         }
-        
+
         return priority;
     };
 
@@ -145,11 +145,11 @@ export function ProductManagement() {
         // Ordenar por prioridad (mayor a menor)
         const priorityA = calculatePriority(a);
         const priorityB = calculatePriority(b);
-        
+
         if (priorityA !== priorityB) {
             return priorityB - priorityA;
         }
-        
+
         // Si tienen la misma prioridad, ordenar por nombre
         return a.name.localeCompare(b.name);
     });
@@ -283,20 +283,22 @@ export function ProductManagement() {
                 _accessToken: session.userData.accessToken
             });
 
-            const newProductId = result.id;
-            const newComponents = productData.recipe.map((ingredient) => ({
-                materialId: ingredient.id,
-                qtyPerUnit: ingredient.quantity,
-            }))
-            const newRecipe = {
-                productId: newProductId,
-                components: newComponents,
-            }
+            if (productData.recipe.length != 0) {
+                const newProductId = result.id;
+                const newComponents = productData.recipe.map((ingredient) => ({
+                    materialId: ingredient.id,
+                    qtyPerUnit: ingredient.quantity,
+                }))
+                const newRecipe = {
+                    productId: newProductId,
+                    components: newComponents,
+                }
 
-            await callCrearYAsignarReceta({
-                _recipe: newRecipe,
-                _accessToken: session.userData.accessToken,
-            })
+                await callCrearYAsignarReceta({
+                    _recipe: newRecipe,
+                    _accessToken: session.userData.accessToken,
+                })
+            }
 
             toast.success("Producto creado correctamente");
             callProductosYCategorias(session.userData.accessToken);
@@ -419,7 +421,7 @@ export function ProductManagement() {
             color: "red",
             icon: <BarChart3 className="w-5 h-5" />
         }] : []),
-        
+
         // Cards neutras después
         {
             id: "total-productos",
@@ -546,114 +548,114 @@ export function ProductManagement() {
                 <div className="space-y-6">
                     {/* Información Básica */}
                     <Card className="">
-                                    <CardHeader>
-                                        <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                                            <Package className="w-5 h-5" />
-                                            Información Básica
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre *</label>
-                                                <Input
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                                    placeholder="Nombre del producto"
-                                                    className="admin-input"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Categoría *</label>
-                                                <CustomSelect
-                                                    value={formData.category}
-                                                    onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-                                                    options={categoryOptions}
-                                                    placeholder="Seleccionar categoría"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio *</label>
-                                                <Input
-                                                    type="number"
-                                                    value={formData.price}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, price: Number(e.target.value) }))}
-                                                    placeholder="Precio de venta"
-                                                    className="admin-input"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Costo</label>
-                                                <Input
-                                                    type="number"
-                                                    value={formData.cost}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, cost: Number(e.target.value) }))}
-                                                    placeholder="Costo de producción"
-                                                    className="admin-input"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="mt-4">
-                                            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Descripción</label>
-                                            <textarea
-                                                value={formData.description}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                                                placeholder="Descripción del producto..."
-                                                className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
-                                            />
-                                        </div>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                                <Package className="w-5 h-5" />
+                                Información Básica
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Nombre *</label>
+                                    <Input
+                                        value={formData.name}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                        placeholder="Nombre del producto"
+                                        className="admin-input"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Categoría *</label>
+                                    <CustomSelect
+                                        value={formData.category}
+                                        onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+                                        options={categoryOptions}
+                                        placeholder="Seleccionar categoría"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio *</label>
+                                    <Input
+                                        type="number"
+                                        value={formData.price}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, price: Number(e.target.value) }))}
+                                        placeholder="Precio de venta"
+                                        className="admin-input"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Costo</label>
+                                    <Input
+                                        type="number"
+                                        value={formData.cost}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, cost: Number(e.target.value) }))}
+                                        placeholder="Costo de producción"
+                                        className="admin-input"
+                                    />
+                                </div>
+                            </div>
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Descripción</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                                    placeholder="Descripción del producto..."
+                                    className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
+                                />
+                            </div>
 
-                                        {/* Configuraciones del producto */}
-                                        <div className="mt-4 flex gap-4">
-                                            <label className="flex items-center gap-2 text-gray-700 dark:text-white">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.isAvailable}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
-                                                    className="rounded border-gray-300 dark:border-empanada-light-gray"
-                                                />
-                                                Disponible para venta
-                                            </label>
-                                            <label className="flex items-center gap-2 text-gray-700 dark:text-white">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.isPopular}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, isPopular: e.target.checked }))}
-                                                    className="rounded border-gray-300 dark:border-empanada-light-gray"
-                                                />
-                                                Producto popular
-                                            </label>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                            {/* Configuraciones del producto */}
+                            <div className="mt-4 flex gap-4">
+                                <label className="flex items-center gap-2 text-gray-700 dark:text-white">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.isAvailable}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
+                                        className="rounded border-gray-300 dark:border-empanada-light-gray"
+                                    />
+                                    Disponible para venta
+                                </label>
+                                <label className="flex items-center gap-2 text-gray-700 dark:text-white">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.isPopular}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, isPopular: e.target.checked }))}
+                                        className="rounded border-gray-300 dark:border-empanada-light-gray"
+                                    />
+                                    Producto popular
+                                </label>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                                {/* Imagen del Producto */}
-                                <Card className="">
-                                    <CardHeader>
-                                        <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                                            <Upload className="w-5 h-5" />
-                                            Imagen del Producto
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="w-full">
-                                            <ImageUpload
-                                                value={formData.imageUrl}
-                                                onChange={(imageUrl) => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        imageUrl: imageUrl || ""
-                                                    }));
-                                                }}
-                                                placeholder="Subir imagen del producto"
-                                                className="w-full"
-                                            />
-                                        </div>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-                                            La imagen se procesará automáticamente para optimizar la carga y visualización
-                                        </p>
-                                    </CardContent>
-                                </Card>
+                    {/* Imagen del Producto */}
+                    <Card className="">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                                <Upload className="w-5 h-5" />
+                                Imagen del Producto
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="w-full">
+                                <ImageUpload
+                                    value={formData.imageUrl}
+                                    onChange={(imageUrl) => {
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            imageUrl: imageUrl || ""
+                                        }));
+                                    }}
+                                    placeholder="Subir imagen del producto"
+                                    className="w-full"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
+                                La imagen se procesará automáticamente para optimizar la carga y visualización
+                            </p>
+                        </CardContent>
+                    </Card>
 
 
                 </div>
@@ -777,8 +779,8 @@ export function ProductManagement() {
                                         };
 
                                         return (
-                                            <tr 
-                                                key={product.id} 
+                                            <tr
+                                                key={product.id}
                                                 className={`border-b border-gray-200 dark:border-empanada-light-gray hover:bg-gray-50 dark:hover:bg-empanada-medium/50 transition-colors ${getPriorityColor(priority)}`}
                                             >
                                                 {/* Columna Producto */}
@@ -798,7 +800,7 @@ export function ProductManagement() {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        
+
                                                         {/* Información del producto */}
                                                         <div className="min-w-0">
                                                             <h3 className="font-medium text-base text-gray-900 dark:text-white truncate">
@@ -816,11 +818,10 @@ export function ProductManagement() {
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className={`h-8 w-24 text-xs font-medium rounded-full transition-colors duration-200 ${
-                                                            currentProduct.isAvailable 
-                                                                ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300' 
+                                                        className={`h-8 w-24 text-xs font-medium rounded-full transition-colors duration-200 ${currentProduct.isAvailable
+                                                                ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300'
                                                                 : 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300'
-                                                        }`}
+                                                            }`}
                                                         onClick={() => toggleAvailability(product.id)}
                                                     >
                                                         {currentProduct.isAvailable ? 'Disponible' : 'No Disponible'}
@@ -832,11 +833,10 @@ export function ProductManagement() {
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className={`h-8 w-20 text-xs font-medium rounded-full transition-colors duration-200 ${
-                                                            currentProduct.isPopular 
-                                                                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300' 
+                                                        className={`h-8 w-20 text-xs font-medium rounded-full transition-colors duration-200 ${currentProduct.isPopular
+                                                                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300'
                                                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-empanada-dark dark:text-gray-400'
-                                                        }`}
+                                                            }`}
                                                         onClick={() => togglePopular(product.id)}
                                                     >
                                                         {currentProduct.isPopular ? 'Popular' : 'Normal'}
@@ -890,10 +890,10 @@ export function ProductManagement() {
                             </table>
                         </div>
                     )}
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
 
-        {/* Modals */}
+            {/* Modals */}
             <AddProductModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
@@ -1058,13 +1058,13 @@ export function ProductManagement() {
                                     !editingIngredients.some(editIng => editIng.ingredienteId === ing.id) &&
                                     ing.nombre.toLowerCase().includes(ingredientSearchTerm.toLowerCase())
                                 ).length === 0 && (
-                                    <div className="text-center py-4 text-gray-500">
-                                        <Package className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                                        <p className="text-sm">
-                                            {ingredientSearchTerm ? 'No se encontraron ingredientes' : 'No hay ingredientes disponibles'}
-                                        </p>
-                                    </div>
-                                )}
+                                        <div className="text-center py-4 text-gray-500">
+                                            <Package className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                                            <p className="text-sm">
+                                                {ingredientSearchTerm ? 'No se encontraron ingredientes' : 'No hay ingredientes disponibles'}
+                                            </p>
+                                        </div>
+                                    )}
                             </div>
                         )}
 

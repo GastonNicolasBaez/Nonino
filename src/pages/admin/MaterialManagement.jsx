@@ -321,6 +321,7 @@ export function MaterialManagement() {
                       </td> */}
                                             <td className="p-4" style={{ width: '1px' }}>
                                                 <div className="flex gap-2">
+                                                    { session.userData.isFabrica &&
                                                     <Button
                                                         variant="empanada"
                                                         size="sm"
@@ -330,6 +331,7 @@ export function MaterialManagement() {
                                                     >
                                                         <PackagePlus className="w-4 h-4" />
                                                     </Button>
+                                                    }
                                                     <Button
                                                         variant="outline"
                                                         size="sm"

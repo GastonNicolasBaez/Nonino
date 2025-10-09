@@ -100,12 +100,10 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
           {/* Quick Add Button */}
           <motion.div
             className="absolute bottom-2 right-2"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: isHovered ? 1 : 0, 
-              scale: isHovered ? 1 : 0.8 
+            style={{
+              opacity: isHovered ? 1 : 0,
+              transition: 'opacity 0.15s ease-in-out'
             }}
-            transition={{ duration: 0.2 }}
           >
             <Button
               size="icon"

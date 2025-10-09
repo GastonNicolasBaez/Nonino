@@ -70,7 +70,7 @@ export function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-black dark">
+      <div className="min-h-screen bg-empanada-darker dark">
         {/* Header */}
         <div className="sticky top-0 bg-empanada-dark/95 backdrop-blur-sm border-b border-empanada-light-gray z-10">
           <div className="flex items-center justify-between px-4 py-3">
@@ -109,7 +109,7 @@ export function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black dark">
+    <div className="min-h-screen bg-empanada-darker dark">
       {/* MOBILE HEADER - Simplificado y compacto */}
       <div className="md:hidden fixed top-16 left-0 right-0 bg-empanada-dark/98 backdrop-blur-lg border-b border-empanada-light-gray/30 z-30 shadow-lg">
         <div className="flex items-center justify-between px-4 py-2.5">
@@ -157,10 +157,10 @@ export function CartPage() {
       <motion.div
         className="md:hidden absolute top-[120px] left-0 right-0"
         style={{
-          height: `calc(100vh - 120px - ${isCartSidebarOpen ? '0px' : '220px'})`,
-          overflow: 'auto',
-          touchAction: 'auto',
-          overscrollBehavior: 'auto',
+          height: items.length > 3 ? `calc(100vh - 120px - ${isCartSidebarOpen ? '0px' : '220px'})` : 'auto',
+          overflow: items.length > 3 ? 'auto' : 'visible',
+          touchAction: items.length > 3 ? 'auto' : 'none',
+          overscrollBehavior: items.length > 3 ? 'auto' : 'none',
           transition: 'height 0.3s ease-in-out'
         }}
         initial={{ opacity: 0, y: 10 }}

@@ -11,7 +11,7 @@ export function MenuPage() {
         categorias: categories,
         sucursales: stores,
         sucursalSeleccionada: selectedStoreId,
-        combosTodos: combos,
+        combos,
         publicDataLoading: loading
     } = usePublicData();
 

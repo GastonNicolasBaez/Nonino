@@ -187,7 +187,7 @@ export function MenuManagement() {
             await callAsignarASucursal({
                 _productosCombos: {
                     "visibleProductIds": selectedProducts,
-                    "visibleComboIds": []
+                    "visibleComboIds": [1]
                 },
                 _idSucursal: selectedStore,
                 _accessToken: session.userData.accessToken,

@@ -11,6 +11,8 @@ export function ComboModal({ combo, isOpen, onClose }) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
+  console.log(combo);
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -235,27 +237,25 @@ export function ComboModal({ combo, isOpen, onClose }) {
                 )}
 
                 {/* Componentes incluidos */}
-                {combo.components && combo.components.length > 0 && (
                   <div>
                     <h3 className="text-sm md:text-base font-semibold text-white mb-2 md:mb-3">Este combo incluye:</h3>
                     <div className="space-y-2 md:space-y-3">
-                      {combo.components.map((component, idx) => (
+                      {combo.selectionSpec.rules.map((component, idx) => (
                         <div
                           key={idx}
                           className="flex items-center justify-between"
                         >
                           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
                             <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-empanada-golden rounded-full flex-shrink-0"></span>
-                            <span>{component.productName || `Producto ${idx + 1}`}</span>
+                            <span>{component.categoryName || `Producto ${idx + 1}`}</span>
                           </div>
                           <Badge variant="outline" className="border-empanada-golden text-empanada-golden text-xs">
-                            {component.quantity}x
+                            {component.units}x
                           </Badge>
                         </div>
                       ))}
                     </div>
                   </div>
-                )}
               </div>
             </div>
 

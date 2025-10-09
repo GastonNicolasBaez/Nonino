@@ -19,7 +19,6 @@ import {
 } from '@/config/apiPublicQueryFunctions';
 import { getStorageItem, setStorageItem } from '@/lib/utils';
 import { STORAGE_KEYS } from '@/constants';
-import { mockCombos, mockProductos } from '@/lib/mockCombos';
 
 const PublicDataContext = createContext();
 
@@ -30,6 +29,11 @@ const PublicDataProvider = ({ children }) => {
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
+    const [combos, setCombos] = useState([]);
+    const [promociones, setPromociones] = useState([]);
+    const [descuentos, setDescuentos] = useState([]);
+
+
     const [sucursales, setSucursales] = useState([]);
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState(() => {
         // Cargar sucursal seleccionada desde localStorage al iniciar
@@ -72,44 +76,57 @@ const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicCatalog'],
         mutationFn: getPublicCatalogQueryFunction,
         onSuccess: (data) => {
-            if (data && data.categories && data.categories.length > 0) {
-                const gotCategories = data.categories.map((categoria) => ({
-                    id: categoria.id,
-                    name: categoria.name
-                }));
+            const gotCategories = data.categories.map((categoria) => ({
+                id: categoria.id,
+                name: categoria.name
+            }));
 
-                const gotProducts = data.categories.flatMap(categoria =>
-                    categoria.products.map((producto) => ({
-                        id: producto.productId,
-                        name: producto.name,
-                        description: producto.description,
-                        category: categoria.id,
-                        price: producto.price,
-                        image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
+            if (gotCategories.length > 0)
+                setProductos(gotCategories);
+
+            const gotProducts = data.categories.flatMap(categoria =>
+                categoria.products.map((producto) => ({
+                    id: producto.productId,
+                    name: producto.name,
+                    description: producto.description,
+                    category: categoria.id,
+                    price: producto.price,
+                    image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
+                })));
+
+            if (gotProducts.length > 0)
+                setProductos(gotProducts);
+
+            const seenCombo = new Set();
+            const gotCombos = data.categories.flatMap((categoria) =>
+                categoria.combos
+                    .filter(combo => {
+                        if (seenCombo.has(combo.comboId)) return false;
+                        seenCombo.add(combo.comboId);
+                        return true;
+                    }).map((combo) => ({
+                        id: combo.comboId,
+                        code: combo.code,
+                        name: combo.name,
+                        description: combo.description,
+                        price: combo.price,
+                        image: combo.imageHref ? `data:image/webp;base64,${combo.imageHref}` : '',
+                        kind: combo.selectionSpec.kind,
+                        components: combo.components,
+                        selectionSpec: combo.selectionSpec,
                     })));
 
-                setCategorias(gotCategories);
-                setProductos(gotProducts);
-            } else {
-                console.log('⚠️ No hay productos del backend, usando datos MOCK');
-                setCategorias([
-                    { id: 1, name: 'Empanadas Tradicionales' },
-                    { id: 2, name: 'Empanadas Especiales' },
-                    { id: 3, name: 'Bebidas' },
-                    { id: 4, name: 'Postres' }
-                ]);
-                setProductos(mockProductos);
-            }
+            if (gotCombos.length > 0)
+                setCombos(gotCombos);
+
+            console.log(gotCombos);
+            console.log(gotCategories);
         },
         onError: (error) => {
-            console.log('⚠️ Error al cargar catálogo, usando datos MOCK:', error);
-            setCategorias([
-                { id: 1, name: 'Empanadas Tradicionales' },
-                { id: 2, name: 'Empanadas Especiales' },
-                { id: 3, name: 'Bebidas' },
-                { id: 4, name: 'Postres' }
-            ]);
-            setProductos(mockProductos);
+            console.log(error);
+            setCombos([]);
+            setCategorias([]);
+            setProductos([]);
         }
     });
 
@@ -129,17 +146,10 @@ const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicCombos'],
         mutationFn: getPublicCombosQueryFunction,
         onSuccess: (data) => {
-            // Si hay datos del backend, usarlos; sino usar mocks
-            if (data && data.length > 0) {
-                setCombosTodos(data);
-            } else {
-                console.log('⚠️ No hay combos del backend, usando datos MOCK');
-                setCombosTodos(mockCombos);
-            }
+            setCombosTodos(data);
         },
         onError: (error) => {
-            console.log('⚠️ Error al cargar combos, usando datos MOCK:', error);
-            setCombosTodos(mockCombos);
+            console.log(error);
         }
     });
 
@@ -203,24 +213,6 @@ const PublicDataProvider = ({ children }) => {
         callPublicProductos();
         callPublicCombos();
         callPublicCompanyInfo();
-
-        // Para testing: Si después de 2 segundos no hay datos, forzar mocks
-        setTimeout(() => {
-            if ((!combosTodos || combosTodos.length === 0) && !callPublicCombosLoading) {
-                console.log('⚠️ Forzando carga de mocks de combos para testing');
-                setCombosTodos(mockCombos);
-            }
-            if ((!productos || productos.length === 0) && !callPublicCatalogLoading) {
-                console.log('⚠️ Forzando carga de mocks de productos para testing');
-                setCategorias([
-                    { id: 1, name: 'Empanadas Tradicionales' },
-                    { id: 2, name: 'Empanadas Especiales' },
-                    { id: 3, name: 'Bebidas' },
-                    { id: 4, name: 'Postres' }
-                ]);
-                setProductos(mockProductos);
-            }
-        }, 2000);
     }, []);
 
     const publicDataLoading =
@@ -236,6 +228,7 @@ const PublicDataProvider = ({ children }) => {
             productos,
             categorias,
             sucursales,
+            combos,
             sucursalSeleccionada,
             productosTodos,
             combosTodos,

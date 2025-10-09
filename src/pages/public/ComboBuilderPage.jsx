@@ -12,7 +12,6 @@ import { ComboSummarySheet } from "@/components/menu/mobile/ComboSummarySheet";
 import { usePublicData } from "@/context/PublicDataProvider";
 import { useCart } from "@/context/CartProvider";
 import { useIsMobile } from "@/hooks/useMediaQuery";
-import { CATEGORY_TYPES } from "@/config/constants";
 import { getStorageItem, setStorageItem, removeStorageItem } from "@/lib/utils";
 import { STORAGE_KEYS } from "@/constants";
 
@@ -20,7 +19,8 @@ export function ComboBuilderPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const {
-    combosTodos: combos,
+    combos,
+    categorias,
     productos: products,
     publicDataLoading: loading,
     sucursalSeleccionada
@@ -30,11 +30,7 @@ export function ComboBuilderPage() {
   const isMobile = useIsMobile();
   const [selectedCombo, setSelectedCombo] = useState(null);
   const [currentStep, setCurrentStep] = useState(null);
-  const [selections, setSelections] = useState({
-    EMPANADAS: {},
-    BEBIDAS: {},
-    POSTRES: {}
-  });
+  const [selections, setSelections] = useState({});
   const [addingToCart, setAddingToCart] = useState(false);
 
   // Verificar que hay sucursal seleccionada
@@ -104,28 +100,12 @@ export function ComboBuilderPage() {
 
   // Determinar los pasos necesarios según el combo seleccionado
   const getRequiredSteps = (combo = selectedCombo) => {
-    if (!combo || !combo.components) return [];
-    
-    const steps = [];
-    const components = combo.components;
+    if (!combo || !combo.selectionSpec.rules) return [];
+
+    const components = combo.selectionSpec.rules;
     
     // Verificar si incluye empanadas
-    const hasEmpanadas = components.some(c => 
-      CATEGORY_TYPES.EMPANADAS.includes(c.categoryId)
-    );
-    if (hasEmpanadas) steps.push('EMPANADAS');
-    
-    // Verificar si incluye bebidas
-    const hasBebidas = components.some(c => 
-      CATEGORY_TYPES.BEBIDAS.includes(c.categoryId)
-    );
-    if (hasBebidas) steps.push('BEBIDAS');
-    
-    // Verificar si incluye postres
-    const hasPostres = components.some(c => 
-      CATEGORY_TYPES.POSTRES.includes(c.categoryId)
-    );
-    if (hasPostres) steps.push('POSTRES');
+    const steps = components.map((c) => (c.categoryId));
     
     return steps;
   };
@@ -143,12 +123,15 @@ export function ComboBuilderPage() {
 
   // Obtener cantidad requerida para un paso
   const getRequiredQuantity = (step) => {
-    if (!selectedCombo || !selectedCombo.components) return 0;
+    if (!selectedCombo || !selectedCombo.selectionSpec.rules) return 0;
 
-    const categoryIds = CATEGORY_TYPES[step] || [];
-    return selectedCombo.components
-      .filter(c => categoryIds.includes(c.categoryId))
-      .reduce((sum, c) => sum + c.quantity, 0);
+    const categoryIds = selectedCombo.selectionSpec.categoryIds.find((c) => c == step);
+    console.log(selectedCombo.selectionSpec.categoryIds)
+
+    console.log(categoryIds);
+    return selectedCombo.selectionSpec.rules
+      .filter(c => c.categoryId == categoryIds)
+      .reduce((sum, c) => sum + c.units, 0);
   };
 
   // Agregar producto

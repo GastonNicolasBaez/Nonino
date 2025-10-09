@@ -35,11 +35,10 @@ export function ComboBuilderPage() {
 
   // Verificar que hay sucursal seleccionada
   useEffect(() => {
-    // Comentado temporalmente para testing con mocks
-    // if (!sucursalSeleccionada && !loading) {
-    //   toast.error('Por favor, seleccioná una sucursal primero');
-    //   navigate('/stores');
-    // }
+    if (!sucursalSeleccionada && !loading) {
+      toast.error('Por favor, seleccioná una sucursal primero');
+      navigate('/stores');
+    }
   }, [sucursalSeleccionada, loading, navigate]);
 
   // Auto-seleccionar combo desde URL params
@@ -61,11 +60,16 @@ export function ComboBuilderPage() {
     }
 
     setSelectedCombo(combo);
-    
+
     // Determinar primer paso basado en el combo
     const steps = getRequiredSteps(combo);
+
     if (steps.length > 0) {
       setCurrentStep(steps[0]);
+    } else {
+      console.error('❌ No se pudieron determinar los pasos del combo. Verifica que selectionSpec.rules exista.');
+      toast.error('El combo no tiene una configuración válida');
+      navigate('/menu');
     }
   }, [loading, combos, searchParams, navigate]);
 
@@ -100,23 +104,99 @@ export function ComboBuilderPage() {
 
   // Determinar los pasos necesarios según el combo seleccionado
   const getRequiredSteps = (combo = selectedCombo) => {
-    if (!combo || !combo.selectionSpec.rules) return [];
+    if (!combo) {
+      console.warn('⚠️ getRequiredSteps: combo es null/undefined');
+      return [];
+    }
+
+    if (!combo.selectionSpec) {
+      console.warn('⚠️ getRequiredSteps: combo.selectionSpec es null/undefined', combo);
+      return [];
+    }
+
+    if (!combo.selectionSpec.rules) {
+      console.warn('⚠️ getRequiredSteps: combo.selectionSpec.rules es null/undefined', combo.selectionSpec);
+      return [];
+    }
 
     const components = combo.selectionSpec.rules;
-    
-    // Verificar si incluye empanadas
+
+    // Obtener los pasos iniciales
     const steps = components.map((c) => (c.categoryId));
+
+    // Filtrar pasos que tienen productos disponibles
+    const stepsWithProducts = steps.filter(categoryId => {
+      const availableProducts = products.filter(p => p.category === categoryId);
+      const hasProducts = availableProducts.length > 0;
+      
+      if (!hasProducts) {
+        console.warn(`⚠️ Categoría ${categoryId} no tiene productos disponibles - se omitirá del flujo`);
+      }
+      
+      return hasProducts;
+    });
+
+    // Ordenar pasos según lógica: Empanadas/Tradicionales/Especiales → Bebidas → Postres
+    const orderedSteps = [...stepsWithProducts].sort((a, b) => {
+      const getCategoryPriority = (catId) => {
+        const category = categorias.find(c => c.id === catId);
+        if (!category) return 999;
+        
+        const categoryName = category.name.toLowerCase();
+        
+        // Prioridad 1: Empanadas, Tradicionales, Especiales
+        if (categoryName.includes('empanada') || 
+            categoryName.includes('tradicional') || 
+            categoryName.includes('especial')) {
+          return 1;
+        }
+        
+        // Prioridad 2: Bebidas
+        if (categoryName.includes('bebida')) {
+          return 2;
+        }
+        
+        // Prioridad 3: Postres
+        if (categoryName.includes('postre')) {
+          return 3;
+        }
+        
+        // Otros
+        return 4;
+      };
+
+      return getCategoryPriority(a) - getCategoryPriority(b);
+    });
     
-    return steps;
+    return orderedSteps;
   };
 
   const requiredSteps = getRequiredSteps();
+
+  // Obtener nombre de categoría para el step actual
+  const getCategoryNameForStep = (step) => {
+    if (!selectedCombo || !selectedCombo.selectionSpec) return null;
+
+    const { categoryIds, categoryNames } = selectedCombo.selectionSpec;
+
+    if (!categoryIds || !categoryNames) return null;
+
+    // Encontrar el índice del categoryId en el array
+    const index = categoryIds.findIndex(id => id === step);
+
+    if (index !== -1 && categoryNames[index]) {
+      return categoryNames[index];
+    }
+
+    return null;
+  };
 
   // Obtener pasos completados
   const getCompletedSteps = () => {
     return requiredSteps.filter(step => {
       const required = getRequiredQuantity(step);
-      const selected = Object.values(selections[step]).reduce((sum, qty) => sum + qty, 0);
+      const stepSelections = selections[step] || {};
+      const selected = Object.values(stepSelections).reduce((sum, qty) => sum + qty, 0);
       return selected >= required;
     });
   };
@@ -126,9 +206,6 @@ export function ComboBuilderPage() {
     if (!selectedCombo || !selectedCombo.selectionSpec.rules) return 0;
 
     const categoryIds = selectedCombo.selectionSpec.categoryIds.find((c) => c == step);
-    console.log(selectedCombo.selectionSpec.categoryIds)
-
-    console.log(categoryIds);
     return selectedCombo.selectionSpec.rules
       .filter(c => c.categoryId == categoryIds)
       .reduce((sum, c) => sum + c.units, 0);
@@ -136,22 +213,26 @@ export function ComboBuilderPage() {
 
   // Agregar producto
   const handleProductAdd = (product) => {
-    setSelections(prev => ({
-      ...prev,
-      [currentStep]: {
-        ...prev[currentStep],
-        [product.id]: (prev[currentStep][product.id] || 0) + 1
-      }
-    }));
+    setSelections(prev => {
+      const stepSelections = prev[currentStep] || {};
+      return {
+        ...prev,
+        [currentStep]: {
+          ...stepSelections,
+          [product.id]: (stepSelections[product.id] || 0) + 1
+        }
+      };
+    });
   };
 
   // Remover producto
   const handleProductRemove = (product) => {
     setSelections(prev => {
-      const currentQuantity = prev[currentStep][product.id] || 0;
+      const stepSelections = prev[currentStep] || {};
+      const currentQuantity = stepSelections[product.id] || 0;
       if (currentQuantity <= 0) return prev;
 
-      const newStepSelections = { ...prev[currentStep] };
+      const newStepSelections = { ...stepSelections };
       if (currentQuantity === 1) {
         delete newStepSelections[product.id];
       } else {
@@ -203,10 +284,11 @@ export function ComboBuilderPage() {
   // Verificar si todos los pasos están completos
   const isComboComplete = () => {
     if (!selectedCombo) return false;
-    
+
     return requiredSteps.every(step => {
       const required = getRequiredQuantity(step);
-      const selected = Object.values(selections[step]).reduce((sum, qty) => sum + qty, 0);
+      const stepSelections = selections[step] || {};
+      const selected = Object.values(stepSelections).reduce((sum, qty) => sum + qty, 0);
       return selected >= required;
     });
   };
@@ -308,9 +390,10 @@ export function ComboBuilderPage() {
               >
                 <ProductStepSelector
                   categoryType={currentStep}
+                  categoryName={getCategoryNameForStep(currentStep)}
                   products={products}
                   maxQuantity={getRequiredQuantity(currentStep)}
-                  currentSelections={selections[currentStep]}
+                  currentSelections={selections[currentStep] || {}}
                   onProductAdd={handleProductAdd}
                   onProductRemove={handleProductRemove}
                   loading={loading}
@@ -346,6 +429,7 @@ export function ComboBuilderPage() {
                 onBack={handleBack}
                 isComplete={isComboComplete()}
                 loading={addingToCart}
+                requiredSteps={requiredSteps}
               />
             </div>
           )}

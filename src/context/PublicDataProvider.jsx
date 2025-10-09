@@ -82,7 +82,7 @@ const PublicDataProvider = ({ children }) => {
             }));
 
             if (gotCategories.length > 0)
-                setProductos(gotCategories);
+                setCategorias(gotCategories);
 
             const gotProducts = data.categories.flatMap(categoria =>
                 categoria.products.map((producto) => ({
@@ -98,8 +98,8 @@ const PublicDataProvider = ({ children }) => {
                 setProductos(gotProducts);
 
             const seenCombo = new Set();
-            const gotCombos = data.categories.flatMap((categoria) =>
-                categoria.combos
+            const gotCombos = data.categories?.flatMap((categoria) =>
+                (categoria.combos || [])
                     .filter(combo => {
                         if (seenCombo.has(combo.comboId)) return false;
                         seenCombo.add(combo.comboId);
@@ -111,16 +111,17 @@ const PublicDataProvider = ({ children }) => {
                         description: combo.description,
                         price: combo.price,
                         image: combo.imageHref ? `data:image/webp;base64,${combo.imageHref}` : '',
-                        kind: combo.selectionSpec.kind,
-                        components: combo.components,
-                        selectionSpec: combo.selectionSpec,
-                    })));
+                        imageBase64: combo.imageHref,
+                        kind: combo.selectionSpec?.kind,
+                        components: combo.components || [],
+                        selectionSpec: combo.selectionSpec || {},
+                    }))) || [];
 
-            if (gotCombos.length > 0)
+            if (gotCombos.length > 0) {
                 setCombos(gotCombos);
-
-            console.log(gotCombos);
-            console.log(gotCategories);
+            } else {
+                setCombos([]);
+            }
         },
         onError: (error) => {
             console.log(error);
@@ -146,10 +147,23 @@ const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicCombos'],
         mutationFn: getPublicCombosQueryFunction,
         onSuccess: (data) => {
-            setCombosTodos(data);
+            const mappedCombos = (data || []).map(combo => ({
+                id: combo.comboId,
+                code: combo.code,
+                name: combo.name,
+                description: combo.description,
+                price: combo.price,
+                image: combo.imageHref ? `data:image/webp;base64,${combo.imageHref}` : '',
+                imageBase64: combo.imageHref,
+                kind: combo.selectionSpec?.kind,
+                components: combo.components || [],
+                selectionSpec: combo.selectionSpec || {},
+            }));
+            setCombosTodos(mappedCombos);
         },
         onError: (error) => {
             console.log(error);
+            setCombosTodos([]);
         }
     });
 

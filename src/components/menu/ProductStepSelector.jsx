@@ -13,6 +13,7 @@ import { CATEGORY_TYPES, CATEGORY_NAMES } from "@/config/constants";
 
 export function ProductStepSelector({
   categoryType,
+  categoryName,
   products,
   maxQuantity,
   currentSelections,
@@ -51,26 +52,29 @@ export function ProductStepSelector({
 
   // Filtrar productos por tipo de categoría y búsqueda
   const filteredProducts = products.filter((product) => {
-    const categoryIds = CATEGORY_TYPES[categoryType] || [];
-    const matchesCategory = categoryIds.includes(product.category);
-    const matchesSearch = !searchTerm || 
+    // Nueva lógica: usar categoryType directamente como categoryId numérico
+    const matchesCategory = product.category === categoryType;
+    const matchesSearch = !searchTerm ||
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
     return matchesCategory && matchesSearch;
   });
 
   // Obtener nombre del tipo de categoría
   const getCategoryLabel = () => {
-    switch (categoryType) {
-      case 'EMPANADAS':
-        return 'Empanadas';
-      case 'BEBIDAS':
-        return 'Bebidas';
-      case 'POSTRES':
-        return 'Postres';
-      default:
-        return 'Productos';
+    // Priorizar el nombre pasado como prop
+    if (categoryName) {
+      return categoryName;
     }
+
+    // Fallback: intentar obtener desde CATEGORY_NAMES por ID
+    if (CATEGORY_NAMES[categoryType]) {
+      return CATEGORY_NAMES[categoryType];
+    }
+
+    // Fallback final
+    return `Categoría ${categoryType}`;
   };
 
   if (loading) {

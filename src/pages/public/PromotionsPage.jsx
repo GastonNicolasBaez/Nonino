@@ -10,10 +10,15 @@ import { LoadingSpinner } from "../../components/common/LoadingSpinner";
 import { FloatingOrderButton } from "../../components/common/FloatingOrderButton";
 import { promotionService } from "../../services/api";
 import { formatPrice } from "../../lib/utils";
+// import { usePublicData } from "../../context/PublicDataProvider";
+// import { ComboSelector } from "../../components/menu/ComboSelector";
+// import { useNavigate } from "react-router";
 
 export function PromotionsPage() {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
+  // const { combosTodos: allCombos, publicDataLoading } = usePublicData();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -30,7 +35,13 @@ export function PromotionsPage() {
     fetchPromotions();
   }, []);
 
-  if (loading) {
+  // const handleSelectCombo = (combo) => {
+  //   navigate(`/menu/combo-builder?comboId=${combo.id}`);
+  // };
+
+  const isLoading = loading;
+
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="xl" />
@@ -190,6 +201,39 @@ export function PromotionsPage() {
           </div>
         </div>
       </section>
+
+      {/* Todos los Combos - DESHABILITADO TEMPORALMENTE hasta implementar flujo correcto */}
+      {/* <section className="py-20 bg-gradient-to-b from-empanada-medium/40 to-black">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              Todos Nuestros Combos
+            </h2>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+              Descubre todos los combos disponibles y arma el tuyo a medida
+            </p>
+          </motion.div>
+
+          {allCombos && allCombos.length > 0 ? (
+            <ComboSelector
+              combos={allCombos}
+              onSelectCombo={handleSelectCombo}
+              loading={publicDataLoading}
+            />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">
+                Próximamente tendremos combos disponibles
+              </p>
+            </div>
+          )}
+        </div>
+      </section> */}
 
       <FloatingOrderButton />
     </div>

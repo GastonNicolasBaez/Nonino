@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatPrice } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { CATEGORY_TYPES } from '@/config/constants';
 
 /**
  * Bottom Sheet colapsable para resumen del combo en mobile
@@ -38,64 +37,85 @@ export function ComboSummarySheet({
 
   if (!selectedCombo) return null;
 
-  // Calcular totales por categoría
-  const getStepInfo = (step) => {
-    const stepData = {
-      EMPANADAS: {
-        label: 'Empanadas',
-        icon: '🥟',
-        required: selectedCombo.components?.filter(c =>
-          CATEGORY_TYPES.EMPANADAS.includes(c.categoryId)
-        ).reduce((sum, c) => sum + c.quantity, 0) || 0
-      },
-      BEBIDAS: {
-        label: 'Bebidas',
-        icon: '🥤',
-        required: selectedCombo.components?.filter(c =>
-          CATEGORY_TYPES.BEBIDAS.includes(c.categoryId)
-        ).reduce((sum, c) => sum + c.quantity, 0) || 0
-      },
-      POSTRES: {
-        label: 'Postres',
-        icon: '🍰',
-        required: selectedCombo.components?.filter(c =>
-          CATEGORY_TYPES.POSTRES.includes(c.categoryId)
-        ).reduce((sum, c) => sum + c.quantity, 0) || 0
-      }
+  // Obtener cantidad requerida por categoryId desde selectionSpec.rules
+  const getRequiredQuantity = (categoryId) => {
+    if (!selectedCombo.selectionSpec?.rules) return 0;
+    
+    return selectedCombo.selectionSpec.rules
+      .filter(rule => rule.categoryId === categoryId)
+      .reduce((sum, rule) => sum + rule.units, 0);
+  };
+
+  // Obtener nombre de la categoría por ID
+  const getCategoryName = (categoryId) => {
+    if (!selectedCombo.selectionSpec?.categoryIds || !selectedCombo.selectionSpec?.categoryNames) {
+      return `Categoría ${categoryId}`;
+    }
+    
+    const index = selectedCombo.selectionSpec.categoryIds.findIndex(id => id === categoryId);
+    return index !== -1 ? selectedCombo.selectionSpec.categoryNames[index] : `Categoría ${categoryId}`;
+  };
+
+  // Obtener icono según el nombre de la categoría
+  const getCategoryIcon = (categoryId) => {
+    const categoryName = getCategoryName(categoryId).toLowerCase();
+    
+    if (categoryName.includes('empanada') || categoryName.includes('tradicional') || categoryName.includes('especial')) {
+      return '🥟';
+    }
+    if (categoryName.includes('bebida')) {
+      return '🥤';
+    }
+    if (categoryName.includes('postre')) {
+      return '🍰';
+    }
+    return '📦';
+  };
+
+  // Calcular info del paso por categoryId
+  const getStepInfo = (categoryId) => {
+    return {
+      label: getCategoryName(categoryId),
+      icon: getCategoryIcon(categoryId),
+      required: getRequiredQuantity(categoryId)
     };
-    return stepData[step] || {};
   };
 
-  const getSelectionCount = (step) => {
-    if (!selections[step]) return 0;
-    return Object.values(selections[step]).reduce((sum, qty) => sum + qty, 0);
+  const getSelectionCount = (categoryId) => {
+    if (!selections[categoryId]) return 0;
+    return Object.values(selections[categoryId]).reduce((sum, qty) => sum + qty, 0);
   };
 
-  const isStepComplete = (step) => {
-    const stepInfo = getStepInfo(step);
-    const count = getSelectionCount(step);
-    return count >= stepInfo.required;
+  const isStepComplete = (categoryId) => {
+    const required = getRequiredQuantity(categoryId);
+    const count = getSelectionCount(categoryId);
+    return count >= required;
   };
 
   // Lista de productos seleccionados
   const getGroupedSelections = () => {
     const grouped = [];
 
-    Object.keys(selections).forEach(categoryType => {
-      const stepInfo = getStepInfo(categoryType);
-      const items = selections[categoryType];
+    Object.keys(selections).forEach(categoryIdStr => {
+      const categoryId = parseInt(categoryIdStr);
+      const stepInfo = getStepInfo(categoryId);
+      const items = selections[categoryIdStr];
 
       if (items && Object.keys(items).length > 0) {
         grouped.push({
-          categoryType,
+          categoryType: categoryIdStr,
           label: stepInfo.label,
           icon: stepInfo.icon,
           items: Object.entries(items)
             .filter(([_, qty]) => qty > 0)
-            .map(([productId, quantity]) => ({
-              productId,
-              quantity
-            }))
+            .map(([productId, quantity]) => {
+              const product = products.find(p => p.id === parseInt(productId));
+              return {
+                productId,
+                productName: product?.name || `Producto #${productId}`,
+                quantity
+              };
+            })
         });
       }
     });
@@ -336,17 +356,17 @@ export function ComboSummarySheet({
                   Progreso del Combo
                 </p>
 
-                {['EMPANADAS', 'BEBIDAS', 'POSTRES'].map((step) => {
-                  const stepInfo = getStepInfo(step);
+                {requiredSteps.map((categoryId) => {
+                  const stepInfo = getStepInfo(categoryId);
                   if (stepInfo.required === 0) return null;
 
-                  const count = getSelectionCount(step);
-                  const complete = isStepComplete(step);
-                  const isCurrent = currentStep === step;
+                  const count = getSelectionCount(categoryId);
+                  const complete = isStepComplete(categoryId);
+                  const isCurrent = currentStep === categoryId;
 
                   return (
                     <div
-                      key={step}
+                      key={categoryId}
                       className={cn(
                         "flex items-center justify-between p-2.5 rounded-lg transition-all",
                         "border",
@@ -418,7 +438,7 @@ export function ComboSummarySheet({
                             >
                               <span className="flex items-center gap-2">
                                 <span className="w-1.5 h-1.5 bg-empanada-golden rounded-full"></span>
-                                <span className="text-xs">Producto #{item.productId}</span>
+                                <span className="text-xs">{item.productName}</span>
                               </span>
                               <Badge
                                 variant="outline"

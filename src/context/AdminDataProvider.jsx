@@ -174,7 +174,20 @@ const AdminDataProvider = ({ children }) => {
                     image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
                 })));
 
-            const gotCombos = data.combos;
+            // Extraer combos desde categories (igual que PublicDataProvider)
+            const seenCombo = new Set();
+            const gotCombos = data.categories?.flatMap((categoria) =>
+                (categoria.combos || [])
+                    .filter(combo => {
+                        if (seenCombo.has(combo.comboId)) return false;
+                        seenCombo.add(combo.comboId);
+                        return true;
+                    }).map((combo) => ({
+                        id: combo.comboId,
+                        name: combo.name,
+                        description: combo.description,
+                        price: combo.price,
+                    }))) || [];
 
             setProductosSucursal(gotProducts);
             setCombosSucursal(gotCombos);

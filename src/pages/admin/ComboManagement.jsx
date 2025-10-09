@@ -92,46 +92,6 @@ export function ComboManagement() {
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
 
-    // Mock data para combos
-    // const mockCombos = [
-    //     {
-    //         id: "combo-001",
-    //         name: "Combo Familiar",
-    //         description: "4 empanadas de carne + 2 de pollo + gaseosa",
-    //         products: [
-    //             { id: "prod-001", name: "Empanada de Carne", quantity: 4, price: 1200 },
-    //             { id: "prod-002", name: "Empanada de Pollo", quantity: 2, price: 1100 },
-    //             { id: "prod-005", name: "Gaseosa 500ml", quantity: 1, price: 800 }
-    //         ],
-    //         originalPrice: 8000,
-    //         discount: 15,
-    //         price: 6800,
-    //         active: true,
-    //         createdAt: "2024-01-15T10:30:00Z"
-    //     },
-    //     {
-    //         id: "combo-002",
-    //         name: "Combo Individual",
-    //         description: "2 empanadas + bebida",
-    //         products: [
-    //             { id: "prod-001", name: "Empanada de Carne", quantity: 1, price: 1200 },
-    //             { id: "prod-003", name: "Empanada Vegetariana", quantity: 1, price: 950 },
-    //             { id: "prod-006", name: "Agua 500ml", quantity: 1, price: 500 }
-    //         ],
-    //         originalPrice: 2650,
-    //         discount: 10,
-    //         price: 2385,
-    //         active: true,
-    //         createdAt: "2024-01-14T14:20:00Z"
-    //     }
-    // ];
-
-    // Cargar datos mock al inicializar
-    // useEffect(() => {
-    //     setCombos(mockCombos);
-    //     setLoading(false);
-    // }, []);
-
     // Filtrar combos por término de búsqueda
     const filteredCombos = combos.filter(combo =>
         combo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -377,6 +337,19 @@ export function ComboManagement() {
             return;
         }
 
+        // Validar que todas las categorías estén seleccionadas
+        const hasInvalidCategory = categoryRequirements.some(req => !req.categoryId);
+        if (hasInvalidCategory) {
+            toast.error("Todas las categorías deben estar seleccionadas");
+            return;
+        }
+
+        // Validar que el precio sea mayor a 0
+        if (!comboForm.price || comboForm.price <= 0) {
+            toast.error("El precio del combo debe ser mayor a 0");
+            return;
+        }
+
         const comboData = {
             ...comboForm,
             id: editingCombo?.id || `combo-${Date.now()}`,
@@ -463,6 +436,15 @@ export function ComboManagement() {
     };
 
     const updateCategoryRow = (index, field, value) => {
+        // Validar que no se duplique la categoría
+        if (field === 'categoryId') {
+            const isDuplicate = categoryRequirements.some((row, i) => i !== index && String(row.categoryId) === String(value));
+            if (isDuplicate) {
+                toast.error('Esta categoría ya está agregada al combo');
+                return;
+            }
+        }
+
         setCategoryRequirements(prev => prev.map((row, i) => i === index ? { ...row, [field]: value, ...(field === 'categoryId' ? { name: (categories || []).find(c => String(c.id) === String(value))?.name || '' } : {}) } : row));
     };
 
@@ -609,48 +591,19 @@ export function ComboManagement() {
                                                     <Badge variant={combo.active ? "default" : "secondary"}>
                                                         {combo.active ? "Activo" : "Inactivo"}
                                                     </Badge>
-                                                    {/* <Badge variant="outline" className="text-green-600">
-                                                        -{calculateDiscountPrice(combo)}%
-                                                    </Badge> */}
                                                 </div>
 
                                                 <p className="text-sm text-muted-foreground mb-4">
                                                     {combo.description}
                                                 </p>
 
-                                                {/* <div className="space-y-2">
-                                                    <p className="text-sm font-medium text-empanada-golden">Productos incluidos:</p>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                                                        {combo.components.map((product, index) => (
-                                                            <div key={index} className="text-sm bg-gray-50 dark:bg-empanada-dark rounded px-3 py-2">
-                                                                <span className="font-medium">{product.quantity}x {product.productName}</span>
-                                                                <span className="text-muted-foreground block">
-                                                                    {formatPrice(product.price)} c/u
-                                                                </span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div> */}
-
                                                 <div className="flex items-center gap-6 mt-4">
-                                                    {/* <div>
-                                                        <p className="text-sm text-muted-foreground">Precio original</p>
-                                                        <p className="text-lg line-through text-gray-500">
-                                                            {formatPrice(calculateOriginalPrice(combo))}
-                                                        </p>
-                                                    </div> */}
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">Precio combo</p>
                                                         <p className="text-xl font-bold text-empanada-golden">
                                                             {formatPrice(combo.price)}
                                                         </p>
                                                     </div>
-                                                    {/* <div>
-                                                        <p className="text-sm text-muted-foreground">Ahorro</p>
-                                                        <p className="text-lg font-semibold text-green-600">
-                                                            {formatPrice(calculateOriginalPrice(combo) - combo.price)}
-                                                        </p>
-                                                    </div> */}
                                                 </div>
                                             </div>
 
@@ -735,18 +688,6 @@ export function ComboManagement() {
                                         className="admin-input"
                                     />
                                 </div>
-                                {/* <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Descuento (%)</label>
-                                    <Input
-                                        type="number"
-                                        value={comboForm.discount}
-                                        onChange={(e) => handleDiscountChange(parseFloat(e.target.value) || 0)}
-                                        min="0"
-                                        max="50"
-                                        placeholder="15"
-                                        className="admin-input"
-                                    />
-                                </div> */}
                                 <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio Final</label>
                                     <Input
@@ -830,63 +771,6 @@ export function ComboManagement() {
                                     ))}
                                 </div>
                             </div>
-
-                            {/* Productos por categoría */}
-
-                            {/* {categoryRequirements.length > 0 && (
-                                <div className="space-y-6 mt-6">
-                                    {categoryRequirements.filter(r => r.categoryId).map((req) => {
-                                        const available = getAvailableProductsForCategory(req.categoryId, searchByCategory[req.categoryId] || '');
-                                        const remaining = remainingByCategory[req.categoryId] ?? 0;
-                                        const selected = selectedByCategory[req.categoryId] || [];
-                                        return (
-                                            <div key={req.categoryId} className="border rounded-lg p-4 bg-gray-50 dark:bg-empanada-dark">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <h5 className="text-sm font-semibold text-gray-900 dark:text-white">{req.name || 'Categoría'} — <span className="font-normal">{selected.reduce((s,p)=>s+p.quantity,0)} / {req.requiredQuantity}</span></h5>
-                                                    <div className="relative w-80 max-w-full">
-                                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                                        <Input
-                                                            value={searchByCategory[req.categoryId] || ''}
-                                                            onChange={(e) => setSearchByCategory(prev => ({ ...prev, [req.categoryId]: e.target.value }))}
-                                                            placeholder={`Buscar productos de ${req.name || 'categoría'}...`}
-                                                            className="pl-10"
-                                                        />
-                                                    </div>
-                                                </div> */}
-
-                            {/* Lista de productos disponibles */}
-                            {/* <div className="space-y-2 max-h-48 overflow-y-auto">
-                                                    {available.length === 0 ? (
-                                                        <p className="text-xs text-muted-foreground text-center py-4">No hay productos disponibles</p>
-                                                    ) : available.map(product => {
-                                                        const current = (selected.find(p => p.id === product.id)?.quantity) || 0;
-                                                        return (
-                                                            <div key={product.id} className="flex items-center justify-between p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-empanada-medium">
-                                                                <div className="flex-1">
-                                                                    <div className="font-medium text-sm">{product.name}</div>
-                                                                    <div className="text-xs text-muted-foreground">{formatPrice(product.price || 0)}</div>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Button size="sm" variant="outline" className="h-6 w-6 p-0" disabled={current<=0} onClick={() => handleAdjustQuantity(req.categoryId, product, -1)}>
-                                                                        <Minus className="w-3 h-3" />
-                                                                    </Button>
-                                                                    <span className="w-8 text-center text-sm">{current}</span>
-                                                                    <Button size="sm" variant="outline" className="h-6 w-6 p-0" disabled={remaining<=0} onClick={() => handleAdjustQuantity(req.categoryId, product, +1)}>
-                                                                        <Plus className="w-3 h-3" />
-                                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                                {remaining <= 0 && (
-                                                    <p className="text-xs text-green-600 mt-2">Cupo completo para esta categoría.</p>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )} */}
 
                             {/* Resumen de precios */}
                             {allSelectedProducts.length > 0 && (

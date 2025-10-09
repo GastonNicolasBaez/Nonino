@@ -1,10 +1,10 @@
 // PROVIDERS
-import AuthProvider from "@/context/AuthProvider";
+import AuthProvider from "./context/AuthProvider";
 import PublicDataProvider from "./context/PublicDataProvider";
 import AdminDataProvider from "./context/AdminDataProvider";
-import ThemeProvider from "@/context/ThemeProvider";
-import AdminThemeProvider from "@/context/AdminThemeProvider";
-import SessionProvider from "@/context/SessionProvider";
+import ThemeProvider from "./context/ThemeProvider";
+import AdminThemeProvider from "./context/AdminThemeProvider";
+import SessionProvider from "./context/SessionProvider";
 import { Toaster } from "sonner";
 import { Suspense, lazy } from "react";
 

@@ -29,27 +29,11 @@ export function ProfilePage() {
     toast.success("Perfil actualizado correctamente");
   };
 
-  const mockOrders = [
-    {
-      id: "EMP-2024-001",
-      date: "2024-01-15T14:30:00Z",
-      status: "delivered",
-      total: 2450,
-      items: ["2x Empanada de Carne", "1x Empanada de Pollo"]
-    },
-    {
-      id: "EMP-2024-002",
-      date: "2024-01-10T19:45:00Z",
-      status: "delivered",
-      total: 1890,
-      items: ["3x Empanada de Jamón y Queso"]
-    }
-  ];
+  // TODO: Obtener órdenes del usuario desde el backend cuando se implemente autenticación
+  const userOrders = [];
 
-  const mockFavorites = [
-    { id: 1, name: "Empanada de Carne", price: 450, icon: "🥟" },
-    { id: 2, name: "Empanada de Pollo", price: 420, icon: "🥟" },
-  ];
+  // TODO: Obtener favoritos del usuario desde el backend cuando se implemente autenticación
+  const userFavorites = [];
 
   const tabs = [
     { id: "profile", label: "Mi Perfil", icon: User },
@@ -179,37 +163,47 @@ export function ProfilePage() {
                     <CardTitle>Historial de Pedidos</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {mockOrders.map((order) => (
-                        <div key={order.id} className="border rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <h4 className="font-medium">Pedido #{order.id}</h4>
-                              <p className="text-sm text-gray-600">
-                                {formatDateTime(order.date)}
-                              </p>
+                    {userOrders.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium mb-2">No tienes pedidos todavía</h3>
+                        <p className="text-gray-600">
+                          Cuando realices tu primer pedido, aparecerá aquí
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {userOrders.map((order) => (
+                          <div key={order.id} className="border rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <h4 className="font-medium">Pedido #{order.id}</h4>
+                                <p className="text-sm text-gray-600">
+                                  {formatDateTime(order.date)}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-bold">{formatPrice(order.total)}</div>
+                                <Badge variant="success" className="text-xs">
+                                  {order.status}
+                                </Badge>
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <div className="font-bold">{formatPrice(order.total)}</div>
-                              <Badge variant="success" className="text-xs">
-                                {order.status}
-                              </Badge>
+                            <div className="text-sm text-gray-600">
+                              {order.items.join(", ")}
+                            </div>
+                            <div className="mt-3 flex gap-2">
+                              <Button variant="outline" size="sm">
+                                Ver Detalles
+                              </Button>
+                              <Button variant="outline" size="sm">
+                                Repetir Pedido
+                              </Button>
                             </div>
                           </div>
-                          <div className="text-sm text-gray-600">
-                            {order.items.join(", ")}
-                          </div>
-                          <div className="mt-3 flex gap-2">
-                            <Button variant="outline" size="sm">
-                              Ver Detalles
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              Repetir Pedido
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}
@@ -221,24 +215,34 @@ export function ProfilePage() {
                     <CardTitle>Mis Favoritos</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {mockFavorites.map((item) => (
-                        <div key={item.id} className="border rounded-lg p-4 flex items-center gap-4">
-                          <div className="w-16 h-16 bg-empanada-golden/10 rounded flex items-center justify-center">
-                            <span className="text-2xl">{item.icon}</span>
+                    {userFavorites.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Heart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium mb-2">No tienes favoritos guardados</h3>
+                        <p className="text-gray-600">
+                          Marca tus productos favoritos para encontrarlos más rápido
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {userFavorites.map((item) => (
+                          <div key={item.id} className="border rounded-lg p-4 flex items-center gap-4">
+                            <div className="w-16 h-16 bg-empanada-golden/10 rounded flex items-center justify-center">
+                              <span className="text-2xl">{item.icon}</span>
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-medium">{item.name}</h4>
+                              <p className="text-empanada-golden font-bold">
+                                {formatPrice(item.price)}
+                              </p>
+                            </div>
+                            <Button variant="empanada" size="sm">
+                              Agregar
+                            </Button>
                           </div>
-                          <div className="flex-1">
-                            <h4 className="font-medium">{item.name}</h4>
-                            <p className="text-empanada-golden font-bold">
-                              {formatPrice(item.price)}
-                            </p>
-                          </div>
-                          <Button variant="empanada" size="sm">
-                            Agregar
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}

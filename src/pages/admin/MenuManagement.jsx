@@ -11,11 +11,14 @@ import {
     RefreshCw,
     CheckCircle2,
     Menu,
+    ShoppingCart,
+    Tag,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdminData } from "@/context/AdminDataProvider";
 import { toast } from "sonner";
 import { useSession } from "@/context/SessionProvider";
@@ -24,8 +27,10 @@ import { SectionHeader, StatsCards, EmptyState } from "@/components/branding";
 export function MenuManagement() {
     const {
         productos: products,
+        combos,
         sucursales: stores,
         productosSucursal,
+        combosSucursal,
         sucursalSeleccionada: selectedStore,
 
         callProductosYCategoriasSucursal,
@@ -35,9 +40,17 @@ export function MenuManagement() {
 
     const session = useSession();
 
+    // Estados para tabs
+    const [activeTab, setActiveTab] = useState("productos");
+
+    // Estados para productos
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [productStates, setProductStates] = useState({});
+
+    // Estados para combos
+    const [comboSearchTerm, setComboSearchTerm] = useState("");
+    const [selectedCombos, setSelectedCombos] = useState([]);
 
     // Función helper para obtener el estado actual de un producto
     const getProductState = (product) => {
@@ -106,6 +119,13 @@ export function MenuManagement() {
         return matchesSearch;
     });
 
+    // Filtrar combos según el término de búsqueda
+    const filteredCombos = combos.filter(combo => {
+        const matchesSearch = combo.name.toLowerCase().includes(comboSearchTerm.toLowerCase()) ||
+            (combo.description && combo.description.toLowerCase().includes(comboSearchTerm.toLowerCase()));
+        return matchesSearch;
+    });
+
     // Preparar datos para los componentes
     const headerActions = [
         {
@@ -120,30 +140,30 @@ export function MenuManagement() {
 
     const statsData = [
         {
-            id: "sucursales",
-            label: "Sucursales",
-            value: stores.filter(s => s.status === 'active').length,
+            id: "total-items",
+            label: "Items Totales",
+            value: products.length + combos.length,
             color: "blue",
-            icon: <Building2 className="w-5 h-5" />
+            icon: <Package className="w-5 h-5" />
         },
         {
-            id: "seleccionados",
-            label: "Seleccionados",
+            id: "productos-seleccionados",
+            label: "Productos Selec.",
             value: selectedProducts.length,
             color: "empanada-golden",
             icon: <Package className="w-5 h-5" />
         },
         {
-            id: "total-productos",
-            label: "Total Productos",
-            value: products.length,
-            color: "blue",
-            icon: <Package className="w-5 h-5" />
+            id: "combos-seleccionados",
+            label: "Combos Selec.",
+            value: selectedCombos.length,
+            color: "green",
+            icon: <ShoppingCart className="w-5 h-5" />
         },
         {
-            id: "vinculados",
-            label: "Vinculados",
-            value: productosSucursal.length,
+            id: "en-menu",
+            label: "En Menú",
+            value: productosSucursal.length + (combosSucursal?.length || 0),
             color: "purple",
             icon: <CheckCircle2 className="w-5 h-5" />
         }
@@ -170,6 +190,28 @@ export function MenuManagement() {
         }
     };
 
+    // ========== FUNCIONES PARA COMBOS ==========
+
+    // Función para manejar la selección de combos
+    const handleComboSelection = (comboId) => {
+        setSelectedCombos(prev => {
+            if (prev.includes(comboId)) {
+                return prev.filter(id => id !== comboId);
+            } else {
+                return [...prev, comboId];
+            }
+        });
+    };
+
+    // Función para seleccionar/deseleccionar todos los combos
+    const handleSelectAllCombos = (filteredCombos) => {
+        if (selectedCombos.length === filteredCombos.length) {
+            setSelectedCombos([]);
+        } else {
+            setSelectedCombos(filteredCombos.map(combo => combo.id));
+        }
+    };
+
     // Función para unir productos a la sucursal
     const handleUnirProductos = async () => {
         if (!selectedStore) {
@@ -187,17 +229,19 @@ export function MenuManagement() {
             await callAsignarASucursal({
                 _productosCombos: {
                     "visibleProductIds": selectedProducts,
-                    "visibleComboIds": [1]
+                    "visibleComboIds": selectedCombos
                 },
                 _idSucursal: selectedStore,
                 _accessToken: session.userData.accessToken,
             })
 
-            toast.success(`${selectedProducts.length} productos vinculados exitosamente al menú`);
+            toast.success(`Menú publicado: ${selectedProducts.length} productos y ${selectedCombos.length} combos`);
 
             // Limpiar selección
             setSelectedProducts([]);
+            setSelectedCombos([]);
             setSearchTerm("");
+            setComboSearchTerm("");
 
             // Actualizar lista de productos de la sucursal
             await callProductosYCategoriasSucursal(selectedStore);
@@ -212,12 +256,29 @@ export function MenuManagement() {
 
     // Efecto para marcar automáticamente los productos ya vinculados cuando se cargan
     useEffect(() => {
-        if (productosSucursal.length > 0 && selectedStore) {
-            // Only select products that are in productosSucursal
-            const productosSucursalIds = productosSucursal.map(p => typeof p === "object" ? p.id : p);
-            setSelectedProducts(productosSucursalIds);
+        if (selectedStore) {
+            if (productosSucursal && productosSucursal.length > 0) {
+                // Only select products that are in productosSucursal
+                const productosSucursalIds = productosSucursal.map(p => typeof p === "object" ? p.id : p);
+                setSelectedProducts(productosSucursalIds);
+            } else {
+                setSelectedProducts([]);
+            }
         }
     }, [productosSucursal, selectedStore]);
+
+    // Efecto para marcar automáticamente los combos ya vinculados cuando se cargan
+    useEffect(() => {
+        if (selectedStore) {
+            if (combosSucursal && combosSucursal.length > 0) {
+                // Only select combos that are in combosSucursal
+                const combosSucursalIds = combosSucursal.map(c => typeof c === "object" ? c.id : c);
+                setSelectedCombos(combosSucursalIds);
+            } else {
+                setSelectedCombos([]);
+            }
+        }
+    }, [combosSucursal, selectedStore]);
 
     return (
         <div className="space-y-6 pb-24">
@@ -233,24 +294,27 @@ export function MenuManagement() {
             <StatsCards stats={statsData} />
 
 
-            {/* Card unificada con búsqueda y lista de productos */}
+            {/* Tabs para Productos, Combos y Promociones */}
             {selectedStore && (
-                <Card>
-                    {/* Header con título y contador */}
-                    <CardHeader className="pb-4">
-                        <CardTitle className="flex items-center justify-between text-lg">
-                            <span className="flex items-center gap-2">
-                                <Package className="w-4 h-4" />
-                                Productos del Menú
-                            </span>
-                            <Badge variant="outline" className="text-xs">
-                                {filteredProducts.length} productos
-                            </Badge>
-                        </CardTitle>
-                    </CardHeader>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:inline-grid">
+                        <TabsTrigger value="productos" className="gap-2 justify-start">
+                            <Package className="w-4 h-4 flex-shrink-0" />
+                            <span className="flex-1 text-left">Productos</span>
+                            <Badge variant="secondary" className="ml-2 min-w-[28px] justify-center">{selectedProducts.length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger value="combos" className="gap-2 justify-start">
+                            <ShoppingCart className="w-4 h-4 flex-shrink-0" />
+                            <span className="flex-1 text-left">Combos</span>
+                            <Badge variant="secondary" className="ml-2 min-w-[28px] justify-center">{selectedCombos.length}</Badge>
+                        </TabsTrigger>
+                    </TabsList>
 
-                    {/* Barra de búsqueda integrada */}
-                    <CardContent className="pt-0 pb-4">
+                    {/* TAB DE PRODUCTOS */}
+                    <TabsContent value="productos">
+                        <Card>
+                            {/* Barra de búsqueda integrada */}
+                            <CardContent className="pt-6 pb-4">
                         <div className="flex flex-col sm:flex-row gap-3">
                             <div className="flex-1">
                                 <div className="relative">
@@ -298,7 +362,7 @@ export function MenuManagement() {
                                         ) : (
                                             <>
                                                 <CheckCircle2 className="w-3 h-3 mr-1" />
-                                                Confirmar ({selectedProducts.length})
+                                                Publicar Menú
                                             </>
                                         )}
                                     </Button>
@@ -430,7 +494,188 @@ export function MenuManagement() {
                             </div>
                         )}
                     </CardContent>
-                </Card>
+                        </Card>
+                    </TabsContent>
+
+                    {/* TAB DE COMBOS */}
+                    <TabsContent value="combos">
+                        <Card>
+                            {/* Barra de búsqueda integrada */}
+                            <CardContent className="pt-6 pb-4">
+                                <div className="flex flex-col sm:flex-row gap-3">
+                                    <div className="flex-1">
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                            <Input
+                                                placeholder="Buscar combos..."
+                                                value={comboSearchTerm}
+                                                onChange={(e) => setComboSearchTerm(e.target.value)}
+                                                className="pl-10 h-9 text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleSelectAllCombos(filteredCombos)}
+                                            className="h-9 px-3 text-sm"
+                                        >
+                                            {selectedCombos.length === filteredCombos.length ? (
+                                                <>
+                                                    <X className="w-3 h-3 mr-1" />
+                                                    Deseleccionar Todo
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Check className="w-3 h-3 mr-1" />
+                                                    Seleccionar Todo
+                                                </>
+                                            )}
+                                        </Button>
+
+                                        <Button
+                                            variant="empanada"
+                                            size="sm"
+                                            onClick={handleUnirProductos}
+                                            disabled={adminDataLoading}
+                                            className="h-9 px-4 font-semibold"
+                                        >
+                                            {adminDataLoading ? (
+                                                <>
+                                                    <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                                                    Procesando...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                                                    Publicar Menú
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+
+                            {/* Tabla de combos */}
+                            <CardContent className="pt-0">
+                                {adminDataLoading ? (
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
+                                                <tr>
+                                                    <th className="text-left p-4">Combo</th>
+                                                    <th className="text-center p-4">En Menú</th>
+                                                    <th className="text-center p-4">Seleccionar</th>
+                                                    <th className="text-left p-4">Descripción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <tr key={i} className="border-b border-gray-200 dark:border-empanada-light-gray animate-pulse">
+                                                        <td className="p-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-12 h-12 bg-gray-200 rounded-md" />
+                                                                <div className="space-y-2">
+                                                                    <div className="bg-gray-200 h-4 rounded w-32" />
+                                                                    <div className="bg-gray-200 h-3 rounded w-20" />
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4 text-center">
+                                                            <div className="bg-gray-200 h-6 rounded w-16 mx-auto" />
+                                                        </td>
+                                                        <td className="p-4 text-center">
+                                                            <div className="bg-gray-200 h-4 rounded w-4 mx-auto" />
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="bg-gray-200 h-3 rounded w-full" />
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
+                                                <tr>
+                                                    <th className="text-left p-4">Combo</th>
+                                                    <th className="text-center p-4">En Menú</th>
+                                                    <th className="text-center p-4">Seleccionar</th>
+                                                    <th className="text-left p-4">Descripción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredCombos.map((combo) => {
+                                                    const isLinked = combosSucursal?.some(c => (typeof c === "object" ? c.id : c) === combo.id);
+                                                    const isSelected = selectedCombos.includes(combo.id);
+
+                                                    return (
+                                                        <tr
+                                                            key={combo.id}
+                                                            className={`border-b border-gray-200 dark:border-empanada-light-gray hover:bg-gray-50 dark:hover:bg-empanada-medium/50 transition-colors ${isSelected ? 'bg-empanada-golden/5 border-empanada-golden' : ''}`}
+                                                        >
+                                                            {/* Columna Combo */}
+                                                            <td className="p-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    {/* Icono del combo */}
+                                                                    <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+                                                                        <div className="w-full h-full bg-green-500/10 flex items-center justify-center">
+                                                                            <ShoppingCart className="w-5 h-5 text-green-600" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Información del combo */}
+                                                                    <div className="min-w-0">
+                                                                        <h3 className="font-medium text-base text-gray-900 dark:text-white truncate">
+                                                                            {combo.name}
+                                                                        </h3>
+                                                                        <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                                                            {combo.price ? `$${combo.price}` : 'Precio variable'}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+
+                                                            {/* Columna En Menú */}
+                                                            <td className="p-4 text-center">
+                                                                <Badge className={`text-xs px-3 py-1 ${isLinked
+                                                                    ? 'bg-blue-500 text-white'
+                                                                    : 'bg-gray-200 text-gray-600 dark:bg-empanada-medium dark:text-white'
+                                                                }`}>
+                                                                    {isLinked ? 'En Menú' : 'No Incluido'}
+                                                                </Badge>
+                                                            </td>
+
+                                                            {/* Columna Seleccionar */}
+                                                            <td className="p-4 text-center">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={isSelected}
+                                                                    onChange={() => handleComboSelection(combo.id)}
+                                                                    className="w-4 h-4 text-empanada-golden bg-gray-100 border-gray-300 rounded focus:ring-empanada-golden focus:ring-2"
+                                                                />
+                                                            </td>
+
+                                                            {/* Columna Descripción */}
+                                                            <td className="p-4">
+                                                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                                                    {combo.description || 'Sin descripción'}
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
             )}
 
 

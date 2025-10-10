@@ -74,6 +74,7 @@ const SessionProvider = ({ children }) => {
     });
 
     useLayoutEffect(() => {
+        setComponentLoading(true);
         const csrf = localStorage.getItem(csrfLocalStorageKeyName);
         if (csrf) {
             callRelogin(csrf);
@@ -84,6 +85,17 @@ const SessionProvider = ({ children }) => {
     const login = (_credentials) => {
         callLogin(_credentials);
     };
+
+    const relogin = () => {
+        setComponentLoading(true);
+        const csrf = localStorage.getItem(csrfLocalStorageKeyName);
+        if (csrf) {
+            callRelogin(csrf);
+        } else {
+            logout();
+        }
+        setComponentLoading(false);
+    }
 
     const logout = () => {
         setUserData(null);
@@ -100,6 +112,7 @@ const SessionProvider = ({ children }) => {
             isAuthenticated,
             loading,
             login,
+            relogin,
             logout,
         }}
         >

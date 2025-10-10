@@ -76,11 +76,11 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
                 Popular
               </Badge>
             )}
-            {!product.isAvailable && (
+            {/* {!product.isAvailable && (
               <Badge variant="destructive" className="text-xs">
                 Agotado
               </Badge>
-            )}
+            )} */}
           </div>
 
           {/* Like Button */}
@@ -109,7 +109,7 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
               size="icon"
               variant="empanada"
               onClick={handleAddToCart}
-              disabled={!product.isAvailable}
+            //   disabled={!product.isAvailable}
               className="shadow-lg"
             >
               <Plus className="w-4 h-4" />
@@ -163,9 +163,8 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
             className="w-full"
             variant="empanada"
             onClick={handleAddToCart}
-            disabled={!product.isAvailable}
           >
-            {product.isAvailable ? "Agregar al Carrito" : "No Disponible"}
+            Agregar al Carrito
           </Button>
         </CardFooter>
         </Card>

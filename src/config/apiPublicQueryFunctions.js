@@ -90,3 +90,19 @@ export const postPublicOrdersCreatePrintJobQueryFunction = async (_printJob) => 
     return await response.data;
 }
 
+export const putPublicOrdersForcePrintJobQueryFunction = async (_printJobId) => {
+    const axiosSetup = {
+        axiosData: {
+            status: 'PARA_IMPRIMIR'
+        },
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }
+    }
+
+    const response = await axios.put(`${ENDPOINTS.printer}/public/print-jobs/${_printJobId}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+

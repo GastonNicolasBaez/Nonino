@@ -59,19 +59,6 @@ const statuses = {
     REJECTED: 'REJECTED',
 }
 
-// Función helper para obtener variante de status
-// function getStatusVariant(status) {
-//     switch (status) {
-//         case statuses.PENDING: return 'yellow';
-//         case statuses.PREPARING: return 'blue';
-//         case statuses.READY: return 'purple';
-//         case statuses.DELIVERED: return 'green';
-//         case statuses.COMPLETED: return 'green';
-//         case statuses.CANCELLED: return 'red';
-//         default: return 'gray';
-//     }
-// }
-
 // Función helper para obtener label de status
 function getStatusLabel(status) {
     switch (status) {
@@ -115,7 +102,7 @@ function OrderViewModal({ order, onClose }) {
         <Portal>
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
                 <div
-                    className="w-full max-w-7xl h-[95vh] flex flex-col"
+                    className="w-full max-w-5xl h-[95vh] flex flex-col"
                 >
                     <Card className="shadow-2xl h-full flex flex-col ">
                         <CardHeader className="pb-4 flex-shrink-0 bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
@@ -145,7 +132,7 @@ function OrderViewModal({ order, onClose }) {
                         </CardHeader>
 
                         <CardContent className="flex-1 overflow-y-auto px-6 py-6">
-                            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full">
+                            <div className="grid grid-cols-1 gap-6 h-full">
                                 {/* Columna izquierda y central: Información de la orden */}
                                 <div className="xl:col-span-2 space-y-6">
                                     {/* Información del Cliente */}
@@ -237,14 +224,14 @@ function OrderViewModal({ order, onClose }) {
                                                 <p className="text-sm text-gray-600 dark:text-gray-400">Envío: {formatPrice(order.deliveryFee)}</p>
                                             )}
                                             <p className="text-lg font-bold text-gray-900 dark:text-white">
-                                                Total: {formatPrice(order.total)}
+                                                Total: {formatPrice(order.totalAmount)}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Columna derecha: Preview del ticket */}
-                                <div className="xl:col-span-1">
+                                {/* <div className="xl:col-span-1">
                                     <div className="sticky top-0">
                                         <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                                             <Printer className="w-4 h-4" />
@@ -256,7 +243,7 @@ function OrderViewModal({ order, onClose }) {
                                             mode={process.env.NODE_ENV === 'development' ? 'dev' : 'prod'}
                                         />
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </CardContent>
 
@@ -286,7 +273,7 @@ export function OrderManagement() {
         callCreateOrder,
         callOrderPayCash,
         callOrderClose,
-        callPublicCreatePrintJob
+        callPublicForcePrintJob
     } = useAdminData();
 
     const session = useSession();
@@ -393,41 +380,8 @@ export function OrderManagement() {
 
 
     const handlePrintOrder = async (order) => {
-
-        // Convertir orden al formato esperado por el sistema de impresión
-        const printableOrder = {
-            id: order.orderNumber,
-            time: order.orderDate || order.date || new Date().toISOString(),
-            total: order.totalAmount,
-            payment: order.paymentMethod || 'Efectivo',
-            deliveryTo: order.deliveryShort,
-            fullfillment: order.fullfillment,
-            totalUnits: order.totalUnits,
-            items: order.items.map(item => ({
-                qty: item.quantity || item.qty || 1,
-                name: item.name,
-                notes: item.notes || '',
-                sku: item.sku,
-            })),
-        };
-
-        const ticketJsoned = JSON.stringify(printableOrder);
-
-        const encryptedId = btoa("AmiAmig0Fr4nki3L3GustalANaveg");
-
-        const constructedPrintJob = {
-            dataB64: ticketJsoned,
-            basic: encryptedId,
-            storeId: sucursalSeleccionada,
-            orderId: order.id,
-            origin: 'admin' // no se guarda. si public, chequear si existe. si existe, no meter. si es admin, meter si o si
-        }
-
-
-        console.log(constructedPrintJob);
-
         try {
-            //await callPublicCreatePrintJob(constructedPrintJob);
+            await callPublicForcePrintJob(order.id);
             toast.success("Ticket enviado a impresora");
         } catch {
             toast.error("Error al procesar la impresión");
@@ -527,7 +481,7 @@ export function OrderManagement() {
                             <thead className="bg-gray-50 dark:bg-empanada-dark border-b border-gray-200 dark:border-empanada-light-gray">
                                 <tr>
                                     <th className="text-left p-4">N°</th>
-                                    <th className="text-left p-4">Fecha</th>
+                                    <th className="text-left p-4">Hora</th>
                                     <th className="text-left p-4">Entrega</th>
                                     <th className="text-left p-4">Estado</th>
                                     <th className="text-left p-4">Items</th>
@@ -537,9 +491,9 @@ export function OrderManagement() {
                             </thead>
                             <tbody>
                                 {filteredOrders.map((order) => {
-                                    const payCashEnabled = order.status == statuses.PENDING;
+                                    const payCashEnabled = order.status == statuses.PENDING || order.status == statuses.CREATED;
                                     const closeOrderEnabled = order.status != statuses.COMPLETED;
-                                    const printEnabled = true;
+                                    const printEnabled = order.status != statuses.CREATED;
 
                                     return (
                                         <tr
@@ -550,7 +504,7 @@ export function OrderManagement() {
                                                 <span className="font-mono text-sm">{order.orderNumber}</span>
                                             </td>
                                             <td className="p-4">
-                                                <span className="text-sm">{new Date(order.createdAt).toLocaleTimeString()}</span>
+                                                <span className="text-sm">{new Date(order.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false }).replace(':', ' : ')}</span>
                                             </td>
                                             <td className="p-4">
                                                 <span className="text-sm">{order.fulfillment}</span>

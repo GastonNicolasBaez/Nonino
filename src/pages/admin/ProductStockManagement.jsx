@@ -36,6 +36,7 @@ import { useAdminData } from "@/context/AdminDataProvider";
 
 // UTILIDADES
 import { formatPrice } from "@/lib/utils";
+import { useSession } from "@/context/SessionProvider";
 
 export function ProductStockManagement() {
     const {
@@ -43,7 +44,11 @@ export function ProductStockManagement() {
         sucursalSeleccionada: selectedStore,
         adminDataLoading: loading,
         categoriasTodas,
+
+        callInventarioMaterialesSucursal,
     } = useAdminData();
+
+    const session = useSession();
 
     const [searchTerm, setSearchTerm] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("all");
@@ -137,12 +142,25 @@ export function ProductStockManagement() {
     // Preparar datos para SectionHeader
     const headerActions = [
         {
+            label: "Ingresar",
+            variant: "outline",
+            className: "h-9 px-4 text-sm font-medium",
+            onClick: () => {
+                toast.info("Actualizando stock de materiales...");
+                // Aquí se llamaría a la función de actualización
+            },
+            icon: <Plus className="w-4 h-4 mr-2" />
+        },
+        {
             label: "Actualizar Stock",
             variant: "empanada",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
                 toast.info("Actualizando stock de productos...");
-                // Aquí se llamaría a la función de actualización
+                callInventarioMaterialesSucursal({
+                    _storeId: selectedStore,
+                    _accessToken: session.userData.accessToken,
+                })
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         }

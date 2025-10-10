@@ -21,17 +21,17 @@ import { usePublicData } from "@/context/PublicDataProvider";
 export function CheckoutPage() {
     const { items, total, subtotal, discount, deliveryFee, clearCart, selectedStore } = useCart();
     const {
+        productos,
         callPublicCreateOrder,
-        callPublicCreateOrderLoading,
+        publicDataCreatingOrderLoading: loading,
         callPublicCreatePreference,
-        callPublicCreatePreferenceLoading,
+        callPublicCreatePrintJob,
     } = usePublicData();
 
 
     const session = useSession();
     const user = session?.userData;
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
 
     // Estados modernos para UX mejorada
     const [currentStep, setCurrentStep] = useState(1);
@@ -65,54 +65,74 @@ export function CheckoutPage() {
         notes: "",
     });
 
+    console.log(orderData);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
 
         try {
             // Validar sucursal seleccionada
             if (!selectedStore) {
                 toast.error("Por favor selecciona una sucursal");
-                setLoading(false);
                 return;
             }
 
             // Validar datos requeridos
             if (!orderData.customerInfo.name || !orderData.customerInfo.phone) {
                 toast.error("Por favor completa tu nombre y teléfono");
-                setLoading(false);
                 return;
             }
 
             if (orderData.deliveryType === "delivery") {
                 if (!orderData.address.street || !orderData.address.number) {
                     toast.error("Por favor completa la dirección de entrega");
-                    setLoading(false);
                     return;
                 }
             }
 
             if (items.length === 0) {
                 toast.error("Tu carrito está vacío");
-                setLoading(false);
                 return;
             }
 
             // Validar pedido mínimo de la sucursal
             if (selectedStore && selectedStore.minOrder && subtotal < selectedStore.minOrder) {
                 toast.error(`El pedido mínimo para ${selectedStore.name} es de ${formatPrice(selectedStore.minOrder)}`);
-                setLoading(false);
                 return;
             }
 
-            const newItems = items.map((item) => ({
-                productId: item.id,
-                comboId: 0,
-                name: item.name,
-                unitPrice: item.price,
-                quantity: item.quantity,
-                sku: item.sku,
-            }));
+            const prodCateMap = new Map(productos.map(p => [p.id, p.category]));
+            const prodSkuMap = new Map(productos.map(p => [p.id, p.sku]));
+
+            const newItems = [];
+
+            items.forEach(item => {
+                // If it's a combo → expand comboDetails
+                if (item.isCombo && Array.isArray(item.comboDetails)) {
+                    item.comboDetails.forEach(detail => {
+                        newItems.push({
+                            productId: detail.productId,
+                            name: detail.name,
+                            //unitPrice: 0,     // 👈 unit price of combo (adjust if you split per item)
+                            quantity: detail.quantity,
+                            sku: detail.sku ?? "",     // optional if not available
+                            hasRecipe: item.hasRecipe,
+                        });
+                    });
+                } else {
+                    // Regular item
+                    newItems.push({
+                        productId: item.id,
+                        name: item.name,
+                        unitPrice: item.price,
+                        quantity: item.quantity,
+                        sku: item.sku ?? "",
+                        hasRecipe: item.hasRecipe,
+                    });
+                }
+            });
+
+            console.log(newItems);
 
             const newDeliveryAddress = {
                 contactName: orderData.customerInfo.name,
@@ -122,7 +142,8 @@ export function CheckoutPage() {
                 apartment: orderData.address.apartment,
                 neighborhood: orderData.address.neighborhood,
                 city: 'CABA',
-                notes: orderData.notes
+                notes: orderData.notes,
+                references: orderData.references,
             }
 
             const newOrder = {
@@ -130,11 +151,62 @@ export function CheckoutPage() {
                 items: newItems,
                 paymentMethod: orderData.paymentMethod == 'mercadopago' ? 'MERCADO_PAGO' : 'CASH',
                 fulfillment: orderData.deliveryType == 'delivery' ? 'DELIVERY' : 'PICKUP',
-                deliveryAddress: newDeliveryAddress
+                deliveryAddress: orderData.deliveryType == 'delivery' ? newDeliveryAddress : null,
+                totalAmount: total,
             }
+
+            console.log(newOrder);
 
             // crear la orden aca
             const createdOrder = await callPublicCreateOrder(newOrder);
+
+            const dA = createdOrder.deliveryShort;
+
+            const shortAddress = dA.street + ' ' + dA.number + ' (' + dA.neighborhood + ')';
+            const shortAddressSpecs = "DTO: " + dA.apartment;
+            const shortWho = dA.contactName;
+            const shortPhone = dA.contactPhone;
+            const shortNote = dA.notes;
+
+            // crear orden de impresión
+            const printableOrder = {
+                id: createdOrder.id,
+                orderNumber: createdOrder.orderNumber,
+                time: createdOrder.orderDate || createdOrder.date || new Date().toISOString(),
+                total: createdOrder.totalAmount,
+                fulfillment: createdOrder.fullfillment,
+                payment: createdOrder.paymentMethod || 'Efectivo',
+                deliveryTo: shortAddress,
+                deliveryToSpec: shortAddressSpecs,
+                deliveryWho: shortWho,
+                deliveryPhone: shortPhone,
+                deliveryNotes: shortNote,
+                deliveryReferences: orderData.references, // cambiar esto
+                fullfillment: createdOrder.fullfillment,
+                totalUnits: createdOrder.items.length,
+                items: createdOrder.items.map(item => ({
+                    qty: item.quantity || item.qty || 1,
+                    name: item.name,
+                    notes: item.notes || '',
+                    sku: prodSkuMap.get(item.productId) ?? null,
+                    categoryId: prodCateMap.get(item.productId) ?? null,
+                })),
+            };
+
+            const ticketJsoned = JSON.stringify(printableOrder);
+
+            const encryptedId = btoa("AmiAmig0Fr4nki3L3GustalANaveg");
+
+            const constructedPrintJob = {
+                dataB64: ticketJsoned,
+                basic: encryptedId,
+                storeId: selectedStore.id,
+                orderId: createdOrder.id,
+                origin: 'public', // no se guarda. si public, chequear si existe. si existe, no meter. si es admin, meter si o si
+                status: createdOrder.paymentMethod == 'MERCADO_PAGO' ? 'PENDIENTE' : 'PARA_IMPRIMIR',
+            }
+
+            await callPublicCreatePrintJob(constructedPrintJob);
 
             // Si el método de pago es MercadoPago, aquí el backend se encargará
             // de generar el link de pago y redirigir al usuario
@@ -143,7 +215,7 @@ export function CheckoutPage() {
                     _orderId: createdOrder.id,
                     _proof: createdOrder.proof
                 });
-                
+
                 toast.success("¡Pedido creado! Serás redirigido al pago...");
                 clearCart();
                 window.location.href = createdPreference.initPoint;
@@ -155,8 +227,6 @@ export function CheckoutPage() {
         } catch (error) {
             console.error("Error al procesar el pedido:", error);
             toast.error("Error al procesar el pedido. Intenta nuevamente.");
-        } finally {
-            setLoading(false);
         }
     };
 

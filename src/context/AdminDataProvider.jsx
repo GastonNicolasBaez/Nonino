@@ -34,7 +34,8 @@ import {
 } from '@/config/apiStoresQueryFunctions';
 import {
     getPublicCatalogQueryFunction,
-    postPublicOrdersCreatePrintJobQueryFunction
+    postPublicOrdersCreatePrintJobQueryFunction,
+    putPublicOrdersForcePrintJobQueryFunction
 } from '@/config/apiPublicQueryFunctions';
 import {
     getAdminInventoryMaterialsQueryFunction,
@@ -76,6 +77,7 @@ const AdminDataProvider = ({ children }) => {
     const [combos, setCombos] = useState([]);
 
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState();
+    const [sucursalSeleccionadaInfo, setSucursalSeleccionadaInfo] = useState();
 
     const [productosSucursal, setProductosSucursal] = useState([]);
     const [combosSucursal, setCombosSucursal] = useState([]);
@@ -129,6 +131,15 @@ const AdminDataProvider = ({ children }) => {
 
             // ordenes activas
             callOrders(at);
+
+            setSucursalSeleccionadaInfo(sucursales.find((s) => s.id == sucursalSeleccionada));
+        } else {
+            setDeliverySucursal([]);
+            setProductosSucursal([]);
+            setCombosSucursal([]);
+            setHorariosSucursal([]);
+            setOrders([]);
+            setSucursalSeleccionadaInfo([]);
         }
         // guardar seleccionada en localstorage solo si es admin
         if (session.userData.isAdmin) {
@@ -172,6 +183,7 @@ const AdminDataProvider = ({ children }) => {
                     category: categoria.id,
                     price: producto.price,
                     image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
+                    sku: producto.sku,
                 })));
 
             // Extraer combos desde categories (igual que PublicDataProvider)
@@ -242,6 +254,7 @@ const AdminDataProvider = ({ children }) => {
                 imageUrl: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
                 isAvailable: producto.active,
                 sku: producto.sku,
+                hasRecipe: producto.hasRecipe,
             }));
 
             const categoryMap = new Map();
@@ -643,11 +656,18 @@ const AdminDataProvider = ({ children }) => {
         }
     });
 
+    const { mutateAsync: callPublicForcePrintJob, isPending: callPublicForcePrintJobLoading } = useMutation({
+        mutationKey: ['publicForcePrintJob'],
+        mutationFn: putPublicOrdersForcePrintJobQueryFunction,
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
 
 
     const showDebugStateInfo = () => {
         const debugInfo = {
-            SUCURSAL: sucursalSeleccionada,
             PRODUCTOS: productos,
             CATEGORIAS: categorias,
             SUCURSALES: sucursales,
@@ -655,6 +675,7 @@ const AdminDataProvider = ({ children }) => {
             COMBOS: combos,
             COMPANY_INFO: companyInfo,
             SUCURSAL_SELECCIONADA: sucursalSeleccionada,
+            SUCURSAL_SELECCIONADA_INFO: sucursalSeleccionadaInfo,
             PRODUCTOS_SUCURSAL: productosSucursal,
             COMBOS_SUCURSAL: combosSucursal,
             DELIVERY_SUCURSAL: deliverySucursal,
@@ -719,6 +740,7 @@ const AdminDataProvider = ({ children }) => {
             orders,
 
             sucursalSeleccionada,
+            sucursalSeleccionadaInfo,
             setSucursalSeleccionada,
             productosSucursal,
             combosSucursal,
@@ -786,7 +808,9 @@ const AdminDataProvider = ({ children }) => {
             callOrderClose,
 
             callPublicCreatePrintJob,
-            callPublicCreatePrintJobLoading
+            callPublicCreatePrintJobLoading,
+            callPublicForcePrintJob,
+            callPublicForcePrintJobLoading,
         }}>
             {children}
         </AdminDataContext.Provider>

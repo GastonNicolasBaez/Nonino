@@ -269,13 +269,14 @@ export function ProductManagement() {
     const handleSaveProduct = async (productData) => {
         try {
             const adaptedProduct = {
-                "sku": productData.sku || `SKU-${Date.now()}`,
-                "name": productData.name,
-                "description": productData.description,
-                "basePrice": productData.price,
-                "active": productData.isAvailable,
-                "categoryId": productData.category,
-                "imageBase64": productData.imageUrl,
+                sku: productData.sku || `SKU-${Date.now()}`,
+                name: productData.name,
+                description: productData.description,
+                basePrice: productData.price,
+                active: productData.isAvailable,
+                categoryId: productData.category,
+                imageBase64: productData.imageUrl,
+                hasRecipe: productData.recipe.length != 0,
             };
 
             const result = await callProductoNuevo({
@@ -482,26 +483,28 @@ export function ProductManagement() {
             isPopular: false,
             ingredients: [],
             allergens: [],
-            imageUrl: ""
+            imageUrl: "",
+            hasRecipe: false,
         });
 
         const handleSave = async () => {
             try {
                 const adaptedProduct = {
-                    "sku": "SKU-" + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
-                    "name": formData.name,
-                    "description": formData.description,
-                    "basePrice": formData.price,
-                    "active": formData.isAvailable,
-                    "categoryId": formData.category,
-                    "imageBase64": formData.imageUrl,
+                    sku: "SKU-" + Math.floor(Math.random() * (9999999 - 1000000) + 1000000),
+                    name: formData.name,
+                    description: formData.description,
+                    basePrice: formData.price,
+                    active: formData.isAvailable,
+                    categoryId: formData.category,
+                    imageBase64: formData.imageUrl,
+                    hasRecipe: formData.hasRecipe,
                 }
 
                 if (product) {
                     // EDITAR EXISTENTE
                     const updateProduct = {
                         ...adaptedProduct,
-                        "id": product.id,
+                        id: product.id,
                     }
                     await callModificarProducto({
                         _producto: updateProduct,
@@ -856,30 +859,23 @@ export function ProductManagement() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-8 px-3 text-xs"
                                                             onClick={() => setEditingProduct(product)}
                                                         >
-                                                            <Edit className="w-3 h-3 mr-1" />
-                                                            Editar
+                                                            <Edit className="w-4 h-4" />
                                                         </Button>
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            disabled
-                                                            className="h-8 px-3 text-xs bg-empanada-golden/10 hover:bg-empanada-golden/20 text-empanada-golden border-empanada-golden/30"
                                                             onClick={() => handleEditRecipe(product)}
                                                         >
-                                                            <ChefHat className="w-3 h-3 mr-1" />
-                                                            Receta
+                                                            <ChefHat className="w-4 h-4" />
                                                         </Button>
                                                         <Button
                                                             variant="destructive"
                                                             size="sm"
-                                                            className="h-8 px-3 text-xs"
                                                             onClick={() => deleteProduct(product.id)}
                                                         >
-                                                            <Trash2 className="w-3 h-3 mr-1" />
-                                                            Borrar
+                                                            <Trash2 className="w-4 h-4" />
                                                         </Button>
                                                     </div>
                                                 </td>

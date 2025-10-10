@@ -14,19 +14,19 @@ export function OrderTrackingPage() {
 
     const {
         callPublicOrderById,
-        callPublicOrderByIdLoading: loading,
+        callPublicOrderByIdLoading,
     } = usePublicData();
 
     const { orderId } = useParams();
     const [order, setOrder] = useState(null);
-
-    console.log(order);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchOrder = async () => {
             try {
                 const response = await callPublicOrderById(orderId);
                 setOrder(response);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching order:", error);
             }
@@ -36,8 +36,8 @@ export function OrderTrackingPage() {
     }, [orderId]);
 
     const statusSteps = [
-        { key: "pending", label: "Pendiente", icon: "⏳" },
-        { key: "confirmed", label: "Confirmado", icon: "✅" },
+        { key: "CREATED", label: "Pendiente", icon: "⏳" },
+        { key: "AWAITING_PAYMENT", label: "Confirmado", icon: "✅" },
         { key: "preparing", label: "Preparando", icon: "👨‍🍳" },
         { key: "ready", label: "Listo", icon: "📦" },
         { key: "inDelivery", label: "En camino", icon: "🚚" },
@@ -65,7 +65,7 @@ export function OrderTrackingPage() {
                 <div className="text-center">
                     <div className="text-6xl mb-4">❌</div>
                     <h1 className="text-2xl font-bold mb-2">Pedido no encontrado</h1>
-                    <p className="text-gray-600">El pedido #{orderId} no existe o no tienes acceso a él.</p>
+                    <p className="text-gray-600">El pedido #{order.orderNumber} no existe o no tienes acceso a él.</p>
                 </div>
             </div>
         );
@@ -74,7 +74,7 @@ export function OrderTrackingPage() {
     const currentStep = getCurrentStepIndex(order.status);
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen bg-black py-8">
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -83,14 +83,14 @@ export function OrderTrackingPage() {
                 >
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold mb-2">Estado de tu Pedido</h1>
-                        <p className="text-gray-600">Pedido #{order.id}</p>
+                        <h1 className="text-3xl font-bold mb-2 text-white/80">Estado de tu Pedido</h1>
+                        <h2 className="text-2xl font-bold mb-2 text-white">{order.status}</h2>
                     </div>
 
                     {/* Status Timeline */}
-                    <Card className="mb-8">
+                    <Card className="mb-8 hidden">
                         <CardHeader>
-                            <CardTitle>Seguimiento del Pedido</CardTitle>
+                            <CardTitle>Seguimiento del Pedido n° {order.orderNumber}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="relative">
@@ -178,7 +178,7 @@ export function OrderTrackingPage() {
                                     <h4 className="font-medium mb-2">Información del Pedido</h4>
                                     <div className="space-y-1 text-sm text-gray-600">
                                         <p>Pedido realizado: {formatDateTime(order.createdAt)}</p>
-                                        <p>Tiempo estimado: {order.estimatedDelivery}</p>
+                                        {/* <p>Tiempo estimado: {order.estimatedDelivery}</p> */}
                                     </div>
                                 </div>
                             </CardContent>
@@ -194,7 +194,7 @@ export function OrderTrackingPage() {
                                     <MapPin className="w-5 h-5 text-empanada-golden mt-1" />
                                     <div>
                                         <h4 className="font-medium">Dirección de Entrega</h4>
-                                        <p className="text-sm text-gray-600">{order.deliveryAddress}</p>
+                                        <p className="text-sm text-gray-600">{order.deliveryAddress.street}</p>
                                     </div>
                                 </div>
 

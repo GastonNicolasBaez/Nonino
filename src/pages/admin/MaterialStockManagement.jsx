@@ -128,6 +128,16 @@ export function MaterialStockManagement() {
     // Preparar datos para SectionHeader
     const headerActions = [
         {
+            label: "Ingresar",
+            variant: "outline",
+            className: "h-9 px-4 text-sm font-medium",
+            onClick: () => {
+                toast.info("Actualizando stock de materiales...");
+                // Aquí se llamaría a la función de actualización
+            },
+            icon: <Plus className="w-4 h-4 mr-2" />
+        },
+        {
             label: "Actualizar Stock",
             variant: "empanada",
             className: "h-9 px-4 text-sm font-medium",
@@ -136,7 +146,8 @@ export function MaterialStockManagement() {
                 // Aquí se llamaría a la función de actualización
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
-        }
+        },
+        
     ];
 
     //   const getStatusClasses = (status) => {

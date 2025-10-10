@@ -33,7 +33,7 @@ export const getAdminOrdersGetOrdersQueryFunction = async (_accessToken) => {
 
 export const postAdminOrdersPayCashQueryFunction = async ({_orderId, _accessToken}) => {
     const axiosSetup = {
-        axiosData: _orderId,
+        axiosData: null,
         axiosConfig: {
             headers: {
                 "Content-Type": "application/json",

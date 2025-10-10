@@ -88,6 +88,7 @@ const PublicDataProvider = ({ children }) => {
                 categoria.products.map((producto) => ({
                     id: producto.productId,
                     name: producto.name,
+                    sku: producto.sku,
                     description: producto.description,
                     category: categoria.id,
                     price: producto.price,
@@ -237,6 +238,11 @@ const PublicDataProvider = ({ children }) => {
         callPublicCompanyInfoLoading ||
         callPublicStoreStatusLoading;
 
+    const publicDataCreatingOrderLoading =
+        callPublicCreateOrderLoading ||
+        callPublicCreatePreferenceLoading ||
+        callPublicCreatePrintJobLoading;
+
     return (
         <PublicDataContext.Provider value={{
             productos,
@@ -258,13 +264,11 @@ const PublicDataProvider = ({ children }) => {
 
             callPublicOrderById,
             callPublicOrderByIdLoading,
-            callPublicCreateOrder,
-            callPublicCreateOrderLoading,
-            callPublicCreatePreference,
-            callPublicCreatePreferenceLoading,
 
+            callPublicCreateOrder,
+            callPublicCreatePreference,
             callPublicCreatePrintJob,
-            callPublicCreatePrintJobLoading,
+            publicDataCreatingOrderLoading
         }}>
             {children}
         </PublicDataContext.Provider>

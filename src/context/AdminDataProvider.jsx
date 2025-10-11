@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useState, useEffect, useContext, createContext } from 'react'
+import React, { useState, useEffect, useContext, createContext, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query';
 import {
     getAdminCatalogProductosYCategoriasQueryFunction,
@@ -64,8 +64,32 @@ import { useSession } from '@/context/SessionProvider';
 const AdminDataContext = createContext();
 
 const AdminDataProvider = ({ children }) => {
-
     const session = useSession();
+    const reloginPromiseRef = useRef(null);
+
+    // Helper to queue relogin
+    const queueRelogin = async () => {
+        if (!reloginPromiseRef.current) {
+            reloginPromiseRef.current = (async () => {
+                try {
+                    await session.relogin();
+                } finally {
+                    reloginPromiseRef.current = null;
+                }
+            })();
+        }
+        return reloginPromiseRef.current;
+    };
+
+    const handleErrorRelogin = async (failureCount, error) => {
+        if (error?.response?.status === 401 && typeof session.relogin === 'function') {
+            await queueRelogin();
+            return true;
+        }
+        return false;
+    }
+
+    const logErrorsToConsole = true;
 
     const [adminStartingLoading, setAdminStartingLoading] = useState([true]);
 
@@ -205,19 +229,19 @@ const AdminDataProvider = ({ children }) => {
             setCombosSucursal(gotCombos);
         },
         onError: (error) => {
-            console.log(error);
+            if (logErrorsToConsole) console.log(error);
             setProductosSucursal([]);
             setCombosSucursal([]);
-        }
+        },
     });
 
     //asignar a sucursal
     const { mutateAsync: callAsignarASucursal, isPending: callAsignarASucursalLoading } = useMutation({
         mutationKey: ['adminAsignarASucursal'],
         mutationFn: postAdminCatalogAsignarASucursalQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // ---------- PRODUCTOS Y CATEGORIAS ADMIN
@@ -225,18 +249,18 @@ const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callProductoNuevo, isPending: callProductoNuevoLoading } = useMutation({
         mutationKey: ['adminProductoNuevo'],
         mutationFn: postAdminCatalogAddProductQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     //eliminar
     const { mutateAsync: callBorrarProducto, isPending: callBorrarProductoLoading } = useMutation({
         mutationKey: ['adminBorrarProducto'],
         mutationFn: deleteAdminCatalogDeleteProductQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     //listar
@@ -271,38 +295,36 @@ const AdminDataProvider = ({ children }) => {
             setProductos(gotProducts);
             setCategorias(gotCategories);
         },
-        onError: (error) => {
-            console.log(error);
-            setProductos([]);
-            setCategorias([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     //modificar producto
     const { mutateAsync: callModificarProducto, isPending: callModificarProductoLoading } = useMutation({
         mutationKey: ['adminModificarProducto'],
         mutationFn: updateAdminCatalogUpdateProductQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // asignar receta
     const { mutateAsync: callCrearYAsignarReceta, isPending: callCrearYAsignarRecetaLoading } = useMutation({
         mutationKey: ['adminCrearYAsignarReceta'],
         mutationFn: postAdminInventoryAssignRecipeQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // llamar receta del producto
     const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoading } = useMutation({
         mutationKey: ['adminRecetaDelProducto'],
         mutationFn: getAdminInventoryGetProductRecipeQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // ---------- SUCURSALES
@@ -311,34 +333,29 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminSucursales'],
         mutationFn: getAdminStoresQueryFunction,
         onSuccess: (data) => {
-            if (!session.userData.isAdmin) {
-                setSucursales(data.filter((s) => s.id == session.userData.sucursal));
-            } else {
-                setSucursales(data);
-            }
+            setSucursales(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setSucursales([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // crear
     const { mutateAsync: callCrearSucursal, isPending: callCrearSucursalLoading } = useMutation({
         mutationKey: ['adminCrearSucursal'],
         mutationFn: postAdminStoresAddStoreQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // modificar
     const { mutateAsync: callActualizarSucursal, isPending: callActualizarSucursalLoading } = useMutation({
         mutationKey: ['adminActualizarSucursal'],
         mutationFn: putAdminStoresUpdateStoreQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // listar horarios
@@ -348,19 +365,18 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setHorariosSucursal(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setHorariosSucursal([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // modificar horarios
     const { mutateAsync: callUpdateSchedule, isPending: callUpdateScheduleLoading } = useMutation({
         mutationKey: ['adminUpdateSchedule'],
         mutationFn: putAdminStoresUpdateScheduleZoneQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // listar zonas de entrega
@@ -370,37 +386,36 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setDeliverySucursal(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setDeliverySucursal([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // crear zona de entrega
     const { mutateAsync: callCrearDeliveryZone, isPending: callCrearDeliveryZoneLoading } = useMutation({
         mutationKey: ['adminCrearDeliveryZone'],
         mutationFn: postAdminStoresAddDeliveryZoneQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // modificar zona de entrega
     const { mutateAsync: callActualizarDeliveryZone, isPending: callActualizarDeliveryZoneLoading } = useMutation({
         mutationKey: ['adminActualizarDeliveryZone'],
         mutationFn: putAdminStoresUpdateDeliveryZoneQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // eliminar zona de entrega   
     const { mutateAsync: callBorrarDeliveryZone, isPending: callBorrarDeliveryZoneLoading } = useMutation({
         mutationKey: ['adminBorrarDeliveryZone'],
         mutationFn: deleteAdminStoresDeleteDeliveryZoneQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // ---------- COMBOS
@@ -411,28 +426,27 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setCombos(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setCombos([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // crear
     const { mutateAsync: callCrearCombo, isPending: callCrearComboLoading } = useMutation({
         mutationKey: ['adminCrearCombo'],
         mutationFn: postAdminCatalogAddComboQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // borrar
     const { mutateAsync: callBorrarCombo, isPending: callBorrarComboLoading } = useMutation({
         mutationKey: ['adminBorrarCombo'],
         mutationFn: deleteAdminCatalogDeleteComboQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // ---------- CATEGORÍAS
@@ -443,37 +457,36 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setCategoriasTodas(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setCategoriasTodas([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // crear
     const { mutateAsync: callCrearCategoria, isPending: callCrearCategoriaLoading } = useMutation({
         mutationKey: ['adminCrearCategoria'],
         mutationFn: postAdminCatalogAddCategoryQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // actualizar
     const { mutateAsync: callActualizarCategoria, isPending: callActualizarCategoriaLoading } = useMutation({
         mutationKey: ['adminActualizarCategoria'],
         mutationFn: putAdminCatalogUpdateCategoryQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // eliminar
     const { mutateAsync: callEliminarCategoria, isPending: callEliminarCategoriaLoading } = useMutation({
         mutationKey: ['adminEliminarCategoria'],
         mutationFn: deleteAdminCatalogDeleteCategoryQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
 
@@ -485,19 +498,18 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setMateriales(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setMateriales([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // crear
     const { mutateAsync: callCrearMaterial, isPending: callCrearMaterialLoading } = useMutation({
         mutationKey: ['adminCrearMaterial'],
         mutationFn: postAdminInventoryAddMaterialQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // inventario materiales sucursal
@@ -507,10 +519,9 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setInventarioMaterialesSucursal(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setInventarioMaterialesSucursal([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // inventario productos sucursal
@@ -528,20 +539,18 @@ const AdminDataProvider = ({ children }) => {
 
             setInventarioProductosSucursal(merged);
         },
-        onError: (error) => {
-            console.log(error);
-            setInventarioProductosSucursal([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // inbound
     const { mutateAsync: callInbound, isPending: callInboundLoading } = useMutation({
         mutationKey: ['adminInbound'],
         mutationFn: postAdminInventoryInboundQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
-
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // ---------- FABRICA
@@ -549,29 +558,27 @@ const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callMakeProducto, isPending: callMakeProductoLoading } = useMutation({
         mutationKey: ['adminMakeProducto'],
         mutationFn: postAdminInventoryMakeProductsQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
-
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // transfer
     const { mutateAsync: callTransferProducto, isPending: callTransferProductoLoading } = useMutation({
         mutationKey: ['adminTransferProducto'],
         mutationFn: postAdminInventoryTransferProductsQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
-
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // adjust
     const { mutateAsync: callAdjustProducto, isPending: callAdjustProductoLoading } = useMutation({
         mutationKey: ['adminAdjustProducto'],
         mutationFn: postAdminInventoryAdjustProductsQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // ---------- COMPANY INFO
@@ -582,19 +589,18 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setCompanyInfo(data);
         },
-        onError: (error) => {
-            console.log(error);
-            setCompanyInfo([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // update
     const { mutateAsync: callActualizarCompanyInfo, isPending: callActualizarCompanyInfoLoading } = useMutation({
         mutationKey: ['adminActualizarCompanyInfo'],
         mutationFn: putAdminStoresUpdateCompanyInfoQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // --------- ORDERS
@@ -603,9 +609,9 @@ const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callCreateOrder, isPending: callCreateOrderLoading } = useMutation({
         mutationKey: ['adminCreateOrder'],
         mutationFn: postAdminOrdersCreateOrderQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // get
@@ -613,38 +619,30 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminOrders'],
         mutationFn: getAdminOrdersGetOrdersQueryFunction,
         onSuccess: (data) => {
-            // if (session.userData.isAdmin) {
-            //     setOrders(data);
-            // } else {
-            //     const filteredOrdersByStoreId = data.filter((o) => o.storeId == sucursalSeleccionada);
-            //     setOrders(filteredOrdersByStoreId);
-            // }
             const filteredOrdersByStoreId = data.filter((o) => o.storeId == sucursalSeleccionada);
             setOrders(filteredOrdersByStoreId);
         },
-        onError: (error) => {
-            console.log(error);
-            setOrders([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // paycash
     const { mutateAsync: callOrderPayCash, isPending: callOrderPayCashLoading } = useMutation({
         mutationKey: ['adminOrderPayCash'],
         mutationFn: postAdminOrdersPayCashQueryFunction,
-        onError: (error) => {
-            console.log(error);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // close
     const { mutateAsync: callOrderClose, isPending: callOrderCloseLoading } = useMutation({
         mutationKey: ['adminOrderClose'],
         mutationFn: postAdminOrdersCloseQueryFunction,
-        onError: (error) => {
-            console.log(error);
-            setCompanyInfo([]);
-        }
+        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: 2000
     });
 
     // public print job
@@ -652,16 +650,16 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['publicCreatePrintJob'],
         mutationFn: postPublicOrdersCreatePrintJobQueryFunction,
         onError: (error) => {
-            console.log(error);
-        }
+            if (logErrorsToConsole) console.log(error);
+        },
     });
 
     const { mutateAsync: callPublicForcePrintJob, isPending: callPublicForcePrintJobLoading } = useMutation({
         mutationKey: ['publicForcePrintJob'],
         mutationFn: putPublicOrdersForcePrintJobQueryFunction,
         onError: (error) => {
-            console.log(error);
-        }
+            if (logErrorsToConsole) console.log(error);
+        },
     });
 
 

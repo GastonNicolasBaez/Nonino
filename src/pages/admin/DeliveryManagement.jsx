@@ -38,7 +38,6 @@ export function DeliveryManagement() {
         adminDataLoading: loading,
         deliverySucursal: deliveryZones,
 
-        callDeliveryZones,
         callCrearDeliveryZone,
         callActualizarDeliveryZone,
         callBorrarDeliveryZone
@@ -108,10 +107,6 @@ export function DeliveryManagement() {
             await callBorrarDeliveryZone({
                 _storeId: selectedStore,
                 _deliveryZoneId: zoneId,
-                _accessToken: session.userData.accessToken
-            })
-            await callDeliveryZones({
-                _storeId: selectedStore,
                 _accessToken: session.userData.accessToken
             })
             toast.success("Zona de delivery eliminada");
@@ -197,10 +192,6 @@ export function DeliveryManagement() {
                         _deliveryZone: updZone,
                         _accessToken: session.userData.accessToken
                     })
-                    await callDeliveryZones({
-                        _storeId: selectedStore,
-                        _accessToken: session.userData.accessToken
-                    })
                     toast.success("Zona de delivery actualizada correctamente");
                 } else {
                     // Crear nueva
@@ -208,10 +199,6 @@ export function DeliveryManagement() {
                     await callCrearDeliveryZone({
                         _storeId: selectedStore,
                         _deliveryZone: newZone,
-                        _accessToken: session.userData.accessToken
-                    })
-                    await callDeliveryZones({
-                        _storeId: selectedStore,
                         _accessToken: session.userData.accessToken
                     })
                     toast.success("Zona de delivery creada correctamente");

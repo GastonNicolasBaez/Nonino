@@ -269,7 +269,6 @@ export function OrderManagement() {
         productos,
         sucursalSeleccionada,
         adminDataLoading: loading,
-        callOrders,
         callCreateOrder,
         callOrderPayCash,
         callOrderClose,
@@ -355,7 +354,6 @@ export function OrderManagement() {
                     _orderId: order.id,
                     _accessToken: session.userData.accessToken,
                 })
-                callOrders(session.userData.accessToken)
                 toast.success("Orden cerrada correctamente");
             }
         });
@@ -372,7 +370,6 @@ export function OrderManagement() {
                     _orderId: orderId,
                     _accessToken: session.userData.accessToken,
                 });
-                callOrders(session.userData.accessToken)
                 toast.success("Orden cerrada correctamente");
             }
         });
@@ -389,7 +386,6 @@ export function OrderManagement() {
     };
 
     const handleRefresh = () => {
-        callOrders(session.userData.accessToken);
     };
 
     const handleMoreFilters = () => {

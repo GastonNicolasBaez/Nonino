@@ -28,12 +28,10 @@ export function MenuManagement() {
     const {
         productos: products,
         combos,
-        sucursales: stores,
         productosSucursal,
         combosSucursal,
         sucursalSeleccionada: selectedStore,
 
-        callProductosYCategoriasSucursal,
         callAsignarASucursal,
         adminDataLoading
     } = useAdminData();
@@ -46,71 +44,71 @@ export function MenuManagement() {
     // Estados para productos
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([]);
-    const [productStates, setProductStates] = useState({});
+    // const [productStates, setProductStates] = useState({});
 
     // Estados para combos
     const [comboSearchTerm, setComboSearchTerm] = useState("");
     const [selectedCombos, setSelectedCombos] = useState([]);
 
     // Función helper para obtener el estado actual de un producto
-    const getProductState = (product) => {
-        const localState = productStates[product.id] || {};
-        return {
-            ...product,
-            isAvailable: localState.isAvailable !== undefined ? localState.isAvailable : product.isAvailable,
-            isPopular: localState.isPopular !== undefined ? localState.isPopular : product.isPopular
-        };
-    };
+    // const getProductState = (product) => {
+    //     const localState = productStates[product.id] || {};
+    //     return {
+    //         ...product,
+    //         isAvailable: localState.isAvailable !== undefined ? localState.isAvailable : product.isAvailable,
+    //         isPopular: localState.isPopular !== undefined ? localState.isPopular : product.isPopular
+    //     };
+    // };
 
-    const toggleAvailability = async (productId) => {
-        try {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
+    // const toggleAvailability = async (productId) => {
+    //     try {
+    //         const product = products.find(p => p.id === productId);
+    //         if (!product) return;
 
-            // Obtener el estado actual del producto
-            const currentProduct = getProductState(product);
-            const newAvailability = !currentProduct.isAvailable;
+    //         // Obtener el estado actual del producto
+    //         const currentProduct = getProductState(product);
+    //         const newAvailability = !currentProduct.isAvailable;
 
-            // Actualizar el estado local inmediatamente
-            setProductStates(prev => ({
-                ...prev,
-                [productId]: {
-                    ...prev[productId],
-                    isAvailable: newAvailability
-                }
-            }));
+    //         // Actualizar el estado local inmediatamente
+    //         setProductStates(prev => ({
+    //             ...prev,
+    //             [productId]: {
+    //                 ...prev[productId],
+    //                 isAvailable: newAvailability
+    //             }
+    //         }));
 
-            toast.success(`Producto ${newAvailability ? 'disponible' : 'no disponible'}`);
-        } catch (error) {
-            console.error('Error al actualizar disponibilidad:', error);
-            toast.error("Error al actualizar el estado del producto");
-        }
-    };
+    //         toast.success(`Producto ${newAvailability ? 'disponible' : 'no disponible'}`);
+    //     } catch (error) {
+    //         console.error('Error al actualizar disponibilidad:', error);
+    //         toast.error("Error al actualizar el estado del producto");
+    //     }
+    // };
 
-    const togglePopular = async (productId) => {
-        try {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
+    // const togglePopular = async (productId) => {
+    //     try {
+    //         const product = products.find(p => p.id === productId);
+    //         if (!product) return;
 
-            // Obtener el estado actual del producto
-            const currentProduct = getProductState(product);
-            const newPopularity = !currentProduct.isPopular;
+    //         // Obtener el estado actual del producto
+    //         const currentProduct = getProductState(product);
+    //         const newPopularity = !currentProduct.isPopular;
 
-            // Actualizar el estado local inmediatamente
-            setProductStates(prev => ({
-                ...prev,
-                [productId]: {
-                    ...prev[productId],
-                    isPopular: newPopularity
-                }
-            }));
+    //         // Actualizar el estado local inmediatamente
+    //         setProductStates(prev => ({
+    //             ...prev,
+    //             [productId]: {
+    //                 ...prev[productId],
+    //                 isPopular: newPopularity
+    //             }
+    //         }));
 
-            toast.success(`Producto ${newPopularity ? 'marcado como popular' : 'removido de populares'}`);
-        } catch (error) {
-            console.error('Error al actualizar popularidad:', error);
-            toast.error("Error al actualizar el estado de popularidad");
-        }
-    };
+    //         toast.success(`Producto ${newPopularity ? 'marcado como popular' : 'removido de populares'}`);
+    //     } catch (error) {
+    //         console.error('Error al actualizar popularidad:', error);
+    //         toast.error("Error al actualizar el estado de popularidad");
+    //     }
+    // };
 
     // Filtrar productos según el término de búsqueda
     const filteredProducts = products.filter(product => {
@@ -242,9 +240,6 @@ export function MenuManagement() {
             setSelectedCombos([]);
             setSearchTerm("");
             setComboSearchTerm("");
-
-            // Actualizar lista de productos de la sucursal
-            await callProductosYCategoriasSucursal(selectedStore);
 
             return true;
         } catch (error) {

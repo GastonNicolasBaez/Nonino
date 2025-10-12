@@ -41,9 +41,9 @@ export function MaterialManagement() {
         materiales: materials,
         adminDataLoading: loading,
         sucursalSeleccionada,
-        callMateriales,
         callCrearMaterial,
         callInventarioMaterialesSucursal,
+        callInbound,
     } = useAdminData();
 
     const session = useSession();
@@ -189,7 +189,7 @@ export function MaterialManagement() {
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
-                callMateriales(session.userData.accessToken);
+                
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         }
@@ -353,7 +353,6 @@ export function MaterialManagement() {
                         });
                         setShowAddModal(false);
                         toast.success(`Material ${newItem.name} agregado correctamente`);
-                        callMateriales(session.userData.accessToken);
                     }}
                 />
             )}

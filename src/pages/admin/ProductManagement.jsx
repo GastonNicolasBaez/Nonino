@@ -74,7 +74,6 @@ export function ProductManagement() {
         inventario,
         adminDataLoading: loading,
 
-        callProductosYCategorias,
         callProductoNuevo,
         callBorrarProducto,
         callModificarProducto,
@@ -254,16 +253,15 @@ export function ProductManagement() {
             type: "danger",
             onConfirm: async () => {
                 await callBorrarProducto({ _id: productId, _accessToken: session.userData.accessToken });
-                callProductosYCategorias(session.userData.accessToken);
                 toast.success("Producto eliminado correctamente");
             }
         });
     };
 
-    const updateStock = (productId, newStock) => {
-        // TODO: Implementar llamada al backend para actualizar stock
-        toast.success("Stock actualizado correctamente");
-    };
+    // const updateStock = (productId, newStock) => {
+    //     // TODO: Implementar llamada al backend para actualizar stock
+    //     toast.success("Stock actualizado correctamente");
+    // };
 
     // Función para manejar el guardado del nuevo producto desde el modal de pasos
     const handleSaveProduct = async (productData) => {
@@ -302,7 +300,6 @@ export function ProductManagement() {
             }
 
             toast.success("Producto creado correctamente");
-            callProductosYCategorias(session.userData.accessToken);
             setShowAddModal(false);
         } catch (error) {
             console.error('Error al crear producto:', error);
@@ -511,7 +508,6 @@ export function ProductManagement() {
                         _accessToken: session.userData.accessToken,
                     });
                     toast.success("Producto actualizado correctamente");
-                    callProductosYCategorias(session.userData.accessToken);
                 } else {
                     // CREAR NUEVO
                     await callProductoNuevo({
@@ -519,7 +515,6 @@ export function ProductManagement() {
                         _accessToken: session.userData.accessToken
                     });
                     toast.success("Producto creado correctamente");
-                    callProductosYCategorias(session.userData.accessToken);
                 }
                 onClose();
             } catch (error) {

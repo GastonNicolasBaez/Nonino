@@ -105,8 +105,6 @@ export function CategoryManagement() {
 
             setShowAddModal(false);
             setEditingCategory(null);
-            // Recargar categorías y productos
-            await callCategorias(session.userData.accessToken);
         } catch (error) {
             console.error('Error al guardar categoría:', error);
             toast.error("Error al guardar la categoría");
@@ -134,8 +132,6 @@ export function CategoryManagement() {
                         _accessToken: session.userData.accessToken
                     });
                     toast.success(`Categoría "${category.name}" eliminada correctamente`);
-                    // Recargar categorías
-                    await callProductosYCategorias(session.userData.accessToken);
                 } catch (error) {
                     console.error('Error al eliminar categoría:', error);
                     toast.error("Error al eliminar la categoría");
@@ -158,7 +154,9 @@ export function CategoryManagement() {
             label: "Actualizar",
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
-            // onClick: () => callProductosYCategorias(session.userData.accessToken),
+            onClick: () => {
+                
+            },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         },
     ];

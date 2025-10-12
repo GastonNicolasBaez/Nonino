@@ -45,8 +45,7 @@ export function ProductStockManagement() {
         sucursalSeleccionada: selectedStore,
         adminDataLoading: loading,
         categoriasTodas,
-
-        callInventarioMaterialesSucursal,
+        
     } = useAdminData();
 
     const session = useSession();
@@ -155,11 +154,7 @@ export function ProductStockManagement() {
             variant: "empanada",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
-                toast.info("Actualizando stock de productos...");
-                callInventarioMaterialesSucursal({
-                    _storeId: selectedStore,
-                    _accessToken: session.userData.accessToken,
-                })
+                
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         }

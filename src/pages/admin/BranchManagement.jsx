@@ -60,8 +60,6 @@ export function BranchManagement() {
         horariosSucursal: schedule,
         callCrearSucursal,
         callActualizarSucursal,
-        callSucursales,
-        callSchedule,
         callUpdateSchedule,
     } = useAdminData();
 
@@ -87,7 +85,6 @@ export function BranchManagement() {
             });
 
             toast.success(`Local "${storeData.name}" agregado correctamente`);
-            await callSucursales(session.userData.accessToken);
             setIsAddStoreModalOpen(false);
 
         } catch (error) {
@@ -113,10 +110,6 @@ export function BranchManagement() {
             }
 
             toast.success("Horarios guardados correctamente");
-            await callSchedule({
-                _storeId: selectedStore,
-                _accessToken: session.userData.accessToken,
-            });
         } catch (error) {
             console.error('Error al guardar horarios:', error);
             toast.error('Error al guardar los horarios');
@@ -219,8 +212,6 @@ export function BranchManagement() {
                     _accessToken: session.userData.accessToken,
                 });
                 toast.success("Cambios guardados correctamente");
-                // Recargar la lista de sucursales
-                await callSucursales(session.userData.accessToken);
             } catch (error) {
                 console.error('Error al actualizar sucursal:', error);
                 toast.error('Error al guardar los cambios');

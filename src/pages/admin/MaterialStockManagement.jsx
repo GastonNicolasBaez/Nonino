@@ -15,6 +15,7 @@ import { Portal } from "@/components/common/Portal";
 import { SectionHeader, StatsCards, CustomSelect, EmptyState } from "@/components/branding";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
+import { AddStockMaterialModal } from "@/components/admin/AddStockMaterialModal";
 
 // ICONOS
 import {
@@ -53,6 +54,7 @@ export function MaterialStockManagement() {
     } = useAdminData();
 
     const [searchTerm, setSearchTerm] = useState("");
+    const [showAddStockMaterialModal, setShowAddStockMaterialModal] = useState(false);
 
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -131,10 +133,7 @@ export function MaterialStockManagement() {
             label: "Ingresar",
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
-            onClick: () => {
-                toast.info("Actualizando stock de materiales...");
-                // Aquí se llamaría a la función de actualización
-            },
+            onClick: () => setShowAddStockMaterialModal(true),
             icon: <Plus className="w-4 h-4 mr-2" />
         },
         {
@@ -313,6 +312,18 @@ export function MaterialStockManagement() {
             {/* Modales */}
             <ConfirmModalComponent />
             <UpdateStockModalComponent />
+            
+            {/* Modal de ingreso de stock de materiales */}
+            <AddStockMaterialModal
+                isOpen={showAddStockMaterialModal}
+                onClose={() => setShowAddStockMaterialModal(false)}
+                onSave={(stockData) => {
+                    console.log("Materiales a ingresar:", stockData);
+                    toast.success(`Stock de ${stockData.length} materiales ingresado correctamente`);
+                    setShowAddStockMaterialModal(false);
+                    // Aquí se implementaría la lógica de guardado
+                }}
+            />
         </div>
     );
 }

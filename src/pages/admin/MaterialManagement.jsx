@@ -15,7 +15,6 @@ import {
     X,
     Save,
     BarChart,
-    PackagePlus,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,7 +43,6 @@ export function MaterialManagement() {
         sucursalSeleccionada,
         callMateriales,
         callCrearMaterial,
-        callInbound,
         callInventarioMaterialesSucursal,
     } = useAdminData();
 
@@ -54,8 +52,6 @@ export function MaterialManagement() {
     //   const [categoryFilter, setCategoryFilter] = useState("all");
     // const [materials, setMaterials] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showInboundModal, setShowInboundModal] = useState(false);
-    const [selectedMaterial, setSelectedMaterial] = useState(null);
 
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -143,10 +139,6 @@ export function MaterialManagement() {
         setShowAddModal(true);
     };
 
-    const handleOpenInbound = (material) => {
-        setSelectedMaterial(material);
-        setShowInboundModal(true);
-    };
 
     // // Preparar datos para StatsCards - críticas primero, resto neutras
     // const statsData = [
@@ -321,17 +313,6 @@ export function MaterialManagement() {
                       </td> */}
                                             <td className="p-4" style={{ width: '1px' }}>
                                                 <div className="flex gap-2">
-                                                    { (session.userData.isFabrica || session.userData.isAdmin) &&
-                                                    <Button
-                                                        variant="empanada"
-                                                        size="sm"
-                                                        onClick={() => handleOpenInbound(item)}
-                                                        disabled={!sucursalSeleccionada}
-                                                        title="Registrar Entrada"
-                                                    >
-                                                        <PackagePlus className="w-4 h-4" />
-                                                    </Button>
-                                                    }
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -377,45 +358,6 @@ export function MaterialManagement() {
                 />
             )}
 
-            {/* Inbound Modal */}
-            {showInboundModal && selectedMaterial && (
-                <InboundMaterialModal
-                    material={selectedMaterial}
-                    onClose={() => {
-                        setShowInboundModal(false);
-                        setSelectedMaterial(null);
-                    }}
-                    onConfirm={async (inboundData) => {
-                        // Aquí iría la llamada a la API
-
-                        const newInboundData = {
-                            factoryId: sucursalSeleccionada,
-                            storeId: null,
-                            materialId: inboundData.materialId,
-                            quantity: inboundData.quantity,
-                            operationId: null,
-                            lotNumber: null,
-                            notes: inboundData.notes,
-                        }
-
-                        await callInbound({
-                            _inbound: newInboundData,
-                            _accessToken: session.userData.accessToken,
-                        });
-
-                        toast.success(`Entrada registrada`);
-
-                        await callInventarioMaterialesSucursal({
-                            _storeId: sucursalSeleccionada,
-                            _accessToken: session.userData.accessToken
-                        });
-
-                        setShowInboundModal(false);
-                        setSelectedMaterial(null);
-                        callMateriales(session.userData.accessToken);
-                    }}
-                />
-            )}
 
             {/* Modal Components */}
             <ConfirmModalComponent />
@@ -608,104 +550,6 @@ function AddMaterialModal({ onClose, onSave }) {
                   />
                 </CardContent>
               </Card> */}
-            </div>
-        </BrandedModal>
-    );
-}
-
-// Modal de Registrar Entrada (Inbound)
-function InboundMaterialModal({ material, onClose, onConfirm }) {
-    const [quantity, setQuantity] = useState("");
-    const [notes, setNotes] = useState("");
-
-    const handleConfirm = async () => {
-        if (!quantity || parseFloat(quantity) <= 0) {
-            toast.error("Debes ingresar una cantidad válida");
-            return;
-        }
-
-        const inboundData = {
-            materialId: material.id,
-            materialName: material.name,
-            quantity: parseFloat(quantity*1000),
-            notes,
-            timestamp: new Date().toISOString()
-        };
-
-        onConfirm(inboundData);
-    };
-
-    const isFormValid = quantity && parseFloat(quantity) > 0;
-
-    return (
-        <BrandedModal
-            isOpen={true}
-            onClose={onClose}
-            title="Registrar Entrada de Material"
-            subtitle={`Material: ${material.name}`}
-            icon={<PackagePlus className="w-6 h-6" />}
-        >
-            <div className="space-y-6">
-
-                {/* Cantidad */}
-                <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
-                        Cantidad * ({material.unit == 'g' ? 'kilogramos' : 'litros'})
-                    </label>
-                    <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                        placeholder={`Cantidad en ${material.unit == 'g' ? 'kilogramos' : 'litros'}`}
-                        className="text-base"
-                    />
-                </div>
-
-                {/* Número de Lote */}
-                {/* <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
-                        Número de Lote
-                    </label>
-                    <Input
-                        type="text"
-                        value={batchNumber}
-                        onChange={(e) => setBatchNumber(e.target.value)}
-                        placeholder="Ej: LOTE-2024-001"
-                        className="text-base"
-                    />
-                </div> */}
-
-                {/* Notas */}
-                <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
-                        Notas
-                    </label>
-                    <textarea
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Notas adicionales sobre esta entrada (opcional)..."
-                        rows={3}
-                        className="w-full px-3 py-2 border-2 border-gray-300 dark:border-empanada-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden bg-white dark:bg-empanada-dark text-gray-900 dark:text-white"
-                    />
-                </div>
-            </div>
-
-            <div className="flex gap-4 my-4">
-                <button
-                    onClick={onClose}
-                    className="border rounded px-2 py-1"
-                >
-                    Cancelar
-                </button>
-                <button
-                    onClick={handleConfirm}
-                    disabled={!isFormValid}
-                    className="border rounded px-2 py-1"
-                >
-                    Confirmar
-                </button>
             </div>
         </BrandedModal>
     );

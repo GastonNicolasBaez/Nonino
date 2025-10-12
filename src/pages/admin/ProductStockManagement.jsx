@@ -15,6 +15,7 @@ import { Portal } from "@/components/common/Portal";
 import { SectionHeader, StatsCards, CustomSelect, EmptyState } from "@/components/branding";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
 import { useUpdateStockModal } from "@/components/common/UpdateStockModal";
+import { AddStockProductModal } from "@/components/admin/AddStockProductModal";
 
 // ICONOS
 import {
@@ -52,6 +53,7 @@ export function ProductStockManagement() {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("all");
+    const [showAddStockModal, setShowAddStockModal] = useState(false);
 
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -145,10 +147,7 @@ export function ProductStockManagement() {
             label: "Ingresar",
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
-            onClick: () => {
-                toast.info("Actualizando stock de materiales...");
-                // Aquí se llamaría a la función de actualización
-            },
+            onClick: () => setShowAddStockModal(true),
             icon: <Plus className="w-4 h-4 mr-2" />
         },
         {
@@ -366,6 +365,18 @@ export function ProductStockManagement() {
             {/* Modales */}
             <ConfirmModalComponent />
             <UpdateStockModalComponent />
+            
+            {/* Modal de ingreso de stock de productos */}
+            <AddStockProductModal
+                isOpen={showAddStockModal}
+                onClose={() => setShowAddStockModal(false)}
+                onSave={(stockData) => {
+                    console.log("Productos a ingresar:", stockData);
+                    toast.success(`Stock de ${stockData.length} productos ingresado correctamente`);
+                    setShowAddStockModal(false);
+                    // Aquí se implementaría la lógica de guardado
+                }}
+            />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import { formatPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartProvider';
 import { Star, Plus, Clock, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { ProductImage } from '@/components/ui/OptimizedImage';
 import noninoEmpanada from '@/assets/nonino.webp';
 
 const PARALLAX_FACTOR = 0.4;
@@ -68,43 +69,25 @@ export function ProductsCarousel({ products = [], className = '', title = 'Nuest
     emblaMainApi.on('reInit', onSelect);
   }, [emblaMainApi, onSelect]);
 
-  // Parallax effect
+  // Parallax effect simplificado - siempre activo
   const tweenParallax = useCallback((emblaApi, eventName) => {
-    const engine = emblaApi.internalEngine();
-    const scrollProgress = emblaApi.scrollProgress();
-    const slidesInView = emblaApi.slidesInView();
-    const isScrollEvent = eventName === 'scroll';
-
-    emblaApi.scrollSnapList().forEach((scrollSnap, snapIndex) => {
-      let diffToTarget = scrollSnap - scrollProgress;
-      const slidesInSnap = engine.slideRegistry[snapIndex];
-
-      slidesInSnap.forEach((slideIndex) => {
-        if (isScrollEvent && !slidesInView.includes(slideIndex)) return;
-
-        if (engine.options.loop) {
-          engine.slideLooper.loopPoints.forEach((loopItem) => {
-            const target = loopItem.target();
-
-            if (slideIndex === loopItem.index && target !== 0) {
-              const sign = Math.sign(target);
-
-              if (sign === -1) {
-                diffToTarget = scrollSnap - (1 + scrollProgress);
-              }
-              if (sign === 1) {
-                diffToTarget = scrollSnap + (1 - scrollProgress);
-              }
-            }
-          });
-        }
-
-        const translate = diffToTarget * (-1 * PARALLAX_FACTOR) * 100;
-        const tweenNode = emblaApi.slideNodes()[slideIndex].querySelector('.parallax-layer');
-        if (tweenNode) {
-          tweenNode.style.transform = `translateX(${translate}%)`;
-        }
-      });
+    const slides = emblaApi.slideNodes();
+    
+    slides.forEach((slide, slideIndex) => {
+      const tweenNode = slide.querySelector('.parallax-image img');
+      
+      if (tweenNode) {
+        // Parallax basado en posición del slide
+        const slidePosition = slideIndex;
+        const totalSlides = slides.length;
+        const progress = slidePosition / Math.max(totalSlides - 1, 1);
+        
+        // Crear movimiento parallax basado en progreso
+        const translate = (progress - 0.5) * 20; // -10% a +10%
+        
+        // Aplicar transform con scale y translateX
+        tweenNode.style.transform = `scale(1.2) translateX(${translate}%)`;
+      }
     });
   }, []);
 
@@ -167,18 +150,12 @@ export function ProductsCarousel({ products = [], className = '', title = 'Nuest
                   style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
                 >
                   <div className="relative overflow-hidden rounded-xl h-80 md:h-96 group cursor-pointer bg-gray-100">
-                    <div className="parallax-layer absolute inset-0 w-[130%] -left-[15%]">
-                      <img
-                        className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                        src={
-                          product.image || product.imageUrl || noninoEmpanada
-                        }
-                        alt={product.name}
-                        onError={(e) => {
-                          e.target.src = noninoEmpanada;
-                        }}
-                      />
-                    </div>
+                    <ProductImage
+                      product={product}
+                      context="parallax"
+                      className="parallax-image absolute inset-0 w-full h-full"
+                      priority={index < 3}
+                    />
 
                     {/* Badges - Always visible */}
                     <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">

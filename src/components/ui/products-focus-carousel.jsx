@@ -14,11 +14,12 @@ import { ProductImage } from '@/components/ui/OptimizedImage';
 const PARALLAX_FACTOR = 0.4;
 
 // Componente optimizado para imágenes de productos - ahora usa ProductImage
-const OptimizedProductImage = React.memo(({ product, onImageLoad, priority = false }) => {
+const OptimizedProductImage = React.memo(({ product, onImageLoad, priority = false, context = 'default' }) => {
     return (
         <ProductImage 
             product={product} 
             priority={priority}
+            context={context}
             onLoad={onImageLoad}
             className="group-hover:scale-105"
         />
@@ -192,9 +193,11 @@ const ProductFocusCard = React.memo(({
             hovered !== null && hovered !== globalIndex && "blur-sm scale-[0.98]"
         )}
     >
-        <div className="parallax-layer absolute inset-0 w-[130%] -left-[15%]">
-            <OptimizedProductImage product={product} />
-        </div>
+        <OptimizedProductImage 
+            product={product} 
+            context="parallax"
+            className="parallax-image absolute inset-0 w-full h-full"
+        />
 
         {/* Badges - Always visible */}
         {/* <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
@@ -282,6 +285,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
         return null;
     }
 
+
     // Crear columnas de productos (cada columna = 2 productos apilados)
     const columns = [];
     for (let i = 0; i < products.length; i += 2) {
@@ -329,50 +333,33 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
         emblaMainApi.on('reInit', onSelect);
     }, [emblaMainApi, onSelect]);
 
-    // Parallax effect
+    // Parallax effect simplificado - siempre activo
     const tweenParallax = useCallback((emblaApi, eventName) => {
-        const engine = emblaApi.internalEngine();
-        const scrollProgress = emblaApi.scrollProgress();
-        const slidesInView = emblaApi.slidesInView();
-        const isScrollEvent = eventName === 'scroll';
-
-        emblaApi.scrollSnapList().forEach((scrollSnap, snapIndex) => {
-            let diffToTarget = scrollSnap - scrollProgress;
-            const slidesInSnap = engine.slideRegistry[snapIndex];
-
-            slidesInSnap.forEach((slideIndex) => {
-                if (isScrollEvent && !slidesInView.includes(slideIndex)) return;
-
-                if (engine.options.loop) {
-                    engine.slideLooper.loopPoints.forEach((loopItem) => {
-                        const target = loopItem.target();
-
-                        if (slideIndex === loopItem.index && target !== 0) {
-                            const sign = Math.sign(target);
-
-                            if (sign === -1) {
-                                diffToTarget = scrollSnap - (1 + scrollProgress);
-                            }
-                            if (sign === 1) {
-                                diffToTarget = scrollSnap + (1 - scrollProgress);
-                            }
-                        }
-                    });
+        const slides = emblaApi.slideNodes();
+        
+        slides.forEach((slide, slideIndex) => {
+            const tweenNodes = slide.querySelectorAll('.parallax-image img');
+            
+            tweenNodes.forEach(tweenNode => {
+                if (tweenNode) {
+                    // Parallax basado en posición del slide
+                    const slidePosition = slideIndex;
+                    const totalSlides = slides.length;
+                    const progress = slidePosition / Math.max(totalSlides - 1, 1);
+                    
+                    // Crear movimiento parallax basado en progreso
+                    const translate = (progress - 0.5) * 20; // -10% a +10%
+                    
+                    // Aplicar transform con scale y translateX
+                    tweenNode.style.transform = `scale(1.2) translateX(${translate}%)`;
                 }
-
-                const translate = diffToTarget * (-1 * PARALLAX_FACTOR) * 100;
-                const tweenNodes = emblaApi.slideNodes()[slideIndex].querySelectorAll('.parallax-layer');
-                tweenNodes.forEach(tweenNode => {
-                    if (tweenNode) {
-                        tweenNode.style.transform = `translateX(${translate}%)`;
-                    }
-                });
             });
         });
     }, []);
 
     useEffect(() => {
         if (!emblaMainApi) return;
+
 
         emblaMainApi.on('reInit', tweenParallax).on('scroll', tweenParallax);
         tweenParallax(emblaMainApi);

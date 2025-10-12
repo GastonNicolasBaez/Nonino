@@ -1,5 +1,6 @@
 import React, { useState, memo } from 'react';
 import { cn } from '@/lib/utils';
+import { getAdaptiveObjectPosition } from '@/utils/imagePositioning';
 
 /**
  * Componente optimizado para imágenes de productos con alta calidad
@@ -13,6 +14,9 @@ export const OptimizedImage = memo(({
     quality = 'high',
     loading = 'lazy',
     decoding = 'async',
+    context = 'default',
+    focalPoint = null,
+    product = null,
     onLoad,
     onError,
     fallbackSrc,
@@ -49,6 +53,9 @@ export const OptimizedImage = memo(({
     const loadingConfig = priority ? 'eager' : loading;
     const decodingConfig = priority ? 'sync' : decoding;
     const fetchPriority = priority ? 'high' : undefined;
+    
+    // Calcular object-position adaptativo
+    const adaptiveObjectPosition = getAdaptiveObjectPosition(context, focalPoint, product);
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-gray-100">
@@ -57,6 +64,7 @@ export const OptimizedImage = memo(({
                     "w-full h-full transition-all duration-300",
                     // Optimizaciones de calidad para desktop
                     quality === 'high' && "image-rendering: high-quality",
+                    // Usar object-cover para todos los contextos
                     imageError ? "object-contain p-1" : "object-cover object-center",
                     className
                 )}
@@ -69,15 +77,20 @@ export const OptimizedImage = memo(({
                 onError={handleImageError}
                 style={{
                     opacity: imageLoaded ? 1 : 0,
-                    transition: 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out',
-                    // Optimizaciones de renderizado para alta calidad
-                    ...(quality === 'high' && {
+                    // Solo aplicar transition de opacity para contexto parallax
+                    transition: context === 'parallax' 
+                        ? 'opacity 0.3s ease-in-out' 
+                        : 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out',
+                    // Optimizaciones de renderizado (solo cuando NO es parallax)
+                    ...(quality === 'high' && context !== 'parallax' && {
                         imageRendering: '-webkit-optimize-contrast',
                         backfaceVisibility: 'hidden',
                         transform: 'translateZ(0)'
                     }),
                     minWidth: imageError ? 'auto' : '100%',
                     minHeight: imageError ? 'auto' : '100%',
+                    // Posicionamiento adaptativo
+                    objectPosition: adaptiveObjectPosition,
                 }}
                 {...props}
             />
@@ -118,16 +131,24 @@ export const useProductImage = (product) => {
 /**
  * Componente específico para imágenes de productos con configuración optimizada
  */
-export const ProductImage = memo(({ product, className = '', priority = false, ...props }) => {
+export const ProductImage = memo(({ 
+    product, 
+    className = '', 
+    priority = false, 
+    context = 'default',
+    ...props 
+}) => {
     const imageSrc = useProductImage(product);
     
     return (
         <OptimizedImage
             src={imageSrc}
             alt={`${product.name || 'Producto'} - Empanada artesanal patagónica Nonino San Martín de los Andes`}
-            className={cn("group-hover:scale-105", className)}
+            className={cn(className)}
             priority={priority}
             quality="high"
+            context={context}
+            product={product}
             fallbackSrc="https://placehold.co/400x300/f59e0b/ffffff?text=Imagen+No+Disponible"
             {...props}
         />

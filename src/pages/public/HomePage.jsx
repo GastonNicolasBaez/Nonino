@@ -56,14 +56,12 @@ export function HomePage() {
     // Force scroll to top on mount to ensure logo animation starts correctly
     useEffect(() => {
         window.scrollTo(0, 0);
-        const id = requestAnimationFrame(() => setInitKey((k) => k + 1));
         // Forzar recálculo de observadores de scroll en el primer render
         const fire = () => window.dispatchEvent(new Event('scroll'));
         const t = setTimeout(fire, 0);
         document.addEventListener('visibilitychange', fire);
         window.addEventListener('load', fire, { once: true });
         return () => {
-            cancelAnimationFrame(id);
             clearTimeout(t);
             document.removeEventListener('visibilitychange', fire);
         };
@@ -251,11 +249,13 @@ export function HomePage() {
         Promise.all([load(heroImage), load(featuresImage)]).then(() => {
             if (cancelled) return;
             setImagesReady(true);
-            // Remontar fondos dependientes e informar a framer del scroll actual
-            requestAnimationFrame(() => {
-                setInitKey((k) => k + 1);
-                window.dispatchEvent(new Event('scroll'));
-            });
+            // Solo actualizar initKey si realmente cambió la imagen, no en el primer montaje
+            if (imagesReady) {
+                requestAnimationFrame(() => {
+                    setInitKey((k) => k + 1);
+                    window.dispatchEvent(new Event('scroll'));
+                });
+            }
         });
         return () => { cancelled = true; };
     }, [heroImage, featuresImage]);
@@ -367,6 +367,7 @@ export function HomePage() {
                             by="word"
                             delay={0.3}
                             duration={0.8}
+                            once={true}
                             className="text-5xl xs:text-6xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl 2xl:text-12xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >

@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Upload, X, RotateCcw, Crop, RotateCw, Move } from "lucide-react";
+import { Upload, X, RotateCcw, Crop, RotateCw, Move, Eye, EyeOff, Monitor, Smartphone } from "lucide-react";
 import { Button } from "./button";
 import { Card, CardContent } from "./card";
+import { detectFocalPoint, calculateSafeArea, generatePositioningRecommendations } from "@/utils/imagePositioning";
 
 export function ImageUpload({ 
   value, 
@@ -23,6 +24,14 @@ export function ImageUpload({
   });
   const [isDraggingImage, setIsDraggingImage] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  
+  // Nuevos estados para el sistema adaptativo
+  const [previewMode, setPreviewMode] = useState('both'); // 'parallax', 'static', 'both'
+  const [focalPoint, setFocalPoint] = useState(null);
+  const [safeArea, setSafeArea] = useState(null);
+  const [recommendations, setRecommendations] = useState(null);
+  const [showGuides, setShowGuides] = useState(true);
+  const [isDetectingFocalPoint, setIsDetectingFocalPoint] = useState(false);
   const fileInputRef = useRef(null);
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
@@ -61,14 +70,34 @@ export function ImageUpload({
     });
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const imageData = e.target.result;
       setOriginalImage(imageData); // Guardar imagen original (NUNCA cambiar)
       setPreview(imageData); // Mostrar imagen original en preview
       setProcessedImage(null); // Limpiar imagen procesada anterior
       setIsImageEdited(false); // Resetear estado de edición
-      setIsEditing(false); // NO entrar automáticamente en modo edición
-      onChange?.(imageData); // Llamar onChange para guardar la imagen inmediatamente
+      setIsEditing(true); // Ir DIRECTAMENTE al modo edición
+      
+      // Detectar punto focal automáticamente
+      setIsDetectingFocalPoint(true);
+      try {
+        const detectedFocalPoint = await detectFocalPoint(imageData);
+        setFocalPoint(detectedFocalPoint);
+        
+        // Calcular área segura
+        const calculatedSafeArea = calculateSafeArea({ width: 480, height: 360 });
+        setSafeArea(calculatedSafeArea);
+        
+        // Generar recomendaciones
+        const generatedRecommendations = generatePositioningRecommendations(detectedFocalPoint, calculatedSafeArea);
+        setRecommendations(generatedRecommendations);
+      } catch (error) {
+        console.warn('Error detectando punto focal:', error);
+      } finally {
+        setIsDetectingFocalPoint(false);
+      }
+      
+      // NO llamar onChange aquí - solo cuando se guarde la edición
     };
     reader.readAsDataURL(file);
   }, [onChange]);
@@ -208,15 +237,6 @@ export function ImageUpload({
     }
   }, [isEditing, editSettings.zoom]);
 
-  const handleStartEdit = () => {
-    // SIEMPRE usar la imagen original al entrar al modo edición
-    setPreview(originalImage); // Volver al original para editar
-    resetSettings(); // Resetear todos los ajustes de edición
-    setIsEditing(true);
-    // Temporalmente marcar como no editada para mostrar object-contain en modo edición
-    setIsImageEdited(false);
-  };
-
   const handleSaveEdit = async () => {
     if (!preview || !canvasRef.current || !imageRef.current) return;
 
@@ -224,10 +244,10 @@ export function ImageUpload({
     const ctx = canvas.getContext('2d');
     const img = imageRef.current;
 
-    // Usar formato rectangular 4:3 para mejor visualización en carruseles
+    // Usar formato rectangular 4:3 mejorado para mejor calidad
     // Este formato es más natural para fotos de productos
-    const canvasWidth = 320;  // Ancho base
-    const canvasHeight = 240; // Alto base (ratio 4:3)
+    const canvasWidth = 480;  // Ancho mejorado (antes 320)
+    const canvasHeight = 360; // Alto mejorado (antes 240)
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
@@ -284,90 +304,212 @@ export function ImageUpload({
         onChange?.(editedImageUrl); // SOLO aquí llamar onChange con la imagen final
       };
       reader.readAsDataURL(blob);
-    }, 'image/jpeg', 0.92); // Calidad ligeramente mejorada para mejor visualización
+    }, 'image/jpeg', 0.95); // Calidad mejorada para mejor visualización
   };
 
   if (isEditing && preview) {
     return (
-      <div className="w-full flex justify-center max-h-[50vh] overflow-y-auto">
-        {/* Layout simplificado y centrado */}
-        <div className="flex flex-col items-center gap-4 max-w-lg">
-
-          {/* Preview como Card de Producto - Centro */}
-          <div className="relative">
-            <div className="w-64 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div
-                ref={previewRef}
-                className="aspect-square relative overflow-hidden cursor-move select-none bg-gray-50 dark:bg-gray-700"
-                onMouseDown={handleMouseDown}
+      <div className="w-full flex justify-center">
+        {/* Layout compacto optimizado */}
+        <div className="flex flex-col items-center gap-3 max-w-5xl w-full">
+          
+          {/* Controles superiores - más compactos */}
+          <div className="flex flex-wrap items-center justify-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg w-full">
+            {/* Toggle de vistas */}
+            <div className="flex items-center gap-1 bg-white dark:bg-gray-700 rounded-lg p-1">
+              <Button
+                variant={previewMode === 'parallax' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setPreviewMode('parallax')}
+                className="h-8 px-3 text-xs"
               >
-                 <img
-                   ref={imageRef}
-                   src={originalImage}
-                   alt="Preview"
-                   className={`absolute inset-0 w-full h-full ${isImageEdited ? 'object-cover' : 'object-contain'}`}
-                   style={{
-                     transform: `
-                       scale(${editSettings.zoom / 100})
-                       translate(${editSettings.x}px, ${editSettings.y}px)
-                     `,
-                     transformOrigin: 'center center'
-                   }}
-                   draggable={false}
-                 />
+                <Monitor className="w-3 h-3 mr-1" />
+                Parallax
+              </Button>
+              <Button
+                variant={previewMode === 'static' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setPreviewMode('static')}
+                className="h-8 px-3 text-xs"
+              >
+                <Smartphone className="w-3 h-3 mr-1" />
+                Estático
+              </Button>
+              <Button
+                variant={previewMode === 'both' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setPreviewMode('both')}
+                className="h-8 px-3 text-xs"
+              >
+                <Eye className="w-3 h-3 mr-1" />
+                Ambas
+              </Button>
+            </div>
+            
+            {/* Toggle de guías */}
+            <Button
+              variant={showGuides ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setShowGuides(!showGuides)}
+              className="h-8 px-3 text-xs"
+            >
+              {showGuides ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
+              Guías
+            </Button>
+            
+            {/* Estado de detección */}
+            {isDetectingFocalPoint && (
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="w-3 h-3 border border-empanada-golden border-t-transparent rounded-full animate-spin"></div>
+                Detectando punto focal...
+              </div>
+            )}
+          </div>
+          
+          {/* Recomendaciones - más compactas */}
+          {recommendations && (
+            <div className={`w-full p-2 rounded-lg text-xs ${
+              recommendations.isOptimal 
+                ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
+                : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300'
+            }`}>
+              <div className="font-medium">
+                {recommendations.isOptimal ? '✅ Posición óptima' : '⚠️ Ajuste recomendado'}
+              </div>
+              {recommendations.suggestions.slice(0, 1).map((suggestion, index) => (
+                <div key={index} className="text-xs">• {suggestion}</div>
+              ))}
+            </div>
+          )}
+          
+          {/* Contenedor de previews */}
+          <div className={`flex gap-4 ${previewMode === 'both' ? 'flex-row' : 'justify-center'}`}>
 
-                {/* Barra de zoom minimalista sobre la imagen */}
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/20 backdrop-blur-md rounded-full p-2 opacity-80 hover:opacity-100 transition-opacity">
-                  <div className="flex items-center gap-2 text-white">
-                    <button
-                      onClick={() => handleSliderChange('zoom', Math.max(25, editSettings.zoom - 25))}
-                      className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-sm font-bold shrink-0"
-                      title="Reducir zoom"
-                    >
-                      -
-                    </button>
-
-                    <input
-                      type="range"
-                      min="25"
-                      max="300"
-                      value={editSettings.zoom}
-                      onChange={(e) => handleSliderChange('zoom', parseInt(e.target.value))}
-                      className="w-24 h-1 bg-white/30 rounded-full appearance-none cursor-pointer zoom-slider"
+            {/* Preview Parallax - más compacto */}
+            {(previewMode === 'parallax' || previewMode === 'both') && (
+              <div className="relative">
+                <div className="w-72 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  <div className="p-3 bg-gray-50 dark:bg-gray-700/50 border-b">
+                    <h3 className="font-medium text-sm text-gray-900 dark:text-white text-center">
+                      Vista Parallax (Carrusel)
+                    </h3>
+                  </div>
+                  <div
+                    ref={previewRef}
+                    className="aspect-[4/3] relative overflow-hidden cursor-move select-none bg-gray-50 dark:bg-gray-700"
+                    onMouseDown={handleMouseDown}
+                  >
+                    {/* Simulación del parallax con escala 120% */}
+                    <img
+                      ref={imageRef}
+                      src={originalImage}
+                      alt="Preview Parallax"
+                      className="absolute inset-0 w-full h-full object-cover"
+                      style={{
+                        transform: `
+                          scale(${(editSettings.zoom / 100) * 1.2})
+                          translate(${editSettings.x}px, ${editSettings.y}px)
+                        `,
+                        transformOrigin: 'center center',
+                        objectPosition: 'center center'
+                      }}
+                      draggable={false}
                     />
 
-                    <button
-                      onClick={() => handleSliderChange('zoom', Math.min(300, editSettings.zoom + 25))}
-                      className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-sm font-bold shrink-0"
-                      title="Aumentar zoom"
-                    >
-                      +
-                    </button>
+                    {/* Guías de área segura - ajustadas al nuevo porcentaje */}
+                    {showGuides && (
+                      <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute top-0 bottom-0 left-[10%] right-[10%] border-2 border-empanada-golden/50 border-dashed" />
+                        <span className="absolute top-2 left-1/2 -translate-x-1/2 text-xs bg-black/60 px-2 py-1 rounded text-white">
+                          Zona siempre visible (80% central con escala 120%)
+                        </span>
+                      </div>
+                    )}
 
-                    <span className="text-xs font-medium bg-white/20 px-2 py-1 rounded-full min-w-[45px] text-center shrink-0">
-                      {editSettings.zoom}%
-                    </span>
-                  </div>
-                </div>
-
-                {/* Indicador de arrastrar - discreto */}
-                <div className="absolute bottom-4 right-4 opacity-40 hover:opacity-70 transition-opacity">
-                  <div className="text-white text-xs bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm flex items-center gap-2">
-                    <Move className="w-3 h-3" />
-                    <span className="text-xs">Arrastra para mover</span>
+                    {/* Indicador de punto focal */}
+                    {focalPoint && showGuides && (
+                      <div 
+                        className="absolute w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-lg pointer-events-none"
+                        style={{
+                          left: `${focalPoint.x}%`,
+                          top: `${focalPoint.y}%`,
+                          transform: 'translate(-50%, -50%)'
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Información del producto simplificada */}
-              <div className="p-2 bg-gray-50 dark:bg-gray-700/50">
-                <div className="text-center">
-                  <h3 className="font-medium text-xs text-gray-900 dark:text-white mb-0.5">Vista previa</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Ajusta zoom y posición
-                  </p>
+            {/* Preview Estático - más compacto */}
+            {(previewMode === 'static' || previewMode === 'both') && (
+              <div className="relative">
+                <div className="w-72 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  <div className="p-3 bg-gray-50 dark:bg-gray-700/50 border-b">
+                    <h3 className="font-medium text-sm text-gray-900 dark:text-white text-center">
+                      Vista Estática (Menú)
+                    </h3>
+                  </div>
+                  <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 dark:bg-gray-700">
+                    <img
+                      src={originalImage}
+                      alt="Preview Estático"
+                      className="w-full h-full object-cover"
+                      style={{
+                        transform: `
+                          scale(${editSettings.zoom / 100})
+                          translate(${editSettings.x}px, ${editSettings.y}px)
+                        `,
+                        transformOrigin: 'center center',
+                        objectPosition: 'center center'
+                      }}
+                      draggable={false}
+                    />
+                  </div>
                 </div>
               </div>
+            )}
+          </div>
+
+          {/* Controles de zoom y posición - más compactos */}
+          <div className="flex flex-wrap items-center justify-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg w-full">
+            {/* Barra de zoom */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleSliderChange('zoom', Math.max(25, editSettings.zoom - 25))}
+                className="w-8 h-8 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center transition-colors text-sm font-bold border border-gray-300"
+                title="Reducir zoom"
+              >
+                -
+              </button>
+
+              <input
+                type="range"
+                min="25"
+                max="300"
+                value={editSettings.zoom}
+                onChange={(e) => handleSliderChange('zoom', parseInt(e.target.value))}
+                className="w-32 h-2 bg-gray-200 rounded-full appearance-none cursor-pointer zoom-slider"
+              />
+
+              <button
+                onClick={() => handleSliderChange('zoom', Math.min(300, editSettings.zoom + 25))}
+                className="w-8 h-8 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center transition-colors text-sm font-bold border border-gray-300"
+                title="Aumentar zoom"
+              >
+                +
+              </button>
+
+              <span className="text-sm font-medium bg-white px-3 py-1 rounded-full border border-gray-300 min-w-[60px] text-center">
+                {editSettings.zoom}%
+              </span>
+            </div>
+
+            {/* Indicador de arrastrar */}
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <Move className="w-4 h-4" />
+              <span className="text-sm">Arrastra para mover</span>
             </div>
           </div>
 
@@ -418,8 +560,8 @@ export function ImageUpload({
         <canvas
           ref={canvasRef}
           className="hidden"
-          width="320"
-          height="240"
+          width="480"
+          height="360"
         />
       </div>
     );
@@ -436,67 +578,7 @@ export function ImageUpload({
         disabled={disabled}
       />
 
-      {preview ? (
-        <div className="w-full flex justify-center">
-          <div className="w-64 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-             <div className="aspect-square relative bg-gray-50 dark:bg-gray-700">
-               <img
-                 src={preview}
-                 alt="Preview"
-                 className={`w-full h-full ${isImageEdited ? 'object-cover' : 'object-contain'}`}
-               />
-             </div>
-            
-            {/* Información del producto simulada */}
-            <div className="p-3">
-              <h3 className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">Empanada de Carne</h3>
-              <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
-                Carne picada, cebolla, huevo duro, aceitunas y condimentos
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-empanada-golden">$450</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-yellow-500 text-xs">★</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-300">4.8</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Botones de acción */}
-            <div className="p-3 border-t border-gray-100 dark:border-gray-700">
-              <div className="flex justify-center gap-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleStartEdit}
-                  className="flex-1 text-xs h-7 px-2"
-                >
-                  <Crop className="w-3 h-3 mr-1" />
-                  Editar
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex-1 text-xs h-7 px-2"
-                >
-                  <Upload className="w-3 h-3 mr-1" />
-                  Cambiar
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRemoveImage}
-                  className="flex-1 text-xs h-7 px-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
-                >
-                  <X className="w-3 h-3 mr-1" />
-                  Eliminar
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
+      {!preview && (
         <div
           onClick={() => !disabled && fileInputRef.current?.click()}
           onDragOver={handleDragOver}

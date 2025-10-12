@@ -62,6 +62,7 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
           <div className="aspect-[4/3] overflow-hidden">
             <ProductImage
               product={product}
+              context="static"
               className="w-full h-full"
               priority={false}
               quality="high"

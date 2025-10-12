@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Portal } from "@/components/common/Portal";
 import { SimpleTooltip } from "@/components/ui/SimpleTooltip";
+import { ProductImage } from "@/components/ui/OptimizedImage";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { CATEGORY_TYPES, CATEGORY_NAMES } from "@/config/constants";
@@ -211,10 +212,10 @@ export function ProductStepSelector({
                     isMobile ? "h-28" : "h-32"
                   )}>
                     {product.image ? (
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                      <ProductImage
+                        product={product}
+                        context="static"
+                        className="w-full h-full transition-transform duration-300 hover:scale-110"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

@@ -42,10 +42,8 @@ export function MaterialManagement() {
         materiales: materials,
         adminDataLoading: loading,
         sucursalSeleccionada,
-        callMateriales,
         callCrearMaterial,
         callInbound,
-        callInventarioMaterialesSucursal,
     } = useAdminData();
 
     const session = useSession();
@@ -197,7 +195,7 @@ export function MaterialManagement() {
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
-                callMateriales(session.userData.accessToken);
+                
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         }
@@ -372,7 +370,6 @@ export function MaterialManagement() {
                         });
                         setShowAddModal(false);
                         toast.success(`Material ${newItem.name} agregado correctamente`);
-                        callMateriales(session.userData.accessToken);
                     }}
                 />
             )}
@@ -405,14 +402,8 @@ export function MaterialManagement() {
 
                         toast.success(`Entrada registrada`);
 
-                        await callInventarioMaterialesSucursal({
-                            _storeId: sucursalSeleccionada,
-                            _accessToken: session.userData.accessToken
-                        });
-
                         setShowInboundModal(false);
                         setSelectedMaterial(null);
-                        callMateriales(session.userData.accessToken);
                     }}
                 />
             )}

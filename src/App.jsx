@@ -61,7 +61,6 @@ const CategoryManagement = lazy(() => import("@/pages/admin/CategoryManagement")
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            retry: 1,
             refetchOnWindowFocus: false,
         },
     },

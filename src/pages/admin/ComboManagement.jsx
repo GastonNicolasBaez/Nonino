@@ -45,7 +45,6 @@ export function ComboManagement() {
         productos,
         combos,
         adminDataLoading: loading,
-        callCombos,
         callCrearCombo,
         callBorrarCombo,
         categoriasTodas: categories,
@@ -143,7 +142,6 @@ export function ComboManagement() {
                     _accessToken: session.userData.accessToken,
                 })
                 toast.success("Combo eliminado correctamente");
-                callCombos(session.userData.accessToken);
             }
         });
     };
@@ -393,7 +391,6 @@ export function ComboManagement() {
                     _accessToken: session.userData.accessToken,
                 });
                 toast.success("Combo creado correctamente");
-                callCombos(session.userData.accessToken);
             }
 
             // Limpiar el formulario
@@ -517,7 +514,7 @@ export function ComboManagement() {
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
-                callCombos(session.userData.accessToken);
+                
             },
             icon: <RefreshCw className="w-4 h-4 mr-2" />
         }

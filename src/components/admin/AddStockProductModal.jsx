@@ -18,9 +18,11 @@ export function AddStockProductModal({
     isLoading = false
 }) {
     const {
-        productos: products,
+        productos,
         adminDataLoading: loading
     } = useAdminData();
+
+    const products = productos.filter((p) => p.hasRecipe == true);
 
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");

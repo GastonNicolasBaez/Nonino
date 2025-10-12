@@ -43,6 +43,7 @@ export function ProductStockManagement() {
     const {
         inventarioProductosSucursal: products,
         sucursalSeleccionada: selectedStore,
+        sucursalSeleccionadaInfo,
         adminDataLoading: loading,
         categoriasTodas,
 
@@ -142,25 +143,28 @@ export function ProductStockManagement() {
         }
     ];
 
-    // Preparar datos para SectionHeader
-    const headerActions = [
-        {
+    const headerActions = [];
+
+    if (sucursalSeleccionadaInfo.code == 'local' ||
+        sucursalSeleccionadaInfo.code == 'franquicia') {
+        headerActions.push({
             label: "Ingresar",
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => setShowAddStockModal(true),
             icon: <Plus className="w-4 h-4 mr-2" />
-        },
-        {
-            label: "Actualizar Stock",
-            variant: "empanada",
-            className: "h-9 px-4 text-sm font-medium",
-            onClick: () => {
+        });
+    }
 
-            },
-            icon: <RefreshCcw className="w-4 h-4 mr-2" />
-        }
-    ];
+    headerActions.push({
+        label: "Actualizar Stock",
+        variant: "empanada",
+        className: "h-9 px-4 text-sm font-medium",
+        onClick: () => {
+
+        },
+        icon: <RefreshCcw className="w-4 h-4 mr-2" />
+    });
 
     const getStatusClasses = (status) => {
         switch (status) {
@@ -371,18 +375,20 @@ export function ProductStockManagement() {
                     try {
                         console.log("Productos a ingresar:", stockData);
 
-                        const newInboundItems = {
-                            productId: 0,
-                            newQuantity: 0
-                        };
+                        const newInboundItems = stockData.map((p) => ({
+                            productId: p.id,
+                            newQuantity: p.quantity,
+                        }));
 
                         const newInboundData = {
                             locationType: "STORE",
                             locationId: selectedStore,
                             items: newInboundItems,
-                            operationId: "string",
-                            notes: "string"
+                            operationId: null,
+                            notes: ''
                         }
+
+                        console.log(newInboundData);
 
                         setShowAddStockModal(false);
 
@@ -393,7 +399,7 @@ export function ProductStockManagement() {
 
                         toast.success(`Stock de ${stockData.length} productos ingresado correctamente`);
                     } catch (error) {
-                        toast.error(error);
+                        toast.error(error?.message);
                     }
                 }}
             />

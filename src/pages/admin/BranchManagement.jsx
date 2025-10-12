@@ -119,8 +119,10 @@ export function BranchManagement() {
     }
 
     // Preparar datos para SectionHeader
-    const headerActions = [
-        {
+    const headerActions = [];
+
+    if (session.userData.isAdmin) {
+        headerActions.push({
             label: loading ? "Guardando..." : "Agregar Local",
             variant: "empanada",
             onClick: addStore,
@@ -131,8 +133,8 @@ export function BranchManagement() {
             ) : (
                 <Plus className="w-4 h-4 mr-2" />
             )
-        }
-    ];
+        });
+    }
 
     // Componente separado para el formulario de configuración de cada local
     const StoreConfigForm = ({ store }) => {

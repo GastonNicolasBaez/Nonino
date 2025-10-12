@@ -286,7 +286,7 @@ export function OrderManagement() {
     const getFilteredOrders = (searchTerm = '', statusFilter = 'all') => {
         return orders.filter(order => {
             const matchesSearch =
-                order.id.toLowerCase().includes(searchTerm.toLowerCase());
+                String(order.orderNumber).includes(searchTerm.toLowerCase());
 
             const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
 
@@ -445,7 +445,7 @@ export function OrderManagement() {
                         <div className="flex-1 relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                                placeholder="Buscar por cliente o ID de orden..."
+                                placeholder="Buscar por cliente o nro de orden..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pl-10"

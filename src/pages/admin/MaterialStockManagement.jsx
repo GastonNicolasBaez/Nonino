@@ -51,6 +51,7 @@ export function MaterialStockManagement() {
         materiales: materialCatalog,
         inventarioMaterialesSucursal: materials,
         sucursalSeleccionada: selectedStore,
+        sucursalSeleccionadaInfo,
         adminDataLoading: loading,
         callInbound,
     } = useAdminData();
@@ -132,26 +133,28 @@ export function MaterialStockManagement() {
     ];
 
     // Preparar datos para SectionHeader
-    const headerActions = [
-        {
+    const headerActions = [];
+
+    if (sucursalSeleccionadaInfo.code == 'fabrica') {
+        headerActions.push({
             label: "Ingresar",
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => setShowAddStockMaterialModal(true),
             icon: <Plus className="w-4 h-4 mr-2" />
-        },
-        {
-            label: "Actualizar Stock",
-            variant: "empanada",
-            className: "h-9 px-4 text-sm font-medium",
-            onClick: () => {
-                toast.info("Actualizando stock de materiales...");
-                // Aquí se llamaría a la función de actualización
-            },
-            icon: <RefreshCcw className="w-4 h-4 mr-2" />
-        },
+        });
+    }
 
-    ];
+    headerActions.push({
+        label: "Actualizar Stock",
+        variant: "empanada",
+        className: "h-9 px-4 text-sm font-medium",
+        onClick: () => {
+            toast.info("Actualizando stock de materiales...");
+            // Aquí se llamaría a la función de actualización
+        },
+        icon: <RefreshCcw className="w-4 h-4 mr-2" />
+    });
 
     //   const getStatusClasses = (status) => {
     //     switch (status) {
@@ -325,14 +328,18 @@ export function MaterialStockManagement() {
                     try {
                         console.log("Materiales a ingresar:", stockData);
 
+                        const newInboundItems = stockData.map((m) => ({
+                            materialId: m.id,
+                            quantity: m.quantity * 1000,
+                        }))
+
                         const newInboundData = {
                             factoryId: selectedStore,
                             storeId: null,
-                            materialId: stockData.materialId,
-                            quantity: stockData.quantity,
+                            materials: newInboundItems,
                             operationId: null,
                             lotNumber: null,
-                            notes: stockData.notes,
+                            notes: '',
                         }
 
                         setShowAddStockMaterialModal(false);
@@ -344,7 +351,7 @@ export function MaterialStockManagement() {
 
                         toast.success(`Stock de ${stockData.length} materiales ingresado correctamente`);
                     } catch (error) {
-                        toast.error(error);
+                        toast.error(error?.message);
                     }
                 }}
             />

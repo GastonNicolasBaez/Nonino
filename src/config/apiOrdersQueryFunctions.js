@@ -27,7 +27,7 @@ export const getAdminOrdersGetOrdersQueryFunction = async (_accessToken) => {
         }
     }
 
-    const response = await axios.get(`${ENDPOINTS.orders}/admin/orders`, axiosSetup.axiosConfig);
+    const response = await axios.get(`${ENDPOINTS.orders}/admin/orders/open/last-24h`, axiosSetup.axiosConfig);
     return await response.data;
 }
 

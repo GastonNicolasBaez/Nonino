@@ -173,7 +173,7 @@ export function AddStockMaterialModal({
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                        Cantidad:
+                                        {material.unit == 'g' ? 'Kilos' : 'Litros'}:
                                     </label>
                                     <Input
                                         type="number"

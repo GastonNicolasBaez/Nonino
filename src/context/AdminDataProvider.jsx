@@ -81,19 +81,23 @@ const AdminDataProvider = ({ children }) => {
         return reloginPromiseRef.current;
     };
 
-    const handleErrorRelogin = async (failureCount, error) => {
-        console.log('retrying....' + failureCount)
+    const handleErrorRelogin = (failureCount, error) => {
         if (failureCount > 1) {
             return false;
         }
         if (error?.response?.status === 401) {
-            await queueRelogin();
+            const tryRelogin = async () => {
+                await queueRelogin();
+            }
+            tryRelogin();
             return true;
         }
         return false;
     }
 
+    // control
     const logErrorsToConsole = true;
+    const retryDelayAll = 4000;
 
     const [adminStartingLoading, setAdminStartingLoading] = useState([true]);
 
@@ -159,8 +163,6 @@ const AdminDataProvider = ({ children }) => {
 
             // ordenes activas
             callOrders(at);
-
-            setSucursalSeleccionadaInfo(sucursales.find((s) => s.id == sucursalSeleccionada));
         } else {
             setDeliverySucursal([]);
             setProductosSucursal([]);
@@ -195,6 +197,13 @@ const AdminDataProvider = ({ children }) => {
         }
     }, [productos, sucursalSeleccionada]);
 
+    //cargar info de la sucursal cuando haya sucursales y cambie la sucursal
+
+    useEffect(() => {
+        if (sucursales.length > 0 && session.userData && sucursalSeleccionada) {
+            setSucursalSeleccionadaInfo(sucursales.find((s) => s.id == sucursalSeleccionada));
+        }
+    }, [sucursales, sucursalSeleccionada]);
 
 
     // ---------- PRODUCTOS Y CATEGORIAS PÚBLICO
@@ -245,8 +254,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminCatalogAsignarASucursalQueryFunction,
         onSuccess: () => callProductosYCategoriasSucursal(sucursalSeleccionada),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // ---------- PRODUCTOS Y CATEGORIAS ADMIN
@@ -287,8 +296,8 @@ const AdminDataProvider = ({ children }) => {
             setProductos([]);
             setCategorias([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     //crear
@@ -297,8 +306,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminCatalogAddProductQueryFunction,
         onSuccess: () => callProductosYCategorias(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     //eliminar
@@ -307,8 +316,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: deleteAdminCatalogDeleteProductQueryFunction,
         onSuccess: () => callProductosYCategorias(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     //modificar producto
@@ -317,8 +326,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: updateAdminCatalogUpdateProductQueryFunction,
         onSuccess: () => callProductosYCategorias(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // asignar receta
@@ -326,8 +335,8 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCrearYAsignarReceta'],
         mutationFn: postAdminInventoryAssignRecipeQueryFunction,
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // llamar receta del producto
@@ -335,8 +344,8 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminRecetaDelProducto'],
         mutationFn: getAdminInventoryGetProductRecipeQueryFunction,
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // ---------- SUCURSALES
@@ -348,8 +357,8 @@ const AdminDataProvider = ({ children }) => {
             setSucursales(data);
         },
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // crear
@@ -358,8 +367,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminStoresAddStoreQueryFunction,
         onSuccess: () => callSucursales(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // modificar
@@ -368,8 +377,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: putAdminStoresUpdateStoreQueryFunction,
         onSuccess: () => callSucursales(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // listar horarios
@@ -383,8 +392,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setHorariosSucursal([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // modificar horarios
@@ -396,8 +405,8 @@ const AdminDataProvider = ({ children }) => {
             _accessToken: session.userData.accessToken,
         }),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // listar zonas de entrega
@@ -411,8 +420,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setDeliverySucursal([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // crear zona de entrega
@@ -424,8 +433,8 @@ const AdminDataProvider = ({ children }) => {
             _accessToken: session.userData.accessToken
         }),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // modificar zona de entrega
@@ -437,8 +446,8 @@ const AdminDataProvider = ({ children }) => {
             _accessToken: session.userData.accessToken
         }),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // eliminar zona de entrega   
@@ -450,8 +459,8 @@ const AdminDataProvider = ({ children }) => {
             _accessToken: session.userData.accessToken
         }),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // ---------- COMBOS
@@ -466,8 +475,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setCombos([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // crear
@@ -476,8 +485,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminCatalogAddComboQueryFunction,
         onSuccess: () => callCombos(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // borrar
@@ -486,8 +495,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: deleteAdminCatalogDeleteComboQueryFunction,
         onSuccess: () => callCombos(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // ---------- CATEGORÍAS
@@ -502,8 +511,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setCategoriasTodas([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // crear
@@ -512,8 +521,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminCatalogAddCategoryQueryFunction,
         onSuccess: () => callCategorias(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // actualizar
@@ -522,8 +531,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: putAdminCatalogUpdateCategoryQueryFunction,
         onSuccess: () => callCategorias(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // eliminar
@@ -532,8 +541,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: deleteAdminCatalogDeleteCategoryQueryFunction,
         onSuccess: () => callCategorias(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
 
@@ -549,8 +558,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setMateriales([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // crear
@@ -559,8 +568,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminInventoryAddMaterialQueryFunction,
         onSuccess: () => callMateriales(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // inventario materiales sucursal
@@ -574,8 +583,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setInventarioMaterialesSucursal([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // inventario productos sucursal
@@ -597,8 +606,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setInventarioProductosSucursal([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // inbound
@@ -610,8 +619,8 @@ const AdminDataProvider = ({ children }) => {
             _accessToken: session.userData.accessToken
         }),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // ---------- FABRICA
@@ -630,8 +639,8 @@ const AdminDataProvider = ({ children }) => {
             });
         },
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // transfer
@@ -643,8 +652,8 @@ const AdminDataProvider = ({ children }) => {
             _accessToken: session.userData.accessToken
         }),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // adjust
@@ -656,8 +665,8 @@ const AdminDataProvider = ({ children }) => {
             _accessToken: session.userData.accessToken
         }),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // ---------- COMPANY INFO
@@ -672,8 +681,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setCompanyInfo([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // update
@@ -682,8 +691,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: putAdminStoresUpdateCompanyInfoQueryFunction,
         onSuccess: () => callCompanyInfo(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // --------- ORDERS
@@ -699,8 +708,8 @@ const AdminDataProvider = ({ children }) => {
             if (logErrorsToConsole) console.log(error);
             setOrders([]);
         },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // create
@@ -709,8 +718,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminOrdersCreateOrderQueryFunction,
         onSuccess: () => callOrders(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // paycash
@@ -719,8 +728,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminOrdersPayCashQueryFunction,
         onSuccess: () => callOrders(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // close
@@ -729,8 +738,8 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postAdminOrdersCloseQueryFunction,
         onSuccess: () => callOrders(session.userData.accessToken),
         onError: (error) => { if (logErrorsToConsole) console.log(error); },
-        retry: async (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
-        retryDelay: 2000
+        retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
+        retryDelay: retryDelayAll
     });
 
     // public print job

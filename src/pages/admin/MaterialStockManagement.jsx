@@ -37,6 +37,7 @@ import { useAdminData } from "@/context/AdminDataProvider";
 
 // UTILIDADES
 import { formatPrice } from "@/lib/utils";
+import { useSession } from "@/context/SessionProvider";
 
 
 const adaptQuantity = (quantity, unit) => {
@@ -51,7 +52,10 @@ export function MaterialStockManagement() {
         inventarioMaterialesSucursal: materials,
         sucursalSeleccionada: selectedStore,
         adminDataLoading: loading,
+        callInbound,
     } = useAdminData();
+
+    const session = useSession();
 
     const [searchTerm, setSearchTerm] = useState("");
     const [showAddStockMaterialModal, setShowAddStockMaterialModal] = useState(false);
@@ -146,7 +150,7 @@ export function MaterialStockManagement() {
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         },
-        
+
     ];
 
     //   const getStatusClasses = (status) => {
@@ -272,7 +276,7 @@ export function MaterialStockManagement() {
                                                         </div>
                                                     </td>
                                                     <td className="p-4">
-                                                        <span className="font-medium">{formatPrice(unitValue*1000)}</span>
+                                                        <span className="font-medium">{formatPrice(unitValue * 1000)}</span>
                                                         <span className="text-sm text-muted-foreground">/ {item.unit == 'g' ? 'kg' : 'litro'}</span>
                                                     </td>
                                                     <td className="p-4">
@@ -312,16 +316,36 @@ export function MaterialStockManagement() {
             {/* Modales */}
             <ConfirmModalComponent />
             <UpdateStockModalComponent />
-            
+
             {/* Modal de ingreso de stock de materiales */}
             <AddStockMaterialModal
                 isOpen={showAddStockMaterialModal}
                 onClose={() => setShowAddStockMaterialModal(false)}
-                onSave={(stockData) => {
-                    console.log("Materiales a ingresar:", stockData);
-                    toast.success(`Stock de ${stockData.length} materiales ingresado correctamente`);
-                    setShowAddStockMaterialModal(false);
-                    // Aquí se implementaría la lógica de guardado
+                onSave={async (stockData) => {
+                    try {
+                        console.log("Materiales a ingresar:", stockData);
+
+                        const newInboundData = {
+                            factoryId: selectedStore,
+                            storeId: null,
+                            materialId: stockData.materialId,
+                            quantity: stockData.quantity,
+                            operationId: null,
+                            lotNumber: null,
+                            notes: stockData.notes,
+                        }
+
+                        setShowAddStockMaterialModal(false);
+
+                        await callInbound({
+                            _inbound: newInboundData,
+                            _accessToken: session.userData.accessToken,
+                        });
+
+                        toast.success(`Stock de ${stockData.length} materiales ingresado correctamente`);
+                    } catch (error) {
+                        toast.error(error);
+                    }
                 }}
             />
         </div>

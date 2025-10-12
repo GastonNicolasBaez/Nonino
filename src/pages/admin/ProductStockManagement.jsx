@@ -45,7 +45,9 @@ export function ProductStockManagement() {
         sucursalSeleccionada: selectedStore,
         adminDataLoading: loading,
         categoriasTodas,
-        
+
+        callAdjustProducto,
+
     } = useAdminData();
 
     const session = useSession();
@@ -66,11 +68,11 @@ export function ProductStockManagement() {
 
     // Filtrar productos
     const filteredProducts = products.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+        return matchesSearch && matchesCategory;
+    });
 
     //   const handleDeleteProduct = (productId) => {
     //     openConfirmModal({
@@ -154,7 +156,7 @@ export function ProductStockManagement() {
             variant: "empanada",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
-                
+
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         }
@@ -260,7 +262,7 @@ export function ProductStockManagement() {
                                         <tr className="border-b">
                                             <th className="text-left p-4 font-medium">Producto</th>
                                             <th className="text-left p-4 font-medium">Stock</th>
-                                            <th className="text-left p-4 font-medium">Categoría</th>                                            
+                                            <th className="text-left p-4 font-medium">Categoría</th>
                                             {/* <th className="text-left p-4 font-medium">Stock Mín.</th>
                                             <th className="text-left p-4 font-medium">Costo</th> */}
                                             <th className="text-left p-4 font-medium">Precio</th>
@@ -360,16 +362,39 @@ export function ProductStockManagement() {
             {/* Modales */}
             <ConfirmModalComponent />
             <UpdateStockModalComponent />
-            
+
             {/* Modal de ingreso de stock de productos */}
             <AddStockProductModal
                 isOpen={showAddStockModal}
                 onClose={() => setShowAddStockModal(false)}
-                onSave={(stockData) => {
-                    console.log("Productos a ingresar:", stockData);
-                    toast.success(`Stock de ${stockData.length} productos ingresado correctamente`);
-                    setShowAddStockModal(false);
-                    // Aquí se implementaría la lógica de guardado
+                onSave={async (stockData) => {
+                    try {
+                        console.log("Productos a ingresar:", stockData);
+
+                        const newInboundItems = {
+                            productId: 0,
+                            newQuantity: 0
+                        };
+
+                        const newInboundData = {
+                            locationType: "STORE",
+                            locationId: selectedStore,
+                            items: newInboundItems,
+                            operationId: "string",
+                            notes: "string"
+                        }
+
+                        setShowAddStockModal(false);
+
+                        await callAdjustProducto({
+                            _adjust: newInboundData,
+                            _accessToken: session.userData.accessToken,
+                        });
+
+                        toast.success(`Stock de ${stockData.length} productos ingresado correctamente`);
+                    } catch (error) {
+                        toast.error(error);
+                    }
                 }}
             />
         </div>

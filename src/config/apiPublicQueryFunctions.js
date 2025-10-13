@@ -72,7 +72,7 @@ export const postPublicOrdersCreatePreferenceQueryFunction = async ({_orderId, _
         }
     }
 
-    const response = await axios.post(`${ENDPOINTS.orders}/public/orders/${_orderId}/payment/preference`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    const response = await axios.post(`${ENDPOINTS.orders}/internal/orders/${_orderId}/payment/preference`, axiosSetup.axiosData, axiosSetup.axiosConfig);
     return await response.data;
 }
 

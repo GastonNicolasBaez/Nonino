@@ -4,7 +4,7 @@ import { usePublicData } from '@/context/PublicDataProvider';
 import { useCart } from '@/context/CartProvider';
 import { cn } from '@/lib/utils';
 
-export function StoreDropdown({ className }) {
+export function StoreDropdown({ className, variant = 'mobile' }) {
   const [isOpen, setIsOpen] = useState(false);
   const {
     sucursales: stores,
@@ -37,15 +37,26 @@ export function StoreDropdown({ className }) {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-empanada-medium border border-empanada-light-gray rounded-lg hover:border-empanada-golden transition-colors"
+        className={cn(
+          "w-full flex items-center justify-between gap-3 bg-empanada-medium border border-empanada-light-gray rounded-lg hover:border-empanada-golden transition-colors",
+          variant === 'desktop' 
+            ? "px-3 py-2" 
+            : "px-4 py-3"
+        )}
       >
         <div className="flex items-center gap-2 flex-1 text-left">
-          <MapPin className="w-5 h-5 text-empanada-golden flex-shrink-0" />
+          <MapPin className={cn(
+            "text-empanada-golden flex-shrink-0",
+            variant === 'desktop' ? "w-4 h-4" : "w-5 h-5"
+          )} />
           <div>
-            <p className="text-sm font-medium text-white">
+            <p className={cn(
+              "font-medium text-white",
+              variant === 'desktop' ? "text-xs" : "text-sm"
+            )}>
               {selectedStore?.name || "Selecciona tu sucursal"}
             </p>
-            {selectedStore && (
+            {selectedStore && variant === 'mobile' && (
               <p className="text-xs text-gray-400">
                 {selectedStore.barrio}
               </p>
@@ -54,7 +65,8 @@ export function StoreDropdown({ className }) {
         </div>
         <ChevronDown
           className={cn(
-            "w-5 h-5 text-gray-400 transition-transform",
+            "text-gray-400 transition-transform",
+            variant === 'desktop' ? "w-4 h-4" : "w-5 h-5",
             isOpen && "rotate-180"
           )}
         />

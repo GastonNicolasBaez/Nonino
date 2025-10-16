@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ChevronDown, Clock, Truck, Star, MapPin, Sparkles, Package, Info } from "lucide-react";
+import { Search, X, ChevronDown, Star, MapPin, Sparkles, Package, Info } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ProductCard } from "@/components/common/ProductCard";
 import { ComboModal } from "@/components/ui/ComboModal";
-import { StoreChangeButton } from "@/components/common/StoreChangeButton";
+import { StoreDropdown } from "@/components/menu/StoreDropdown";
 import { useCart } from "@/context/CartProvider";
 
 export function MenuDesktop({
@@ -90,36 +90,10 @@ export function MenuDesktop({
             <div className="bg-empanada-dark shadow-lg border-b lg:bg-empanada-dark/95 lg:backdrop-blur-md lg:border-b lg:border-empanada-light-gray py-6 sticky top-16 z-40">
                 <div className="container mx-auto px-6">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                            <div>
-                                <h1 className="text-2xl font-bold text-gray-100">Nonino Empanadas</h1>
-                                <div className="flex items-center gap-3 mt-1">
-                                    <div className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-gray-500" />
-                                        <span className="text-sm text-gray-300">
-                                            {selectedStore?.name || "Selecciona una sucursal"}
-                                        </span>
-                                    </div>
-                                    {selectedStore && (
-                                        <StoreChangeButton variant="desktop" storeName={selectedStore?.name} />
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-6 text-sm text-gray-300">
-                                <div className="flex items-center gap-2 bg-green-900/30 px-3 py-2 rounded-lg border border-green-800">
-                                    <Clock className="w-4 h-4 text-green-400" />
-                                    <span className="text-green-300 font-medium">{selectedStore?.deliveryTime || "30-40 min"}</span>
-                                </div>
-                                <div className="flex items-center gap-2 bg-blue-900/30 px-3 py-2 rounded-lg border border-blue-800">
-                                    <Truck className="w-4 h-4 text-blue-400" />
-                                    <span className="text-blue-300 font-medium">
-                                        Envío: {selectedStore?.deliveryFee === 0 ? "Gratis" : `$${selectedStore?.deliveryFee || 500}`}
-                                    </span>
-                                </div>
-                                <div className="bg-orange-900/30 px-3 py-2 rounded-lg border border-orange-800">
-                                    <span className="text-orange-300 font-medium">Mín: ${selectedStore?.minOrder || 2000}</span>
-                                </div>
+                        <div className="flex-1 flex flex-col items-start">
+                            <h1 className="text-2xl font-bold text-gray-100 mb-3">Selecciona sucursal</h1>
+                            <div className="w-80">
+                                <StoreDropdown variant="desktop" />
                             </div>
                         </div>
 

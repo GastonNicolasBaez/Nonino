@@ -127,9 +127,39 @@ export function ComboManagement() {
             products: combo.products ? [...combo.products] : [], // Crear copia para evitar mutación
             discount: combo.discount || 0,
             price: combo.price || 0,
-            active: combo.active !== undefined ? combo.active : true
+            active: combo.active !== undefined ? combo.active : true,
+            imageBase64: combo.imageBase64 || ""
         });
+
+        // Cargar las categorías del combo desde categoryIds y selectionRules
+        console.log(combo.categoryIds);
+        console.log(combo.selectionRules);
+        if (combo.categoryIds && combo.selectionRules && Array.isArray(combo.categoryIds)) {
+            
+            const loadedCategoryRequirements = combo.categoryIds.map((categoryId) => {
+                // Buscar la regla correspondiente para obtener la cantidad requerida
+                const rule = combo.selectionRules.find(r => String(r.categoryId) === String(categoryId));
+                const requiredQuantity = rule ? rule.units : 1;
+
+                // Buscar el nombre de la categoría
+                const category = categories?.find(c => String(c.id) === String(categoryId));
+                const categoryName = category ? category.name : '';
+
+                return {
+                    categoryId: categoryId,
+                    name: categoryName,
+                    requiredQuantity: requiredQuantity
+                };
+            });
+
+            setCategoryRequirements(loadedCategoryRequirements);
+        } else {
+            setCategoryRequirements([]);
+        }
+
         setProductSearchTerm("");
+        setSelectedByCategory({});
+        setSearchByCategory({});
         setShowCreateModal(true);
     };
 

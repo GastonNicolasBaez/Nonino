@@ -24,7 +24,6 @@ import {
 import { TicketPreview } from './TicketPreview';
 import { printOrder, testPrinterConnection, getAvailablePrinters } from '../../services/printerSender';
 import { formatToEscPos, generateTestPrint, downloadEscPosFile, bufferToHex } from '../../services/printFormatter';
-import { toast } from 'sonner';
 
 // Orden de muestra para testing
 const SAMPLE_ORDER = {
@@ -78,8 +77,6 @@ export function PrinterTestComponent() {
         timestamp: new Date().toLocaleTimeString()
       }]);
 
-      toast.success(`${testName} completado exitosamente`);
-
     } catch (error) {
       const duration = Date.now() - startTime;
 
@@ -91,8 +88,6 @@ export function PrinterTestComponent() {
         error: error.message,
         timestamp: new Date().toLocaleTimeString()
       }]);
-
-      toast.error(`${testName} falló: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +147,6 @@ export function PrinterTestComponent() {
   // Limpiar resultados
   const clearResults = () => {
     setTestResults([]);
-    toast.info('Resultados de prueba limpiados');
   };
 
   return (

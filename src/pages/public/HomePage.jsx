@@ -280,31 +280,31 @@ export function HomePage() {
     const features = [
         {
             icon: Clock,
-            title: "Entrega Rápida",
-            description: "En menos de 45 minutos en toda la ciudad",
+            title: "CALIDAD GARANTIZADA",
+            description: "Seleccionamos cuidadosamente cada ingrediente para garantizar el mejor sabor y frescura en cada empanada.",
         },
         {
             icon: Truck,
-            title: "Envío Gratis",
-            description: "En pedidos mayores a $3000",
+            title: "EMPRESA FAMILIAR",
+            description: "Somos una familia que valora las relaciones humanas y el trato cercano con cada uno de nuestros clientes y equipo de trabajo.",
         },
         {
             icon: Shield,
-            title: "Calidad Garantizada",
-            description: "Ingredientes frescos y naturales",
+            title: "32 GUSTOS",
+            description: "Tenemos la mayor variedad de rellenos deliciosos de San Martín de los Andes.",
         },
         {
             icon: Award,
-            title: "Tradición Familiar",
-            description: "Más de 25 años de experiencia",
+            title: "NUESTRA EMPANADA",
+            description: " Se destaca por mantener un buen tamaño y su cocción las hacen únicas. Resolvé tus comidas, fácil y rico.",
         },
     ];
 
     const stats = [
         { value: 10000, label: "Clientes Felices", suffix: "+" },
-        { value: 50000, label: "Empanadas Vendidas", suffix: "+" },
-        { value: 25, label: "Años de Experiencia" },
-        { value: 4.8, label: "Puntuación Promedio", decimals: 1 },
+        { value: 9000000, label: "Empanadas Vendidas", suffix: "+" },
+        { value: 10, label: "Años de Experiencia" },
+        { value: 4.6, label: "Puntuación Promedio", decimals: 1 },
     ];
 
     return (
@@ -381,7 +381,7 @@ export function HomePage() {
                             className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto px-2"
                             style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}
                         >
-                            Tradición familiar desde 1995. Ingredientes frescos, recetas artesanales
+                            Tradición familiar desde 2015. Ingredientes frescos, recetas artesanales
                             y el sabor auténtico que tanto amas.
                         </motion.p>
 
@@ -391,15 +391,15 @@ export function HomePage() {
                             transition={{ delay: 0.8, duration: 0.6 }}
                             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
                         >
-                            <Link to={sucursalSeleccionada ? "/menu" : "/pedir"} className="w-full sm:w-auto">
+                            <Link to="/menu" className="w-full sm:w-auto">
                                 <Button size="lg" variant="shimmer" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto">
-                                    Pedir YA
+                                    Hacé tu pedido
                                     <ChevronRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                                 </Button>
                             </Link>
-                            <Link to="/locales" className="w-full sm:w-auto">
+                            <Link to="/franquicias" className="w-full sm:w-auto">
                                 <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white/20 border-white/30 text-white hover:bg-white/30 w-full sm:w-auto">
-                                    Nuestros Locales
+                                    Franquicias
                                 </Button>
                             </Link>
                         </motion.div>
@@ -411,7 +411,7 @@ export function HomePage() {
             {!loading && (
                 <ProductsFocusCarousel
                     products={productos}
-                    title="Nuestras Empanadas Más Populares"
+                    title="LAS MAS ELEGIDAS"
                     className=""
                 />
             )}
@@ -479,9 +479,7 @@ export function HomePage() {
                             ¿Por qué elegir{" "}
                             <AnimatedGradientText>Nonino Empanadas</AnimatedGradientText>?
                         </h2>
-                        <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto px-2 drop-shadow-md">
-                            Descubri lo que nos hace únicos y por qué miles de clientes confían en nosotros
-                        </p>
+                       
                     </motion.div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
@@ -571,8 +569,8 @@ export function HomePage() {
                 {/* Gradiente de transición */}
                 <div className="absolute inset-0 bg-gradient-to-b from-empanada-dark via-empanada-dark/80 to-empanada-golden/20"></div>
 
-                {/* Separador Visual Mejorado */}
-                <div className="relative py-12 sm:py-16">
+                {/* Separador Visual Mejorado - COMENTADO */}
+                {/* <div className="relative py-12 sm:py-16">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-center">
                             <div className="flex items-center space-x-6">
@@ -600,13 +598,13 @@ export function HomePage() {
                         </div>
 
                         {/* Texto de transición */}
-                        <div className="text-center mt-8">
+                        {/* <div className="text-center mt-8">
                             <p className="text-empanada-golden/90 text-sm font-medium tracking-wide uppercase">
                                 ¡Es Hora de Disfrutar!
                             </p>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             {/* Promotions */}
@@ -666,10 +664,10 @@ export function HomePage() {
                 </section>
             )}
 
-            {/* CTA Section */}
-            <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-r from-empanada-golden to-empanada-warm text-white relative">
+            {/* CTA Section - COMENTADO */}
+            {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-r from-empanada-golden to-empanada-warm text-white relative">
                 {/* Decoración superior */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                {/* <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -696,7 +694,7 @@ export function HomePage() {
                         </div>
                     </motion.div>
                 </div>
-            </section>
+            </section> */}
 
             {/* Floating Order Button */}
             <FloatingOrderButton />

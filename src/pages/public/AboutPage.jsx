@@ -1,5 +1,4 @@
 import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
-import { Heart, Award, Users, Clock } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { TextAnimate } from "../../components/ui/text-animate";
 import { Card, CardContent } from "../../components/ui/card";
@@ -149,35 +148,10 @@ export function AboutPage() {
     return () => obs.disconnect();
   }, []);
 
-  const values = [
-    {
-      icon: Heart,
-      title: "Pasión",
-      description: "Cada empanada está hecha con amor y dedicación, manteniendo las recetas familiares que nos han acompañado por generaciones."
-    },
-    {
-      icon: Award,
-      title: "Calidad",
-      description: "Seleccionamos cuidadosamente cada ingrediente para garantizar el mejor sabor y frescura en todos nuestros productos."
-    },
-    {
-      icon: Users,
-      title: "Familia",
-      description: "Somos una empresa familiar que valora las relaciones humanas y el trato cercano con cada uno de nuestros clientes."
-    },
-    {
-      icon: Clock,
-      title: "Tradición",
-      description: "Respetamos las técnicas tradicionales de elaboración mientras innovamos para satisfacer los gustos modernos."
-    }
-  ];
-
   const milestones = [
-    { year: "1995", event: "Fundación de Nonino Empanadas", description: "Don Carlos Nonino abre el primer local familiar" },
-    { year: "2000", event: "Segundo Local", description: "Expansión a la zona norte de la ciudad" },
-    { year: "2010", event: "Delivery Online", description: "Lanzamiento de nuestro servicio de delivery" },
-    { year: "2020", event: "App Mobile", description: "Desarrollo de nuestra aplicación móvil" },
-    { year: "2024", event: "25 Años de Tradición", description: "Celebramos nuestro aniversario con nuevas recetas" },
+    { year: "2015", event: "Fundación de Nonino Empanadas", description: "Primer local familiar en Villegas" },
+    { year: "2018", event: "Segundo Local", description: "Segundo local en Ruta 40" },
+    { year: "2025", event: "Primera Franquicia", description: "Inicio del sistema de franquicias" },
   ];
 
   const parallaxImages = [
@@ -350,67 +324,7 @@ export function AboutPage() {
         </div>
       </section>
 
-        {/* Separator Section - Story to Values */}
-        <section className="py-4 relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-4">
-              <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-empanada-golden/50"></div>
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-empanada-golden/60 rounded-full"></div>
-                <div className="w-3 h-3 bg-empanada-golden rounded-full animate-pulse delay-500"></div>
-              </div>
-              <div className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-empanada-golden/50"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-        {/* Values Section */}
-        <section id="valores" className="py-8 sm:py-12 lg:py-16 relative">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-              Nuestros Valores
-            </h2>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-              Los principios que guían cada día nuestro trabajo y nos conectan con nuestros clientes
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="text-center h-full hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="mb-4 inline-flex items-center justify-center w-16 h-16 bg-empanada-golden/10 rounded-full">
-                      <value.icon className="w-8 h-8 text-empanada-golden" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-3">{value.title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {value.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-        {/* Separator Section - Values to Timeline */}
+        {/* Separator Section - Story to Timeline */}
         <section className="py-4 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
@@ -449,7 +363,7 @@ export function AboutPage() {
             <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-empanada-golden/20 transform -translate-y-1/2" />
 
             {/* Timeline Items - Alternating Layout */}
-            <div className="hidden md:grid md:grid-cols-5 gap-4 relative">
+            <div className="hidden md:grid md:grid-cols-3 gap-8 relative">
               {milestones.map((milestone, index) => (
                 <div key={milestone.year} className="relative flex flex-col items-center">
                   {/* Timeline Dot */}

@@ -62,7 +62,6 @@ export function SettingsPage() {
         store: {
             minOrderAmount: 2000,
             deliveryFee: 500,
-            freeDeliveryThreshold: 3000,
             preparationTime: 30,
             deliveryRadius: 15,
             maxOrdersPerHour: 20,
@@ -108,18 +107,6 @@ export function SettingsPage() {
                 validUntil: "2024-12-31",
                 minOrderAmount: 0,
                 maxUses: 1000,
-                isActive: true
-            },
-            {
-                id: 2,
-                title: "Envío Gratis",
-                description: "Envío gratis en pedidos superiores a $2500",
-                discount: 0,
-                code: "ENVIOGRATIS",
-                validFrom: "2024-01-01",
-                validUntil: "2024-12-31",
-                minOrderAmount: 2500,
-                maxUses: 500,
                 isActive: true
             }
         ],
@@ -352,16 +339,6 @@ export function SettingsPage() {
                                 value={settings.store.deliveryFee}
                                 onChange={(e) => updateSetting("store", "deliveryFee", Number(e.target.value))}
                                 placeholder="Costo base de envío"
-                                className="admin-input"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Envío Gratis desde</label>
-                            <Input
-                                type="number"
-                                value={settings.store.freeDeliveryThreshold}
-                                onChange={(e) => updateSetting("store", "freeDeliveryThreshold", Number(e.target.value))}
-                                placeholder="Monto para envío gratuito"
                                 className="admin-input"
                             />
                         </div>

@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Portal } from "@/components/common/Portal";
 import { SectionHeader, StatsCards, CustomSelect, BrandedModal, BrandedModalFooter } from "@/components/branding";
 import { useConfirmModal } from "@/components/common/ConfirmModal";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 // ICONOS
 import {
@@ -29,7 +30,9 @@ import {
     Save,
     Minus,
     RefreshCw,
-    Eye
+    Eye,
+    Upload,
+    Image as ImageIcon
 } from "lucide-react";
 
 // PROVIDERS
@@ -400,6 +403,14 @@ export function ComboManagement() {
             setCategoryRequirements([]);
             setSelectedByCategory({});
             setSearchByCategory({});
+            setComboForm({
+                name: "",
+                description: "",
+                products: [],
+                discount: 0,
+                price: 0,
+                active: true
+            });
         } catch (error) {
             console.error("Error al guardar combo:", error);
             toast.error("Error al guardar el combo");
@@ -638,6 +649,17 @@ export function ComboManagement() {
                     setShowCreateModal(false);
                     setEditingCombo(null);
                     setProductSearchTerm("");
+                    setCategoryRequirements([]);
+                    setSelectedByCategory({});
+                    setSearchByCategory({});
+                    setComboForm({
+                        name: "",
+                        description: "",
+                        products: [],
+                        discount: 0,
+                        price: 0,
+                        active: true
+                    });
                 }}
                 title={editingCombo ? 'Editar Combo' : 'Crear Nuevo Combo'}
                 subtitle="Configure los productos y el descuento para el combo"
@@ -648,6 +670,17 @@ export function ComboManagement() {
                             setShowCreateModal(false);
                             setEditingCombo(null);
                             setProductSearchTerm("");
+                            setCategoryRequirements([]);
+                            setSelectedByCategory({});
+                            setSearchByCategory({});
+                            setComboForm({
+                                name: "",
+                                description: "",
+                                products: [],
+                                discount: 0,
+                                price: 0,
+                                active: true
+                            });
                         }}
                         onConfirm={handleSaveCombo}
                         confirmText={editingCombo ? 'Actualizar Combo' : 'Crear Combo'}
@@ -786,6 +819,42 @@ export function ComboManagement() {
                                     </div>
                                 </div>
                             )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Imagen del Combo */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                                <ImageIcon className="w-5 h-5" />
+                                Imagen del Combo
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-3">
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    Sube una imagen representativa del combo (opcional)
+                                </p>
+                                <ImageUpload
+                                    value={comboForm.imageBase64}
+                                    onChange={(imageUrl) => {
+                                        setComboForm(prev => ({ ...prev, imageBase64: imageUrl || '' }));
+                                    }}
+                                    placeholder="Subir imagen del combo (opcional)"
+                                    className="w-full"
+                                    simplePreview={true}
+                                />
+                                <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded border border-blue-200 dark:border-blue-800">
+                                    <p className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">
+                                        💡 Recomendaciones:
+                                    </p>
+                                    <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                                        <li>• Formato cuadrado o 4:3 para mejor visualización</li>
+                                        <li>• Resolución mínima 400x400px</li>
+                                        <li>• JPG o PNG, tamaño máximo 5MB</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>

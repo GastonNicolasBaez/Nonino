@@ -8,6 +8,7 @@ import { IntegratedCartItem } from "../../components/ui/IntegratedCartItem";
 import { useCart } from "../../context/CartProvider";
 import { formatPrice } from "../../lib/utils";
 import { useState } from "react";
+import { toast } from "sonner";
 
 function ConfirmDialog({ isOpen, onClose, onConfirm, title, message }) {
   if (!isOpen) return null;
@@ -277,7 +278,7 @@ export function CartPage() {
                     ) : (
                       <Button
                         variant="ghost"
-                        onClick={() => setShowPromoInput(true)}
+                        onClick={() => toast.info("Próximamente podrás usar códigos promocionales", { duration: 3000 })}
                         className="mb-4 w-full justify-start text-gray-300 hover:bg-empanada-medium"
                       >
                         <Tag className="w-4 h-4 mr-2" />
@@ -300,7 +301,7 @@ export function CartPage() {
                     )}
                     <div className="flex justify-between">
                       <span className="text-gray-300">Envío</span>
-                      <span className="font-medium text-white">{deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}</span>
+                      <span className="font-medium text-white">{formatPrice(deliveryFee)}</span>
                     </div>
                     <div className="border-t border-empanada-light-gray pt-3">
                       <div className="flex justify-between font-bold text-xl">
@@ -327,10 +328,6 @@ export function CartPage() {
 
                   {/* Trust indicators */}
                   <div className="mt-6 pt-4 border-t border-empanada-light-gray text-xs text-gray-300 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span>
-                      <span>Envío gratis en pedidos &gt; $3000</span>
-                    </div>
                     <div className="flex items-center gap-2">
                       <span className="text-green-500">✓</span>
                       <span>Tiempo estimado: 30-45 min</span>
@@ -413,7 +410,7 @@ export function CartPage() {
                 </motion.form>
               ) : (
                 <button
-                  onClick={() => setShowPromoInput(true)}
+                  onClick={() => toast.info("Próximamente podrás usar códigos promocionales", { duration: 3000 })}
                   className="mb-3 w-full flex items-center justify-start gap-2 py-2 px-3 text-xs text-gray-400 hover:text-gray-300 hover:bg-empanada-medium/40 rounded-xl transition-all duration-200"
                 >
                   <Tag className="w-3.5 h-3.5" />
@@ -436,9 +433,7 @@ export function CartPage() {
               )}
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Envío</span>
-                <span className="text-white font-medium">
-                  {deliveryFee > 0 ? formatPrice(deliveryFee) : <span className="text-green-400 font-semibold">GRATIS</span>}
-                </span>
+                <span className="text-white font-medium">{formatPrice(deliveryFee)}</span>
               </div>
 
               {/* Separador sutil */}

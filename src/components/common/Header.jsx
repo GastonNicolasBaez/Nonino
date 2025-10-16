@@ -37,7 +37,7 @@ export const Header = memo(function Header() {
   const { scrollY } = useScroll();
   
   // Detectar si estamos en páginas que no deben tener animaciones
-  const isStaticPage = ['/pedir', '/promociones', '/locales', '/nosotros', '/contacto', '/menu', '/carrito', '/checkout'].includes(location.pathname);
+  const isStaticPage = ['/menu', '/franquicias', '/locales', '/nosotros', '/contacto', '/carrito', '/checkout'].includes(location.pathname);
 
   // Detectar si estamos en la página de inicio (única que debe tener transparencias)
   const isHomePage = location.pathname === '/';
@@ -81,8 +81,8 @@ export const Header = memo(function Header() {
 
   const leftNavigation = [
     { name: "Inicio", href: "/" },
-    { name: "Pedir Ya", href: "/pedir" },
-    { name: "Promociones", href: "/promociones" },
+    { name: "Pedir Ya", href: "/menu" },
+    { name: "Franquicias", href: "/franquicias" },
   ];
 
   const rightNavigation = [
@@ -447,7 +447,7 @@ export const Header = memo(function Header() {
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     <Link
-                      to={sucursalSeleccionada ? "/menu" : "/pedir"}
+                      to="/menu"
                       onClick={() => setIsMenuOpen(false)}
                       className="flex flex-col items-center p-3 rounded-lg hover:bg-empanada-medium transition-colors"
                     >

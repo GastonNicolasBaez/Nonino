@@ -1,15 +1,16 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Upload, X, RotateCcw, Crop, RotateCw, Move, Eye, EyeOff, Monitor, Smartphone } from "lucide-react";
+import { Upload, X, RotateCcw, Crop, RotateCw, Move, Eye, EyeOff, Monitor, Smartphone, Edit } from "lucide-react";
 import { Button } from "./button";
 import { Card, CardContent } from "./card";
 import { detectFocalPoint, calculateSafeArea, generatePositioningRecommendations } from "@/utils/imagePositioning";
 
-export function ImageUpload({ 
-  value, 
-  onChange, 
+export function ImageUpload({
+  value,
+  onChange,
   placeholder = "Subir imagen del producto",
   className = "",
-  disabled = false 
+  disabled = false,
+  simplePreview = false // Nueva prop: si es true, solo muestra preview estático sin parallax
 }) {
   const [preview, setPreview] = useState(value || null);
   const [originalImage, setOriginalImage] = useState(value || null);
@@ -310,67 +311,87 @@ export function ImageUpload({
   if (isEditing && preview) {
     return (
       <div className="w-full flex justify-center">
+        {/* Input file y canvas - necesarios para el modo edición */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileInputChange}
+          className="hidden"
+          disabled={disabled}
+        />
+
+        {/* Canvas oculto para procesamiento */}
+        <canvas
+          ref={canvasRef}
+          className="hidden"
+          width="480"
+          height="360"
+        />
+
         {/* Layout compacto optimizado */}
         <div className="flex flex-col items-center gap-3 max-w-5xl w-full">
           
           {/* Controles superiores - más compactos */}
-          <div className="flex flex-wrap items-center justify-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg w-full">
-            {/* Toggle de vistas */}
-            <div className="flex items-center gap-1 bg-white dark:bg-gray-700 rounded-lg p-1">
-              <Button
-                variant={previewMode === 'parallax' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setPreviewMode('parallax')}
-                className="h-8 px-3 text-xs"
-              >
-                <Monitor className="w-3 h-3 mr-1" />
-                Parallax
-              </Button>
-              <Button
-                variant={previewMode === 'static' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setPreviewMode('static')}
-                className="h-8 px-3 text-xs"
-              >
-                <Smartphone className="w-3 h-3 mr-1" />
-                Estático
-              </Button>
-              <Button
-                variant={previewMode === 'both' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setPreviewMode('both')}
-                className="h-8 px-3 text-xs"
-              >
-                <Eye className="w-3 h-3 mr-1" />
-                Ambas
-              </Button>
-            </div>
-            
-            {/* Toggle de guías */}
-            <Button
-              variant={showGuides ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setShowGuides(!showGuides)}
-              className="h-8 px-3 text-xs"
-            >
-              {showGuides ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
-              Guías
-            </Button>
-            
-            {/* Estado de detección */}
-            {isDetectingFocalPoint && (
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <div className="w-3 h-3 border border-empanada-golden border-t-transparent rounded-full animate-spin"></div>
-                Detectando punto focal...
+          {!simplePreview && (
+            <div className="flex flex-wrap items-center justify-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg w-full">
+              {/* Toggle de vistas */}
+              <div className="flex items-center gap-1 bg-white dark:bg-gray-700 rounded-lg p-1">
+                <Button
+                  variant={previewMode === 'parallax' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setPreviewMode('parallax')}
+                  className="h-8 px-3 text-xs"
+                >
+                  <Monitor className="w-3 h-3 mr-1" />
+                  Parallax
+                </Button>
+                <Button
+                  variant={previewMode === 'static' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setPreviewMode('static')}
+                  className="h-8 px-3 text-xs"
+                >
+                  <Smartphone className="w-3 h-3 mr-1" />
+                  Estático
+                </Button>
+                <Button
+                  variant={previewMode === 'both' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setPreviewMode('both')}
+                  className="h-8 px-3 text-xs"
+                >
+                  <Eye className="w-3 h-3 mr-1" />
+                  Ambas
+                </Button>
               </div>
-            )}
-          </div>
+
+              {/* Toggle de guías */}
+              <Button
+                variant={showGuides ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setShowGuides(!showGuides)}
+                className="h-8 px-3 text-xs"
+              >
+                {showGuides ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
+                Guías
+              </Button>
+
+              {/* Estado de detección */}
+              {isDetectingFocalPoint && (
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="w-3 h-3 border border-empanada-golden border-t-transparent rounded-full animate-spin"></div>
+                  Detectando punto focal...
+                </div>
+              )}
+            </div>
+          )}
           
           {/* Recomendaciones - más compactas */}
-          {recommendations && (
+          {!simplePreview && recommendations && (
             <div className={`w-full p-2 rounded-lg text-xs ${
-              recommendations.isOptimal 
-                ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
+              recommendations.isOptimal
+                ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
                 : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300'
             }`}>
               <div className="font-medium">
@@ -383,10 +404,10 @@ export function ImageUpload({
           )}
           
           {/* Contenedor de previews */}
-          <div className={`flex gap-4 ${previewMode === 'both' ? 'flex-row' : 'justify-center'}`}>
+          <div className={`flex gap-4 ${(previewMode === 'both' && !simplePreview) ? 'flex-row' : 'justify-center'}`}>
 
             {/* Preview Parallax - más compacto */}
-            {(previewMode === 'parallax' || previewMode === 'both') && (
+            {!simplePreview && (previewMode === 'parallax' || previewMode === 'both') && (
               <div className="relative">
                 <div className="w-72 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                   <div className="p-3 bg-gray-50 dark:bg-gray-700/50 border-b">
@@ -443,16 +464,23 @@ export function ImageUpload({
             )}
 
             {/* Preview Estático - más compacto */}
-            {(previewMode === 'static' || previewMode === 'both') && (
+            {(simplePreview || previewMode === 'static' || previewMode === 'both') && (
               <div className="relative">
                 <div className="w-72 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                  <div className="p-3 bg-gray-50 dark:bg-gray-700/50 border-b">
-                    <h3 className="font-medium text-sm text-gray-900 dark:text-white text-center">
-                      Vista Estática (Menú)
-                    </h3>
-                  </div>
-                  <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 dark:bg-gray-700">
+                  {!simplePreview && (
+                    <div className="p-3 bg-gray-50 dark:bg-gray-700/50 border-b">
+                      <h3 className="font-medium text-sm text-gray-900 dark:text-white text-center">
+                        Vista Estática (Menú)
+                      </h3>
+                    </div>
+                  )}
+                  <div
+                    ref={simplePreview ? previewRef : null}
+                    className="aspect-[4/3] relative overflow-hidden bg-gray-50 dark:bg-gray-700 cursor-move select-none"
+                    onMouseDown={handleMouseDown}
+                  >
                     <img
+                      ref={simplePreview ? imageRef : null}
                       src={originalImage}
                       alt="Preview Estático"
                       className="w-full h-full object-cover"
@@ -555,20 +583,13 @@ export function ImageUpload({
             </Button>
           </div>
         </div>
-
-        {/* Canvas oculto para procesamiento */}
-        <canvas
-          ref={canvasRef}
-          className="hidden"
-          width="480"
-          height="360"
-        />
       </div>
     );
   }
 
   return (
     <div className={`space-y-4 ${className}`}>
+      {/* Input file - necesario para seleccionar archivos iniciales */}
       <input
         ref={fileInputRef}
         type="file"
@@ -578,7 +599,7 @@ export function ImageUpload({
         disabled={disabled}
       />
 
-      {!preview && (
+      {!preview ? (
         <div
           onClick={() => !disabled && fileInputRef.current?.click()}
           onDragOver={handleDragOver}
@@ -586,8 +607,8 @@ export function ImageUpload({
           onDrop={handleDrop}
           className={`
             border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors duration-200
-            ${isDragging 
-              ? 'border-empanada-golden bg-empanada-golden/10' 
+            ${isDragging
+              ? 'border-empanada-golden bg-empanada-golden/10'
               : 'border-gray-300 dark:border-gray-600 hover:border-empanada-golden/50'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
@@ -608,6 +629,48 @@ export function ImageUpload({
                 PNG, JPG, JPEG hasta 5MB
               </p>
             </div>
+          </div>
+        </div>
+      ) : (
+        /* Vista de preview cuando hay imagen pero no está editando */
+        <div className="space-y-3">
+          <div className="relative w-full max-w-md mx-auto">
+            <div className="aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+          <div className="flex justify-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Editar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2"
+            >
+              <Upload className="w-4 h-4" />
+              Cambiar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRemoveImage}
+              className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <X className="w-4 h-4" />
+              Eliminar
+            </Button>
           </div>
         </div>
       )}

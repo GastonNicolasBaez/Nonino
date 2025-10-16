@@ -50,7 +50,7 @@ export function ComboCarousel({ combos = [], onSelectCombo, onShowInfo }) {
   return (
     <div className="relative px-4 py-6">
       {/* Cards con animación */}
-      <div className="relative h-[480px] mb-6">
+      <div className="relative h-[260px] mb-6">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <ComboCard
             key={`${currentCombo.id}-${currentIndex}`}
@@ -162,20 +162,25 @@ function ComboCard({ combo, onSwipe, onSelect, onShowInfo, direction }) {
       initial="enter"
       animate="center"
       exit="exit"
-      className="absolute inset-0"
+      className="absolute inset-0 cursor-pointer"
       drag="x"
       dragConstraints={{ left: -200, right: 200 }}
       dragElastic={0.7}
       dragDirectionLock
       onDragEnd={handleDragEnd}
+      onClick={(e) => {
+        // Solo abrir modal si no se clickeó el botón
+        if (e.target.closest('button[data-action="select"]')) return;
+        onShowInfo && onShowInfo(combo);
+      }}
       style={{
         x,
         opacity,
       }}
     >
-      <Card className="h-full overflow-hidden bg-empanada-dark border-2 border-empanada-light-gray shadow-2xl">
+      <Card className="h-full overflow-hidden bg-empanada-dark border-2 border-empanada-light-gray shadow-2xl hover:border-empanada-golden transition-colors">
         {/* Imagen del combo */}
-        <div className="relative h-56 bg-gradient-to-br from-empanada-medium to-empanada-dark overflow-hidden">
+        <div className="relative h-32 bg-gradient-to-br from-empanada-medium to-empanada-dark overflow-hidden">
           {combo.imageBase64 ? (
             <img
               src={combo.imageBase64.startsWith('data:') ? combo.imageBase64 : `data:image/webp;base64,${combo.imageBase64}`}
@@ -194,77 +199,67 @@ function ComboCard({ combo, onSwipe, onSelect, onShowInfo, direction }) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring' }}
-              className="absolute top-4 right-4"
+              className="absolute top-2 right-2"
             >
-              <Badge className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-4 py-2 text-base font-bold shadow-2xl">
-                <TrendingUp className="w-5 h-5 mr-1 inline" />
+              <Badge className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-2 py-1 text-xs font-bold shadow-2xl">
+                <TrendingUp className="w-3 h-3 mr-0.5 inline" />
                 {discountPercentage}% OFF
               </Badge>
             </motion.div>
           )}
 
-          {/* Botón de info */}
-          <motion.button
-            onClick={(e) => {
-              e.stopPropagation();
-              onShowInfo && onShowInfo(combo);
-            }}
-            className="absolute top-4 left-4 w-10 h-10 bg-empanada-dark/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-            onPointerDown={(e) => e.stopPropagation()}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Info className="w-5 h-5 text-white" />
-          </motion.button>
+          {/* Indicador de tap para ver detalles */}
+          <div className="absolute top-2 left-2 bg-empanada-dark/80 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-lg">
+            <Info className="w-3 h-3 text-empanada-golden" />
+            <span className="text-xs text-white font-medium">Toca para ver detalles</span>
+          </div>
         </div>
 
-        <CardContent className="p-6 flex flex-col justify-between h-[calc(100%-224px)]">
-          {/* Nombre y descripción */}
-          <div className="mb-4">
-            <h3 className="text-2xl font-bold text-white mb-2 leading-tight">
+        <CardContent className="p-3 flex flex-col h-[calc(100%-128px)]">
+          {/* Nombre */}
+          <div className="mb-1.5">
+            <h3 className="text-sm font-bold text-white leading-tight line-clamp-1 mb-0.5">
               {combo.name}
             </h3>
-            <p className="text-gray-400 text-sm line-clamp-2">
+            <p className="text-gray-400 text-xs line-clamp-1">
               {combo.description || "Combo personalizable a tu gusto"}
             </p>
           </div>
 
-          {/* Precios y ahorro */}
-          <div className="mb-4">
-            <div className="flex items-baseline gap-3 mb-2">
-              <span className="text-4xl font-bold text-empanada-golden">
+          {/* Precio y ahorro */}
+          <div className="mb-2 flex-1">
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-bold text-empanada-golden">
                 {formatPrice(combo.price)}
               </span>
               {discount > 0 && (
-                <span className="text-lg text-gray-500 line-through">
+                <span className="text-xs text-gray-500 line-through">
                   {formatPrice(combo.price + discount)}
                 </span>
               )}
             </div>
             {discount > 0 && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-sm text-green-400 font-medium"
-              >
+              <p className="text-xs text-green-400 font-medium">
                 ✨ Ahorrás {formatPrice(discount)}
-              </motion.p>
+              </p>
             )}
           </div>
 
-          {/* Botón CTA */}
+          {/* Botón CTA compacto */}
           <Button
+            data-action="select"
             variant="empanada"
-            size="lg"
-            className="w-full text-lg shadow-xl group"
+            size="sm"
+            className="w-full text-xs py-1.5 shadow-xl group h-auto"
             onClick={(e) => {
               e.stopPropagation();
               onSelect(combo);
             }}
             onPointerDown={(e) => e.stopPropagation()}
           >
-            <Package className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-            Armar este Combo
-            <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            <Package className="w-3 h-3 mr-1 group-hover:scale-110 transition-transform" />
+            Armar Combo
+            <ChevronRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
           </Button>
         </CardContent>
       </Card>

@@ -26,9 +26,9 @@ export default {
           50: '#fdf5e6',   // neutral-light
           100: '#f5f5dc',  // secondary-cream
           200: '#f0e68c',  // secondary-wheat
-          300: '#cd853f',  // secondary-terracotta
-          400: '#b8860b',  // primary-warm
-          500: '#d4af37',  // primary-golden
+          300: '#f4a11e',  // secondary-terracotta (actualizado)
+          400: '#f4a11e',  // primary-warm (actualizado)
+          500: '#f4a11e',  // primary-golden (actualizado)
           600: '#8b4513',  // primary-rich
           700: '#654321',  // marrón medio oscuro
           800: '#1a1a1a',  // neutral-dark (gris oscuro)
@@ -41,9 +41,9 @@ export default {
           50: '#fdf5e6',   // neutral-light
           100: '#f5f5dc',  // secondary-cream
           200: '#f0e68c',  // secondary-wheat
-          300: '#cd853f',  // secondary-terracotta
-          400: '#b8860b',  // primary-warm
-          500: '#d4af37',  // primary-golden
+          300: '#f4a11e',  // secondary-terracotta (actualizado)
+          400: '#f4a11e',  // primary-warm (actualizado)
+          500: '#f4a11e',  // primary-golden (actualizado)
           600: '#8b4513',  // primary-rich
           700: '#654321',  // marrón medio oscuro
           800: '#1a1a1a',  // neutral-dark (gris oscuro)
@@ -68,12 +68,12 @@ export default {
         },
         // Nueva paleta "Tradición Argentina"
         empanada: {
-          golden: '#d4af37',      // primary-golden
-          warm: '#b8860b',        // primary-warm
+          golden: '#f4a11e',      // primary-golden (actualizado)
+          warm: '#f4a11e',        // primary-warm (actualizado)
           rich: '#8b4513',        // primary-rich
           cream: '#f5f5dc',       // secondary-cream
           wheat: '#f0e68c',       // secondary-wheat
-          terracotta: '#cd853f',  // secondary-terracotta
+          terracotta: '#f4a11e',  // secondary-terracotta (actualizado)
           dark: '#1a1a1a',        // neutral-dark (gris oscuro del footer)
           darker: '#0f0f0f',      // más oscuro que el footer
           medium: '#2a2a2a',      // versión más clara del footer

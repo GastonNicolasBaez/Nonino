@@ -214,11 +214,6 @@ export function CartDropdown({ isOpen, onClose }) {
                     </Button>
                   </Link>
                 </div>
-
-                {/* Quick Info */}
-                <p className="text-xs text-gray-400 text-center mt-3">
-                  Envío gratis en pedidos &gt; $3000
-                </p>
               </div>
             )}
           </motion.div>

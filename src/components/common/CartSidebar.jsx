@@ -312,10 +312,6 @@ export function CartSidebar() {
                 <div className="text-xs text-gray-400 space-y-1 pt-2 border-t border-empanada-light-gray">
                   <p className="flex items-center gap-1">
                     <span className="text-green-500">✓</span>
-                    Envío gratis en pedidos &gt; $3000
-                  </p>
-                  <p className="flex items-center gap-1">
-                    <span className="text-green-500">✓</span>
                     Tiempo estimado: 30-45 min
                   </p>
                 </div>

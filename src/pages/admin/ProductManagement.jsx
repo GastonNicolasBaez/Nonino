@@ -647,6 +647,7 @@ export function ProductManagement() {
                                     }}
                                     placeholder="Subir imagen del producto"
                                     className="w-full"
+                                    simplePreview={true}
                                 />
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">

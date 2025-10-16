@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Quote, Star } from "lucide-react";
 import {
   somosBlur, somos640, somos1024, somos1920, somos2560,
   somos2Blur, somos2640, somos21024, somos21920, somos22560,
@@ -9,50 +8,28 @@ import {
 
 const teamMembers = [
   {
-    quote:
-      "Fundé Nonino hace más de 25 años con el sueño de compartir las recetas familiares de mi abuela. Cada empanada que sale de nuestra cocina lleva mi pasión y dedicación por mantener viva esta tradición.",
-    name: "Carlos Nonino",
-    designation: "Fundador y Chef Principal",
+    name: "ELI",
+    designation: "Encargada de la Sucursal Villegas",
     src: somos2560,
     srcSet: `${somos640} 640w, ${somos1024} 1024w, ${somos1920} 1920w, ${somos2560} 2560w`,
     blurDataURL: somosBlur,
   },
   {
-    quote:
-      "Como gerente general, me aseguro de que cada cliente reciba el mejor servicio. Coordino todos nuestros locales y mantengo los estándares de calidad que nos han caracterizado durante tantos años.",
-    name: "María Nonino",
-    designation: "Gerente General",
+    name: "ORLANDO",
+    designation: "Encargado de Fábrica",
     src: somos22560,
     srcSet: `${somos2640} 640w, ${somos21024} 1024w, ${somos21920} 1920w, ${somos22560} 2560w`,
     blurDataURL: somos2Blur,
   },
   {
-    quote:
-      "En la cocina central, superviso la producción diaria de miles de empanadas. Mi equipo y yo nos aseguramos de que cada masa tenga la textura perfecta y cada relleno el sabor auténtico que nos distingue.",
-    name: "José Martínez",
-    designation: "Chef de Producción",
+    name: "DAVID Y CATERINA",
+    designation: "Encargado de la sucursal El Molino y encargada de Despacho",
     src: somos32560,
     srcSet: `${somos3640} 640w, ${somos31024} 1024w, ${somos31920} 1920w, ${somos32560} 2560w`,
     blurDataURL: somos3Blur,
   },
-  {
-    quote:
-      "Manejo toda la logística de delivery y me aseguro de que nuestras empanadas lleguen calientes a cada hogar. La puntualidad y calidad en el servicio son mi prioridad número uno.",
-    name: "Ana Morales",
-    designation: "Coordinadora de Delivery",
-    src: somos2560,
-    srcSet: `${somos640} 640w, ${somos1024} 1024w, ${somos1920} 1920w, ${somos2560} 2560w`,
-    blurDataURL: somosBlur,
-  },
-  {
-    quote:
-      "Como encargada del local Centro, recibo a nuestros clientes con una sonrisa y me aseguro de que vivan la experiencia Nonino completa. Conozco las preferencias de cada cliente regular.",
-    name: "Laura Vega",
-    designation: "Encargada Local Centro",
-    src: somos22560,
-    srcSet: `${somos2640} 640w, ${somos21024} 1024w, ${somos21920} 1920w, ${somos22560} 2560w`,
-    blurDataURL: somos2Blur,
-  },
+
+  
 ];
 
 export function AnimatedTestimonials({ autoplay = false }) {
@@ -125,11 +102,11 @@ export function AnimatedTestimonials({ autoplay = false }) {
   };
 
   return (
-    <div className="max-w-sm md:max-w-4xl mx-auto antialiased font-sans px-4 md:px-8 lg:px-12 py-20 relative" style={{ zIndex: 1 }}>
-      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-20">
-        <div>
+    <div className="max-w-sm md:max-w-3xl mx-auto antialiased font-sans px-4 md:px-8 lg:px-12 py-12 relative" style={{ zIndex: 1 }}>
+      <div className="relative flex flex-col items-center">
+        <div className="w-full max-w-md">
           <div
-            className="relative h-80 w-full"
+            className="relative h-96 w-full"
             onTouchStart={isMobile ? onTouchStart : undefined}
             onTouchMove={isMobile ? onTouchMove : undefined}
             onTouchEnd={isMobile ? onTouchEnd : undefined}
@@ -199,68 +176,66 @@ export function AnimatedTestimonials({ autoplay = false }) {
             </AnimatePresence>
           </div>
         </div>
-        <div className="flex justify-between flex-col py-4">
-          <motion.div
-            key={active}
-            initial={{
-              y: 20,
-              opacity: 0,
-            }}
-            animate={{
-              y: 0,
-              opacity: 1,
-            }}
-            exit={{
-              y: -20,
-              opacity: 0,
-            }}
-            transition={{
-              duration: 0.2,
-              ease: "easeInOut",
-            }}
+
+        {/* Información del miembro del equipo - Centrada debajo de la imagen */}
+        <motion.div
+          key={active}
+          initial={{
+            y: 20,
+            opacity: 0,
+          }}
+          animate={{
+            y: 0,
+            opacity: 1,
+          }}
+          exit={{
+            y: -20,
+            opacity: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut",
+          }}
+          className="text-center mt-8 mb-6"
+        >
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            {teamMembers[active].name}
+          </h3>
+          <p className="text-base md:text-lg text-empanada-golden font-medium">
+            {teamMembers[active].designation}
+          </p>
+        </motion.div>
+
+        {/* Controles de navegación - Centrados */}
+        <div className="flex gap-4 justify-center">
+          <button
+            onClick={handlePrev}
+            className="h-10 w-10 rounded-full bg-empanada-medium hover:bg-empanada-golden/20 border border-empanada-golden/30 flex items-center justify-center group/button transition-all"
           >
-            <div className="text-lg text-slate-500 max-w-sm mx-auto md:mx-0">
-              <Quote className="h-4 w-4 text-empanada-golden inline mr-1" />
-              {teamMembers[active].quote}
-              <Quote className="h-4 w-4 text-empanada-golden inline ml-1 rotate-180" />
-            </div>
-            <div className="text-sm md:text-base font-bold text-slate-800 mt-4">
-              {teamMembers[active].name}
-            </div>
-            <div className="text-sm text-slate-600 mt-2">
-              {teamMembers[active].designation}
-            </div>
-          </motion.div>
-          <div className={`gap-4 pt-12 md:pt-0 ${isMobile ? 'hidden' : 'flex'}`}>
-            <button
-              onClick={handlePrev}
-              className="h-7 w-7 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center group/button"
+            <svg
+              className="h-5 w-5 text-empanada-golden group-hover/button:rotate-12 transition-transform duration-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
             >
-              <svg
-                className="h-5 w-5 text-black dark:text-neutral-400 group-hover/button:rotate-12 transition-transform duration-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={handleNext}
-              className="h-7 w-7 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center group/button"
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={handleNext}
+            className="h-10 w-10 rounded-full bg-empanada-medium hover:bg-empanada-golden/20 border border-empanada-golden/30 flex items-center justify-center group/button transition-all"
+          >
+            <svg
+              className="h-5 w-5 text-empanada-golden group-hover/button:-rotate-12 transition-transform duration-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
             >
-              <svg
-                className="h-5 w-5 text-black dark:text-neutral-400 group-hover/button:-rotate-12 transition-transform duration-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>

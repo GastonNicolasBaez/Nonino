@@ -26,7 +26,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 const HomePage = lazy(() => import("@/pages/public/HomePage").then(m => ({ default: m.HomePage })));
 const MenuPage = lazy(() => import("@/pages/public/MenuPage").then(m => ({ default: m.MenuPage })));
 const ComboBuilderPage = lazy(() => import("@/pages/public/ComboBuilderPage").then(m => ({ default: m.ComboBuilderPage })));
-const PromotionsPage = lazy(() => import("@/pages/public/PromotionsPage").then(m => ({ default: m.PromotionsPage })));
+const FranchisePage = lazy(() => import("@/pages/public/FranchisePage").then(m => ({ default: m.FranchisePage })));
 const StoresPage = lazy(() => import("@/pages/public/StoresPage").then(m => ({ default: m.StoresPage })));
 const AboutPage = lazy(() => import("@/pages/public/AboutPage").then(m => ({ default: m.AboutPage })));
 const ContactPage = lazy(() => import("@/pages/public/ContactPage").then(m => ({ default: m.ContactPage })));
@@ -97,9 +97,9 @@ function App() {
                                     <ComboBuilderPage />
                                 </Suspense>
                             } />
-                            <Route path="/promociones" element={
+                            <Route path="/franquicias" element={
                                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
-                                    <PromotionsPage />
+                                    <FranchisePage />
                                 </Suspense>
                             } />
                             <Route path="/locales" element={

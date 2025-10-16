@@ -656,6 +656,7 @@ export function AddProductModal({
                                                     }}
                                                     placeholder="Subir imagen del producto (opcional)"
                                                     className="w-full"
+                                                    simplePreview={true}
                                                 />
                                                 {errors.imageUrl && (
                                                     <p className="text-red-500 text-xs flex items-center gap-1 mt-2">

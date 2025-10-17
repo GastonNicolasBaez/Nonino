@@ -126,16 +126,14 @@ export function ComboManagement() {
             description: combo.description || "",
             products: combo.products ? [...combo.products] : [], // Crear copia para evitar mutación
             discount: combo.discount || 0,
-            price: combo.price || 0,
+            price: combo.price,
             active: combo.active !== undefined ? combo.active : true,
             imageBase64: combo.imageBase64 || ""
         });
 
         // Cargar las categorías del combo desde categoryIds y selectionRules
-        console.log(combo.categoryIds);
-        console.log(combo.selectionRules);
         if (combo.categoryIds && combo.selectionRules && Array.isArray(combo.categoryIds)) {
-            
+
             const loadedCategoryRequirements = combo.categoryIds.map((categoryId) => {
                 // Buscar la regla correspondiente para obtener la cantidad requerida
                 const rule = combo.selectionRules.find(r => String(r.categoryId) === String(categoryId));
@@ -200,7 +198,7 @@ export function ComboManagement() {
                 ...prev,
                 products: updatedProducts
             }));
-            calculateComboPrice(updatedProducts, comboForm.discount);
+            // calculateComboPrice(updatedProducts, comboForm.discount);
             toast.success(`${selectedProduct.name} agregado (cantidad: ${updatedProducts[existingProductIndex].quantity})`);
         } else {
             // Si no existe, agregarlo
@@ -216,7 +214,7 @@ export function ComboManagement() {
                 ...prev,
                 products: updatedProducts
             }));
-            calculateComboPrice(updatedProducts, comboForm.discount);
+            // calculateComboPrice(updatedProducts, comboForm.discount);
             toast.success(`${selectedProduct.name} agregado al combo`);
         }
     };
@@ -229,7 +227,7 @@ export function ComboManagement() {
             ...prev,
             products: updatedProducts
         }));
-        calculateComboPrice(updatedProducts, comboForm.discount);
+        // calculateComboPrice(updatedProducts, comboForm.discount);
 
         if (productName) {
             toast.success(`${productName} removido del combo`);
@@ -285,7 +283,7 @@ export function ComboManagement() {
             ...prev,
             products: updatedProducts
         }));
-        calculateComboPrice(updatedProducts, comboForm.discount);
+        // calculateComboPrice(updatedProducts, comboForm.discount);
     };
 
     const calculateOriginalPrice = (combo) => {
@@ -305,30 +303,30 @@ export function ComboManagement() {
         return discountValue.toFixed(2);
     }
 
-    const calculateComboPrice = (products, discount) => {
-        if (!products || products.length === 0) {
-            setComboForm(prev => ({
-                ...prev,
-                price: 0
-            }));
-            return;
-        }
+    // const calculateComboPrice = (products, discount) => {
+    //     if (!products || products.length === 0) {
+    //         setComboForm(prev => ({
+    //             ...prev,
+    //             price: 0
+    //         }));
+    //         return;
+    //     }
 
-        const originalPrice = products.reduce((sum, product) => {
-            const price = parseFloat(product.price) || 0;
-            const quantity = parseInt(product.quantity) || 0;
-            return sum + (price * quantity);
-        }, 0);
+    //     const originalPrice = products.reduce((sum, product) => {
+    //         const price = parseFloat(product.price) || 0;
+    //         const quantity = parseInt(product.quantity) || 0;
+    //         return sum + (price * quantity);
+    //     }, 0);
 
-        const discountPercent = parseFloat(discount) || 0;
-        const discountAmount = (originalPrice * discountPercent) / 100;
-        const finalPrice = originalPrice - discountAmount;
+    //     const discountPercent = parseFloat(discount) || 0;
+    //     const discountAmount = (originalPrice * discountPercent) / 100;
+    //     const finalPrice = originalPrice - discountAmount;
 
-        setComboForm(prev => ({
-            ...prev,
-            price: Math.round(Math.max(0, finalPrice)) // Asegurar que no sea negativo
-        }));
-    };
+    //     setComboForm(prev => ({
+    //         ...prev,
+    //         price: Math.round(Math.max(0, finalPrice)) // Asegurar que no sea negativo
+    //     }));
+    // };
 
     const handleDiscountChange = (discount) => {
         const numDiscount = parseFloat(discount) || 0;
@@ -347,14 +345,14 @@ export function ComboManagement() {
             ...prev,
             discount: numDiscount
         }));
-        calculateComboPrice(comboForm.products, numDiscount);
+        // calculateComboPrice(comboForm.products, numDiscount);
     };
 
     // Recalcular precio en base a la selección por categorías
-    useEffect(() => {
-        calculateComboPrice(allSelectedProducts, comboForm.discount);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [allSelectedProducts, comboForm.discount]);
+    // useEffect(() => {
+    //     // calculateComboPrice(allSelectedProducts, comboForm.discount);
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [allSelectedProducts, comboForm.discount]);
 
     const handleSaveCombo = async () => {
         // Validaciones
@@ -382,49 +380,39 @@ export function ComboManagement() {
         }
 
         const comboData = {
+            ...editingCombo,
             ...comboForm,
-            id: editingCombo?.id || `combo-${Date.now()}`,
-            createdAt: editingCombo?.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString()
         };
 
         try {
-            if (editingCombo) {
-                setCombos(prev => prev.map(combo =>
-                    combo.id === editingCombo.id ? comboData : combo
-                ));
-                toast.success("Combo actualizado correctamente");
-            } else {
 
-                console.log(categoryRequirements);
+            const newCategoryList = categoryRequirements.map((c) => (c.categoryId));
 
-                const newCategoryList = categoryRequirements.map((c) => (c.categoryId));
+            const newSelectionRules = categoryRequirements.map((c) => ({
+                categoryId: c.categoryId,
+                units: c.requiredQuantity,
+            }));
 
-                const newSelectionRules = categoryRequirements.map((c) => ({
-                    categoryId: c.categoryId,
-                    units: c.requiredQuantity,
-                }));
-
-                const newCombo = {
-                    code: `MAT-${Date.now()}`,
-                    name: comboData.name,
-                    description: comboData.description,
-                    price: comboData.price,
-                    active: true,
-                    kind: 'CATEGORY_PICKER',
-                    categoryIds: newCategoryList,
-                    selectionRules: newSelectionRules,
-                    allowRepeats: true,
-                    components: [],
-                    imageBase64: "",
-                }
-
-                await callCrearCombo({
-                    _combo: newCombo,
-                    _accessToken: session.userData.accessToken,
-                });
-                toast.success("Combo creado correctamente");
+            const newCombo = {
+                code: editingCombo ? comboData.code : `CMB-${Date.now()}`,
+                name: comboData.name,
+                description: comboData.description,
+                price: comboData.price,
+                active: true,
+                kind: 'CATEGORY_PICKER',
+                categoryIds: newCategoryList,
+                selectionRules: newSelectionRules,
+                allowRepeats: true,
+                components: [],
+                imageBase64: comboData.imageBase64,
             }
+
+            await callCrearCombo({
+                _combo: newCombo,
+                _accessToken: session.userData.accessToken,
+            });
+
+            toast.success("Combo " + editingCombo ? "creado" : "actualizado" + " correctamente");
 
             // Limpiar el formulario
             setShowCreateModal(false);
@@ -555,7 +543,7 @@ export function ComboManagement() {
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
-                
+
             },
             icon: <RefreshCw className="w-4 h-4 mr-2" />
         }
@@ -866,7 +854,7 @@ export function ComboManagement() {
                                     Sube una imagen representativa del combo (opcional)
                                 </p>
                                 <ImageUpload
-                                    value={comboForm.imageBase64}
+                                    value={comboForm.imageBase64 ? `data:image/webp;base64,` + comboForm.imageBase64 : ''}
                                     onChange={(imageUrl) => {
                                         setComboForm(prev => ({ ...prev, imageBase64: imageUrl || '' }));
                                     }}

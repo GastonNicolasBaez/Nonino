@@ -183,7 +183,7 @@ function ComboCard({ combo, onSwipe, onSelect, onShowInfo, direction }) {
         <div className="relative h-32 bg-gradient-to-br from-empanada-medium to-empanada-dark overflow-hidden">
           {combo.imageBase64 ? (
             <img
-              src={combo.imageBase64.startsWith('data:') ? combo.imageBase64 : `data:image/webp;base64,${combo.imageBase64}`}
+              src={combo.imageBase64}
               alt={combo.name}
               className="w-full h-full object-cover"
             />

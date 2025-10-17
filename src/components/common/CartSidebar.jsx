@@ -260,22 +260,16 @@ export function CartSidebar() {
                   <div className="space-y-3">
                     <div className="text-sm font-medium text-white">Sucursal para el pedido:</div>
                     <div className="bg-empanada-medium p-3 rounded-lg border border-green-600">
-                      <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 bg-green-800 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-green-800 rounded-full flex items-center justify-center flex-shrink-0">
                           <span className="text-green-400 text-sm">✓</span>
                         </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm text-green-400">{selectedStore.name}</div>
-                          <div className="text-xs text-green-300">{selectedStore.address}</div>
-                          <div className="text-xs text-green-300 mt-1 font-medium">
-                            {selectedStore.deliveryTime} • Min: {formatPrice(selectedStore.minOrder)}
-                          </div>
-                        </div>
+                        <div className="font-medium text-sm text-green-400">{selectedStore.name}</div>
                       </div>
                     </div>
-                    {selectedStore.minOrder && subtotal < selectedStore.minOrder && (
+                    {(selectedStore.minOrder || 0) > 0 && subtotal < (selectedStore.minOrder || 0) && (
                       <div className="text-xs text-amber-400 bg-empanada-medium p-2 rounded border border-amber-600">
-                        ⚠️ Pedido mínimo: {formatPrice(selectedStore.minOrder)}
+                        ⚠️ Pedido mínimo: {formatPrice(selectedStore.minOrder || 0)}
                       </div>
                     )}
                   </div>
@@ -308,13 +302,6 @@ export function CartSidebar() {
                   </Link>
                 </div>
 
-                {/* Quick Info */}
-                <div className="text-xs text-gray-400 space-y-1 pt-2 border-t border-empanada-light-gray">
-                  <p className="flex items-center gap-1">
-                    <span className="text-green-500">✓</span>
-                    Tiempo estimado: 30-45 min
-                  </p>
-                </div>
               </div>
             )}
           </motion.div>

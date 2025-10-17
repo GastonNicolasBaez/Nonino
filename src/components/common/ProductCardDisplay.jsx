@@ -1,24 +1,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Star, Clock, Eye } from "lucide-react";
+import { Star, Clock, Eye } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
+import { useIsMobile } from "../../hooks/useMediaQuery";
 
 export function ProductCardDisplay({ product, className, onViewDetails }) {
-  const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
 
-  /**
-   * Maneja el toggle de favoritos
-   */
-  const handleLike = (e) => {
-    e.stopPropagation();
-    setIsLiked(!isLiked);
-    toast.success(isLiked ? "Removido de favoritos" : "Agregado a favoritos");
-  };
 
   /**
    * Maneja el click para ver detalles
@@ -67,19 +60,6 @@ export function ProductCardDisplay({ product, className, onViewDetails }) {
             )}
           </div>
 
-          {/* Like Button */}
-          <motion.button
-            className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-colors"
-            onClick={handleLike}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Heart
-              className={`w-4 h-4 transition-colors ${
-                isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
-              }`}
-            />
-          </motion.button>
 
           {/* View Details Button */}
           <motion.div
@@ -103,14 +83,19 @@ export function ProductCardDisplay({ product, className, onViewDetails }) {
         </div>
 
         <CardContent className="p-5 flex-1 flex flex-col">
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="font-bold text-xl leading-tight group-hover:text-empanada-golden transition-colors duration-300">
+          <div className="mb-3">
+            <h3 className="font-bold text-xl leading-tight group-hover:text-empanada-golden transition-colors duration-300 mb-2">
               {product.name}
             </h3>
-            <div className="text-right">
+            <div className="flex items-center justify-between">
               <p className="text-2xl font-bold text-empanada-golden">
                 {formatPrice(product.price)}
               </p>
+              {product.volume && (
+                <span className="text-sm text-muted-foreground">
+                  {product.volume}
+                </span>
+              )}
             </div>
           </div>
 

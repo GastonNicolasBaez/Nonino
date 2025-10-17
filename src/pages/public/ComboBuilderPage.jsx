@@ -36,10 +36,13 @@ export function ComboBuilderPage() {
   // Verificar que hay sucursal seleccionada
   useEffect(() => {
     if (!sucursalSeleccionada && !loading) {
-      toast.error('Por favor, seleccioná una sucursal primero');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.error('Por favor, seleccioná una sucursal primero');
+      }
       navigate('/stores');
     }
-  }, [sucursalSeleccionada, loading, navigate]);
+  }, [sucursalSeleccionada, loading, navigate, isMobile]);
 
   // Auto-seleccionar combo desde URL params
   useEffect(() => {
@@ -47,14 +50,20 @@ export function ComboBuilderPage() {
     
     const comboId = searchParams.get('comboId');
     if (!comboId) {
-      toast.error('No se especificó un combo');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.error('No se especificó un combo');
+      }
       navigate('/menu');
       return;
     }
 
     const combo = combos.find(c => c.id === parseInt(comboId));
     if (!combo) {
-      toast.error('Combo no encontrado');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.error('Combo no encontrado');
+      }
       navigate('/menu');
       return;
     }
@@ -68,7 +77,10 @@ export function ComboBuilderPage() {
       setCurrentStep(steps[0]);
     } else {
       console.error('❌ No se pudieron determinar los pasos del combo. Verifica que selectionSpec.rules exista.');
-      toast.error('El combo no tiene una configuración válida');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.error('El combo no tiene una configuración válida');
+      }
       navigate('/menu');
     }
   }, [loading, combos, searchParams, navigate]);
@@ -296,7 +308,10 @@ export function ComboBuilderPage() {
   // Agregar al carrito
   const handleAddToCart = async () => {
     if (!isComboComplete()) {
-      toast.error('Por favor, completá todos los pasos del combo');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.error('Por favor, completá todos los pasos del combo');
+      }
       return;
     }
 
@@ -333,7 +348,10 @@ export function ComboBuilderPage() {
       // Clear persisted state after successful add
       removeStorageItem(STORAGE_KEYS.COMBO_BUILDER);
 
-      toast.success('Combo agregado al carrito');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.success('Combo agregado al carrito');
+      }
 
       // Navegar al carrito
       setTimeout(() => {
@@ -342,7 +360,10 @@ export function ComboBuilderPage() {
 
     } catch (error) {
       console.error('Error al agregar al carrito:', error);
-      toast.error('Error al agregar al carrito');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.error('Error al agregar al carrito');
+      }
     } finally {
       setAddingToCart(false);
     }

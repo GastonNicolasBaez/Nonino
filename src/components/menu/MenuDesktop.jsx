@@ -84,6 +84,46 @@ export function MenuDesktop({
         { value: "rating", label: "Mejor Calificación" },
     ];
 
+    // Si no hay sucursal seleccionada, mostrar pantalla de selección
+    if (!selectedStore) {
+        return (
+            <div className="min-h-screen bg-black dark">
+                {/* Header con info del restaurante */}
+                <div className="bg-empanada-dark shadow-lg border-b lg:bg-empanada-dark/95 lg:backdrop-blur-md lg:border-b lg:border-empanada-light-gray py-6 sticky top-16 z-40">
+                    <div className="container mx-auto px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex-1 flex flex-col items-start">
+                                <h1 className="text-2xl font-bold text-gray-100 mb-3">Selecciona sucursal</h1>
+                                <div className="w-80">
+                                    <StoreDropdown variant="desktop" />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                                <span className="font-semibold text-lg">4.5</span>
+                                <span className="text-gray-400">(500+ reseñas)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Pantalla de selección de sucursal */}
+                <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-6">
+                    <div className="text-center max-w-md">
+                        <MapPin className="w-20 h-20 text-empanada-golden mx-auto mb-6" />
+                        <h2 className="text-3xl font-bold text-white mb-4">
+                            Selecciona una sucursal
+                        </h2>
+                        <p className="text-gray-300 mb-8 text-lg">
+                            Para ver nuestros productos y hacer tu pedido, primero debes seleccionar una sucursal en el menú superior
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-black dark">
             {/* Header con info del restaurante */}
@@ -241,7 +281,7 @@ export function MenuDesktop({
                                             <div className="w-32 h-32 bg-empanada-medium flex-shrink-0 relative">
                                                 {combo.imageBase64 ? (
                                                     <img
-                                                        src={combo.imageBase64.startsWith('data:') ? combo.imageBase64 : `data:image/webp;base64,${combo.imageBase64}`}
+                                                        src={combo.imageBase64}
                                                         alt={combo.name}
                                                         className="w-full h-full object-cover"
                                                     />

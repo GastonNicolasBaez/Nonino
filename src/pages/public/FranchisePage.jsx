@@ -38,8 +38,7 @@ export function FranchisePage() {
       description: "Modelo de negocio probado con excelente retorno de inversión. Sistema operativo simplificado que te permite enfocarte en vender sin complicaciones.",
       features: [
         "Proceso operativo optimizado y documentado",
-        "ROI comprobado en nuestros locales existentes",
-        "Inversión accesible con plan de financiamiento"
+        "ROI comprobado en nuestros locales existentes"
       ]
     },
     {
@@ -48,15 +47,15 @@ export function FranchisePage() {
       description: "Brindamos soporte, capacitación y acompañamiento continuo. No necesitás experiencia previa. Te acompañamos en cada etapa del negocio.",
       features: [
         "Capacitación inicial completa e intensiva",
-        "Soporte técnico y comercial permanente",
-        "Marketing y materiales promocionales incluidos"
+        "Soporte técnico y comercial permanente"
+        
       ]
     }
   ];
 
   const franchiseStats = [
     { value: "10+", label: "Años de Experiencia" },
-    { value: "4", label: "Locales Activos" },
+    { value: "3", label: "Locales Activos" },
     { value: "95%", label: "Satisfacción Clientes" },
     { value: "32", label: "Variedades Únicas" }
   ];
@@ -120,7 +119,7 @@ export function FranchisePage() {
                 className="bg-gradient-to-r from-empanada-golden to-empanada-warm hover:from-empanada-warm hover:to-empanada-rich text-white text-lg px-8 py-6 shadow-2xl hover:shadow-xl transition-all duration-300"
               >
                 <Phone className="mr-2 w-5 h-5" />
-                QUIERO SER FRANQUICIADO
+                ESCRIBINOS
               </Button>
             </motion.div>
           </motion.div>
@@ -160,7 +159,7 @@ export function FranchisePage() {
             className="text-center mb-12 md:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white">
-              ¿Por Qué Elegir Nonino?
+              ¿Por qué elegir Nonino?
             </h2>
             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
               Una oportunidad de negocio única con respaldo comprobado

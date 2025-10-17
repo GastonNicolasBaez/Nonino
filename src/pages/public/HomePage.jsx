@@ -492,7 +492,7 @@ export function HomePage() {
                                 transition={{ delay: index * 0.1 }}
                                 className="h-full"
                             >
-                                <Card className="text-center hover:shadow-lg transition-all duration-300 group h-full flex flex-col bg-white/25 backdrop-blur-xs border-white/40 shadow-2xl backdrop-brightness-110">
+                                <Card className="text-center hover:shadow-lg transition-all duration-300 group h-full flex flex-col bg-black/50 backdrop-blur-xs border-black/24 shadow-2xl backdrop-brightness-40">
                                     <CardContent className="p-4 sm:p-6 flex flex-col flex-1">
                                         <div className="mb-3 sm:mb-4 flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-empanada-golden/10 rounded-full group-hover:bg-empanada-golden/20 transition-colors mx-auto">
                                             <feature.icon className="w-6 h-6 sm:w-8 sm:h-8 text-empanada-golden" />

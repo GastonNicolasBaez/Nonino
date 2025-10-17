@@ -8,7 +8,6 @@ import {
   X,
   MapPin,
   Phone,
-  Heart,
   Search,
   ChevronRight
 } from "lucide-react";
@@ -56,7 +55,6 @@ export const Header = memo(function Header() {
   const iconsSectionX = useTransform(scrollY, [200, 400], isStaticPage ? [0, 0] : [0, 8]);
 
   // Individual icon movements - sincronizados con el movimiento de las secciones
-  const heartIconX = useTransform(scrollY, [200, 300], isStaticPage ? [0, 0] : [0, 2]);
   const cartIconX = useTransform(scrollY, [200, 300], isStaticPage ? [0, 0] : [0, 3]);
   const userIconX = useTransform(scrollY, [200, 300], isStaticPage ? [0, 0] : [0, 4]);
 
@@ -264,20 +262,6 @@ export const Header = memo(function Header() {
               className="flex items-center space-x-1 sm:space-x-2 xl:space-x-3 flex-shrink-0 header-motion-element"
             >
 
-              {/* Favorites - Hidden on very small screens */}
-              <motion.div style={{ x: heartIconX }}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "relative h-10 w-10 sm:h-11 sm:w-11 hidden sm:flex",
-                    "text-white hover:text-empanada-golden hover:bg-empanada-golden/10"
-                  )}
-                >
-                  <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
-                </Button>
-
-              </motion.div>
 
               {/* Cart */}
               <motion.div style={{ x: cartIconX }} className="relative">

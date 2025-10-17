@@ -14,6 +14,22 @@ export function StoreSelector({ onStoreSelect, selectedStore, className = "" }) 
   const [isOpen, setIsOpen] = useState(false);
   const { selectedStore: cartStore } = useCart();
 
+  // Función para formatear tiempo de envío (compatible con datos reales y mock)
+  const formatDeliveryTime = (store) => {
+    // Si ya tiene deliveryTime formateado (datos mock), usarlo
+    if (store.deliveryTime && typeof store.deliveryTime === 'string') {
+      return store.deliveryTime;
+    }
+    
+    // Si tiene deliveryTimeMinutes (datos reales), formatearlo
+    const deliveryTime = store.deliveryTimeMinutes || store.estimatedDeliveryTime;
+    if (!deliveryTime || deliveryTime === 0) return null;
+    
+    const minTime = parseInt(deliveryTime);
+    const maxTime = minTime + 15; // Añadir 15 minutos al tiempo base
+    return `${minTime}-${maxTime} min`;
+  };
+
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -102,7 +118,7 @@ export function StoreSelector({ onStoreSelect, selectedStore, className = "" }) 
               <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
                 <span className="flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {selectedStore.deliveryTime}
+                  {formatDeliveryTime(selectedStore)}
                 </span>
                 <span className="flex items-center gap-1">
                   <Star className="w-3 h-3 text-yellow-400" />
@@ -170,7 +186,7 @@ export function StoreSelector({ onStoreSelect, selectedStore, className = "" }) 
                           <div className="flex items-center gap-3 text-xs text-gray-500">
                             <span className="flex items-center gap-1">
                               <Clock className="w-3 h-3" />
-                              {store.deliveryTime}
+                              {formatDeliveryTime(store)}
                             </span>
                             <span className="flex items-center gap-1">
                               <Star className="w-3 h-3 text-yellow-400" />

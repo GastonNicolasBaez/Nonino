@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, Star, Clock, Users, Heart, Flame } from "lucide-react";
+import { X, Plus, Minus, Star, Clock, Users, Flame } from "lucide-react";
 import { Button } from "./button";
 import { Badge } from "./badge";
 import { useCart } from "../../context/CartProvider";
@@ -9,7 +9,6 @@ import { toast } from "sonner";
 
 export function ProductModal({ product, isOpen, onClose }) {
   const [quantity, setQuantity] = useState(1);
-  const [isLiked, setIsLiked] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isSmallMobile, setIsSmallMobile] = useState(false);
   const { addItem } = useCart();
@@ -52,10 +51,6 @@ export function ProductModal({ product, isOpen, onClose }) {
     onClose();
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    // Toast removido para mejor fluidez de UX
-  };
 
   const increaseQuantity = () => {
     setQuantity(prev => prev + 1);
@@ -179,19 +174,6 @@ export function ProductModal({ product, isOpen, onClose }) {
                   <X className="w-5 h-5" />
                 </Button>
 
-                {/* Like Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleLike}
-                  className="absolute top-4 left-4 h-10 w-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full"
-                >
-                  <Heart
-                    className={`w-5 h-5 transition-colors ${
-                      isLiked ? "fill-red-500 text-red-500" : "text-white"
-                    }`}
-                  />
-                </Button>
 
                 {/* Badges */}
                 <div className="absolute bottom-4 left-4 flex gap-2">
@@ -345,19 +327,6 @@ export function ProductModal({ product, isOpen, onClose }) {
                   <X className="w-4 h-4" />
                 </Button>
 
-                {/* Like Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleLike}
-                  className="absolute top-4 left-4 h-8 w-8 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full"
-                >
-                  <Heart
-                    className={`w-4 h-4 transition-colors ${
-                      isLiked ? "fill-red-500 text-red-500" : "text-white"
-                    }`}
-                  />
-                </Button>
 
                 {/* Badges */}
                 <div className="absolute bottom-4 left-4 flex gap-2">

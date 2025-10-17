@@ -103,7 +103,7 @@ export function ComboSelector({ combos, onSelectCombo, loading }) {
                   <div className="h-48 bg-gradient-to-br from-empanada-medium to-empanada-dark overflow-hidden relative">
                     {combo.imageBase64 ? (
                       <img
-                        src={combo.imageBase64.startsWith('data:') ? combo.imageBase64 : `data:image/webp;base64,${combo.imageBase64}`}
+                        src={combo.imageBase64}
                         alt={combo.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
@@ -112,7 +112,7 @@ export function ComboSelector({ combos, onSelectCombo, loading }) {
                         <ShoppingCart className="w-20 h-20 text-empanada-golden opacity-30" />
                       </div>
                     )}
-                    
+
                     {/* Badge de descuento */}
                     {discount > 0 && (
                       <div className="absolute top-4 right-4">

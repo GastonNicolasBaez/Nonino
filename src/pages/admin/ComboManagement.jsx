@@ -128,7 +128,8 @@ export function ComboManagement() {
             discount: combo.discount || 0,
             price: combo.price,
             active: combo.active !== undefined ? combo.active : true,
-            imageBase64: combo.imageBase64 || ""
+            // El backend usa imageBase64 (sin prefijo), agregamos prefijo para el preview
+            imageBase64: combo.imageBase64 ? `data:image/webp;base64,${combo.imageBase64}` : ""
         });
 
         // Cargar las categorías del combo desde categoryIds y selectionRules
@@ -404,7 +405,10 @@ export function ComboManagement() {
                 selectionRules: newSelectionRules,
                 allowRepeats: true,
                 components: [],
-                imageBase64: comboData.imageBase64,
+                // Extraer SOLO el base64 sin el prefijo data:image/webp;base64,
+                imageBase64: comboData.imageBase64
+                    ? comboData.imageBase64.replace(/^data:image\/[a-z]+;base64,/, '')
+                    : undefined,
             }
 
             await callCrearCombo({
@@ -854,8 +858,9 @@ export function ComboManagement() {
                                     Sube una imagen representativa del combo (opcional)
                                 </p>
                                 <ImageUpload
-                                    value={comboForm.imageBase64 ? `data:image/webp;base64,` + comboForm.imageBase64 : ''}
+                                    value={comboForm.imageBase64 || ''}
                                     onChange={(imageUrl) => {
+                                        // imageUrl ya viene con el prefijo completo data:image/webp;base64,
                                         setComboForm(prev => ({ ...prev, imageBase64: imageUrl || '' }));
                                     }}
                                     placeholder="Subir imagen del combo (opcional)"

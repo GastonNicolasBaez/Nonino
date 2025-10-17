@@ -22,7 +22,8 @@ import {
     Truck,
     Factory,
     Tag,
-    RefreshCcw
+    RefreshCcw,
+    Clock
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -56,6 +57,7 @@ const AdminLayout = () => {
         orders,
 
         refreshAll,
+        callActualizarSucursal,
     } = useAdminData();
 
     const pendingOrdersCount = orders.filter(order => order.status === 'pending').length;
@@ -67,6 +69,8 @@ const AdminLayout = () => {
     const [sucursalDropdownOpen, setSucursalDropdownOpen] = useState(false);
     const [fabricaDropdownOpen, setFabricaDropdownOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+    const [deliveryTimeInput, setDeliveryTimeInput] = useState('');
+    const [isUpdatingDeliveryTime, setIsUpdatingDeliveryTime] = useState(false);
 
     // Opciones para CustomSelect de sucursales
     const sucursalOptions = [
@@ -96,6 +100,27 @@ const AdminLayout = () => {
         }
     }, []);
 
+    // Sincronizar input de tiempo de envío con la sucursal seleccionada
+    // SOLO cuando cambia la sucursal, NO cuando escribís en el input
+    useEffect(() => {
+        if (sucursalSeleccionada && sucursales.length > 0) {
+            const sucursal = sucursales.find(s => s.id === sucursalSeleccionada);
+            if (sucursal) {
+                // El campo puede ser deliveryTimeMinutes, estimatedDeliveryTime o deliveryTime
+                const deliveryTime = sucursal.deliveryTimeMinutes || sucursal.estimatedDeliveryTime || sucursal.deliveryTime || '';
+                setDeliveryTimeInput(deliveryTime.toString());
+                console.log('[AdminLayout] Sucursal seleccionada:', sucursal);
+                console.log('[AdminLayout] Campos de tiempo:', {
+                    deliveryTimeMinutes: sucursal.deliveryTimeMinutes,
+                    estimatedDeliveryTime: sucursal.estimatedDeliveryTime,
+                    deliveryTime: sucursal.deliveryTime
+                });
+            }
+        } else {
+            setDeliveryTimeInput('');
+        }
+    }, [sucursalSeleccionada]); // Solo depende de sucursalSeleccionada, NO de sucursales
+
     // Cerrar dropdown cuando se hace click fuera
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -114,6 +139,55 @@ const AdminLayout = () => {
         setSidebarCollapsed(!sidebarCollapsed);
         localStorage.setItem('admin-sidebar-collapsed', JSON.stringify(!sidebarCollapsed));
     };
+
+    // Función para actualizar tiempo de envío con debounce
+    const updateDeliveryTime = async (newTime) => {
+        if (!sucursalSeleccionada || !session.userData?.accessToken) return;
+        
+        setIsUpdatingDeliveryTime(true);
+        try {
+            const sucursal = sucursales.find(s => s.id === sucursalSeleccionada);
+            if (sucursal) {
+                const updatedSucursal = {
+                    ...sucursal,
+                    deliveryTimeMinutes: parseInt(newTime) || 0
+                };
+                
+                console.log('[AdminLayout] Enviando sucursal actualizada:', updatedSucursal);
+                console.log('[AdminLayout] Campo deliveryTimeMinutes:', updatedSucursal.deliveryTimeMinutes);
+                
+                const result = await callActualizarSucursal({
+                    _store: updatedSucursal,
+                    _accessToken: session.userData.accessToken,
+                });
+                
+                console.log('[AdminLayout] Respuesta del backend:', result);
+            }
+        } catch (error) {
+            console.error('Error al actualizar tiempo de envío:', error);
+        } finally {
+            setIsUpdatingDeliveryTime(false);
+        }
+    };
+
+    // Debounce para actualizar tiempo de envío
+    useEffect(() => {
+        // No actualizar si el input está vacío o es el mismo valor inicial
+        if (!deliveryTimeInput || !sucursalSeleccionada) return;
+        
+        const sucursal = sucursales.find(s => s.id === sucursalSeleccionada);
+        const currentTime = sucursal?.deliveryTimeMinutes || sucursal?.estimatedDeliveryTime || sucursal?.deliveryTime || '';
+        
+        // Solo actualizar si el valor cambió
+        if (deliveryTimeInput === currentTime.toString()) return;
+        
+        const timeoutId = setTimeout(() => {
+            console.log('[AdminLayout] Actualizando tiempo de envío a:', deliveryTimeInput);
+            updateDeliveryTime(deliveryTimeInput);
+        }, 800);
+
+        return () => clearTimeout(timeoutId);
+    }, [deliveryTimeInput]);
 
 
     const navigationItemsByRole = {
@@ -738,6 +812,27 @@ const AdminLayout = () => {
                             </div>
 
                             <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                                {/* Input de tiempo de envío - Solo para ADMIN */}
+                                {session.userData.isAdmin && sucursalSeleccionada && (
+                                    <div className="flex items-center gap-2 bg-gray-50 dark:bg-empanada-medium rounded-lg px-3 py-1.5 border border-gray-200 dark:border-empanada-light-gray">
+                                        <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max="999"
+                                            value={deliveryTimeInput}
+                                            onChange={(e) => setDeliveryTimeInput(e.target.value)}
+                                            placeholder="Tiempo"
+                                            className="w-16 text-sm bg-transparent border-none outline-none text-gray-700 dark:text-white placeholder-gray-400"
+                                            disabled={isUpdatingDeliveryTime}
+                                        />
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">min</span>
+                                        {isUpdatingDeliveryTime && (
+                                            <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                                        )}
+                                    </div>
+                                )}
+                                
                                 <Button
                                     variant="ghost"
                                     size="icon"

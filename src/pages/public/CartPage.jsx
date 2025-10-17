@@ -250,22 +250,16 @@ export function CartPage() {
                         </div>
                       </motion.div>
                     ) : showPromoInput ? (
-                      <motion.form
-                        onSubmit={handlePromoCode}
+                      <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         className="flex gap-2 mb-4"
                       >
-                        <Input
-                          name="promoCode"
-                          placeholder="Código promocional"
-                          className="flex-1"
-                          autoFocus
-                        />
-                        <Button type="submit" variant="outline" size="sm">
-                          Aplicar
-                        </Button>
+                        <div className="flex-1 p-3 bg-empanada-medium/50 border border-empanada-light-gray/40 rounded-lg text-gray-400 text-sm flex items-center">
+                          <Tag className="w-4 h-4 mr-2 text-empanada-golden" />
+                          Próximamente podrás usar códigos promocionales
+                        </div>
                         <Button
                           type="button"
                           variant="ghost"
@@ -274,11 +268,11 @@ export function CartPage() {
                         >
                           <X className="w-4 h-4" />
                         </Button>
-                      </motion.form>
+                      </motion.div>
                     ) : (
                       <Button
                         variant="ghost"
-                        onClick={() => toast.info("Próximamente podrás usar códigos promocionales", { duration: 3000 })}
+                        onClick={() => setShowPromoInput(true)}
                         className="mb-4 w-full justify-start text-gray-300 hover:bg-empanada-medium"
                       >
                         <Tag className="w-4 h-4 mr-2" />
@@ -382,22 +376,16 @@ export function CartPage() {
                   </div>
                 </motion.div>
               ) : showPromoInput ? (
-                <motion.form
-                  onSubmit={handlePromoCode}
+                <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   className="flex gap-2 mb-3"
                 >
-                  <Input
-                    name="promoCode"
-                    placeholder="Código"
-                    className="flex-1 rounded-xl border-empanada-light-gray/40 bg-empanada-medium/50 text-white backdrop-blur-sm h-9 text-sm"
-                    autoFocus
-                  />
-                  <Button type="submit" variant="outline" size="sm" className="px-3 rounded-xl h-9 text-xs">
-                    Aplicar
-                  </Button>
+                  <div className="flex-1 p-2.5 bg-empanada-medium/50 border border-empanada-light-gray/40 rounded-xl text-gray-400 text-xs flex items-center h-9">
+                    <Tag className="w-3.5 h-3.5 mr-2 text-empanada-golden flex-shrink-0" />
+                    <span className="truncate">Próximamente podrás usar códigos promocionales</span>
+                  </div>
                   <Button
                     type="button"
                     variant="ghost"
@@ -407,10 +395,10 @@ export function CartPage() {
                   >
                     <X className="w-3.5 h-3.5" />
                   </Button>
-                </motion.form>
+                </motion.div>
               ) : (
                 <button
-                  onClick={() => toast.info("Próximamente podrás usar códigos promocionales", { duration: 3000 })}
+                  onClick={() => setShowPromoInput(true)}
                   className="mb-3 w-full flex items-center justify-start gap-2 py-2 px-3 text-xs text-gray-400 hover:text-gray-300 hover:bg-empanada-medium/40 rounded-xl transition-all duration-200"
                 >
                   <Tag className="w-3.5 h-3.5" />

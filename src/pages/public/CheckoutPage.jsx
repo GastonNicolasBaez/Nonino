@@ -17,6 +17,7 @@ import { toast } from "sonner";
 
 import { useSession } from "@/context/SessionProvider";
 import { usePublicData } from "@/context/PublicDataProvider";
+import { useIsMobile } from "@/hooks/useMediaQuery";
 
 export function CheckoutPage() {
     const { items, total, subtotal, discount, deliveryFee, clearCart, selectedStore } = useCart();
@@ -27,6 +28,7 @@ export function CheckoutPage() {
         callPublicCreatePreference,
         callPublicCreatePrintJob,
     } = usePublicData();
+    const isMobile = useIsMobile();
 
 
     const session = useSession();
@@ -73,31 +75,46 @@ export function CheckoutPage() {
         try {
             // Validar sucursal seleccionada
             if (!selectedStore) {
-                toast.error("Por favor selecciona una sucursal");
+                // Solo mostrar toast en desktop
+                if (!isMobile) {
+                    toast.error("Por favor selecciona una sucursal");
+                }
                 return;
             }
 
             // Validar datos requeridos
             if (!orderData.customerInfo.name || !orderData.customerInfo.phone) {
-                toast.error("Por favor completa tu nombre y teléfono");
+                // Solo mostrar toast en desktop
+                if (!isMobile) {
+                    toast.error("Por favor completa tu nombre y teléfono");
+                }
                 return;
             }
 
             if (orderData.deliveryType === "delivery") {
                 if (!orderData.address.street || !orderData.address.number) {
-                    toast.error("Por favor completa la dirección de entrega");
+                    // Solo mostrar toast en desktop
+                    if (!isMobile) {
+                        toast.error("Por favor completa la dirección de entrega");
+                    }
                     return;
                 }
             }
 
             if (items.length === 0) {
-                toast.error("Tu carrito está vacío");
+                // Solo mostrar toast en desktop
+                if (!isMobile) {
+                    toast.error("Tu carrito está vacío");
+                }
                 return;
             }
 
             // Validar pedido mínimo de la sucursal
             if (selectedStore && selectedStore.minOrder && subtotal < selectedStore.minOrder) {
-                toast.error(`El pedido mínimo para ${selectedStore.name} es de ${formatPrice(selectedStore.minOrder)}`);
+                // Solo mostrar toast en desktop
+                if (!isMobile) {
+                    toast.error(`El pedido mínimo para ${selectedStore.name} es de ${formatPrice(selectedStore.minOrder)}`);
+                }
                 return;
             }
 
@@ -216,17 +233,26 @@ export function CheckoutPage() {
                     _proof: createdOrder.proof
                 });
 
-                toast.success("¡Pedido creado! Serás redirigido al pago...");
+                // Solo mostrar toast en desktop
+                if (!isMobile) {
+                    toast.success("¡Pedido creado! Serás redirigido al pago...");
+                }
                 clearCart();
                 window.location.href = createdPreference.initPoint;
             } else {
                 clearCart();
-                toast.success("¡Pedido realizado exitosamente!");
+                // Solo mostrar toast en desktop
+                if (!isMobile) {
+                    toast.success("¡Pedido realizado exitosamente!");
+                }
                 navigate(`/tracking/${createdOrder.id}`);
             }
         } catch (error) {
             console.error("Error al procesar el pedido:", error);
-            toast.error("Error al procesar el pedido. Intenta nuevamente.");
+            // Solo mostrar toast en desktop
+            if (!isMobile) {
+                toast.error("Error al procesar el pedido. Intenta nuevamente.");
+            }
         }
     };
 

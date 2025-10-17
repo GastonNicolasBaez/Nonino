@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, ChevronDown, Check } from 'lucide-react';
+import { MapPin, ChevronDown, Check, Clock } from 'lucide-react';
 import { usePublicData } from '@/context/PublicDataProvider';
 import { useCart } from '@/context/CartProvider';
 import { cn } from '@/lib/utils';
@@ -14,6 +14,27 @@ export function StoreDropdown({ className, variant = 'mobile' }) {
   const { clearCart, items } = useCart();
 
   const selectedStore = stores.find(s => s.id === selectedStoreId);
+
+  // Console log para debug
+  console.log('[StoreDropdown] selectedStore:', selectedStore);
+  console.log('[StoreDropdown] all stores:', stores);
+
+  // Función para formatear tiempo de envío
+  const formatDeliveryTime = (store) => {
+    console.log('[StoreDropdown] formatDeliveryTime - store:', store);
+    console.log('[StoreDropdown] candidate fields:', {
+      deliveryTimeMinutes: store?.deliveryTimeMinutes,
+      estimatedDeliveryTime: store?.estimatedDeliveryTime,
+      deliveryTime: store?.deliveryTime,
+      statusData: store?.statusData
+    });
+    const deliveryTime = store.deliveryTimeMinutes || store.estimatedDeliveryTime || store.deliveryTime;
+    if (!deliveryTime || deliveryTime === 0) return null;
+    
+    const minTime = parseInt(deliveryTime);
+    const maxTime = minTime + 15; // Añadir 15 minutos al tiempo base
+    return `${minTime}-${maxTime} min`;
+  };
 
   const handleSelectStore = (storeId) => {
     // Si hay items en el carrito y cambias de sucursal, limpiar
@@ -57,9 +78,17 @@ export function StoreDropdown({ className, variant = 'mobile' }) {
               {selectedStore?.name || "Selecciona tu sucursal"}
             </p>
             {selectedStore && variant === 'mobile' && (
-              <p className="text-xs text-gray-400">
-                {selectedStore.barrio}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs text-gray-400">
+                  {selectedStore.barrio}
+                </p>
+                {formatDeliveryTime(selectedStore) && (
+                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <Clock className="w-3 h-3" />
+                    <span>{formatDeliveryTime(selectedStore)}</span>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -108,6 +137,12 @@ export function StoreDropdown({ className, variant = 'mobile' }) {
                     )}>
                       {store.statusData.isOpenNow ? "Abierto" : "Cerrado"}
                     </span>
+                    {formatDeliveryTime(store) && (
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <Clock className="w-3 h-3" />
+                        <span>{formatDeliveryTime(store)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {selectedStoreId === store.id && (

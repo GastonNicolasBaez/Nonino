@@ -92,17 +92,14 @@ export const IntegratedCartItem = ({
         onHoverEnd={() => setIsHovered(false)}
       >
         {!isLast && (
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-empanada-light-gray/10 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-empanada-light-gray/10" />
         )}
 
         <div className={`
-          relative backdrop-blur-md bg-gradient-to-br from-empanada-dark/80 via-empanada-medium/50 to-empanada-dark/80
+          relative
           ${isMobile ? 'py-5 px-4' : 'py-6 px-6'}
-          transition-all duration-300
-          ${isMobile ? 'rounded-2xl' : 'rounded-xl'}
+          transition-opacity duration-300
           ${isRemoving ? 'opacity-50 scale-95' : ''}
-          ${isHovered ? 'shadow-2xl shadow-empanada-golden/20' : 'shadow-lg'}
-          border border-empanada-golden/20
         `}>
           {/* Fila 1: Icono + Nombre + Precio + Delete */}
           <div className="flex items-center gap-3 mb-3">
@@ -110,7 +107,7 @@ export const IntegratedCartItem = ({
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative ${isMobile ? 'w-14 h-14' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-empanada-golden/30 to-empanada-warm/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 ring-2 ring-empanada-golden/40 shadow-lg`}
+              className={`relative ${isMobile ? 'w-14 h-14' : 'w-16 h-16'} rounded-2xl bg-empanada-golden/10 flex items-center justify-center flex-shrink-0`}
             >
               <Package className={`${isMobile ? 'w-7 h-7' : 'w-8 h-8'} text-empanada-golden drop-shadow-lg`} />
               <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-empanada-golden text-black text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg">
@@ -120,9 +117,12 @@ export const IntegratedCartItem = ({
 
             {/* Nombre y badge */}
             <div className="flex-1 min-w-0">
-              <Badge className="mb-1.5 bg-empanada-golden/90 text-black text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-md">
-                ✨ COMBO PERSONALIZADO
-              </Badge>
+              <div className="mb-1.5 flex items-center gap-1">
+                <div className="w-2 h-2 bg-empanada-golden rounded-full"></div>
+                <span className="text-empanada-golden text-[10px] font-semibold">
+                  COMBO PERSONALIZADO
+                </span>
+              </div>
               <h3 className={`font-bold text-white ${isMobile ? 'text-base' : 'text-lg'} leading-tight line-clamp-1 drop-shadow-sm`}>
                 {item.name}
               </h3>
@@ -147,11 +147,8 @@ export const IntegratedCartItem = ({
           {/* Fila 2: Chips horizontales scrollables con productos del combo */}
           {item.comboDetails && item.comboDetails.length > 0 && (
             <div className="relative">
-              {/* Gradient fade izquierdo */}
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-empanada-dark/80 to-transparent pointer-events-none z-10 rounded-l-xl"></div>
-
               {/* Contenedor scrollable */}
-              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory -mx-1 px-1">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory">
                 {item.comboDetails.map((detail, idx) => (
                   <motion.div
                     key={idx}
@@ -160,7 +157,7 @@ export const IntegratedCartItem = ({
                     transition={{ delay: idx * 0.05 }}
                     className="flex-shrink-0 snap-start"
                   >
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-empanada-golden/15 to-empanada-warm/10 backdrop-blur-sm rounded-full border border-empanada-golden/30 shadow-sm">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5">
                       <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-empanada-golden`}>
                         {detail.quantity}x
                       </span>
@@ -172,22 +169,9 @@ export const IntegratedCartItem = ({
                 ))}
               </div>
 
-              {/* Gradient fade derecho */}
-              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-empanada-dark/80 to-transparent pointer-events-none z-10 rounded-r-xl"></div>
             </div>
           )}
 
-          {/* Glow effect en hover */}
-          <AnimatePresence>
-            {isHovered && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-empanada-golden/10 via-transparent to-empanada-golden/5 pointer-events-none"
-              />
-            )}
-          </AnimatePresence>
         </div>
       </motion.div>
     );
@@ -207,18 +191,16 @@ export const IntegratedCartItem = ({
       >
         {/* Línea separadora sutil */}
         {!isLast && (
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-empanada-light-gray/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-empanada-light-gray/10" />
         )}
         
         <div className={`
-          relative bg-gradient-to-r from-empanada-dark via-empanada-dark to-empanada-darker 
-          py-4 px-4 transition-all duration-300
+          relative py-4 px-4 transition-opacity duration-300
           ${isRemoving ? 'opacity-50 scale-95' : ''}
-          ${isHovered ? 'bg-gradient-to-r from-empanada-dark via-empanada-medium/10 to-empanada-darker' : ''}
         `}>
           <div className="flex items-center gap-4">
             {/* Imagen del producto */}
-            <div className="relative w-16 h-16 rounded-xl overflow-hidden ring-1 ring-empanada-light-gray/30 flex-shrink-0">
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
               <ProductImage
                 product={item}
                 className="w-full h-full"
@@ -251,12 +233,6 @@ export const IntegratedCartItem = ({
                       <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                       <span className="text-gray-400 text-xs">{item.rating || 4.8}</span>
                     </div>
-                    
-                    {/* Tiempo */}
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-gray-400" />
-                      <span className="text-gray-400 text-xs">{item.preparationTime || 15}m</span>
-                    </div>
                   </div>
                 </div>
 
@@ -273,13 +249,12 @@ export const IntegratedCartItem = ({
                 <div className="mb-2">
                   <div className="flex flex-wrap gap-1">
                     {Object.entries(item.customizations).map(([key, value]) => (
-                      <Badge 
-                        key={key} 
-                        variant="secondary" 
-                        className="text-xs px-2 py-0.5 bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30 rounded-full"
-                      >
-                        {value}
-                      </Badge>
+                    <span 
+                      key={key} 
+                      className="text-xs px-2 py-0.5 text-empanada-golden/80"
+                    >
+                      {value}
+                    </span>
                     ))}
                   </div>
                 </div>
@@ -342,18 +317,16 @@ export const IntegratedCartItem = ({
     >
       {/* Línea separadora sutil */}
       {!isLast && (
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-empanada-light-gray/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-empanada-light-gray/10" />
       )}
       
       <div className={`
-        relative bg-gradient-to-r from-empanada-dark via-empanada-dark to-empanada-darker 
-        py-6 px-6 transition-all duration-300
+        relative py-6 px-6 transition-opacity duration-300
         ${isRemoving ? 'opacity-50 scale-95' : ''}
-        ${isHovered ? 'bg-gradient-to-r from-empanada-dark via-empanada-medium/10 to-empanada-darker' : ''}
       `}>
         <div className="flex items-center gap-6">
           {/* Imagen del producto */}
-          <div className="relative w-20 h-20 rounded-xl overflow-hidden ring-1 ring-empanada-light-gray/30 flex-shrink-0">
+          <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
             <ProductImage
               product={item}
               className="w-full h-full"
@@ -386,12 +359,6 @@ export const IntegratedCartItem = ({
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-gray-400">{item.rating || 4.8}</span>
                   </div>
-                  
-                  {/* Tiempo */}
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-400">{item.preparationTime || 15} min</span>
-                  </div>
                 </div>
               </div>
 
@@ -409,13 +376,12 @@ export const IntegratedCartItem = ({
               <div className="mb-3">
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(item.customizations).map(([key, value]) => (
-                    <Badge 
+                    <span 
                       key={key} 
-                      variant="secondary" 
-                      className="text-sm px-3 py-1 bg-empanada-golden/20 text-empanada-golden border border-empanada-golden/30 rounded-full"
+                      className="text-sm px-3 py-1 text-empanada-golden/80"
                     >
                       {value}
-                    </Badge>
+                    </span>
                   ))}
                 </div>
               </div>

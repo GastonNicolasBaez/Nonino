@@ -6,6 +6,7 @@ import { getStorageItem, setStorageItem } from '../lib/utils';
 import { STORAGE_KEYS } from '../constants';
 import { toast } from 'sonner';
 import { orderService } from '../services/api';
+import { useIsMobile } from '../hooks/useMediaQuery';
 
 const CartContext = createContext();
 
@@ -23,6 +24,7 @@ export const CartProvider = ({ children }) => {
   const [deliveryInfo, setDeliveryInfo] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Cargar carrito guardado
@@ -59,7 +61,10 @@ export const CartProvider = ({ children }) => {
         addedAt: new Date().toISOString(),
       };
       setItems([...items, comboItem]);
-      toast.success(`${product.name} agregado al carrito`);
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.success(`${product.name} agregado al carrito`);
+      }
       return;
     }
 
@@ -174,7 +179,10 @@ export const CartProvider = ({ children }) => {
       return response.data;
     } catch (error) {
       console.error('Error enviando orden al backend:', error);
-      toast.error('Error al enviar el pedido');
+      // Solo mostrar toast en desktop
+      if (!isMobile) {
+        toast.error('Error al enviar el pedido');
+      }
       throw error;
     }
   };

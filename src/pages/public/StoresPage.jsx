@@ -61,9 +61,7 @@ export function StoresPage() {
       {/* Interactive Locations Accordion */}
       <InteractiveImageAccordion
         title="Nuestros Locales y Fábrica"
-        subtitle="Descubre todos nuestros puntos de venta y conoce donde hacemos nuestras empanadas"
-        buttonText="Únete a Nonino"
-        buttonHref="#locales"
+        subtitle="Descubrí todos nuestros puntos de venta y conoce donde hacemos nuestras empanadas"
       />
 
       <FloatingOrderButton />

@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
 import { motion } from "framer-motion";
-import { Heart, Plus, Star, Clock, Users } from "lucide-react";
+import { Plus, Star, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -11,7 +11,6 @@ import { formatPrice } from "../../lib/utils";
 import { toast } from "sonner";
 
 export const ProductCard = memo(function ProductCard({ product, className }) {
-  const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const { addItem } = useCart();
@@ -25,14 +24,6 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
     // El toast se maneja en el contexto CartContext
   };
 
-  /**
-   * Maneja el toggle de favoritos
-   */
-  const handleLike = (e) => {
-    e.stopPropagation();
-    setIsLiked(!isLiked);
-    // Toast removido para mejor UX
-  };
 
   /**
    * Maneja la apertura del modal en mobile
@@ -84,19 +75,6 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
             )} */}
           </div>
 
-          {/* Like Button */}
-          <motion.button
-            className="absolute top-2 right-2 p-2 bg-empanada-dark/80 backdrop-blur-sm rounded-full shadow-sm"
-            onClick={handleLike}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Heart
-              className={`w-4 h-4 transition-colors ${
-                isLiked ? "fill-red-500 text-red-500" : "text-gray-300"
-              }`}
-            />
-          </motion.button>
 
           {/* Quick Add Button */}
           <motion.div
@@ -119,14 +97,19 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
         </div>
 
         <CardContent className="p-4">
-          <div className="flex items-start justify-between mb-2">
-            <h3 className="font-semibold text-lg leading-tight text-white group-hover:text-empanada-golden transition-colors">
+          <div className="mb-2">
+            <h3 className="font-semibold text-lg leading-tight text-white group-hover:text-empanada-golden transition-colors mb-1">
               {product.name}
             </h3>
-            <div className="text-right">
+            <div className="flex items-center justify-between">
               <p className="text-lg font-bold text-empanada-golden">
                 {formatPrice(product.price)}
               </p>
+              {product.volume && (
+                <span className="text-sm text-gray-400">
+                  {product.volume}
+                </span>
+              )}
             </div>
           </div>
 

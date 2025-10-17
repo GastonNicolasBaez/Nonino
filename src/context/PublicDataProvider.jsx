@@ -19,6 +19,7 @@ import {
 } from '@/config/apiPublicQueryFunctions';
 import { getStorageItem, setStorageItem } from '@/lib/utils';
 import { STORAGE_KEYS } from '@/constants';
+import { ENDPOINTS } from '@/config/apiEndpoints';
 
 const PublicDataContext = createContext();
 
@@ -46,6 +47,7 @@ const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicStores'],
         mutationFn: getPublicStoresQueryFunction,
         onSuccess: async (data) => {
+            console.log('[PublicData] raw stores from backend:', data);
             const servingStores = ['local', 'franquicia'];
             const usefulStores = data.filter((s) => servingStores.includes(s.code.toLowerCase()));
 
@@ -55,6 +57,16 @@ const PublicDataProvider = ({ children }) => {
                     return { ...s, statusData };
                 })
             )
+            console.log('[PublicData] fullStores with statusData:', fullStores);
+            if (fullStores?.length) {
+                console.log('[PublicData] sample store:', fullStores[0]);
+                console.log('[PublicData] candidate fields:', {
+                    deliveryTimeMinutes: fullStores[0]?.deliveryTimeMinutes,
+                    estimatedDeliveryTime: fullStores[0]?.estimatedDeliveryTime,
+                    deliveryTime: fullStores[0]?.deliveryTime,
+                    statusData: fullStores[0]?.statusData
+                });
+            }
             setSucursales(fullStores);
         },
         onError: (error) => {
@@ -105,18 +117,36 @@ const PublicDataProvider = ({ children }) => {
                         if (seenCombo.has(combo.comboId)) return false;
                         seenCombo.add(combo.comboId);
                         return true;
-                    }).map((combo) => ({
-                        id: combo.comboId,
-                        code: combo.code,
-                        name: combo.name,
-                        description: combo.description,
-                        price: combo.price,
-                        image: combo.imageHref ? `data:image/webp;base64,${combo.imageHref}` : '',
-                        imageBase64: combo.imageHref,
-                        kind: combo.selectionSpec?.kind,
-                        components: combo.components || [],
-                        selectionSpec: combo.selectionSpec || {},
-                    }))) || [];
+                    }).map((combo) => {
+                        // SOLUCIÓN: Usar imageBase64 si está disponible, sino intentar URL desde imageHref
+                        let imageBase64 = '';
+                        
+                        if (combo.imageBase64) {
+                            // Si el backend devuelve imageBase64, usarlo con el formato correcto
+                            imageBase64 = `data:image/webp;base64,${combo.imageBase64}`;
+                        } else if (combo.imageHref) {
+                            // TEMPORAL: El endpoint de imágenes no existe en el backend
+                            // Por ahora, usar imagen placeholder hasta que se arregle el backend
+                            // console.warn(`⚠️ Endpoint de imagen no disponible para combo ${combo.comboId}: ${combo.imageHref}`);
+                           //  imageBase64 = ''; // Imagen vacía = placeholder
+                            
+                            // TODO: Cuando el backend esté listo, descomentar esta línea:
+                             imageBase64 = `${ENDPOINTS.catalog}${combo.imageHref.startsWith('/') ? '' : '/'}${combo.imageHref}`;
+                        }
+
+                        return {
+                            id: combo.comboId,
+                            code: combo.code,
+                            name: combo.name,
+                            description: combo.description,
+                            price: combo.price,
+                            image: imageBase64,
+                            imageBase64: imageBase64, // Usar el mismo valor para ambos campos
+                            kind: combo.selectionSpec?.kind,
+                            components: combo.components || [],
+                            selectionSpec: combo.selectionSpec || {},
+                        };
+                    })) || [];
 
             if (gotCombos.length > 0) {
                 setCombos(gotCombos);
@@ -148,18 +178,37 @@ const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicCombos'],
         mutationFn: getPublicCombosQueryFunction,
         onSuccess: (data) => {
-            const mappedCombos = (data || []).map(combo => ({
-                id: combo.comboId,
-                code: combo.code,
-                name: combo.name,
-                description: combo.description,
-                price: combo.price,
-                image: combo.imageHref ? `data:image/webp;base64,${combo.imageHref}` : '',
-                imageBase64: combo.imageHref,
-                kind: combo.selectionSpec?.kind,
-                components: combo.components || [],
-                selectionSpec: combo.selectionSpec || {},
-            }));
+            const mappedCombos = (data || []).map(combo => {
+                // SOLUCIÓN: Usar imageBase64 si está disponible, sino intentar URL desde imageHref
+                let imageBase64 = '';
+                
+                if (combo.imageBase64) {
+                    // Si el backend devuelve imageBase64, usarlo con el formato correcto
+                    imageBase64 = `data:image/webp;base64,${combo.imageBase64}`;
+                } else if (combo.imageHref) {
+                    // TEMPORAL: El endpoint de imágenes no existe en el backend
+                    // Por ahora, usar imagen placeholder hasta que se arregle el backend
+                  //   console.warn(`⚠️ Endpoint de imagen no disponible para combo ${combo.comboId}: ${combo.imageHref}`);
+                  //   imageBase64 = ''; // Imagen vacía = placeholder
+                    
+                    // TODO: Cuando el backend esté listo, descomentar esta línea:
+                     imageBase64 = `${ENDPOINTS.catalog}${combo.imageHref.startsWith('/') ? '' : '/'}${combo.imageHref}`;
+                }
+
+                return {
+                    id: combo.comboId,
+                    code: combo.code,
+                    name: combo.name,
+                    description: combo.description,
+                    price: combo.price,
+                    image: imageBase64,
+                    imageBase64: imageBase64, // Usar el mismo valor para ambos campos
+                    kind: combo.selectionSpec?.kind,
+                    components: combo.components || [],
+                    selectionSpec: combo.selectionSpec || {},
+                };
+            });
+
             setCombosTodos(mappedCombos);
         },
         onError: (error) => {

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { MapPin, Clock, Phone, Factory, Calendar } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WordPullUp } from './word-pull-up';
-import { FranchiseModal } from './FranchiseModal';
 import {
   localRuta40Blur, localRuta40640, localRuta401024, localRuta401920, localRuta402560,
   FabricaBlur, Fabrica640, Fabrica1024, Fabrica1920, Fabrica2560,
@@ -65,10 +64,10 @@ const AccordionItem = ({ item, isActive, onMouseEnter }) => {
   return (
     <div
       className={cn(
-        "relative h-[450px] rounded-2xl overflow-hidden cursor-pointer group",
+        "relative h-[550px] rounded-2xl overflow-hidden cursor-pointer group",
         "transition-all duration-700 ease-in-out",
         "shadow-lg hover:shadow-xl",
-        isActive ? "w-[400px]" : "w-[80px]"
+        isActive ? "w-[500px]" : "w-[100px]"
       )}
       onMouseEnter={onMouseEnter}
     >
@@ -197,7 +196,7 @@ const MobileCard = ({ item }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
-    <div className="relative h-[320px] md:h-[350px] rounded-2xl overflow-hidden shadow-xl">
+    <div className="relative h-[400px] md:h-[450px] rounded-2xl overflow-hidden shadow-xl">
       {/* Blur placeholder */}
       {item.blurDataURL && !isLoaded && (
         <img
@@ -296,19 +295,12 @@ const MobileCard = ({ item }) => {
 // --- Main Component ---
 export function InteractiveImageAccordion({
   title = "Nuestros Locales y Fábrica",
-  subtitle = "Descubre todos nuestros puntos de venta y conoce donde hacemos nuestras empanadas",
-  buttonText = "Ver Todos los Locales",
-  buttonHref = "/locales"
+  subtitle = "Descubre todos nuestros puntos de venta y conoce donde hacemos nuestras empanadas"
 }) {
   const [activeIndex, setActiveIndex] = useState(2); // Start with factory active
-  const [isFranchiseModalOpen, setIsFranchiseModalOpen] = useState(false);
 
   const handleItemHover = (index) => {
     setActiveIndex(index);
-  };
-
-  const handleButtonClick = () => {
-    setIsFranchiseModalOpen(true);
   };
 
   return (
@@ -353,14 +345,6 @@ export function InteractiveImageAccordion({
                 show: { y: 0, opacity: 1 },
               }}
             />
-            <div className="mt-8">
-              <button
-                onClick={handleButtonClick}
-                className="inline-block bg-empanada-golden text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-empanada-golden/90 transition-colors duration-300 cursor-pointer"
-              >
-                {buttonText}
-              </button>
-            </div>
           </div>
 
           {/* Right Side: Image Accordion (Desktop) / Cards (Mobile/Tablet) */}
@@ -390,11 +374,6 @@ export function InteractiveImageAccordion({
       {/* Degradado sutil hacia el footer */}
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-empanada-medium pointer-events-none"></div>
 
-      {/* Franchise Modal */}
-      <FranchiseModal
-        isOpen={isFranchiseModalOpen}
-        onClose={() => setIsFranchiseModalOpen(false)}
-      />
     </div>
   );
 }

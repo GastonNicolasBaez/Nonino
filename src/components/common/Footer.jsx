@@ -56,6 +56,14 @@ export function Footer() {
 
   return (
     <footer className="bg-empanada-dark text-white">
+      {/* Línea divisoria dorada sutil en la parte superior */}
+      <div className="relative py-6">
+        <div className="absolute inset-x-0 top-1/2 h-0.5 bg-gradient-to-r from-transparent via-empanada-golden/20 to-transparent transform -translate-y-1/2">
+          {/* Efecto de brillo muy sutil */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-empanada-golden/30 to-transparent opacity-40 blur-sm"></div>
+        </div>
+      </div>
+
       {/* Newsletter Section - Comentado temporalmente */}
       {/* <div className="bg-empanada-golden py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">

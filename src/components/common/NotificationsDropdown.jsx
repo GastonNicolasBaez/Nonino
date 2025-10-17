@@ -1,62 +1,79 @@
-import { useState, useRef, useEffect } from 'react';
-import { Bell, X, Check, Clock, AlertTriangle, Package, Users, DollarSign } from 'lucide-react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { Bell, X, Check, Clock, AlertTriangle, Package } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAdminData } from '@/context/AdminDataProvider';
 
 /**
  * Componente de notificaciones con dropdown
+ * Muestra solo alertas de stock bajo de productos y materiales
  */
 export function NotificationsDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'order',
-      title: 'Nuevo Pedido',
-      message: 'Pedido #ORD-001 de María González - $3,500',
-      time: 'Hace 5 min',
-      unread: true,
-      priority: 'high'
-    },
-    {
-      id: 2,
-      type: 'inventory',
-      title: 'Stock Bajo',
-      message: 'Empanada de Carne: Solo quedan 5 unidades',
-      time: 'Hace 15 min',
-      unread: true,
-      priority: 'medium'
-    },
-    {
-      id: 3,
-      type: 'payment',
-      title: 'Pago Recibido',
-      message: 'Pago de $2,800 confirmado para Pedido #ORD-002',
-      time: 'Hace 30 min',
-      unread: true,
-      priority: 'low'
-    },
-    {
-      id: 4,
-      type: 'customer',
-      title: 'Nuevo Cliente',
-      message: 'Carlos Rodríguez se registró en la plataforma',
-      time: 'Hace 1 hora',
-      unread: false,
-      priority: 'low'
-    },
-    {
-      id: 5,
-      type: 'order',
-      title: 'Pedido Completado',
-      message: 'Pedido #ORD-003 entregado exitosamente',
-      time: 'Hace 2 horas',
-      unread: false,
-      priority: 'low'
+  const [readNotifications, setReadNotifications] = useState(() => {
+    // Cargar notificaciones leídas desde localStorage
+    const saved = localStorage.getItem('noninoReadNotifications');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Obtener datos de inventario desde AdminDataProvider
+  const {
+    inventarioProductosSucursal: products,
+    inventarioMaterialesSucursal: materials,
+  } = useAdminData();
+
+  // Generar notificaciones dinámicamente basadas en stock bajo
+  const notifications = useMemo(() => {
+    const stockNotifications = [];
+
+    // Notificaciones de productos con stock bajo
+    if (products && Array.isArray(products)) {
+      const lowStockProducts = products.filter(item => item.status === 'low');
+      lowStockProducts.forEach((product, index) => {
+        stockNotifications.push({
+          id: `product-${product.id}`,
+          type: 'inventory',
+          subtype: 'product',
+          title: 'Stock Bajo - Productos',
+          message: `${product.name}: Solo quedan ${product.quantity} unidades`,
+          time: 'Ahora',
+          unread: !readNotifications.includes(`product-${product.id}`),
+          priority: 'high',
+          link: '/intranet/stock-productos'
+        });
+      });
     }
-  ]);
+
+    // Notificaciones de materiales con stock bajo
+    if (materials && Array.isArray(materials)) {
+      const lowStockMaterials = materials.filter(item => item.status === 'low');
+      lowStockMaterials.forEach((material, index) => {
+        // Adaptar unidad para mostrar
+        const displayQuantity = material.quantity >= 1000
+          ? (material.quantity / 1000).toFixed(1)
+          : material.quantity;
+        const displayUnit = material.quantity >= 1000
+          ? (material.unit === 'g' ? 'kg' : 'litros')
+          : material.unit;
+
+        stockNotifications.push({
+          id: `material-${material.id}`,
+          type: 'inventory',
+          subtype: 'material',
+          title: 'Stock Bajo - Materia Prima',
+          message: `${material.materialName}: Solo quedan ${displayQuantity} ${displayUnit}`,
+          time: 'Ahora',
+          unread: !readNotifications.includes(`material-${material.id}`),
+          priority: 'high',
+          link: '/intranet/stock-materias-primas'
+        });
+      });
+    }
+
+    return stockNotifications;
+  }, [products, materials, readNotifications]);
   
   const dropdownRef = useRef(null);
 
@@ -74,16 +91,15 @@ export function NotificationsDropdown() {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
+  // Sincronizar localStorage cuando cambien las notificaciones leídas
+  useEffect(() => {
+    localStorage.setItem('noninoReadNotifications', JSON.stringify(readNotifications));
+  }, [readNotifications]);
+
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'order':
-        return <Package className="w-4 h-4 text-blue-600" />;
       case 'inventory':
         return <AlertTriangle className="w-4 h-4 text-amber-600" />;
-      case 'payment':
-        return <DollarSign className="w-4 h-4 text-green-600" />;
-      case 'customer':
-        return <Users className="w-4 h-4 text-purple-600" />;
       default:
         return <Bell className="w-4 h-4 text-gray-600" />;
     }
@@ -103,40 +119,25 @@ export function NotificationsDropdown() {
   };
 
   const markAsRead = (id) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, unread: false }
-          : notification
-      )
-    );
+    setReadNotifications(prev => {
+      if (!prev.includes(id)) {
+        return [...prev, id];
+      }
+      return prev;
+    });
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, unread: false }))
-    );
+    const allIds = notifications.map(n => n.id);
+    setReadNotifications(allIds);
   };
 
   const handleNotificationClick = (notification) => {
     markAsRead(notification.id);
-    
-    // Navegar según el tipo de notificación
-    switch (notification.type) {
-      case 'order':
-        window.location.href = '/admin/pedidos';
-        break;
-      case 'inventory':
-        window.location.href = '/admin/inventario';
-        break;
-      case 'payment':
-        window.location.href = '/admin/pedidos';
-        break;
-      case 'customer':
-        window.location.href = '/admin/clientes';
-        break;
-      default:
-        break;
+
+    // Navegar a la página de stock correspondiente
+    if (notification.link) {
+      window.location.href = notification.link;
     }
   };
 
@@ -202,8 +203,9 @@ export function NotificationsDropdown() {
                 <div className="max-h-96 overflow-y-auto">
                   {notifications.length === 0 ? (
                     <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-                      <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p>No hay notificaciones</p>
+                      <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p className="font-medium">No hay alertas de stock</p>
+                      <p className="text-xs mt-1">Todos los productos y materiales tienen stock adecuado</p>
                     </div>
                   ) : (
                     <div className="space-y-1">
@@ -242,17 +244,12 @@ export function NotificationsDropdown() {
                     </div>
                   )}
                 </div>
-                
+
                 {notifications.length > 0 && (
                   <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full text-xs"
-                      onClick={() => window.location.href = '/admin/notificaciones'}
-                    >
-                      Ver todas las notificaciones
-                    </Button>
+                    <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+                      Haz clic en una alerta para ir a la gestión de stock
+                    </div>
                   </div>
                 )}
               </CardContent>

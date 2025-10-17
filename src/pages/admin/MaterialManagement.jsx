@@ -104,20 +104,20 @@ export function MaterialManagement() {
 
     const handleDeleteItem = (itemId) => {
         openConfirmModal({
-            title: "Eliminar Material",
-            message: "¿Estás seguro de que quieres eliminar este material del inventario?",
+            title: "Eliminar Materia Prima",
+            message: "¿Estás seguro de que quieres eliminar esta materia prima del inventario?",
             type: "danger",
             confirmText: "Eliminar",
             onConfirm: () => {
                 setMaterials(prev => prev.filter(item => item.id !== itemId));
-                toast.success("Material eliminado correctamente");
+                toast.success("Materia prima eliminada correctamente");
             }
         });
     };
 
     const handleUpdateStock = (itemId, currentStock) => {
         openStockModal({
-            title: "Actualizar Stock de Material",
+            title: "Actualizar Stock de Materia Prima",
             currentStock,
             onConfirm: (newStock) => {
                 setMaterials(prev => prev.map(item =>
@@ -130,7 +130,7 @@ export function MaterialManagement() {
                         }
                         : item
                 ));
-                toast.success("Stock de material actualizado correctamente");
+                toast.success("Stock de materia prima actualizado correctamente");
             }
         });
     };
@@ -178,7 +178,7 @@ export function MaterialManagement() {
     // Preparar datos para SectionHeader
     const headerActions = [
         {
-            label: "Agregar Material",
+            label: "Agregar Materia Prima",
             variant: "empanada",
             className: "h-9 px-4 text-sm font-medium",
             onClick: handleAddItem,
@@ -217,7 +217,7 @@ export function MaterialManagement() {
         <div className="space-y-6">
             {/* Header usando SectionHeader */}
             <SectionHeader
-                title="Gestión de Materiales"
+                title="Gestión de Materia Prima"
                 subtitle="Administra el inventario de materias primas e ingredientes"
                 icon={<Package className="w-6 h-6" />}
                 actions={headerActions}
@@ -352,7 +352,7 @@ export function MaterialManagement() {
                             _accessToken: session.userData.accessToken,
                         });
                         setShowAddModal(false);
-                        toast.success(`Material ${newItem.name} agregado correctamente`);
+                        toast.success(`Materia prima ${newItem.name} agregada correctamente`);
                     }}
                 />
             )}
@@ -388,8 +388,8 @@ function AddMaterialModal({ onClose, onSave }) {
         <BrandedModal
             isOpen={true}
             onClose={onClose}
-            title="Agregar Nuevo Material"
-            subtitle="Agrega un nuevo material al inventario"
+            title="Agregar Nueva Materia Prima"
+            subtitle="Agrega una nueva materia prima al inventario"
             icon={<Package className="w-6 h-6" />}
             maxWidth="max-w-7xl"
             maxHeight="max-h-[95vh]"
@@ -398,7 +398,7 @@ function AddMaterialModal({ onClose, onSave }) {
                     onCancel={onClose}
                     onConfirm={handleSave}
                     cancelText="Cancelar"
-                    confirmText="Agregar Material"
+                    confirmText="Agregar Materia Prima"
                     confirmIcon={<Save className="w-4 h-4" />}
                     isConfirmDisabled={!isFormValid}
                 />
@@ -420,7 +420,7 @@ function AddMaterialModal({ onClose, onSave }) {
                                 <Input
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="Nombre del material"
+                                    placeholder="Nombre de la materia prima"
                                     required
                                     className="admin-input"
                                 />
@@ -440,7 +440,7 @@ function AddMaterialModal({ onClose, onSave }) {
                                     type='number'
                                     value={formData.unitPrice}
                                     onChange={(e) => setFormData({ ...formData, unitPrice: e.target.value === '' ? '' : Number(e.target.value) })}
-                                    placeholder="Nombre del material"
+                                    placeholder="Precio por unidad"
                                     required
                                     className="admin-input"
                                 />

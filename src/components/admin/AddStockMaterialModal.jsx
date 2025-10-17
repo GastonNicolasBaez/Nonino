@@ -85,8 +85,8 @@ export function AddStockMaterialModal({
         <BrandedModal
             isOpen={isOpen}
             onClose={handleClose}
-            title="Ingresar Stock de Materiales"
-            subtitle="Selecciona los materiales y cantidades a agregar al inventario"
+            title="Ingresar Stock de Materia Prima"
+            subtitle="Selecciona las materias primas y cantidades a agregar al inventario"
             icon={<Package className="w-6 h-6" />}
             maxWidth="max-w-4xl"
             footer={
@@ -105,7 +105,7 @@ export function AddStockMaterialModal({
                 {/* Búsqueda de materiales */}
                 <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
-                        Buscar Material *
+                        Buscar Materia Prima *
                     </label>
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -113,7 +113,7 @@ export function AddStockMaterialModal({
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Buscar material por nombre o SKU..."
+                            placeholder="Buscar materia prima por nombre o SKU..."
                             className="pl-10"
                             disabled={loading || isLoading}
                         />
@@ -145,7 +145,7 @@ export function AddStockMaterialModal({
                                 ))
                             ) : (
                                 <div className="px-3 py-4 text-center text-gray-500">
-                                    No se encontraron materiales
+                                    No se encontraron materias primas
                                 </div>
                             )}
                         </div>
@@ -156,7 +156,7 @@ export function AddStockMaterialModal({
                 {selectedMaterials.length > 0 && (
                     <div className="space-y-3">
                         <h3 className="text-sm font-semibold text-gray-700 dark:text-white">
-                            Materiales a ingresar ({selectedMaterials.length})
+                            Materias primas a ingresar ({selectedMaterials.length})
                         </h3>
                         {selectedMaterials.map((material) => (
                             <div
@@ -202,7 +202,7 @@ export function AddStockMaterialModal({
                 {selectedMaterials.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
                         <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                        <p>Busca y selecciona materiales para agregar al inventario</p>
+                        <p>Busca y selecciona materias primas para agregar al inventario</p>
                     </div>
                 )}
             </div>

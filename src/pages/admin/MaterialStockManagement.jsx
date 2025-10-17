@@ -86,7 +86,7 @@ export function MaterialStockManagement() {
 
     const handleUpdateMaterialStock = (materialId, currentStock) => {
         openStockModal({
-            title: "Actualizar Stock de Material",
+            title: "Actualizar Stock de Materia Prima",
             currentStock,
             onConfirm: (newStock) => {
                 setMaterials(prev => prev.map(item =>
@@ -99,7 +99,7 @@ export function MaterialStockManagement() {
                         }
                         : item
                 ));
-                toast.success("Stock de material actualizado correctamente");
+                toast.success("Stock de materia prima actualizado correctamente");
             }
         });
     };
@@ -118,7 +118,7 @@ export function MaterialStockManagement() {
         // Cards neutras después
         {
             id: "total-materiales",
-            label: "Total Materiales",
+            label: "Total Materia Prima",
             value: materials.length,
             color: "gray",
             icon: <Package className="w-5 h-5" />
@@ -150,7 +150,7 @@ export function MaterialStockManagement() {
         variant: "empanada",
         className: "h-9 px-4 text-sm font-medium",
         onClick: () => {
-            toast.info("Actualizando stock de materiales...");
+            toast.info("Actualizando stock de materia prima...");
             // Aquí se llamaría a la función de actualización
         },
         icon: <RefreshCcw className="w-4 h-4 mr-2" />
@@ -178,7 +178,7 @@ export function MaterialStockManagement() {
         <div className="space-y-6">
             {/* Header usando SectionHeader */}
             <SectionHeader
-                title="Stock de Materiales"
+                title="Stock de Materia Prima"
                 subtitle={`Gestiona el inventario de materias primas${selectedStore ? ` - ${selectedStore}` : ''}`}
                 icon={<Package className="w-6 h-6" />}
                 actions={headerActions}
@@ -201,7 +201,7 @@ export function MaterialStockManagement() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Package className="w-5 h-5" />
-                            Inventario de Materiales
+                            Inventario de Materia Prima
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -211,7 +211,7 @@ export function MaterialStockManagement() {
                                 <div className="flex-1 relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                                     <Input
-                                        placeholder="Buscar materiales por nombre o categoría..."
+                                        placeholder="Buscar materia prima por nombre o categoría..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-10"
@@ -232,12 +232,12 @@ export function MaterialStockManagement() {
                             <div className="text-center py-12">
                                 <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                                 <h3 className="text-xl font-semibold mb-2">
-                                    {searchTerm ? 'No se encontraron materiales' : 'No hay materiales'}
+                                    {searchTerm ? 'No se encontró materia prima' : 'No hay materia prima'}
                                 </h3>
                                 <p className="text-muted-foreground">
                                     {searchTerm
                                         ? 'Intenta con otros filtros de búsqueda'
-                                        : 'Los materiales aparecerán aquí cuando se agreguen'
+                                        : 'La materia prima aparecerá aquí cuando se agregue'
                                     }
                                 </p>
                             </div>
@@ -349,7 +349,7 @@ export function MaterialStockManagement() {
                             _accessToken: session.userData.accessToken,
                         });
 
-                        toast.success(`Stock de ${stockData.length} materiales ingresado correctamente`);
+                        toast.success(`Stock de ${stockData.length} materias primas ingresado correctamente`);
                     } catch (error) {
                         toast.error(error?.message);
                     }

@@ -207,7 +207,7 @@ const AdminLayout = () => {
                 dropdownItems: [
                     { name: "Productos", href: "/intranet/admin/productos", icon: Package },
                     { name: "Categorías", href: "/intranet/admin/categorias", icon: Tag },
-                    { name: "Materiales", href: "/intranet/admin/materiales", icon: Archive },
+                    { name: "Materia Prima", href: "/intranet/admin/materiales", icon: Archive },
                     { name: "Combos", href: "/intranet/admin/combos", icon: ShoppingCart }
                 ]
             },
@@ -217,7 +217,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Productos", href: "/intranet/admin/inventario-productos", icon: ShoppingCart },
-                    { name: "Materiales", href: "/intranet/admin/inventario-materiales", icon: Package }
+                    { name: "Materia Prima", href: "/intranet/admin/inventario-materiales", icon: Package }
                 ]
             },
             {
@@ -319,7 +319,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Productos", href: "/intranet/fabrica/inventario-productos", icon: ShoppingCart },
-                    { name: "Materiales", href: "/intranet/fabrica/inventario-materiales", icon: Package }
+                    { name: "Materia Prima", href: "/intranet/fabrica/inventario-materiales", icon: Package }
                 ]
             },
             // {

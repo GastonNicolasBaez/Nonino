@@ -135,15 +135,13 @@ export function AboutPage() {
     return () => unsubscribe();
   }, [manualProgress, shouldAnimateTitle, shouldAnimateSubtitle]);
 
-  // Ocultar el título al finalizar el parallax o al entrar historia
+  // Ocultar el título al finalizar el parallax
   useEffect(() => {
-    const t1 = document.getElementById('historia');
     const t2 = document.getElementById('end-parallax');
     const obs = new IntersectionObserver((entries) => {
       const anyVisible = entries.some(e => e.isIntersecting && e.intersectionRatio > 0.01);
       setHideTitle(anyVisible);
     }, { threshold: [0, 0.01, 0.1] });
-    if (t1) obs.observe(t1);
     if (t2) obs.observe(t2);
     return () => obs.disconnect();
   }, []);
@@ -271,60 +269,7 @@ export function AboutPage() {
       {/* Anchor point for end of parallax (ajustado para cerrar sin gap) */}
       <div id="end-parallax" className="absolute" style={{ top: '205vh' }}></div>
 
-        {/* Story Section */}
-        <section id="historia" className="py-8 sm:py-12 lg:py-16 -mt-1">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2 text-empanada-white">
-                La Historia de Don Carlos
-              </h2>
-              <div className="space-y-4 text-empanada-golden leading-relaxed">
-                <p>
-                  Todo comenzó en 1995 cuando Don Carlos Nonino decidió cumplir su sueño 
-                  de abrir su propia empanadora. Con las recetas heredadas de su abuela 
-                  y una gran pasión por la cocina, abrió el primer local en el centro de la ciudad.
-                </p>
-                <p>
-                  Lo que empezó como un pequeño negocio familiar se convirtió en una tradición 
-                  querida por toda la comunidad. Cada empanada es preparada con el mismo cuidado 
-                  y dedicación que Don Carlos puso desde el primer día.
-                </p>
-                <p>
-                  Hoy, con más de 25 años de experiencia, seguimos manteniendo esa esencia 
-                  familiar mientras incorporamos nuevas tecnologías para brindar el mejor 
-                  servicio a nuestros clientes.
-                </p>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-2 gap-4"
-            >
-              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
-                <span className="text-4xl">👨‍🍳</span>
-              </div>
-              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
-                <span className="text-4xl">🏪</span>
-              </div>
-              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
-                <span className="text-4xl">👨‍👩‍👧‍👦</span>
-              </div>
-              <div className="bg-empanada-golden/10 rounded-lg shadow-lg flex items-center justify-center h-48">
-                <span className="text-4xl">🥟</span>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-        {/* Separator Section - Story to Timeline */}
+        {/* Separator Section */}
         <section className="py-4 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">

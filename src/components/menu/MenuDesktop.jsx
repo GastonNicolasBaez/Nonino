@@ -276,9 +276,14 @@ export function MenuDesktop({
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 {combos.map((combo) => (
-                                    <Card key={combo.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray group">
-                                        <div className="flex">
-                                            <div className="w-32 h-32 bg-empanada-medium flex-shrink-0 relative">
+                                    <Card 
+                                        key={combo.id} 
+                                        className="overflow-hidden hover:shadow-lg transition-shadow bg-empanada-dark border-empanada-light-gray cursor-pointer"
+                                        onClick={() => handleShowComboInfo(combo)}
+                                    >
+                                        <div className="flex h-full">
+                                            {/* Imagen al costado ocupando todo el alto */}
+                                            <div className="w-60 h-full bg-empanada-medium flex-shrink-0 relative">
                                                 {combo.imageBase64 ? (
                                                     <img
                                                         src={combo.imageBase64}
@@ -287,19 +292,11 @@ export function MenuDesktop({
                                                     />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center">
-                                                        <Package className="w-12 h-12 text-empanada-golden opacity-30" />
+                                                        <Package className="w-16 h-16 text-empanada-golden opacity-30" />
                                                     </div>
                                                 )}
-                                                {/* Botón info en hover */}
-                                                <button
-                                                    onClick={() => handleShowComboInfo(combo)}
-                                                    className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                >
-                                                    <div className="bg-empanada-golden rounded-full p-2">
-                                                        <Info className="w-6 h-6 text-white" />
-                                                    </div>
-                                                </button>
                                             </div>
+                                            
                                             <CardContent className="flex-1 p-6 flex flex-col justify-between bg-empanada-dark">
                                                 <div>
                                                     <h3 className="font-bold text-xl text-white mb-2">{combo.name}</h3>
@@ -310,18 +307,12 @@ export function MenuDesktop({
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => handleShowComboInfo(combo)}
-                                                        className="border-empanada-light-gray hover:border-empanada-golden text-gray-300 hover:text-white"
-                                                    >
-                                                        <Info className="w-4 h-4 mr-2" />
-                                                        Ver Info
-                                                    </Button>
-                                                    <Button
                                                         className="flex-1"
                                                         variant="empanada"
-                                                        onClick={() => navigate(`/menu/combo-builder?comboId=${combo.id}`)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/menu/combo-builder?comboId=${combo.id}`);
+                                                        }}
                                                     >
                                                         <Package className="w-4 h-4 mr-2" />
                                                         Armar Combo

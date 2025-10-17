@@ -146,8 +146,8 @@ export function BranchManagement() {
             barrio: store.barrio || '',
             lat: store.lat || '',
             lng: store.lng || '',
-            supportsPickup: store.supportsPickup || true,
-            supportsDelivery: store.supportsDelivery || true,
+            supportsPickup: store.supportsPickup ?? true, // Usar nullish coalescing en lugar de ||
+            supportsDelivery: store.supportsDelivery ?? true, // Usar nullish coalescing en lugar de ||
             tel1: store.tel1 || '',
             tel2: store.tel2 || '',
         });
@@ -162,8 +162,8 @@ export function BranchManagement() {
                 barrio: store.barrio || '',
                 lat: store.lat || '',
                 lng: store.lng || '',
-                supportsPickup: store.supportsPickup || true,
-                supportsDelivery: store.supportsDelivery || true,
+                supportsPickup: store.supportsPickup ?? true, // Usar nullish coalescing en lugar de ||
+                supportsDelivery: store.supportsDelivery ?? true, // Usar nullish coalescing en lugar de ||
                 tel1: store.tel1 || '',
                 tel2: store.tel2 || '',
             });
@@ -431,7 +431,7 @@ export function BranchManagement() {
                                             className="rounded border-gray-300 text-empanada-golden focus:ring-empanada-golden"
                                         />
                                         <span className="text-xs text-gray-700 dark:text-white">
-                                            Soporta Delivery
+                                            Soporta Envíos
                                         </span>
                                     </label>
                                 </div>

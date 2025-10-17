@@ -134,7 +134,23 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => {
     setItems([]);
     setPromoCode(null);
+    // Limpiar también los totales guardados para el pago
+    localStorage.removeItem('pendingPaymentTotals');
     // Toast removido para mejor fluidez UX
+  };
+
+  const savePendingPaymentTotals = (orderId = null) => {
+    // Guardar los totales actuales para mantenerlos durante la redirección a MercadoPago
+    const totals = {
+      orderId,
+      subtotal,
+      discount,
+      deliveryFee,
+      total,
+      itemCount,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('pendingPaymentTotals', JSON.stringify(totals));
   };
 
   const applyPromoCode = (code) => {
@@ -208,6 +224,7 @@ export const CartProvider = ({ children }) => {
     updateDeliveryInfo,
     createOrder,
     setIsOpen,
+    savePendingPaymentTotals,
   };
 
   return (

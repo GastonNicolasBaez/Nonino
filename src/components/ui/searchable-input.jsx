@@ -63,14 +63,9 @@ export function SearchableInput({
   };
 
   const handleOptionSelect = (option) => {
-    console.log('SearchableInput: Seleccionando ingrediente:', option);
-    console.log('SearchableInput: Valor actual:', value);
-    
     onSelect(option);
     setIsOpen(false);
     onChange('');
-    
-    console.log('SearchableInput: Después de onSelect');
   };
 
   const handleKeyDown = (e) => {

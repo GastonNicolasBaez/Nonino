@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import tsconfigPaths from "vite-tsconfig-paths"
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,6 +11,12 @@ export default defineConfig({
         basicSsl(),
         tsconfigPaths(),
     ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src')
+        },
+        extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
+    },
     server: {
         https: true,
         port: 3000,

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate, Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -20,13 +20,14 @@ import { usePublicData } from "@/context/PublicDataProvider";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 
 export function CheckoutPage() {
-    const { items, total, subtotal, discount, deliveryFee, clearCart, selectedStore } = useCart();
+    const { items, total, subtotal, discount, deliveryFee, clearCart, selectedStore, savePendingPaymentTotals } = useCart();
     const {
         productos,
         callPublicCreateOrder,
         publicDataCreatingOrderLoading: loading,
         callPublicCreatePreference,
         callPublicCreatePrintJob,
+        callPublicOrderById,
     } = usePublicData();
     const isMobile = useIsMobile();
 
@@ -40,6 +41,59 @@ export function CheckoutPage() {
     const [completedSteps, setCompletedSteps] = useState(new Set());
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
+
+    // Recuperar totales guardados si existen (durante redirección a pago)
+    const [pendingPaymentTotals, setPendingPaymentTotals] = useState(null);
+    const [validatingPendingOrder, setValidatingPendingOrder] = useState(false);
+
+    useEffect(() => {
+        const validatePendingOrder = async () => {
+            const savedTotals = localStorage.getItem('pendingPaymentTotals');
+            if (!savedTotals) return;
+
+            try {
+                const parsed = JSON.parse(savedTotals);
+
+                // Si hay un orderId, verificar si la orden sigue pendiente
+                if (parsed.orderId) {
+                    setValidatingPendingOrder(true);
+                    try {
+                        const orderStatus = await callPublicOrderById(parsed.orderId);
+
+                        // Solo mantener los totales si la orden sigue pendiente de pago
+                        if (orderStatus.status === 'AWAITING_PAYMENT' || orderStatus.status === 'CREATED') {
+                            console.log('✅ [Checkout] Pending order found, restoring totals');
+                            setPendingPaymentTotals(parsed);
+                        } else {
+                            console.log('⚠️ [Checkout] Order is no longer pending, clearing totals');
+                            localStorage.removeItem('pendingPaymentTotals');
+                        }
+                    } catch (error) {
+                        console.error('Error validating pending order:', error);
+                        // Si hay error al validar, limpiar los totales por seguridad
+                        localStorage.removeItem('pendingPaymentTotals');
+                    }
+                    setValidatingPendingOrder(false);
+                } else {
+                    // Si no hay orderId (totales viejos), limpiarlos
+                    console.log('⚠️ [Checkout] No orderId in pending totals, clearing');
+                    localStorage.removeItem('pendingPaymentTotals');
+                }
+            } catch (e) {
+                console.error('Error parsing pending payment totals:', e);
+                localStorage.removeItem('pendingPaymentTotals');
+            }
+        };
+
+        validatePendingOrder();
+    }, []);
+
+    // Usar totales guardados SOLO si hay un pedido pendiente válido y el carrito está vacío
+    const shouldUseStoredTotals = items.length === 0 && pendingPaymentTotals && pendingPaymentTotals.orderId;
+    const displaySubtotal = shouldUseStoredTotals ? pendingPaymentTotals.subtotal : subtotal;
+    const displayDiscount = shouldUseStoredTotals ? pendingPaymentTotals.discount : discount;
+    const displayDeliveryFee = shouldUseStoredTotals ? pendingPaymentTotals.deliveryFee : deliveryFee;
+    const displayTotal = shouldUseStoredTotals ? pendingPaymentTotals.total : total;
 
     // Steps definition - memoized to prevent dependency changes
     const steps = useMemo(() => [
@@ -233,13 +287,18 @@ export function CheckoutPage() {
                     _proof: createdOrder.proof
                 });
 
+                // Guardar los totales ANTES de redirigir para mantenerlos durante la redirección
+                savePendingPaymentTotals(createdOrder.id);
+
                 // Solo mostrar toast en desktop
                 if (!isMobile) {
                     toast.success("¡Pedido creado! Serás redirigido al pago...");
                 }
-                clearCart();
+                // No limpiar carrito - se limpiará en OrderTrackingPage cuando el pago sea exitoso
                 window.location.href = createdPreference.initPoint;
             } else {
+                // Para pagos en efectivo, limpiar totales guardados también
+                localStorage.removeItem('pendingPaymentTotals');
                 clearCart();
                 // Solo mostrar toast en desktop
                 if (!isMobile) {
@@ -256,7 +315,7 @@ export function CheckoutPage() {
         }
     };
 
-    const handleInputChange = useCallback((section, field, value) => {
+    const handleInputChange = (section, field, value) => {
         setOrderData(prev => ({
             ...prev,
             [section]: {
@@ -265,12 +324,10 @@ export function CheckoutPage() {
             }
         }));
 
-        // Clear error when user starts typing - batched update
-        if (errors[`${section}.${field}`] || !touched[`${section}.${field}`]) {
-            setErrors(prev => ({ ...prev, [`${section}.${field}`]: null }));
-            setTouched(prev => ({ ...prev, [`${section}.${field}`]: true }));
-        }
-    }, [errors, touched]);
+        // Clear error when user starts typing
+        setErrors(prev => ({ ...prev, [`${section}.${field}`]: null }));
+        setTouched(prev => ({ ...prev, [`${section}.${field}`]: true }));
+    };
 
     // Validation functions - Memoized
     const validateStep = useCallback((step) => {
@@ -377,7 +434,7 @@ export function CheckoutPage() {
                                 <Truck className="w-4 h-4" />
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-semibold text-white text-sm mb-1">Delivery a domicilio</h4>
+                                <h4 className="font-semibold text-white text-sm mb-1">Envíos a domicilio</h4>
                                 <p className="text-xs text-gray-300 mb-1">Recibe tu pedido en casa</p>
                                 <div className="flex items-center gap-1 text-xs text-empanada-golden">
                                     <Clock className="w-3 h-3" />
@@ -684,7 +741,7 @@ export function CheckoutPage() {
                         {orderData.deliveryType === "delivery" ? (
                             <>
                                 <Truck className="w-4 h-4 text-empanada-golden" />
-                                <span>Delivery a domicilio</span>
+                                <span>Envíos a domicilio</span>
                             </>
                         ) : (
                             <>
@@ -782,23 +839,23 @@ export function CheckoutPage() {
                     <div className="mt-4 pt-4 border-t border-empanada-light-gray space-y-2">
                         <div className="flex justify-between text-sm text-gray-300">
                             <span>Subtotal</span>
-                            <span className="font-medium">{formatPrice(subtotal)}</span>
+                            <span className="font-medium">{formatPrice(displaySubtotal)}</span>
                         </div>
-                        {discount > 0 && (
+                        {displayDiscount > 0 && (
                             <div className="flex justify-between text-sm text-green-600">
                                 <span>Descuento</span>
-                                <span className="font-medium">-{formatPrice(discount)}</span>
+                                <span className="font-medium">-{formatPrice(displayDiscount)}</span>
                             </div>
                         )}
                         <div className="flex justify-between text-sm text-gray-300">
                             <span>Envío</span>
-                            <span className={cn("font-medium", deliveryFee === 0 && "text-green-600")}>
-                                {deliveryFee > 0 ? formatPrice(deliveryFee) : "GRATIS"}
+                            <span className={cn("font-medium", displayDeliveryFee === 0 && "text-green-600")}>
+                                {displayDeliveryFee > 0 ? formatPrice(displayDeliveryFee) : "GRATIS"}
                             </span>
                         </div>
                         <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-empanada-light-gray">
                             <span>Total</span>
-                            <span className="text-empanada-golden">{formatPrice(total)}</span>
+                            <span className="text-empanada-golden">{formatPrice(displayTotal)}</span>
                         </div>
                     </div>
                 </div>
@@ -820,7 +877,7 @@ export function CheckoutPage() {
                 </div>
             </div>
         </div>
-    ), [orderData, items, subtotal, discount, deliveryFee, total, selectedStore, formatPrice]);
+    ), [orderData, items, displaySubtotal, displayDiscount, displayDeliveryFee, displayTotal, selectedStore, formatPrice]);
 
 
     return (

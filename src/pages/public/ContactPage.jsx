@@ -201,7 +201,7 @@ export function ContactPage() {
                       >
                         <option value="">Selecciona un asunto</option>
                         <option value="pedido">Consulta sobre pedidos</option>
-                        <option value="delivery">Información de delivery</option>
+                        <option value="delivery">Información de envíos</option>
                         <option value="productos">Consulta sobre productos</option>
                         <option value="franquicia">Consulta por franquicia</option>
                         <option value="sugerencia">Sugerencia</option>
@@ -254,9 +254,9 @@ export function ContactPage() {
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-white">¿Hacen delivery los domingos?</h4>
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base text-white">¿Hacen envíos los domingos?</h4>
                       <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-                        Sí, hacemos delivery todos los días de la semana, incluidos domingos y feriados.
+                        Sí, hacemos envíos todos los días de la semana, incluidos domingos y feriados.
                       </p>
                     </div>
                     <div>

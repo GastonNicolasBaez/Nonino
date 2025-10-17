@@ -9,6 +9,7 @@ import { orderService } from "@/services/api";
 import { formatPrice, formatDateTime } from "@/lib/utils";
 
 import { usePublicData } from "@/context/PublicDataProvider";
+import { useCart } from "@/context/CartProvider";
 
 export function OrderTrackingPage() {
 
@@ -16,6 +17,8 @@ export function OrderTrackingPage() {
         callPublicOrderById,
         callPublicOrderByIdLoading,
     } = usePublicData();
+
+    const { clearCart } = useCart();
 
     const { orderId } = useParams();
     const [order, setOrder] = useState(null);
@@ -25,8 +28,36 @@ export function OrderTrackingPage() {
         const fetchOrder = async () => {
             try {
                 const response = await callPublicOrderById(orderId);
+                console.log('🔍 [OrderTracking] Order fetched:', {
+                    orderId,
+                    status: response.status,
+                    paymentMethod: response.paymentMethod,
+                    fullResponse: response
+                });
+                
                 setOrder(response);
                 setLoading(false);
+                
+                // Verificar si ya limpiamos el carrito para esta orden
+                const clearedOrders = JSON.parse(localStorage.getItem('clearedOrderCarts') || '[]');
+                const alreadyCleared = clearedOrders.includes(orderId);
+
+                // Limpiar carrito solo si el pago fue exitoso Y no lo hemos limpiado antes
+                if (response.status === 'PAID' && !alreadyCleared) {
+                    console.log('✅ [OrderTracking] Payment confirmed, clearing cart and pending payment totals');
+                    clearCart(); // Esto también limpia los totales guardados
+                    // Marcar esta orden como procesada
+                    clearedOrders.push(orderId);
+                    localStorage.setItem('clearedOrderCarts', JSON.stringify(clearedOrders));
+                } else if (response.status === 'PAID' && alreadyCleared) {
+                    console.log('ℹ️ [OrderTracking] Payment confirmed but cart already cleared for this order');
+                } else if (response.status === 'CANCELLED' || response.status === 'FAILED') {
+                    // Si el pago fue cancelado o falló, limpiar los totales guardados
+                    console.log(`❌ [OrderTracking] Payment ${response.status}, clearing pending totals`);
+                    localStorage.removeItem('pendingPaymentTotals');
+                } else {
+                    console.log(`⏳ [OrderTracking] Payment status is ${response.status}, NOT clearing cart`);
+                }
             } catch (error) {
                 console.error("Error fetching order:", error);
             }
@@ -158,12 +189,18 @@ export function OrderTrackingPage() {
                                 <div>
                                     <h4 className="font-medium mb-2">Productos</h4>
                                     <div className="space-y-2">
-                                        {order.items.map((item, index) => (
-                                            <div key={index} className="flex justify-between text-sm">
-                                                <span>{item.quantity}x {item.name}</span>
-                                                <span>{formatPrice(item.unitPrice * item.quantity)}</span>
-                                            </div>
-                                        ))}
+                                        {order.items && order.items.length > 0 ? (
+                                            order.items.map((item, index) => (
+                                                <div key={index} className="flex justify-between text-sm">
+                                                    <span>{item.quantity}x {item.name}</span>
+                                                    {item.unitPrice !== undefined && (
+                                                        <span>{formatPrice(item.unitPrice * item.quantity)}</span>
+                                                    )}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-sm text-gray-400">No hay productos en esta orden</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -190,13 +227,21 @@ export function OrderTrackingPage() {
                                 <CardTitle>Información de Entrega</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <MapPin className="w-5 h-5 text-empanada-golden mt-1" />
-                                    <div>
-                                        <h4 className="font-medium">Dirección de Entrega</h4>
-                                        <p className="text-sm text-gray-600">{order.deliveryAddress.street}</p>
+                                {order.deliveryAddress && (
+                                    <div className="flex items-start gap-3">
+                                        <MapPin className="w-5 h-5 text-empanada-golden mt-1" />
+                                        <div>
+                                            <h4 className="font-medium">Dirección de Entrega</h4>
+                                            <p className="text-sm text-gray-600">
+                                                {order.deliveryAddress.street} {order.deliveryAddress.number}
+                                                {order.deliveryAddress.apartment && `, Depto ${order.deliveryAddress.apartment}`}
+                                            </p>
+                                            {order.deliveryAddress.neighborhood && (
+                                                <p className="text-sm text-gray-600">{order.deliveryAddress.neighborhood}</p>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {/* <div className="flex items-start gap-3">
                                     <Phone className="w-5 h-5 text-empanada-golden mt-1" />

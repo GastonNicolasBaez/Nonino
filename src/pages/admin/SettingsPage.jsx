@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 // Removed framer-motion for simpler admin experience
 import {
     Settings,
@@ -227,7 +227,7 @@ export function SettingsPage() {
         }
     ];
 
-    const GeneralSettings = () => (
+    const GeneralSettings = useMemo(() => (
         <div className="space-y-6">
             <Card className="">
                 <CardHeader>
@@ -299,7 +299,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.general.taxRate}
-                                onChange={(e) => updateSetting("general", "taxRate", Number(e.target.value))}
+                                onChange={(e) => updateSetting("general", "taxRate", e.target.value === '' ? '' : Number(e.target.value))}
                                 min="0"
                                 max="50"
                                 className="admin-input"
@@ -309,9 +309,9 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), [settings.general, updateSetting, currencyOptions, timezoneOptions]);
 
-    const StoreSettings = () => (
+    const StoreSettings = useMemo(() => (
         <div className="space-y-6">
             <Card className="">
                 <CardHeader>
@@ -327,7 +327,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.store.minOrderAmount}
-                                onChange={(e) => updateSetting("store", "minOrderAmount", Number(e.target.value))}
+                                onChange={(e) => updateSetting("store", "minOrderAmount", e.target.value === '' ? '' : Number(e.target.value))}
                                 placeholder="Monto mínimo de pedido"
                                 className="admin-input"
                             />
@@ -337,7 +337,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.store.deliveryFee}
-                                onChange={(e) => updateSetting("store", "deliveryFee", Number(e.target.value))}
+                                onChange={(e) => updateSetting("store", "deliveryFee", e.target.value === '' ? '' : Number(e.target.value))}
                                 placeholder="Costo base de envío"
                                 className="admin-input"
                             />
@@ -347,17 +347,17 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.store.preparationTime}
-                                onChange={(e) => updateSetting("store", "preparationTime", Number(e.target.value))}
+                                onChange={(e) => updateSetting("store", "preparationTime", e.target.value === '' ? '' : Number(e.target.value))}
                                 placeholder="Tiempo promedio de preparación"
                                 className="admin-input"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Radio de Delivery (km)</label>
+                            <label className="block text-sm font-medium mb-1">Radio de Envíos (km)</label>
                             <Input
                                 type="number"
                                 value={settings.store.deliveryRadius}
-                                onChange={(e) => updateSetting("store", "deliveryRadius", Number(e.target.value))}
+                                onChange={(e) => updateSetting("store", "deliveryRadius", e.target.value === '' ? '' : Number(e.target.value))}
                                 placeholder="Radio máximo de entrega"
                                 className="admin-input"
                             />
@@ -367,7 +367,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.store.maxOrdersPerHour}
-                                onChange={(e) => updateSetting("store", "maxOrdersPerHour", Number(e.target.value))}
+                                onChange={(e) => updateSetting("store", "maxOrdersPerHour", e.target.value === '' ? '' : Number(e.target.value))}
                                 placeholder="Capacidad máxima"
                                 className="admin-input"
                             />
@@ -391,7 +391,7 @@ export function SettingsPage() {
                                     checked={settings.store.enableDelivery}
                                     onChange={(e) => updateSetting("store", "enableDelivery", e.target.checked)}
                                 />
-                                <span className="text-sm">Habilitar Delivery</span>
+                                <span className="text-sm">Habilitar Envíos</span>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input
@@ -406,9 +406,9 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), [settings.store, updateSetting]);
 
-    const NotificationSettings = () => (
+    const NotificationSettings = useMemo(() => (
         <div className="space-y-6">
             <Card className="">
                 <CardHeader>
@@ -511,9 +511,9 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), [settings.notifications, updateSetting]);
 
-    const PaymentSettings = () => (
+    const PaymentSettings = useMemo(() => (
         <div className="space-y-6">
             <Card className="">
                 <CardHeader>
@@ -611,7 +611,7 @@ export function SettingsPage() {
                         <Input
                             type="number"
                             value={settings.payment.commissionRate}
-                            onChange={(e) => updateSetting("payment", "commissionRate", Number(e.target.value))}
+                            onChange={(e) => updateSetting("payment", "commissionRate", e.target.value === '' ? '' : Number(e.target.value))}
                             placeholder="Comisión por transacción"
                             step="0.1"
                             min="0"
@@ -621,9 +621,9 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), [settings.payment, updateSetting]);
 
-    const SecuritySettings = () => (
+    const SecuritySettings = useMemo(() => (
         <div className="space-y-6">
             <Card className="">
                 <CardHeader>
@@ -654,7 +654,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.security.sessionTimeout}
-                                onChange={(e) => updateSetting("security", "sessionTimeout", Number(e.target.value))}
+                                onChange={(e) => updateSetting("security", "sessionTimeout", e.target.value === '' ? '' : Number(e.target.value))}
                                 min="5"
                                 max="480"
                             />
@@ -664,7 +664,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.security.passwordExpiry}
-                                onChange={(e) => updateSetting("security", "passwordExpiry", Number(e.target.value))}
+                                onChange={(e) => updateSetting("security", "passwordExpiry", e.target.value === '' ? '' : Number(e.target.value))}
                                 min="30"
                                 max="365"
                             />
@@ -674,7 +674,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.security.loginAttempts}
-                                onChange={(e) => updateSetting("security", "loginAttempts", Number(e.target.value))}
+                                onChange={(e) => updateSetting("security", "loginAttempts", e.target.value === '' ? '' : Number(e.target.value))}
                                 min="3"
                                 max="10"
                             />
@@ -748,9 +748,9 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), [settings, updateSetting]);
 
-    const PromotionsSettings = () => (
+    const PromotionsSettings = useMemo(() => (
         <div className="space-y-6">
             <Card>
                 <CardHeader>
@@ -811,7 +811,7 @@ export function SettingsPage() {
                                         <Input
                                             type="number"
                                             value={promotion.discount}
-                                            onChange={(e) => updatePromotion(promotion.id, "discount", Number(e.target.value))}
+                                            onChange={(e) => updatePromotion(promotion.id, "discount", e.target.value === '' ? '' : Number(e.target.value))}
                                             placeholder="10"
                                         />
                                     </div>
@@ -820,7 +820,7 @@ export function SettingsPage() {
                                         <Input
                                             type="number"
                                             value={promotion.minOrderAmount}
-                                            onChange={(e) => updatePromotion(promotion.id, "minOrderAmount", Number(e.target.value))}
+                                            onChange={(e) => updatePromotion(promotion.id, "minOrderAmount", e.target.value === '' ? '' : Number(e.target.value))}
                                             placeholder="0"
                                         />
                                     </div>
@@ -845,7 +845,7 @@ export function SettingsPage() {
                                         <Input
                                             type="number"
                                             value={promotion.maxUses}
-                                            onChange={(e) => updatePromotion(promotion.id, "maxUses", Number(e.target.value))}
+                                            onChange={(e) => updatePromotion(promotion.id, "maxUses", e.target.value === '' ? '' : Number(e.target.value))}
                                             placeholder="1000"
                                         />
                                     </div>
@@ -867,9 +867,9 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), [settings.promotions, updatePromotion, deletePromotion, addPromotion]);
 
-    const HistorySettings = () => (
+    const HistorySettings = useMemo(() => (
         <div className="space-y-6">
             <Card>
                 <CardHeader>
@@ -885,7 +885,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.companyHistory.foundedYear}
-                                onChange={(e) => updateHistorySetting("foundedYear", Number(e.target.value))}
+                                onChange={(e) => updateHistorySetting("foundedYear", e.target.value === '' ? '' : Number(e.target.value))}
                                 placeholder="1995"
                             />
                         </div>
@@ -937,7 +937,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.companyHistory.stats.yearsExperience}
-                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, yearsExperience: Number(e.target.value) })}
+                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, yearsExperience: e.target.value === '' ? '' : Number(e.target.value) })}
                                 placeholder="29"
                             />
                         </div>
@@ -946,7 +946,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.companyHistory.stats.happyCustomers}
-                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, happyCustomers: Number(e.target.value) })}
+                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, happyCustomers: e.target.value === '' ? '' : Number(e.target.value) })}
                                 placeholder="15000"
                             />
                         </div>
@@ -955,7 +955,7 @@ export function SettingsPage() {
                             <Input
                                 type="number"
                                 value={settings.companyHistory.stats.empanadasSold}
-                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, empanadasSold: Number(e.target.value) })}
+                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, empanadasSold: e.target.value === '' ? '' : Number(e.target.value) })}
                                 placeholder="100000"
                             />
                         </div>
@@ -965,7 +965,7 @@ export function SettingsPage() {
                                 type="number"
                                 step="0.1"
                                 value={settings.companyHistory.stats.averageRating}
-                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, averageRating: Number(e.target.value) })}
+                                onChange={(e) => updateHistorySetting("stats", { ...settings.companyHistory.stats, averageRating: e.target.value === '' ? '' : Number(e.target.value) })}
                                 placeholder="4.8"
                             />
                         </div>
@@ -973,9 +973,9 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), [settings.companyHistory, updateHistorySetting]);
 
-    const ExportImportSettings = () => (
+    const ExportImportSettings = useMemo(() => (
         <div className="space-y-6">
             {/* Exportación de Datos */}
             <Card>
@@ -1174,7 +1174,7 @@ export function SettingsPage() {
                 </CardContent>
             </Card>
         </div>
-    );
+    ), []);
 
     return (
         <div className="space-y-6">
@@ -1216,14 +1216,14 @@ export function SettingsPage() {
                     <div
                         key={activeTab}
                     >
-                        {activeTab === "general" && <GeneralSettings />}
-                        {activeTab === "store" && <StoreSettings />}
-                        {activeTab === "promotions" && <PromotionsSettings />}
-                        {activeTab === "history" && <HistorySettings />}
-                        {activeTab === "notifications" && <NotificationSettings />}
-                        {activeTab === "payment" && <PaymentSettings />}
-                        {activeTab === "export-import" && <ExportImportSettings />}
-                        {activeTab === "security" && <SecuritySettings />}
+                        {activeTab === "general" && GeneralSettings}
+                        {activeTab === "store" && StoreSettings}
+                        {activeTab === "promotions" && PromotionsSettings}
+                        {activeTab === "history" && HistorySettings}
+                        {activeTab === "notifications" && NotificationSettings}
+                        {activeTab === "payment" && PaymentSettings}
+                        {activeTab === "export-import" && ExportImportSettings}
+                        {activeTab === "security" && SecuritySettings}
                     </div>
                 </div>
             </div>

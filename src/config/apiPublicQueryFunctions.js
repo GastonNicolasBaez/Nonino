@@ -24,6 +24,7 @@ export const getPublicProductosQueryFunction = async () => {
 
 export const getPublicCombosQueryFunction = async () => {
     const response = await axios.get(`${ENDPOINTS.catalog}/public/catalog/combos`);
+    console.log('🔵 [API] Raw combos from backend:', response.data);
     return await response.data;
 }
 

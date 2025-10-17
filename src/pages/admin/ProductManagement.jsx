@@ -83,22 +83,16 @@ export function ProductManagement() {
         callRecetaDelProductoLoading,
     } = useAdminData();
 
-    const categoriasTodas = [
-        { "id": "1", "name": "Empanadas" },
-        { "id": "2", "name": "Bebidas" },
-        { "id": "3", "name": "Promociones" },
-    ]
-
-    // Opciones para CustomSelect
-    const categoryOptions = categoriasTodas.map(category => ({
-        value: category.id,
+    // Opciones para CustomSelect - Usar las categorías del provider
+    const categoryOptions = categories.map(category => ({
+        value: String(category.id), // Convertir a string para consistencia
         label: category.name
     }));
 
     const categoryFilterOptions = [
         { value: "-1", label: "Todo" },
         ...categories.map(category => ({
-            value: category.id,
+            value: String(category.id), // Convertir a string para consistencia
             label: category.name
         }))
     ];
@@ -467,10 +461,13 @@ export function ProductManagement() {
 
     // ProductModal component definition (moved inside the main component)
     const ProductModal = ({ product, onClose }) => {
-        const [formData, setFormData] = useState(product || {
+        const [formData, setFormData] = useState(product ? {
+            ...product,
+            category: String(product.category) // Convertir a string para que coincida con las opciones
+        } : {
             name: "",
             description: "",
-            category: 1,
+            category: categories.length > 0 ? String(categories[0].id) : "", // Usar la primera categoría disponible
             price: 0,
             cost: 0,
             stock: 0,
@@ -577,7 +574,7 @@ export function ProductManagement() {
                                     <Input
                                         type="number"
                                         value={formData.price}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, price: Number(e.target.value) }))}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value === '' ? '' : Number(e.target.value) }))}
                                         placeholder="Precio de venta"
                                         className="admin-input"
                                     />
@@ -587,7 +584,7 @@ export function ProductManagement() {
                                     <Input
                                         type="number"
                                         value={formData.cost}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, cost: Number(e.target.value) }))}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, cost: e.target.value === '' ? '' : Number(e.target.value) }))}
                                         placeholder="Costo de producción"
                                         className="admin-input"
                                     />

@@ -171,7 +171,7 @@ function OrderViewModal({ order, onClose }) {
                                                 Detalles de la Orden
                                             </h3>
                                             <div className="space-y-2 text-sm">
-                                                <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Tipo:</strong> {order.deliveryType === 'delivery' ? 'Delivery' : 'Retiro'}</p>
+                                                <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Tipo:</strong> {order.deliveryType === 'delivery' ? 'Envíos' : 'Retiro'}</p>
                                                 <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Pago:</strong> {order.paymentMethod || 'Efectivo'}</p>
                                                 <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Items:</strong> {Array.isArray(order.items) ? order.items.length : 0} productos</p>
                                                 {order.notes && <p className="text-gray-900 dark:text-white"><strong className="text-gray-700 dark:text-white">Notas:</strong> {order.notes}</p>}

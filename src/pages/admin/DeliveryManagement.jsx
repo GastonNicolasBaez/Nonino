@@ -103,13 +103,13 @@ export function DeliveryManagement() {
 
     const deleteZone = async (zoneId) => {
         const zone = deliveryZones.find(z => z.id === zoneId);
-        if (confirm(`¿Estás seguro de que quieres eliminar la zona de delivery para ${zone?.barrioName}?`)) {
+        if (confirm(`¿Estás seguro de que quieres eliminar la zona de envíos para ${zone?.barrioName}?`)) {
             await callBorrarDeliveryZone({
                 _storeId: selectedStore,
                 _deliveryZoneId: zoneId,
                 _accessToken: session.userData.accessToken
             })
-            toast.success("Zona de delivery eliminada");
+            toast.success("Zona de envíos eliminada");
         }
     };
 
@@ -192,7 +192,7 @@ export function DeliveryManagement() {
                         _deliveryZone: updZone,
                         _accessToken: session.userData.accessToken
                     })
-                    toast.success("Zona de delivery actualizada correctamente");
+                    toast.success("Zona de envíos actualizada correctamente");
                 } else {
                     // Crear nueva
                     const newZone = formData;
@@ -201,12 +201,12 @@ export function DeliveryManagement() {
                         _deliveryZone: newZone,
                         _accessToken: session.userData.accessToken
                     })
-                    toast.success("Zona de delivery creada correctamente");
+                    toast.success("Zona de envíos creada correctamente");
                 }
                 onClose();
             } catch (error) {
                 console.error('Error al guardar zona:', error);
-                toast.error("Error al guardar la zona de delivery");
+                toast.error("Error al guardar la zona de envíos");
             }
         };
 
@@ -218,10 +218,10 @@ export function DeliveryManagement() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
-                                        {zone ? "Editar Zona de Delivery" : "Nueva Zona de Delivery"}
+                                        {zone ? "Editar Zona de Envíos" : "Nueva Zona de Envíos"}
                                     </CardTitle>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                        {zone ? "Modifica la configuración de la zona" : "Configura una nueva zona de delivery"}
+                                        {zone ? "Modifica la configuración de la zona" : "Configura una nueva zona de envíos"}
                                     </p>
                                 </div>
                                 <Button variant="ghost" size="sm" onClick={onClose}>
@@ -258,7 +258,7 @@ export function DeliveryManagement() {
 
                                 <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
-                                        Tiempo de Delivery
+                                        Tiempo de Envío
                                     </label>
                                     <Input
                                         value={formData.delayMinutes}
@@ -341,7 +341,7 @@ export function DeliveryManagement() {
             {/* Header usando SectionHeader */}
             <SectionHeader
                 title="Gestión de Envíos"
-                subtitle="Configura las zonas de delivery y sus parámetros"
+                subtitle="Configura las zonas de envíos y sus parámetros"
                 icon={<Truck className="w-6 h-6" />}
                 actions={headerActions}
             />
@@ -357,7 +357,7 @@ export function DeliveryManagement() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <MapPin className="w-5 h-5" />
-                        Zonas de Delivery
+                        Zonas de Envíos
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -367,7 +367,7 @@ export function DeliveryManagement() {
                     {!selectedStore ? (
                         <EmptyState
                             title="Selecciona una Sucursal"
-                            message="Elige una sucursal para comenzar a gestionar sus zonas de delivery"
+                            message="Elige una sucursal para comenzar a gestionar sus zonas de envíos"
                             icon={<Truck className="w-12 h-12 text-muted-foreground" />}
                         />
                     ) : loading ? (
@@ -417,8 +417,8 @@ export function DeliveryManagement() {
                         </>
                     ) : filteredZones.length === 0 ? (
                         <EmptyState
-                            title="No hay zonas de delivery"
-                            message="No se encontraron zonas que coincidan con los filtros aplicados"
+                            title="No hay zonas de envíos"
+                            message="No se encontraron zonas de envíos que coincidan con los filtros aplicados"
                             icon={<MapPin className="w-12 h-12 text-muted-foreground" />}
                         />
                     ) : (

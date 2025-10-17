@@ -49,7 +49,7 @@ export function OrderEditModal({ order, onClose, onSave }) {
 
   // Opciones para CustomSelect
   const deliveryTypeOptions = [
-    { value: "delivery", label: "Delivery" },
+    { value: "delivery", label: "Envíos" },
     { value: "pickup", label: "Retiro" }
   ];
 

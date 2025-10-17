@@ -179,89 +179,80 @@ function ComboCard({ combo, onSwipe, onSelect, onShowInfo, direction }) {
       }}
     >
       <Card className="h-full overflow-hidden bg-empanada-dark border-2 border-empanada-light-gray shadow-2xl hover:border-empanada-golden transition-colors">
-        {/* Imagen del combo */}
-        <div className="relative h-32 bg-gradient-to-br from-empanada-medium to-empanada-dark overflow-hidden">
-          {combo.imageBase64 ? (
-            <img
-              src={combo.imageBase64}
-              alt={combo.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Package className="w-24 h-24 text-empanada-golden opacity-20" />
-            </div>
-          )}
+        <div className="flex h-full">
+          {/* Imagen al costado ocupando todo el alto */}
+          <div className="w-48 h-full bg-gradient-to-br from-empanada-medium to-empanada-dark overflow-hidden flex-shrink-0 relative">
+            {combo.imageBase64 ? (
+              <img
+                src={combo.imageBase64}
+                alt={combo.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Package className="w-12 h-12 text-empanada-golden opacity-20" />
+              </div>
+            )}
 
-          {/* Badge de descuento */}
-          {discount > 0 && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring' }}
-              className="absolute top-2 right-2"
-            >
-              <Badge className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-2 py-1 text-xs font-bold shadow-2xl">
-                <TrendingUp className="w-3 h-3 mr-0.5 inline" />
-                {discountPercentage}% OFF
-              </Badge>
-            </motion.div>
-          )}
-
-          {/* Indicador de tap para ver detalles */}
-          <div className="absolute top-2 left-2 bg-empanada-dark/80 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-lg">
-            <Info className="w-3 h-3 text-empanada-golden" />
-            <span className="text-xs text-white font-medium">Toca para ver detalles</span>
-          </div>
-        </div>
-
-        <CardContent className="p-3 flex flex-col h-[calc(100%-128px)]">
-          {/* Nombre */}
-          <div className="mb-1.5">
-            <h3 className="text-sm font-bold text-white leading-tight line-clamp-1 mb-0.5">
-              {combo.name}
-            </h3>
-            <p className="text-gray-400 text-xs line-clamp-1">
-              {combo.description || "Combo personalizable a tu gusto"}
-            </p>
-          </div>
-
-          {/* Precio y ahorro */}
-          <div className="mb-2 flex-1">
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-empanada-golden">
-                {formatPrice(combo.price)}
-              </span>
-              {discount > 0 && (
-                <span className="text-xs text-gray-500 line-through">
-                  {formatPrice(combo.price + discount)}
-                </span>
-              )}
-            </div>
+            {/* Badge de descuento */}
             {discount > 0 && (
-              <p className="text-xs text-green-400 font-medium">
-                ✨ Ahorrás {formatPrice(discount)}
-              </p>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring' }}
+                className="absolute -top-1 -right-1"
+              >
+                <Badge className="bg-gradient-to-r from-empanada-golden to-empanada-warm text-white px-1 py-0.5 text-xs font-bold shadow-2xl">
+                  <TrendingUp className="w-2 h-2 mr-0.5 inline" />
+                  {discountPercentage}%
+                </Badge>
+              </motion.div>
             )}
           </div>
 
-          {/* Botón CTA compacto */}
-          <Button
-            data-action="select"
-            variant="empanada"
-            size="sm"
-            className="w-full text-xs py-1.5 shadow-xl group h-auto"
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(combo);
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <Package className="w-3 h-3 mr-1 group-hover:scale-110 transition-transform" />
-            Armar Combo
-            <ChevronRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </CardContent>
+          <CardContent className="flex-1 p-3 flex flex-col justify-between">
+            {/* Nombre y descripción */}
+            <div className="mb-2">
+              <h3 className="text-sm font-bold text-white leading-tight line-clamp-1 mb-1">
+                {combo.name}
+              </h3>
+              <p className="text-gray-400 text-xs line-clamp-2">
+                {combo.description || "Combo personalizable"}
+              </p>
+            </div>
+
+            {/* Precio */}
+            <div className="mb-2">
+              <div className="flex items-baseline gap-1">
+                <span className="text-base font-bold text-empanada-golden">
+                  {formatPrice(combo.price)}
+                </span>
+                {discount > 0 && (
+                  <span className="text-xs text-gray-500 line-through">
+                    {formatPrice(combo.price + discount)}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Botón CTA compacto */}
+            <Button
+              data-action="select"
+              variant="empanada"
+              size="sm"
+              className="w-full text-xs py-1.5 shadow-xl group h-auto"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(combo);
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <Package className="w-3 h-3 mr-1 group-hover:scale-110 transition-transform" />
+              Armar Combo
+              <ChevronRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </CardContent>
+        </div>
       </Card>
 
     </motion.div>

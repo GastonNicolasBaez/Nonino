@@ -74,9 +74,6 @@ export function AddProductModal({
     );
 
     const handleInputChange = (field, value) => {
-        console.log('AddProductModal: Cambiando campo:', field, 'a valor:', value);
-        console.log('AddProductModal: Estado anterior:', formData);
-        
         setFormData(prev => ({
             ...prev,
             [field]: value
@@ -89,8 +86,6 @@ export function AddProductModal({
                 [field]: ''
             }));
         }
-        
-        console.log('AddProductModal: Después del cambio, formData.category será:', value);
     };
 
     // Agregar ingrediente a la receta

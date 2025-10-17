@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
 import { motion } from "framer-motion";
-import { Plus, Star, Clock, Users } from "lucide-react";
+import { Plus, Star, Clock, Users, ShoppingCart } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -91,7 +91,7 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
             //   disabled={!product.isAvailable}
               className="shadow-lg"
             >
-              <Plus className="w-4 h-4" />
+              <ShoppingCart className="w-4 h-4" />
             </Button>
           </motion.div>
         </div>
@@ -144,11 +144,13 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
 
         <CardFooter className="p-4 pt-0">
           <Button
-            className="w-full"
+            className="w-full text-xs sm:text-sm md:text-base"
             variant="empanada"
             onClick={handleAddToCart}
           >
-            Agregar al Carrito
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            <span className="hidden md:inline">Agregar al Carrito</span>
+            <span className="md:hidden">Agregar</span>
           </Button>
         </CardFooter>
         </Card>

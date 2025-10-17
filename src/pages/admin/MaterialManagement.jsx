@@ -439,7 +439,7 @@ function AddMaterialModal({ onClose, onSave }) {
                                 <Input
                                     type='number'
                                     value={formData.unitPrice}
-                                    onChange={(e) => setFormData({ ...formData, unitPrice: Number(e.target.value) })}
+                                    onChange={(e) => setFormData({ ...formData, unitPrice: e.target.value === '' ? '' : Number(e.target.value) })}
                                     placeholder="Nombre del material"
                                     required
                                     className="admin-input"

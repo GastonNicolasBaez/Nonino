@@ -88,7 +88,7 @@ export function StoreSelectionPage() {
                                             {store.supportsDelivery && (
                                                 <>
                                                     <BikeIcon className="w-3 h-3" />
-                                                    <span>Delivery</span>
+                                                    <span>Envíos</span>
                                                 </>
                                             )}
                                         </div>

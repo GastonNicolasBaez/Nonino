@@ -226,7 +226,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Configurar", href: "/intranet/admin/sucursal-configurar", icon: Settings },
-                    { name: "Delivery", href: "/intranet/admin/sucursal-delivery", icon: Truck }
+                    { name: "Envíos", href: "/intranet/admin/sucursal-delivery", icon: Truck }
                 ]
             },
             {
@@ -277,7 +277,7 @@ const AdminLayout = () => {
                 hasDropdown: true,
                 dropdownItems: [
                     { name: "Configurar", href: "/intranet/local/sucursal-configurar", icon: Settings },
-                    { name: "Delivery", href: "/intranet/local/sucursal-delivery", icon: Truck }
+                    { name: "Envíos", href: "/intranet/local/sucursal-delivery", icon: Truck }
                 ]
             },
             // {

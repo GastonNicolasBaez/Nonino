@@ -465,7 +465,7 @@ export function AddStoreModal({
                                                                 disabled={isLoading}
                                                             />
                                                             <span className="text-xs text-gray-700 dark:text-white">
-                                                                Soporta Delivery
+                                                                Soporta Envíos
                                                             </span>
                                                         </label>
                                                     </div>

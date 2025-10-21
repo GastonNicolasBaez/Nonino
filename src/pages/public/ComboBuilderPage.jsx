@@ -348,11 +348,6 @@ export function ComboBuilderPage() {
       // Clear persisted state after successful add
       removeStorageItem(STORAGE_KEYS.COMBO_BUILDER);
 
-      // Solo mostrar toast en desktop
-      if (!isMobile) {
-        toast.success('Combo agregado al carrito');
-      }
-
       // Navegar al carrito
       setTimeout(() => {
         navigate('/carrito');

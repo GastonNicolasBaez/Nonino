@@ -5,7 +5,8 @@ import {
     CreditCard, MapPin, Clock, Phone, User, Store,
     Check, ChevronRight, ChevronLeft, ShoppingBag,
     AlertCircle, Truck, Home, Edit2, ArrowRight,
-    Shield, Package, ArrowLeft, Star, Info
+    Shield, Package, ArrowLeft, Star, Info,
+    Banknote, MessageSquare, Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,6 +87,11 @@ export function CheckoutPage() {
         };
 
         validatePendingOrder();
+    }, []);
+
+    // Scroll hacia arriba al cargar la página
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
     // Usar totales guardados SOLO si hay un pedido pendiente válido y el carrito está vacío
@@ -371,6 +377,8 @@ export function CheckoutPage() {
         if (validateStep(currentStep)) {
             setCompletedSteps(prev => new Set([...prev, currentStep]));
             setCurrentStep(step);
+            // Scroll hacia arriba al cambiar de paso
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }, [currentStep, validateStep]);
 
@@ -383,6 +391,8 @@ export function CheckoutPage() {
     const prevStep = useCallback(() => {
         if (currentStep > 1) {
             setCurrentStep(currentStep - 1);
+            // Scroll hacia arriba al ir al paso anterior
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }, [currentStep]);
 
@@ -391,7 +401,7 @@ export function CheckoutPage() {
         <div className="space-y-4">
             {/* Store Selection */}
             {selectedStore ? (
-                <div className="bg-empanada-dark border border-empanada-light-gray rounded-lg p-4">
+                <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-4">
                     <div className="flex items-start gap-3">
                         <div className="w-8 h-8 bg-green-800 rounded-full flex items-center justify-center flex-shrink-0">
                             <Check className="w-4 h-4 text-green-400" />
@@ -403,7 +413,7 @@ export function CheckoutPage() {
                     </div>
                 </div>
             ) : (
-                <div className="bg-empanada-dark border border-red-600 rounded-lg p-4 text-center">
+                <div className="bg-empanada-medium border border-red-600 rounded-lg p-4 text-center">
                     <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
                     <h3 className="font-semibold text-red-400 text-sm mb-1">Selecciona una sucursal</h3>
                     <p className="text-red-300 text-xs">Necesitas elegir una sucursal para continuar</p>
@@ -418,10 +428,10 @@ export function CheckoutPage() {
                         type="button"
                         onClick={() => setOrderData(prev => ({ ...prev, deliveryType: "delivery" }))}
                         className={cn(
-                            "p-4 rounded-lg border-2 text-left transition-all",
+                            "p-4 rounded-lg border-2 text-left transition-colors duration-200",
                             orderData.deliveryType === "delivery"
                                 ? "border-empanada-golden bg-empanada-golden/5"
-                                : "border-empanada-light-gray hover:border-empanada-golden/50"
+                                : "border-empanada-light-gray bg-empanada-medium/30 hover:border-empanada-golden/50"
                         )}
                     >
                         <div className="flex items-start gap-3">
@@ -448,10 +458,10 @@ export function CheckoutPage() {
                         type="button"
                         onClick={() => setOrderData(prev => ({ ...prev, deliveryType: "pickup" }))}
                         className={cn(
-                            "p-4 rounded-lg border-2 text-left transition-all",
+                            "p-4 rounded-lg border-2 text-left transition-colors duration-200",
                             orderData.deliveryType === "pickup"
                                 ? "border-empanada-golden bg-empanada-golden/5"
-                                : "border-empanada-light-gray hover:border-empanada-golden/50"
+                                : "border-empanada-light-gray bg-empanada-medium/30 hover:border-empanada-golden/50"
                         )}
                     >
                         <div className="flex items-start gap-3">
@@ -647,234 +657,220 @@ export function CheckoutPage() {
                     <h3 className="text-base font-semibold text-white">Método de pago</h3>
                 </div>
 
-                <div className="space-y-2">
-                    <label className="flex items-start p-4 border-2 border-empanada-light-gray bg-empanada-dark rounded-lg cursor-pointer hover:bg-empanada-medium transition-colors">
+                <div className="space-y-3">
+                    <label className={cn(
+                        "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors duration-200",
+                        orderData.paymentMethod === "mercadopago"
+                            ? "border-empanada-golden bg-empanada-golden/5"
+                            : "border-empanada-light-gray bg-empanada-medium/30 hover:border-empanada-golden/50"
+                    )}>
                         <input
                             type="radio"
                             name="paymentMethod"
                             value="mercadopago"
                             checked={orderData.paymentMethod === "mercadopago"}
-                            onChange={(e) => setOrderData(prev => ({ ...prev, paymentMethod: e.target.value }))}
-                            className="mt-0.5 w-4 h-4 text-empanada-golden"
+                            onChange={(e) => handleInputChange("paymentMethod", e.target.value)}
+                            className="mt-1"
                         />
-                        <div className="ml-3 flex-1">
-                            <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <CreditCard className="w-4 h-4 text-blue-400" />
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className="font-semibold text-white text-sm mb-1">Mercado Pago</h4>
-                                    <p className="text-xs text-gray-300 mb-2">Tarjetas, transferencias y billeteras digitales</p>
-                                    <div className="flex items-center gap-1">
-                                        <Shield className="w-3 h-3 text-green-600" />
-                                        <span className="text-xs text-green-600 font-medium">Pago seguro</span>
-                                    </div>
-                                </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                                <CreditCard className="w-4 h-4 text-empanada-golden" />
+                                <span className="font-semibold text-white text-sm">Mercado Pago</span>
+                                <span className="bg-empanada-golden/10 text-empanada-golden text-xs px-2 py-1 rounded-full">Seguro</span>
                             </div>
+                            <p className="text-xs text-gray-300">Paga con tarjeta, efectivo o transferencia</p>
                         </div>
                     </label>
 
-                    <label className="flex items-start p-4 border-2 border-empanada-light-gray bg-empanada-dark rounded-lg cursor-pointer hover:bg-empanada-medium transition-colors">
+                    <label className={cn(
+                        "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors duration-200",
+                        orderData.paymentMethod === "cash"
+                            ? "border-empanada-golden bg-empanada-golden/5"
+                            : "border-empanada-light-gray bg-empanada-medium/30 hover:border-empanada-golden/50"
+                    )}>
                         <input
                             type="radio"
                             name="paymentMethod"
                             value="cash"
                             checked={orderData.paymentMethod === "cash"}
-                            onChange={(e) => setOrderData(prev => ({ ...prev, paymentMethod: e.target.value }))}
-                            className="mt-0.5 w-4 h-4 text-empanada-golden"
+                            onChange={(e) => handleInputChange("paymentMethod", e.target.value)}
+                            className="mt-1"
                         />
-                        <div className="ml-3 flex-1">
-                            <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <div className="text-lg">💵</div>
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className="font-semibold text-white text-sm mb-1">Efectivo</h4>
-                                    <p className="text-xs text-gray-300 mb-2">Paga en efectivo al recibir</p>
-                                    <div className="flex items-center gap-1">
-                                        <Info className="w-3 h-3 text-gray-300" />
-                                        <span className="text-xs text-gray-300">Monto exacto preparado</span>
-                                    </div>
-                                </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Banknote className="w-4 h-4 text-empanada-golden" />
+                                <span className="font-semibold text-white text-sm">Efectivo</span>
+                                <span className="bg-empanada-golden/10 text-empanada-golden text-xs px-2 py-1 rounded-full">Rápido</span>
                             </div>
+                            <p className="text-xs text-gray-300">Paga cuando recibas tu pedido</p>
                         </div>
                     </label>
                 </div>
             </div>
 
-            {/* Notes */}
-            <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-300">
+            {/* Observations */}
+            <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
                     Observaciones para tu pedido
                 </label>
                 <textarea
-                    value={orderData.notes}
-                    onChange={(e) => setOrderData(prev => ({ ...prev, notes: e.target.value }))}
+                    value={orderData.observations}
+                    onChange={(e) => handleInputChange("observations", e.target.value)}
                     className="w-full px-3 py-2 border border-empanada-light-gray bg-empanada-medium text-white placeholder-gray-400 focus:border-empanada-golden rounded-lg transition-colors resize-none text-sm"
                     rows={3}
-                    placeholder="Instrucciones especiales, alergias, etc."
+                    placeholder="Ej: Sin cebolla, extra salsa, etc."
                 />
             </div>
         </div>
-    ), [orderData.paymentMethod, orderData.notes]);
+    ), [orderData.paymentMethod, orderData.observations, handleInputChange]);
 
     const ConfirmStep = useMemo(() => (
         <div className="space-y-4">
-            {/* Unified Order Summary */}
-            <div className="bg-empanada-dark rounded-lg p-6">
-                <h4 className="font-semibold text-white mb-6 flex items-center gap-2 text-lg">
-                    <ShoppingBag className="w-5 h-5 text-empanada-golden" />
-                    Resumen de tu pedido
-                </h4>
-
-                {/* 1. Contact Information - Quién recibe */}
-                <div className="mb-4">
-                    <h5 className="font-medium text-gray-300 text-sm mb-2">Contacto</h5>
-                    <p className="text-sm text-white font-medium">{orderData.customerInfo.name}</p>
-                    <p className="text-sm text-gray-300">{orderData.customerInfo.phone}</p>
+            {/* Resumen de datos */}
+            <div className="space-y-3">
+                {/* Información de contacto */}
+                <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                        <User className="w-4 h-4 text-empanada-golden" />
+                        <h5 className="font-semibold text-white text-sm">Contacto</h5>
+                    </div>
+                    <p className="text-sm text-white">{orderData.customerInfo.name}</p>
+                    <p className="text-xs text-gray-300">{orderData.customerInfo.phone}</p>
                 </div>
 
-                {/* 2. Delivery Details - Cómo y dónde se entrega */}
-                <div className="mb-4">
-                    <h5 className="font-medium text-gray-300 text-sm mb-2">Entrega</h5>
-                    <div className="flex items-center gap-2 text-sm text-white mb-1">
+                {/* Información de entrega */}
+                <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
                         {orderData.deliveryType === "delivery" ? (
-                            <>
-                                <Truck className="w-4 h-4 text-empanada-golden" />
-                                <span>Envíos a domicilio</span>
-                            </>
+                            <Truck className="w-4 h-4 text-empanada-golden" />
                         ) : (
-                            <>
-                                <Home className="w-4 h-4 text-empanada-golden" />
-                                <span>Retiro en sucursal</span>
-                            </>
+                            <Home className="w-4 h-4 text-empanada-golden" />
                         )}
+                        <h5 className="font-semibold text-white text-sm">Entrega</h5>
                     </div>
-                    <p className="text-xs text-gray-300">
-                        Tiempo estimado: {orderData.deliveryType === "delivery" ? "30-45" : "15-20"} min
+                    <p className="text-sm text-white">
+                        {orderData.deliveryType === "delivery" ? "Envío a domicilio" : "Retiro en sucursal"}
+                    </p>
+                    {orderData.deliveryType === "delivery" && orderData.address.street && (
+                        <div className="mt-2">
+                            <p className="text-xs text-gray-300">
+                                {orderData.address.street} {orderData.address.number}
+                                {orderData.address.floor && `, Piso ${orderData.address.floor}`}
+                                {orderData.address.apartment && `, Depto ${orderData.address.apartment}`}
+                            </p>
+                            {orderData.address.neighborhood && (
+                                <p className="text-xs text-gray-300">{orderData.address.neighborhood}</p>
+                            )}
+                        </div>
+                    )}
+                    {orderData.deliveryType === "pickup" && selectedStore && (
+                        <div className="mt-2">
+                            <p className="text-sm text-white">{selectedStore.name}</p>
+                            <p className="text-xs text-gray-300">{selectedStore.address}</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Método de pago */}
+                <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                        <CreditCard className="w-4 h-4 text-empanada-golden" />
+                        <h5 className="font-semibold text-white text-sm">Pago</h5>
+                    </div>
+                    <p className="text-sm text-white">
+                        {orderData.paymentMethod === "mercadopago" ? "Mercado Pago" : "Efectivo"}
                     </p>
                 </div>
 
-                {/* Address (if delivery) - Parte de los detalles de entrega */}
-                {orderData.deliveryType === "delivery" && orderData.address.street && (
-                    <div className="mb-4">
-                        <h5 className="font-medium text-gray-300 text-sm mb-2">Dirección de entrega</h5>
-                        <p className="text-sm text-white">
-                            {orderData.address.street} {orderData.address.number}
-                            {orderData.address.floor && `, Piso ${orderData.address.floor}`}
-                            {orderData.address.apartment && `, Depto ${orderData.address.apartment}`}
-                        </p>
-                        {orderData.address.neighborhood && (
-                            <p className="text-sm text-gray-300">{orderData.address.neighborhood}</p>
+                        {/* Observaciones - Si existen */}
+                        {orderData.observations && (
+                            <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <MessageSquare className="w-4 h-4 text-empanada-golden" />
+                                    <h5 className="font-semibold text-white text-sm">Observaciones</h5>
+                                </div>
+                                <p className="text-sm text-gray-300">{orderData.observations}</p>
+                            </div>
                         )}
-                        {orderData.address.references && (
-                            <p className="text-xs text-gray-300 mt-1">Ref: {orderData.address.references}</p>
-                        )}
-                    </div>
-                )}
 
-                {/* Store Info (if pickup) - Parte de los detalles de entrega */}
-                {orderData.deliveryType === "pickup" && selectedStore && (
-                    <div className="mb-4">
-                        <h5 className="font-medium text-gray-300 text-sm mb-2">Sucursal para retiro</h5>
-                        <p className="text-sm text-white font-medium">{selectedStore.name}</p>
-                        <p className="text-sm text-gray-300">{selectedStore.address}</p>
-                    </div>
-                )}
+                        {/* Productos */}
+                        <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Package className="w-4 h-4 text-empanada-golden" />
+                                <h5 className="font-semibold text-white text-sm">Productos</h5>
+                                <div className="ml-auto text-xs text-gray-300">
+                                    {items.length} {items.length === 1 ? 'producto' : 'productos'}
+                                </div>
+                            </div>
 
-                {/* 3. Payment Method - Cómo paga */}
-                <div className="mb-4">
-                    <h5 className="font-medium text-gray-300 text-sm mb-2">Método de pago</h5>
-                    <div className="flex items-center gap-2 text-sm text-white">
-                        <CreditCard className="w-4 h-4 text-empanada-golden" />
-                        <span>
-                            {orderData.paymentMethod === "mercadopago" ? "Mercado Pago" : "Efectivo"}
-                        </span>
-                    </div>
-                </div>
-
-                {/* 4. Additional Information - Información extra */}
-                {orderData.notes && (
-                    <div className="mb-6">
-                        <h5 className="font-medium text-gray-300 text-sm mb-2">Observaciones</h5>
-                        <p className="text-sm text-white">{orderData.notes}</p>
-                    </div>
-                )}
-
-                {/* 5. FINAL: Products & Pricing - Confirmación final de lo que va a pagar */}
-                <div className="mb-0 pt-4 border-t border-empanada-light-gray">
-                    <h5 className="font-medium text-gray-300 text-sm mb-3">Productos</h5>
-                    <div className="space-y-3">
-                        {items.map((item, index) => (
-                            <div key={index} className="flex items-center gap-3">
-                                <div className="relative flex-shrink-0">
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        className="w-10 h-10 object-cover rounded-lg"
-                                    />
-                                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-empanada-golden text-white text-xs font-bold rounded-full flex items-center justify-center">
-                                        {item.quantity}
+                            <div className="space-y-2">
+                                {items.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center gap-3 p-2 bg-empanada-dark/50 rounded-lg"
+                                    >
+                                        <div className="relative flex-shrink-0">
+                                            <img
+                                                src={item.image}
+                                                alt={item.name}
+                                                className="w-10 h-10 object-cover rounded"
+                                            />
+                                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-empanada-golden text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                                {item.quantity}
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h6 className="font-medium text-white text-sm truncate">{item.name}</h6>
+                                            <p className="text-xs text-gray-300">{formatPrice(item.price)} c/u</p>
+                                        </div>
+                                        <div className="text-right flex-shrink-0">
+                                            <div className="font-semibold text-empanada-golden text-sm">
+                                                {formatPrice(item.price * item.quantity)}
+                                            </div>
+                                        </div>
                                     </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Resumen de precios */}
+                        <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-4">
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-300">Subtotal</span>
+                                    <span className="text-white">{formatPrice(displaySubtotal)}</span>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <h6 className="font-medium text-white text-sm truncate">{item.name}</h6>
-                                    <p className="text-xs text-empanada-golden">{formatPrice(item.price)} c/u</p>
-                                    {item.customizations && Object.keys(item.customizations).length > 0 && (
-                                        <p className="text-xs text-gray-300 truncate">
-                                            {Object.values(item.customizations).join(", ")}
-                                        </p>
-                                    )}
+                                {displayDiscount > 0 && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-300">Descuento</span>
+                                        <span className="text-green-400">-{formatPrice(displayDiscount)}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-300">Envío</span>
+                                    <span className={cn(displayDeliveryFee === 0 && "text-green-400")}>
+                                        {displayDeliveryFee > 0 ? formatPrice(displayDeliveryFee) : "GRATIS"}
+                                    </span>
                                 </div>
-                                <div className="text-right flex-shrink-0">
-                                    <div className="font-semibold text-empanada-golden text-sm">
-                                        {formatPrice(item.price * item.quantity)}
+
+                                <div className="border-t border-empanada-light-gray pt-2">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-base font-semibold text-white">Total</span>
+                                        <span className="text-lg font-bold text-empanada-golden">
+                                            {formatPrice(displayTotal)}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Price Summary - Confirmación final */}
-                    <div className="mt-4 pt-4 border-t border-empanada-light-gray space-y-2">
-                        <div className="flex justify-between text-sm text-gray-300">
-                            <span>Subtotal</span>
-                            <span className="font-medium">{formatPrice(displaySubtotal)}</span>
                         </div>
-                        {displayDiscount > 0 && (
-                            <div className="flex justify-between text-sm text-green-600">
-                                <span>Descuento</span>
-                                <span className="font-medium">-{formatPrice(displayDiscount)}</span>
-                            </div>
-                        )}
-                        <div className="flex justify-between text-sm text-gray-300">
-                            <span>Envío</span>
-                            <span className={cn("font-medium", displayDeliveryFee === 0 && "text-green-600")}>
-                                {displayDeliveryFee > 0 ? formatPrice(displayDeliveryFee) : "GRATIS"}
-                            </span>
-                        </div>
-                        <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-empanada-light-gray">
-                            <span>Total</span>
-                            <span className="text-empanada-golden">{formatPrice(displayTotal)}</span>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            {/* Final confirmation */}
-            <div className="bg-empanada-golden/5 border border-empanada-golden/20 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-empanada-golden/20 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Check className="w-4 h-4 text-empanada-golden" />
-                    </div>
-                    <div>
-                        <h4 className="font-semibold text-empanada-golden text-sm mb-1">¡Casi listo!</h4>
-                        <p className="text-xs text-gray-300">
-                            Al confirmar recibirás una notificación con el estado de tu pedido.
-                            {orderData.paymentMethod === "mercadopago" && " Serás redirigido a Mercado Pago."}
-                        </p>
-                    </div>
-                </div>
+            {/* Confirmación final */}
+            <div className="text-center py-4">
+                <p className="text-sm text-gray-300">
+                    Al confirmar, tu pedido será procesado y recibirás una confirmación.
+                    {orderData.paymentMethod === "mercadopago" && " Serás redirigido a Mercado Pago para completar el pago."}
+                </p>
             </div>
         </div>
     ), [orderData, items, displaySubtotal, displayDiscount, displayDeliveryFee, displayTotal, selectedStore, formatPrice]);
@@ -929,15 +925,15 @@ export function CheckoutPage() {
                         {/* Main Content - Ocupa todo el ancho */}
                         <div className="w-full">
                             <div className="bg-empanada-dark rounded-lg border border-empanada-light-gray p-4 md:p-6 shadow-sm mb-4">
-                                {/* Progress Indicator - Optimizado para mobile */}
+                                {/* Progress Indicator - Simplificado */}
                                 <div className="mb-6 pb-4 border-b border-empanada-light-gray">
-                                    {/* Mobile Progress - Optimizado */}
+                                    {/* Mobile Progress - Compacto */}
                                     <div className="md:hidden">
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3">
                                                 <div className={cn(
                                                     "flex items-center justify-center w-10 h-10 rounded-full border-2",
-                                                    "bg-empanada-golden text-white border-empanada-golden shadow-sm"
+                                                    "bg-empanada-golden text-white border-empanada-golden"
                                                 )}>
                                                     {(() => {
                                                         const IconComponent = steps[currentStep - 1].icon;
@@ -962,9 +958,9 @@ export function CheckoutPage() {
                                         </div>
 
                                         {/* Barra de progreso mobile - simplificada */}
-                                        <div className="w-full bg-empanada-medium rounded-full h-3 shadow-inner">
+                                        <div className="w-full bg-empanada-medium rounded-full h-3">
                                             <div
-                                                className="bg-gradient-to-r from-empanada-golden to-empanada-wheat h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
+                                                className="bg-gradient-to-r from-empanada-golden to-empanada-wheat h-3 rounded-full transition-all duration-500"
                                                 style={{ width: `${(currentStep / steps.length) * 100}%` }}
                                             />
                                         </div>
@@ -1025,14 +1021,17 @@ export function CheckoutPage() {
                                     </motion.div>
                                 </AnimatePresence>
 
-                                {/* Navigation Buttons - Integrados */}
+                                {/* Navigation Buttons */}
                                 <div className="flex justify-between items-center pt-6 mt-6 border-t border-empanada-light-gray">
                                     <Button
                                         type="button"
                                         variant="outline"
                                         onClick={prevStep}
                                         disabled={currentStep === 1}
-                                        className="flex items-center gap-2 px-4 py-2 menu-category-button"
+                                        className={cn(
+                                            "flex items-center gap-2",
+                                            currentStep === 1 && "opacity-50 cursor-not-allowed"
+                                        )}
                                     >
                                         <ChevronLeft className="w-4 h-4" />
                                         Anterior
@@ -1043,7 +1042,7 @@ export function CheckoutPage() {
                                             type="button"
                                             variant="empanada"
                                             onClick={nextStep}
-                                            className="flex items-center gap-2 px-6 py-2 font-semibold"
+                                            className="flex items-center gap-2"
                                         >
                                             Siguiente
                                             <ChevronRight className="w-4 h-4" />
@@ -1054,17 +1053,20 @@ export function CheckoutPage() {
                                             variant="empanada"
                                             disabled={loading}
                                             onClick={handleSubmit}
-                                            className="flex items-center gap-2 px-6 py-2 font-semibold"
+                                            className={cn(
+                                                "flex items-center gap-2 bg-green-600 hover:bg-green-700",
+                                                loading && "opacity-70 cursor-not-allowed"
+                                            )}
                                         >
                                             {loading ? (
                                                 <>
-                                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                                                    Procesando...
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                    <span>Procesando...</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     <Shield className="w-4 h-4" />
-                                                    Confirmar Pedido
+                                                    <span>Confirmar Pedido</span>
                                                 </>
                                             )}
                                         </Button>

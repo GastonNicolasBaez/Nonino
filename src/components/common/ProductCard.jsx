@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
 import { motion } from "framer-motion";
-import { Plus, Star, Clock, Users, ShoppingCart } from "lucide-react";
+import { Plus, Star, Users, ShoppingCart } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -116,18 +116,6 @@ export const ProductCard = memo(function ProductCard({ product, className }) {
           <p className="text-gray-300 text-sm mb-3 line-clamp-2">
             {product.description}
           </p>
-
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
-            <div className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              <span>{product.preparationTime} min</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              <span>{product.rating}</span>
-              <span>({product.reviews})</span>
-            </div>
-          </div>
 
           {/* Allergens */}
           {product.allergens && product.allergens.length > 0 && (

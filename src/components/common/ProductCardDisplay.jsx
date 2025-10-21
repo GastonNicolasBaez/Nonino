@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Star, Clock, Eye } from "lucide-react";
+import { Star, Eye } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -102,18 +102,6 @@ export function ProductCardDisplay({ product, className, onViewDetails }) {
           <p className="text-muted-foreground text-sm mb-4 line-clamp-2 flex-1">
             {product.description}
           </p>
-
-          <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span className="font-medium">{product.preparationTime || 15} min</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-medium">{product.rating || 4.8}</span>
-              <span className="text-xs">({product.reviews || 120})</span>
-            </div>
-          </div>
 
           {/* Allergens */}
           {product.allergens && product.allergens.length > 0 && (

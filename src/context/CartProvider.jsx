@@ -61,10 +61,6 @@ export const CartProvider = ({ children }) => {
         addedAt: new Date().toISOString(),
       };
       setItems([...items, comboItem]);
-      // Solo mostrar toast en desktop
-      if (!isMobile) {
-        toast.success(`${product.name} agregado al carrito`);
-      }
       return;
     }
 

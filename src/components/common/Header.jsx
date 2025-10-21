@@ -108,8 +108,8 @@ export const Header = memo(function Header() {
 
   // Right navigation movement - navegación central derecha (Locales, Nosotros, Contacto)
   // Parámetros: (≥1536px, 1280px-1535px, 1024px-1279px)
-  const rightNavInitial = getResponsivePosition(-115, -60, -40); // Progresivo: -80 → -60 → -40
-  const rightNavEnd = getResponsivePosition(-55, -45, 40); // Progresivo: -55 → -45 → 40
+  const rightNavInitial = getResponsivePosition(-130, -80, -30); // Progresivo: -60 → -40 → -30
+  const rightNavEnd = getResponsivePosition(-90, -90, -15); // Progresivo: -30 → -20 → -15
   const rightNavX = useTransform(scrollY, [0, 400], isStaticPage ? [rightNavInitial, rightNavInitial] : [rightNavInitial, rightNavEnd]);
 
   const isActive = (href) => location.pathname === href;

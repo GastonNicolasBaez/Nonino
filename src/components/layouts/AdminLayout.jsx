@@ -766,7 +766,7 @@ const AdminLayout = () => {
 
                             <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                                 {/* Input de tiempo de envío - Solo para ADMIN */}
-                                {(sucursalSeleccionadaInfo.code == 'local' || sucursalSeleccionadaInfo.code == 'franquicia') && sucursalSeleccionada && (
+                                {(sucursalSeleccionadaInfo?.code == 'local' || sucursalSeleccionadaInfo?.code == 'franquicia') && sucursalSeleccionada && (
                                     <div className="flex items-center gap-2 bg-gray-50 dark:bg-empanada-medium rounded-lg px-3 py-1.5 border border-gray-200 dark:border-empanada-light-gray">
                                         <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                                         <input

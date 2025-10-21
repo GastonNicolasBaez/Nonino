@@ -783,18 +783,17 @@ const AdminLayout = () => {
                                         {(callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading ) && (
                                             <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                                         )}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={handleUpdateDelay}
+                                            disabled={callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading}
+                                            className="ml-1 p-1 h-6 w-6 text-gray-600 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-empanada-light-gray rounded"
+                                        >
+                                            <RefreshCcw className="w-3 h-3" />
+                                        </Button>
                                     </div>
                                 )}
-
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={handleUpdateDelay}
-                                    disabled={callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading}
-                                    className="text-gray-600 hover:text-gray-700 hover:bg-red-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-empanada-medium"
-                                >
-                                    <RefreshCcw className="w-4 h-4 mr-2" />
-                                </Button>
                                 {/* Notifications Dropdown */}
                                 <div className="hidden sm:block">
                                     <NotificationsDropdown />

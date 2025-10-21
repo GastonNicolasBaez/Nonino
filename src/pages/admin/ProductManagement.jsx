@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 // CORE
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // EXTERNO
 import { toast } from "sonner";
@@ -71,7 +71,7 @@ export function ProductManagement() {
     const {
         productos: products,
         categoriasTodas: categories,
-        inventario,
+        materiales: inventario,
         adminDataLoading: loading,
 
         callProductoNuevo,
@@ -96,6 +96,7 @@ export function ProductManagement() {
             label: category.name
         }))
     ];
+
 
     // Hooks para modales
     const { openModal: openConfirmModal, ConfirmModalComponent } = useConfirmModal();
@@ -302,14 +303,35 @@ export function ProductManagement() {
     };
 
     // Funciones para el modal de receta
-    const handleEditRecipe = (product) => {
-        setEditingRecipe(product);
-        setEditingIngredients(
-            product.receta?.map(item => ({
-                ...item,
-                ingrediente: inventario?.find(ing => ing.id === item.ingredienteId) || {}
-            })) || []
-        );
+    const handleEditRecipe = async (product) => {
+        try {
+            setEditingRecipe(product);
+            
+            // Llamar al backend para obtener los ingredientes de la receta
+            const recipeData = await callRecetaDelProducto({
+                _productId: product.id,
+                _accessToken: session.userData.accessToken
+            });
+
+            // Mapear la respuesta del backend al formato esperado por el modal
+            const mappedIngredients = recipeData?.components?.map(component => {
+                const ingrediente = inventario?.find(ing => ing.id === component.materialId);
+                return {
+                    ingredienteId: component.materialId,
+                    cantidad: component.qtyPerUnit,
+                    unidad: ingrediente?.unit || ingrediente?.unidadMedida || 'unidad',
+                    ingrediente: ingrediente || {}
+                };
+            }) || [];
+
+            setEditingIngredients(mappedIngredients);
+        } catch (error) {
+            console.error('Error al cargar la receta:', error);
+            toast.error('Error al cargar los ingredientes de la receta');
+            
+            // En caso de error, mostrar el modal con ingredientes vacíos
+            setEditingIngredients([]);
+        }
     };
 
     const handleAddIngredient = () => {
@@ -323,7 +345,7 @@ export function ProductManagement() {
             {
                 ingredienteId: ingrediente.id,
                 cantidad: 1,
-                unidad: ingrediente.unidadMedida || 'unidad',
+                unidad: ingrediente.unit || ingrediente.unidadMedida || 'unidad',
                 ingrediente: ingrediente
             }
         ]);
@@ -341,15 +363,13 @@ export function ProductManagement() {
     };
 
     const handleIngredientChange = (index, field, value) => {
-        const updated = [...editingIngredients];
-        updated[index] = { ...updated[index], [field]: value };
-
+        // Solo permitir cambios en cantidad y unidad, no en ingredienteId
         if (field === 'ingredienteId') {
-            const ingrediente = inventario?.find(ing => ing.id === value);
-            updated[index].ingrediente = ingrediente || {};
-            updated[index].unidad = ingrediente?.unidadMedida || 'unidad';
+            return; // No permitir cambios en el ingrediente cuando está cargado desde el backend
         }
 
+        const updated = [...editingIngredients];
+        updated[index] = { ...updated[index], [field]: value };
         setEditingIngredients(updated);
     };
 
@@ -929,19 +949,11 @@ export function ProductManagement() {
                         {/* Lista de ingredientes editables */}
                         {editingIngredients.map((item, index) => (
                             <div key={index} className="flex items-center gap-3 p-4 border rounded-lg">
-                                {/* Selector de ingrediente */}
+                                {/* Nombre del ingrediente (solo lectura) */}
                                 <div className="flex-1">
-                                    <select
-                                        value={item.ingredienteId}
-                                        onChange={(e) => handleIngredientChange(index, 'ingredienteId', e.target.value)}
-                                        className="w-full p-2 border rounded-md bg-background"
-                                    >
-                                        {inventario?.map(ingrediente => (
-                                            <option key={ingrediente.id} value={ingrediente.id}>
-                                                {ingrediente.nombre}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="w-full p-2 border rounded-md bg-background text-foreground">
+                                        {item.ingrediente?.name || 'Ingrediente no encontrado'}
+                                    </div>
                                 </div>
 
                                 {/* Cantidad */}

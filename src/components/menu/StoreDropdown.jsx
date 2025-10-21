@@ -15,23 +15,12 @@ export function StoreDropdown({ className, variant = 'mobile' }) {
 
   const selectedStore = stores.find(s => s.id === selectedStoreId);
 
-  // Console log para debug
-  console.log('[StoreDropdown] selectedStore:', selectedStore);
-  console.log('[StoreDropdown] all stores:', stores);
-
   // Función para formatear tiempo de envío
   const formatDeliveryTime = (store) => {
-    console.log('[StoreDropdown] formatDeliveryTime - store:', store);
-    console.log('[StoreDropdown] candidate fields:', {
-      deliveryTimeMinutes: store?.deliveryTimeMinutes,
-      estimatedDeliveryTime: store?.estimatedDeliveryTime,
-      deliveryTime: store?.deliveryTime,
-      statusData: store?.statusData
-    });
-    const deliveryTime = store.deliveryTimeMinutes || store.estimatedDeliveryTime || store.deliveryTime;
-    if (!deliveryTime || deliveryTime === 0) return null;
-    
-    const minTime = parseInt(deliveryTime);
+    const baseDelay = store?.baseDelay;
+    if (!baseDelay || baseDelay === 0) return null;
+
+    const minTime = parseInt(baseDelay);
     const maxTime = minTime + 15; // Añadir 15 minutos al tiempo base
     return `${minTime}-${maxTime} min`;
   };

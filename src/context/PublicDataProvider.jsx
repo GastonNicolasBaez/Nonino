@@ -56,19 +56,15 @@ const PublicDataProvider = ({ children }) => {
             const fullStores = await Promise.all(
                 usefulStores.map(async (s) => {
                     const statusData = await callPublicStoreStatus(s.id);
-                    return { ...s, statusData };
+                    const baseDelayData = await callPublicStoreBaseDelay(s.id);
+                    return {
+                        ...s,
+                        statusData,
+                        baseDelay: baseDelayData?.baseDelay || 0
+                    };
                 })
             )
-            console.log('[PublicData] fullStores with statusData:', fullStores);
-            if (fullStores?.length) {
-                console.log('[PublicData] sample store:', fullStores[0]);
-                console.log('[PublicData] candidate fields:', {
-                    deliveryTimeMinutes: fullStores[0]?.deliveryTimeMinutes,
-                    estimatedDeliveryTime: fullStores[0]?.estimatedDeliveryTime,
-                    deliveryTime: fullStores[0]?.deliveryTime,
-                    statusData: fullStores[0]?.statusData
-                });
-            }
+            console.log('[PublicData] fullStores with statusData and baseDelay:', fullStores);
             setSucursales(fullStores);
         },
         onError: (error) => {

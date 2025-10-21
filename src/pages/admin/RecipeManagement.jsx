@@ -255,7 +255,7 @@ function RecipeManagement() {
                         <select
                           value={item.ingredienteId}
                           onChange={(e) => handleIngredientChange(index, 'ingredienteId', e.target.value)}
-                          className="w-full p-2 border rounded-md bg-background"
+                          className="w-full p-2 border rounded-md admin-input"
                         >
                           {inventario?.map(ingrediente => (
                             <option key={ingrediente.id} value={ingrediente.id}>

@@ -951,7 +951,7 @@ export function ProductManagement() {
                             <div key={index} className="flex items-center gap-3 p-4 border rounded-lg">
                                 {/* Nombre del ingrediente (solo lectura) */}
                                 <div className="flex-1">
-                                    <div className="w-full p-2 border rounded-md bg-background text-foreground">
+                                    <div className="w-full p-2 border rounded-md admin-input text-foreground">
                                         {item.ingrediente?.name || 'Ingrediente no encontrado'}
                                     </div>
                                 </div>

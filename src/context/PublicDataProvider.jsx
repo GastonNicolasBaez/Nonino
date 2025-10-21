@@ -10,6 +10,7 @@ import {
     getPublicCombosQueryFunction,
     getPublicCompanyInfoQueryFunction,
     getPublicStoreStatusQueryFunction,
+    getPublicStoreBaseDelayQueryFunction,
 
     getAdminOrdersGetOrderByIdQueryFunction,
     postPublicOrdersCreateOrderQueryFunction,
@@ -40,6 +41,7 @@ const PublicDataProvider = ({ children }) => {
         // Cargar sucursal seleccionada desde localStorage al iniciar
         return getStorageItem(STORAGE_KEYS.SELECTED_STORE, null);
     });
+    const [sucursalSeleccionadaDelay, setSucursalSeleccionadaDelay] = useState(0);
     const [companyInfo, setCompanyInfo] = useState([]);
 
     // sucursales
@@ -174,6 +176,17 @@ const PublicDataProvider = ({ children }) => {
         }
     });
 
+    const { mutateAsync: callPublicStoreBaseDelay, isPending: callPublicStoreBaseDelayLoading } = useMutation({
+        mutationKey: ['publicStoreBaseDelay'],
+        mutationFn: getPublicStoreBaseDelayQueryFunction,
+        onSuccess: (data) => {
+            setSucursalSeleccionadaDelay(data);
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
     const { mutateAsync: callPublicCombos, isPending: callPublicCombosLoading } = useMutation({
         mutationKey: ['publicCombos'],
         mutationFn: getPublicCombosQueryFunction,
@@ -299,6 +312,7 @@ const PublicDataProvider = ({ children }) => {
             sucursales,
             combos,
             sucursalSeleccionada,
+            sucursalSeleccionadaDelay,
             productosTodos,
             combosTodos,
             companyInfo,
@@ -310,6 +324,9 @@ const PublicDataProvider = ({ children }) => {
             callPublicCatalog,
             callPublicProductos,
             callPublicCombos,
+
+            callPublicStoreBaseDelay,
+            callPublicStoreBaseDelayLoading,
 
             callPublicOrderById,
             callPublicOrderByIdLoading,

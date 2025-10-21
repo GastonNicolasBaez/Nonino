@@ -49,6 +49,7 @@ const AdminLayout = () => {
     const {
         sucursales,
         sucursalSeleccionada,
+        sucursalSeleccionadaInfo,
         setSucursalSeleccionada,
         showDebugStateInfo,
         adminDataLoading,
@@ -58,6 +59,12 @@ const AdminLayout = () => {
 
         refreshAll,
         callActualizarSucursal,
+
+        callPublicStoreBaseDelay,
+        callPublicStoreBaseDelayLoading,
+        sucursalSeleccionadaDelay,
+        callAdminStoreBaseDelayUpdate,
+        callAdminStoreBaseDelayUpdateLoading,
     } = useAdminData();
 
     const pendingOrdersCount = orders.filter(order => order.status === 'pending').length;
@@ -70,7 +77,6 @@ const AdminLayout = () => {
     const [fabricaDropdownOpen, setFabricaDropdownOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const [deliveryTimeInput, setDeliveryTimeInput] = useState('');
-    const [isUpdatingDeliveryTime, setIsUpdatingDeliveryTime] = useState(false);
 
     // Opciones para CustomSelect de sucursales
     const sucursalOptions = [
@@ -103,23 +109,8 @@ const AdminLayout = () => {
     // Sincronizar input de tiempo de envío con la sucursal seleccionada
     // SOLO cuando cambia la sucursal, NO cuando escribís en el input
     useEffect(() => {
-        if (sucursalSeleccionada && sucursales.length > 0) {
-            const sucursal = sucursales.find(s => s.id === sucursalSeleccionada);
-            if (sucursal) {
-                // El campo puede ser deliveryTimeMinutes, estimatedDeliveryTime o deliveryTime
-                const deliveryTime = sucursal.deliveryTimeMinutes || sucursal.estimatedDeliveryTime || sucursal.deliveryTime || '';
-                setDeliveryTimeInput(deliveryTime.toString());
-                console.log('[AdminLayout] Sucursal seleccionada:', sucursal);
-                console.log('[AdminLayout] Campos de tiempo:', {
-                    deliveryTimeMinutes: sucursal.deliveryTimeMinutes,
-                    estimatedDeliveryTime: sucursal.estimatedDeliveryTime,
-                    deliveryTime: sucursal.deliveryTime
-                });
-            }
-        } else {
-            setDeliveryTimeInput('');
-        }
-    }, [sucursalSeleccionada]); // Solo depende de sucursalSeleccionada, NO de sucursales
+            setDeliveryTimeInput(sucursalSeleccionadaDelay)
+    }, [sucursalSeleccionadaDelay, sucursalSeleccionada]); // Solo depende de sucursalSeleccionada, NO de sucursales
 
     // Cerrar dropdown cuando se hace click fuera
     useEffect(() => {
@@ -140,55 +131,17 @@ const AdminLayout = () => {
         localStorage.setItem('admin-sidebar-collapsed', JSON.stringify(!sidebarCollapsed));
     };
 
-    // Función para actualizar tiempo de envío con debounce
-    const updateDeliveryTime = async (newTime) => {
-        if (!sucursalSeleccionada || !session.userData?.accessToken) return;
-        
-        setIsUpdatingDeliveryTime(true);
+    const handleUpdateDelay = async () => {
         try {
-            const sucursal = sucursales.find(s => s.id === sucursalSeleccionada);
-            if (sucursal) {
-                const updatedSucursal = {
-                    ...sucursal,
-                    deliveryTimeMinutes: parseInt(newTime) || 0
-                };
-                
-                console.log('[AdminLayout] Enviando sucursal actualizada:', updatedSucursal);
-                console.log('[AdminLayout] Campo deliveryTimeMinutes:', updatedSucursal.deliveryTimeMinutes);
-                
-                const result = await callActualizarSucursal({
-                    _store: updatedSucursal,
-                    _accessToken: session.userData.accessToken,
-                });
-                
-                console.log('[AdminLayout] Respuesta del backend:', result);
-            }
+            await callAdminStoreBaseDelayUpdate({
+                _storeId: sucursalSeleccionada,
+                _delay: parseInt(deliveryTimeInput),
+                _accessToken: session.userData.accessToken
+            });
         } catch (error) {
             console.error('Error al actualizar tiempo de envío:', error);
-        } finally {
-            setIsUpdatingDeliveryTime(false);
         }
-    };
-
-    // Debounce para actualizar tiempo de envío
-    useEffect(() => {
-        // No actualizar si el input está vacío o es el mismo valor inicial
-        if (!deliveryTimeInput || !sucursalSeleccionada) return;
-        
-        const sucursal = sucursales.find(s => s.id === sucursalSeleccionada);
-        const currentTime = sucursal?.deliveryTimeMinutes || sucursal?.estimatedDeliveryTime || sucursal?.deliveryTime || '';
-        
-        // Solo actualizar si el valor cambió
-        if (deliveryTimeInput === currentTime.toString()) return;
-        
-        const timeoutId = setTimeout(() => {
-            console.log('[AdminLayout] Actualizando tiempo de envío a:', deliveryTimeInput);
-            updateDeliveryTime(deliveryTimeInput);
-        }, 800);
-
-        return () => clearTimeout(timeoutId);
-    }, [deliveryTimeInput]);
-
+    }
 
     const navigationItemsByRole = {
         "ADMIN": [
@@ -813,7 +766,7 @@ const AdminLayout = () => {
 
                             <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                                 {/* Input de tiempo de envío - Solo para ADMIN */}
-                                {session.userData.isAdmin && sucursalSeleccionada && (
+                                {(sucursalSeleccionadaInfo.code == 'local' || sucursalSeleccionadaInfo.code == 'franquicia') && sucursalSeleccionada && (
                                     <div className="flex items-center gap-2 bg-gray-50 dark:bg-empanada-medium rounded-lg px-3 py-1.5 border border-gray-200 dark:border-empanada-light-gray">
                                         <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                                         <input
@@ -824,21 +777,20 @@ const AdminLayout = () => {
                                             onChange={(e) => setDeliveryTimeInput(e.target.value)}
                                             placeholder="Tiempo"
                                             className="w-16 text-sm bg-transparent border-none outline-none text-gray-700 dark:text-white placeholder-gray-400"
-                                            disabled={isUpdatingDeliveryTime}
+                                            disabled={callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading  }
                                         />
                                         <span className="text-xs text-gray-500 dark:text-gray-400">min</span>
-                                        {isUpdatingDeliveryTime && (
+                                        {(callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading ) && (
                                             <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                                         )}
                                     </div>
                                 )}
-                                
+
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => {
-                                        refreshAll();
-                                    }}
+                                    onClick={handleUpdateDelay}
+                                    disabled={callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading}
                                     className="text-gray-600 hover:text-gray-700 hover:bg-red-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-empanada-medium"
                                 >
                                     <RefreshCcw className="w-4 h-4 mr-2" />
@@ -917,8 +869,8 @@ const AdminLayout = () => {
 
                 {/* Page Content */}
                 <main className="flex-1 p-4 sm:p-6 overflow-y-auto admin-main-content">
-                    {adminStartingLoading ? 
-                    'cargando primeros...' : <Outlet />}
+                    {adminStartingLoading ?
+                        'cargando primeros...' : <Outlet />}
                 </main>
             </div>
         </div>

@@ -31,9 +31,11 @@ import {
 
     getAdminStoresCompanyInfoQueryFunction,
     putAdminStoresUpdateCompanyInfoQueryFunction,
+    putAdminStoreBaseDelayUpdateQueryFunction,
 } from '@/config/apiStoresQueryFunctions';
 import {
     getPublicCatalogQueryFunction,
+    getPublicStoreBaseDelayQueryFunction,
     postPublicOrdersCreatePrintJobQueryFunction,
     putPublicOrdersForcePrintJobQueryFunction
 } from '@/config/apiPublicQueryFunctions';
@@ -110,6 +112,7 @@ const AdminDataProvider = ({ children }) => {
 
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState();
     const [sucursalSeleccionadaInfo, setSucursalSeleccionadaInfo] = useState();
+    const [sucursalSeleccionadaDelay, setSucursalSeleccionadaDelay] = useState(0);
 
     const [productosSucursal, setProductosSucursal] = useState([]);
     const [combosSucursal, setCombosSucursal] = useState([]);
@@ -202,6 +205,7 @@ const AdminDataProvider = ({ children }) => {
     useEffect(() => {
         if (sucursales.length > 0 && session.userData && sucursalSeleccionada) {
             setSucursalSeleccionadaInfo(sucursales.find((s) => s.id == sucursalSeleccionada));
+            setSucursalSeleccionadaDelay(sucursales.find((s) => s.id == sucursalSeleccionada).baseDelay);
         }
     }, [sucursales, sucursalSeleccionada]);
 
@@ -462,6 +466,30 @@ const AdminDataProvider = ({ children }) => {
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
+
+    // basedelay get
+    const { mutateAsync: callPublicStoreBaseDelay, isPending: callPublicStoreBaseDelayLoading } = useMutation({
+            mutationKey: ['publicStoreBaseDelay'],
+            mutationFn: getPublicStoreBaseDelayQueryFunction,
+            onSuccess: (data) => {
+                setSucursalSeleccionadaDelay(data.baseDelay);
+            },
+            onError: (error) => {
+                console.log(error);
+            }
+        });
+
+        // basedelay set
+    const { mutateAsync: callAdminStoreBaseDelayUpdate, isPending: callAdminStoreBaseDelayUpdateLoading } = useMutation({
+            mutationKey: ['adminStoreBaseDelayUpdate'],
+            mutationFn: putAdminStoreBaseDelayUpdateQueryFunction,
+            onSuccess: () => {
+                callPublicStoreBaseDelay(sucursalSeleccionada)
+            },
+            onError: (error) => {
+                console.log(error);
+            }
+        });
 
     // ---------- COMBOS
     // listar
@@ -771,6 +799,7 @@ const AdminDataProvider = ({ children }) => {
             COMPANY_INFO: companyInfo,
             SUCURSAL_SELECCIONADA: sucursalSeleccionada,
             SUCURSAL_SELECCIONADA_INFO: sucursalSeleccionadaInfo,
+            SUCURSAL_SELECCIONADA_DELAY: sucursalSeleccionadaDelay,
             PRODUCTOS_SUCURSAL: productosSucursal,
             COMBOS_SUCURSAL: combosSucursal,
             DELIVERY_SUCURSAL: deliverySucursal,
@@ -836,6 +865,7 @@ const AdminDataProvider = ({ children }) => {
 
             sucursalSeleccionada,
             sucursalSeleccionadaInfo,
+            sucursalSeleccionadaDelay,
             setSucursalSeleccionada,
             productosSucursal,
             combosSucursal,
@@ -880,6 +910,11 @@ const AdminDataProvider = ({ children }) => {
             callAsignarASucursal,
             callCrearSucursal,
             callActualizarSucursal,
+
+            callPublicStoreBaseDelay,
+            callPublicStoreBaseDelayLoading,
+            callAdminStoreBaseDelayUpdate,
+            callAdminStoreBaseDelayUpdateLoading,
 
             callDeliveryZones,
             callCrearDeliveryZone,

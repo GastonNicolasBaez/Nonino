@@ -61,6 +61,7 @@ export function BranchManagement() {
         callCrearSucursal,
         callActualizarSucursal,
         callUpdateSchedule,
+        sucursalSeleccionadaDelay,
     } = useAdminData();
 
     const session = useSession();
@@ -200,6 +201,7 @@ export function BranchManagement() {
                     tel1: localStore.tel1.trim(),
                     tel2: localStore.tel2.trim(),
                     timezone: 'America/Argentina/Buenos_Aires',
+                    baseDelay: sucursalSeleccionadaDelay,
                     // deliveryTime: localStore.deliveryTime.trim(),
                     // minOrder: Number(localStore.minOrder),
                     // isOpen: localStore.isOpen,

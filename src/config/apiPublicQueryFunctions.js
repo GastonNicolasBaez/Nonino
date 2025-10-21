@@ -33,6 +33,13 @@ export const getPublicCompanyInfoQueryFunction = async () => {
     return await response.data;
 }
 
+export const getPublicStoreBaseDelayQueryFunction = async (_storeId) => {
+    const response = await axios.get(`${ENDPOINTS.stores}/public/stores/baseDelay/${_storeId}`);
+    return await response.data;
+}
+
+
+
 export const postPublicOrdersCreateOrderQueryFunction = async (_order) => {
     const axiosSetup = {
         axiosData: _order,

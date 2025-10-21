@@ -97,6 +97,24 @@ export const putAdminStoresUpdateDeliveryZoneQueryFunction = async ({_storeId, _
     return await response.data;
 }
 
+// modificar basedelay sucursal
+export const putAdminStoreBaseDelayUpdateQueryFunction = async ({_storeId, _delay, _accessToken}) => {
+    const axiosSetup = {
+        axiosData: {
+            baseDelay: _delay,
+        },
+        axiosConfig: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${_accessToken}`,
+            }
+        }
+    }
+
+    const response = await axios.put(`${ENDPOINTS.stores}/admin/stores/base-delay/${_storeId}`, axiosSetup.axiosData, axiosSetup.axiosConfig);
+    return await response.data;
+}
+
 // eliminar zona de entrega de sucursal
 export const deleteAdminStoresDeleteDeliveryZoneQueryFunction = async ({_storeId, _deliveryZoneId, _accessToken}) => {
     const axiosSetup = {

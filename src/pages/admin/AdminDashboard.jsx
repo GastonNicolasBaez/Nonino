@@ -17,21 +17,21 @@ import { useConfirmModal } from "@/components/common/ConfirmModal";
 
 // ICONOS
 import {
-  ShoppingCart,
-  RefreshCw,
-  Eye,
-  Printer,
-  DollarSign,
-  Check,
-  Activity,
-  ShoppingBag,
-  Search,
-  X,
-  User,
-  Package,
-  Mail,
-  Phone,
-  MapPin
+    ShoppingCart,
+    RefreshCw,
+    Eye,
+    Printer,
+    DollarSign,
+    Check,
+    Activity,
+    ShoppingBag,
+    Search,
+    X,
+    User,
+    Package,
+    Mail,
+    Phone,
+    MapPin
 } from "lucide-react";
 
 // PROVIDERS
@@ -407,8 +407,8 @@ export function AdminDashboard() {
     const handleRefresh = () => {
         if (callOrders && session?.userData?.accessToken) {
             callOrders(session.userData.accessToken);
-            toast.info("Actualizando órdenes...");
         }
+        toast.info("Actualizando órdenes...");
     };
 
     // Header actions
@@ -430,8 +430,7 @@ export function AdminDashboard() {
                         <div className="w-16 h-16 border-4 border-empanada-golden border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                         <div className="absolute inset-0 w-16 h-16 border-4 border-empanada-golden/20 rounded-full mx-auto"></div>
                     </div>
-                    <p className="text-lg font-medium text-gray-600 dark:text-gray-400">Cargando dashboard...</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Preparando datos en tiempo real</p>
+                    <p className="text-lg font-medium text-gray-600 dark:text-gray-400">Cargando pedidos...</p>
                 </div>
             </div>
         );
@@ -441,33 +440,16 @@ export function AdminDashboard() {
         <div className="space-y-6">
             {/* Header */}
             <SectionHeader
-                title="Dashboard"
-                subtitle={`Resumen general de tu negocio • ${new Date().toLocaleDateString('es-AR', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                })}`}
+                title="Órdenes activas"
                 icon={<Activity className="w-6 h-6" />}
                 actions={headerActions}
             />
 
             {/* Card con tabla de órdenes */}
             <Card>
-                <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center justify-between">
-                        <span className="flex items-center gap-2">
-                            <ShoppingCart className="w-5 h-5 text-empanada-golden" />
-                            Órdenes Activas
-                        </span>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <span>{filteredOrders.length} órdenes</span>
-                        </div>
-                    </CardTitle>
-                </CardHeader>
 
                 {/* Búsqueda */}
-                <CardContent className="pt-0 pb-4">
+                <CardContent className="py-3">
                     <div className="flex gap-4 items-center">
                         <div className="flex-1 relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -506,9 +488,8 @@ export function AdminDashboard() {
                                     return (
                                         <tr
                                             key={order.id}
-                                            className={`border-b admin-table-row transition-all duration-1000 ${
-                                                isNewOrder ? 'animate-highlight-fade' : ''
-                                            }`}
+                                            className={`border-b admin-table-row transition-all duration-1000 ${isNewOrder ? 'animate-highlight-fade' : ''
+                                                }`}
                                         >
                                             <td className="p-4">
                                                 <span className="font-mono text-sm">{order.orderNumber}</span>

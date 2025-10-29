@@ -1,9 +1,16 @@
 <IfModule mod_rewrite.c>
-  RewriteEngine on
+    RewriteEngine on
 
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
+    # redirect http to https 
 
-  RewriteRule ^ index.html [L]
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # redirect all to index if not file
+
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    RewriteRule ^ index.html [L]
 </IfModule>

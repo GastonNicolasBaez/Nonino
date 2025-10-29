@@ -21,7 +21,6 @@ export default defineConfig({
         https: true,
         port: 3000,
     },
-    base: "/demo/nonino/",
 
     // OPTIMIZACIONES DE BUILD
     build: {

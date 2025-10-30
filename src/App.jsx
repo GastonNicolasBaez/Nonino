@@ -69,6 +69,7 @@ const queryClient = new QueryClient({
 
 function App() {
     return (
+        // <BrowserRouter basename="/demo/nonino/">
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
                 <SessionProvider>

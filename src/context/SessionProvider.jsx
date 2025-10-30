@@ -20,8 +20,9 @@ const csrfLocalStorageKeyName = 'noninoSysCsrf';
 const userPrivilegesByEmail = {
     'admin@nonino': { role: 'ADMIN', sucursal: '', },
     'fabrica@nonino': { role: 'FABRICA', sucursal: 1 },
-    'local1@nonino': { role: 'LOCAL', sucursal: 2 },
-    'local2@nonino': { role: 'LOCAL', sucursal: 3 },
+    'villegas@nonino': { role: 'LOCAL', sucursal: 2 },
+    'elmolino@nonino': { role: 'LOCAL', sucursal: 3 },
+    'rincondelossauces@nonino': { role: 'LOCAL', sucursal: 4 },
 }
 
 const SessionContext = createContext();

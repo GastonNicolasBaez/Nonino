@@ -41,10 +41,7 @@ export function AdminLogin() {
     const session = useSession();
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        email: "admin@nonino",
-        password: "admin123"
-    });
+    const [formData, setFormData] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
 

@@ -228,7 +228,7 @@ export function CheckoutPage() {
                 items: newItems,
                 paymentMethod: orderData.paymentMethod == 'mercadopago' ? 'MERCADO_PAGO' : 'CASH',
                 fulfillment: orderData.deliveryType == 'delivery' ? 'DELIVERY' : 'PICKUP',
-                deliveryAddress: orderData.deliveryType == 'delivery' ? newDeliveryAddress : null,
+                deliveryAddress: newDeliveryAddress,
                 totalAmount: total,
             }
 
@@ -782,87 +782,87 @@ export function CheckoutPage() {
                     </p>
                 </div>
 
-                        {/* Observaciones - Si existen */}
-                        {orderData.observations && (
-                            <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <MessageSquare className="w-4 h-4 text-empanada-golden" />
-                                    <h5 className="font-semibold text-white text-sm">Observaciones</h5>
+                {/* Observaciones - Si existen */}
+                {orderData.observations && (
+                    <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                            <MessageSquare className="w-4 h-4 text-empanada-golden" />
+                            <h5 className="font-semibold text-white text-sm">Observaciones</h5>
+                        </div>
+                        <p className="text-sm text-gray-300">{orderData.observations}</p>
+                    </div>
+                )}
+
+                {/* Productos */}
+                <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Package className="w-4 h-4 text-empanada-golden" />
+                        <h5 className="font-semibold text-white text-sm">Productos</h5>
+                        <div className="ml-auto text-xs text-gray-300">
+                            {items.length} {items.length === 1 ? 'producto' : 'productos'}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        {items.map((item, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center gap-3 p-2 bg-empanada-dark/50 rounded-lg"
+                            >
+                                <div className="relative flex-shrink-0">
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="w-10 h-10 object-cover rounded"
+                                    />
+                                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-empanada-golden text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                        {item.quantity}
+                                    </div>
                                 </div>
-                                <p className="text-sm text-gray-300">{orderData.observations}</p>
+                                <div className="flex-1 min-w-0">
+                                    <h6 className="font-medium text-white text-sm truncate">{item.name}</h6>
+                                    <p className="text-xs text-gray-300">{formatPrice(item.price)} c/u</p>
+                                </div>
+                                <div className="text-right flex-shrink-0">
+                                    <div className="font-semibold text-empanada-golden text-sm">
+                                        {formatPrice(item.price * item.quantity)}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Resumen de precios */}
+                <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-4">
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-300">Subtotal</span>
+                            <span className="text-white">{formatPrice(displaySubtotal)}</span>
+                        </div>
+                        {displayDiscount > 0 && (
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-300">Descuento</span>
+                                <span className="text-green-400">-{formatPrice(displayDiscount)}</span>
                             </div>
                         )}
-
-                        {/* Productos */}
-                        <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-3">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Package className="w-4 h-4 text-empanada-golden" />
-                                <h5 className="font-semibold text-white text-sm">Productos</h5>
-                                <div className="ml-auto text-xs text-gray-300">
-                                    {items.length} {items.length === 1 ? 'producto' : 'productos'}
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                {items.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center gap-3 p-2 bg-empanada-dark/50 rounded-lg"
-                                    >
-                                        <div className="relative flex-shrink-0">
-                                            <img
-                                                src={item.image}
-                                                alt={item.name}
-                                                className="w-10 h-10 object-cover rounded"
-                                            />
-                                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-empanada-golden text-white text-xs font-bold rounded-full flex items-center justify-center">
-                                                {item.quantity}
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h6 className="font-medium text-white text-sm truncate">{item.name}</h6>
-                                            <p className="text-xs text-gray-300">{formatPrice(item.price)} c/u</p>
-                                        </div>
-                                        <div className="text-right flex-shrink-0">
-                                            <div className="font-semibold text-empanada-golden text-sm">
-                                                {formatPrice(item.price * item.quantity)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-300">Envío</span>
+                            <span className={cn(displayDeliveryFee === 0 && "text-green-400")}>
+                                {displayDeliveryFee > 0 ? formatPrice(displayDeliveryFee) : "GRATIS"}
+                            </span>
                         </div>
 
-                        {/* Resumen de precios */}
-                        <div className="bg-empanada-medium border border-empanada-light-gray rounded-lg p-4">
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-300">Subtotal</span>
-                                    <span className="text-white">{formatPrice(displaySubtotal)}</span>
-                                </div>
-                                {displayDiscount > 0 && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-gray-300">Descuento</span>
-                                        <span className="text-green-400">-{formatPrice(displayDiscount)}</span>
-                                    </div>
-                                )}
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-300">Envío</span>
-                                    <span className={cn(displayDeliveryFee === 0 && "text-green-400")}>
-                                        {displayDeliveryFee > 0 ? formatPrice(displayDeliveryFee) : "GRATIS"}
-                                    </span>
-                                </div>
-
-                                <div className="border-t border-empanada-light-gray pt-2">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-base font-semibold text-white">Total</span>
-                                        <span className="text-lg font-bold text-empanada-golden">
-                                            {formatPrice(displayTotal)}
-                                        </span>
-                                    </div>
-                                </div>
+                        <div className="border-t border-empanada-light-gray pt-2">
+                            <div className="flex justify-between items-center">
+                                <span className="text-base font-semibold text-white">Total</span>
+                                <span className="text-lg font-bold text-empanada-golden">
+                                    {formatPrice(displayTotal)}
+                                </span>
                             </div>
                         </div>
+                    </div>
+                </div>
             </div>
 
             {/* Confirmación final */}

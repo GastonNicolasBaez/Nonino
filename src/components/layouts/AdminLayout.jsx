@@ -109,7 +109,7 @@ const AdminLayout = () => {
     // Sincronizar input de tiempo de envío con la sucursal seleccionada
     // SOLO cuando cambia la sucursal, NO cuando escribís en el input
     useEffect(() => {
-            setDeliveryTimeInput(sucursalSeleccionadaDelay)
+        setDeliveryTimeInput(sucursalSeleccionadaDelay)
     }, [sucursalSeleccionadaDelay, sucursalSeleccionada]); // Solo depende de sucursalSeleccionada, NO de sucursales
 
     // Cerrar dropdown cuando se hace click fuera
@@ -439,9 +439,14 @@ const AdminLayout = () => {
                             disabled={adminDataLoading}
                         />
                     ) : (
-                        <span className="text-sm font-medium text-gray-700 dark:text-white px-3 py-2">
-                            {sucursales[0]?.name}
-                        </span>
+                        <>
+                            <span className="text-sm font-medium text-gray-700 dark:text-white px-3 py-2">
+                                {sucursales?.find((sucursal) => sucursal.id == sucursalSeleccionada)
+                                    ? sucursales.find((sucursal) => sucursal.id == sucursalSeleccionada).name
+                                    : 'Cargando...'
+                                }
+                            </span>
+                        </>
                     )}
 
                     {assignedNavigationItems.map((item) => (
@@ -620,7 +625,10 @@ const AdminLayout = () => {
                     ) : (
                         <>
                             <span className="text-sm font-medium text-gray-700 dark:text-white px-3 py-2">
-                                {sucursales[0]?.name}
+                                {sucursales?.find((sucursal) => sucursal.id == sucursalSeleccionada)
+                                    ? sucursales.find((sucursal) => sucursal.id == sucursalSeleccionada).name
+                                    : 'Cargando...'
+                                }
                             </span>
                         </>
                     )}
@@ -777,10 +785,10 @@ const AdminLayout = () => {
                                             onChange={(e) => setDeliveryTimeInput(e.target.value)}
                                             placeholder="Tiempo"
                                             className="w-16 text-sm bg-transparent border-none outline-none text-gray-700 dark:text-white placeholder-gray-400"
-                                            disabled={callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading  }
+                                            disabled={callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading}
                                         />
                                         <span className="text-xs text-gray-500 dark:text-gray-400">min</span>
-                                        {(callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading ) && (
+                                        {(callAdminStoreBaseDelayUpdateLoading || adminDataLoading || callPublicStoreBaseDelayLoading) && (
                                             <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                                         )}
                                         <Button
@@ -838,13 +846,14 @@ const AdminLayout = () => {
                                                 </div>
                                             </div>
                                             <div className="p-2">
-                                                <Button
+                                                {import.meta.env.DEV && <Button
                                                     variant="ghost"
                                                     size="sm"
                                                     onClick={() => showDebugStateInfo()}
                                                 >
                                                     DEBUG STATE INFO
                                                 </Button>
+                                                }
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"

@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
 
+import { usePublicData } from "@/context/PublicDataProvider";
+import { FaWhatsapp } from "react-icons/fa";
+
 // Instagram Logo SVG Component
 const InstagramLogo = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -18,6 +21,10 @@ const InstagramLogo = ({ className }) => (
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const {
+    sucursales
+  } = usePublicData();
 
   const socialLinks = [
     { icon: InstagramLogo, href: "https://www.instagram.com/noninoempanadas/", label: "Instagram" }
@@ -37,21 +44,6 @@ export function Footer() {
     { name: "Política de Privacidad", href: "/privacidad" },
     { name: "Política de Cookies", href: "/cookies" },
     { name: "Preguntas Frecuentes", href: "/faq" },
-  ];
-
-  const stores = [
-    {
-      name: "Centro",
-      address: "General Villegas 745, Centro",
-      phone: "+54 2972 42-5072",
-      hours: "Lun-Dom: 11:00 15:00 / 19:00 - 23:00"
-    },
-    {
-      name: "El Molino",
-      address: "Ruta 40",
-      phone: "+54 2972 41-0400",
-      hours: "Lun-Dom: 11:00 15:00 / 19:00 - 23:00"
-    }
   ];
 
   return (
@@ -94,7 +86,7 @@ export function Footer() {
       </div> */}
 
       {/* Main Footer */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-5">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-12">
           {/* Brand - Simplificado en móvil */}
           <div className="space-y-3 sm:space-y-4 md:col-span-2 lg:col-span-1 text-center md:text-left lg:text-left">
@@ -158,22 +150,22 @@ export function Footer() {
               Nuestros Locales
             </h4>
             <div className="space-y-3 sm:space-y-4">
-              {stores.map((store) => (
+              {sucursales.map((store) => (
                 <div key={store.name} className="text-sm">
                   <h5 className="font-medium text-white mb-2 text-sm sm:text-base">{store.name}</h5>
                   <div className="space-y-1 text-gray-400">
                     <div className="flex items-start gap-2">
                       <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm">{store.address}</span>
+                      <span className="text-xs sm:text-sm">{store.shortAddress}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm">{store.phone}</span>
+                      <FaWhatsapp className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm">{store.tel2}</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                       <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="text-xs sm:text-sm">{store.hours}</span>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               ))}
@@ -196,10 +188,10 @@ export function Footer() {
                     info@noninoempanadas.com
                   </a>
                 </div>
-                <div className="pt-2">
+                {/* <div className="pt-2">
                   <h5 className="font-medium text-white mb-2 text-sm sm:text-base">Horarios de Atención</h5>
                   <p className="text-xs sm:text-sm">Lunes a Domingo: 11:00 - 23:00</p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -215,7 +207,7 @@ export function Footer() {
                 © {currentYear} Nonino Empanadas. Todos los derechos reservados.
               </p>
               <div className="flex items-center gap-1 justify-center sm:justify-start">
-                <span>Sitio Web desarrollado por zecLogic</span>
+                <span>Sitio Web desarrollado por <a className="text-white hover:font-semibold" target="_blank" href="https://zeclogic.net.ar/">zecLogic</a></span>
               </div>
             </div>
             <div className="hidden lg:flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-end text-xs sm:text-sm">

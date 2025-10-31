@@ -81,7 +81,7 @@ export function ContactPage() {
             transition={{ delay: 0.5 }}
             className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-2"
           >
-            Estamos aquí para ayudarte. Contáctanos por cualquier consulta o sugerencia
+            ¿Sugerencias, consultas? ¡Contactanos!
           </motion.p>
         </div>
       </section>
@@ -139,7 +139,7 @@ export function ContactPage() {
                 <CardHeader className="pb-4 sm:pb-6">
                   <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                     <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-empanada-golden" />
-                    Envíanos un Mensaje
+                    Envianos un Mensaje
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 sm:px-6">
@@ -272,7 +272,7 @@ export function ContactPage() {
               {/* Social Media */}
               <Card className="shadow-lg">
                 <CardHeader className="pb-4 sm:pb-6">
-                  <CardTitle className="text-lg sm:text-xl">Síguenos en Redes</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl">Seguinos en Redes</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 sm:px-6">
                   <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
@@ -287,7 +287,7 @@ export function ContactPage() {
                     </motion.a>
                   </div>
                   <p className="text-xs sm:text-sm text-gray-300 mt-3 sm:mt-4 text-center sm:text-left">
-                    Mantente al día con nuestras promociones y novedades
+                    Mantenete al día con nuestras promociones y novedades
                   </p>
                 </CardContent>
               </Card>

@@ -37,6 +37,7 @@ const PublicDataProvider = ({ children }) => {
 
 
     const [sucursales, setSucursales] = useState([]);
+    const [sucursalesTodas, setSucursalesTodas] = useState([]);
     const [sucursalSeleccionada, setSucursalSeleccionada] = useState(() => {
         // Cargar sucursal seleccionada desde localStorage al iniciar
         return getStorageItem(STORAGE_KEYS.SELECTED_STORE, null);
@@ -51,24 +52,33 @@ const PublicDataProvider = ({ children }) => {
         onSuccess: async (data) => {
             console.log('[PublicData] raw stores from backend:', data);
             const servingStores = ['local', 'franquicia'];
-            const usefulStores = data.filter((s) => servingStores.includes(s.code.toLowerCase()));
 
             const fullStores = await Promise.all(
-                usefulStores.map(async (s) => {
+                data.map(async (s) => {
                     const statusData = await callPublicStoreStatus(s.id);
                     const baseDelayData = await callPublicStoreBaseDelay(s.id);
+                    const shortAddress = s.street + " " + s.number + ", " + s.barrio;
                     return {
                         ...s,
+                        shortAddress,
                         statusData,
                         baseDelay: baseDelayData?.baseDelay || 0
                     };
                 })
-            )
+            );
+
+            const usefulStores = fullStores.filter((s) => servingStores.includes(s.code.toLowerCase()));
+
             console.log('[PublicData] fullStores with statusData and baseDelay:', fullStores);
-            setSucursales(fullStores);
+            console.log('fullstores filtradas', usefulStores);
+
+            setSucursales(usefulStores.sort((a, b) => (a.id - b.id)));
+            setSucursalesTodas(fullStores.sort((a, b) => (a.id - b.id)));
         },
         onError: (error) => {
             console.log(error);
+            setSucursales([]);
+            setSucursalesTodas([]);
         }
     });
 
@@ -306,6 +316,7 @@ const PublicDataProvider = ({ children }) => {
             productos,
             categorias,
             sucursales,
+            sucursalesTodas,
             combos,
             sucursalSeleccionada,
             sucursalSeleccionadaDelay,

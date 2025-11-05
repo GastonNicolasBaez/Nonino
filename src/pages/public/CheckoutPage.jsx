@@ -125,7 +125,7 @@ export function CheckoutPage() {
             references: "",
         },
         paymentMethod: "mercadopago",
-        notes: "",
+        observations: "",
     });
 
     console.log(orderData);
@@ -220,7 +220,7 @@ export function CheckoutPage() {
                 apartment: orderData.address.apartment,
                 neighborhood: orderData.address.neighborhood,
                 city: 'CABA',
-                notes: orderData.notes,
+                notes: orderData.observations,
                 references: orderData.references,
             }
 
@@ -324,17 +324,32 @@ export function CheckoutPage() {
     };
 
     const handleInputChange = (section, field, value) => {
-        setOrderData(prev => ({
-            ...prev,
-            [section]: {
-                ...prev[section],
-                [field]: value
-            }
-        }));
+        // Si value es undefined, entonces field contiene el valor (campo directo)
+        // Si value está definido, entonces es un campo anidado (section.field = value)
+        if (value === undefined) {
+            // Campo directo: section = field (donde field es el valor)
+            setOrderData(prev => ({
+                ...prev,
+                [section]: field
+            }));
 
-        // Clear error when user starts typing
-        setErrors(prev => ({ ...prev, [`${section}.${field}`]: null }));
-        setTouched(prev => ({ ...prev, [`${section}.${field}`]: true }));
+            // Clear error when user starts typing
+            setErrors(prev => ({ ...prev, [section]: null }));
+            setTouched(prev => ({ ...prev, [section]: true }));
+        } else {
+            // Campo anidado: section.field = value
+            setOrderData(prev => ({
+                ...prev,
+                [section]: {
+                    ...prev[section],
+                    [field]: value
+                }
+            }));
+
+            // Clear error when user starts typing
+            setErrors(prev => ({ ...prev, [`${section}.${field}`]: null }));
+            setTouched(prev => ({ ...prev, [`${section}.${field}`]: true }));
+        }
     };
 
     // Validation functions - Memoized

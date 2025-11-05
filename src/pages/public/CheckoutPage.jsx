@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useSession } from "@/context/SessionProvider";
 import { usePublicData } from "@/context/PublicDataProvider";
 import { useIsMobile } from "@/hooks/useMediaQuery";
+import { base64 } from "zod";
 
 export function CheckoutPage() {
     const { items, total, subtotal, discount, deliveryFee, clearCart, selectedStore, savePendingPaymentTotals } = useCart();
@@ -272,11 +273,12 @@ export function CheckoutPage() {
 
             const ticketJsoned = JSON.stringify(printableOrder);
 
-            const encryptedId = btoa("AmiAmig0Fr4nki3L3GustalANaveg");
+            const basicBase = "AmiAmig0Fr4nki3L3GustalANaveg";
+            const basicEncrypted = window.btoa(basicBase);
 
             const constructedPrintJob = {
                 dataB64: ticketJsoned,
-                basic: encryptedId,
+                basic: basicEncrypted,
                 storeId: selectedStore.id,
                 orderId: createdOrder.id,
                 origin: 'public', // no se guarda. si public, chequear si existe. si existe, no meter. si es admin, meter si o si

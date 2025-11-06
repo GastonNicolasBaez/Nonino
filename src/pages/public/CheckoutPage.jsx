@@ -252,7 +252,7 @@ export function CheckoutPage() {
                 orderNumber: createdOrder.orderNumber,
                 time: createdOrder.orderDate || createdOrder.date || new Date().toISOString(),
                 total: createdOrder.totalAmount,
-                fulfillment: createdOrder.fullfillment,
+                fulfillment: createdOrder.fulfillment,
                 payment: createdOrder.paymentMethod || 'Efectivo',
                 deliveryTo: shortAddress,
                 deliveryToSpec: shortAddressSpecs,
@@ -260,7 +260,6 @@ export function CheckoutPage() {
                 deliveryPhone: shortPhone,
                 deliveryNotes: shortNote,
                 deliveryReferences: orderData.references, // cambiar esto
-                fullfillment: createdOrder.fullfillment,
                 totalUnits: createdOrder.items.length,
                 items: createdOrder.items.map(item => ({
                     qty: item.quantity || item.qty || 1,

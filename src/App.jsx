@@ -14,6 +14,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 // LAYOUTS (no lazy - necesarios inmediatamente)
 import PublicLayout from "@/components/layouts/PublicLayout";
 import AdminLayout from "@/components/layouts/AdminLayout";
+import TotemLayout from "@/components/layouts/TotemLayout";
 
 // GATES (no lazy - necesarios inmediatamente)
 import IntranetPortal from "@/context/IntranetPortal";
@@ -34,6 +35,12 @@ const CartPage = lazy(() => import("@/pages/public/CartPage").then(m => ({ defau
 const CheckoutPage = lazy(() => import("@/pages/public/CheckoutPage").then(m => ({ default: m.CheckoutPage })));
 const OrderTrackingPage = lazy(() => import("@/pages/public/OrderTrackingPage").then(m => ({ default: m.OrderTrackingPage })));
 const StoreSelectionPage = lazy(() => import("@/pages/public/StoreSelectionPage").then(m => ({ default: m.StoreSelectionPage })));
+
+// TOTEM - CODE SPLITTING (solo cargan si accedes al totem)
+const TotemStoreSelection = lazy(() => import("@/pages/totem/TotemStoreSelection").then(m => ({ default: m.TotemStoreSelection })));
+const TotemMenuPage = lazy(() => import("@/pages/totem/TotemMenuPage").then(m => ({ default: m.TotemMenuPage })));
+const TotemCheckoutPage = lazy(() => import("@/pages/totem/TotemCheckoutPage").then(m => ({ default: m.TotemCheckoutPage })));
+const TotemOrderSuccess = lazy(() => import("@/pages/totem/TotemOrderSuccess").then(m => ({ default: m.TotemOrderSuccess })));
 
 // DASHBOARDS & ADMIN - CODE SPLITTING (solo cargan si accedes al admin)
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin").then(m => ({ default: m.AdminLogin })));
@@ -141,6 +148,37 @@ function App() {
                             <Route path="/failed/:orderId" element={
                                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
                                     <OrderTrackingPage />
+                                </Suspense>
+                            } />
+                        </Route>
+
+                        {/* TOTEM - Modo kiosko para autoatención */}
+                        <Route
+                            path="/totem"
+                            element={
+                                <PublicDataProvider>
+                                    <TotemLayout />
+                                </PublicDataProvider>
+                            }
+                        >
+                            <Route index element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <TotemStoreSelection />
+                                </Suspense>
+                            } />
+                            <Route path="menu" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <TotemMenuPage />
+                                </Suspense>
+                            } />
+                            <Route path="checkout" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <TotemCheckoutPage />
+                                </Suspense>
+                            } />
+                            <Route path="order-success/:orderId" element={
+                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                    <TotemOrderSuccess />
                                 </Suspense>
                             } />
                         </Route>

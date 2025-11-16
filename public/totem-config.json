@@ -1,0 +1,21 @@
+{
+  "storeId": null,
+  "storeName": "",
+  "allowStoreSelection": true,
+  "inactivityTimeout": 180,
+  "autoResetTimeout": 30,
+  "enableMercadoPago": true,
+  "enableCash": true,
+  "kioskMode": true,
+  "showPrices": true,
+  "maxItemsPerOrder": 50,
+  "instructions": {
+    "es": {
+      "welcome": "Bienvenido a Nonino",
+      "selectStore": "Seleccioná tu local",
+      "addToCart": "Agregar al pedido",
+      "checkout": "Ir a pagar",
+      "thankYou": "¡Gracias por tu compra!"
+    }
+  }
+}

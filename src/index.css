@@ -956,3 +956,206 @@ html.dark .admin-user-card:hover {
 body.homepage-background {
   background-color: transparent !important;
 }
+
+/* ============================================ */
+/* TOTEM - MODO KIOSKO PARA AUTOATENCIÓN */
+/* ============================================ */
+
+/* Contenedor principal del totem */
+.totem-container {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevenir zoom con gestos en el totem */
+.totem-container,
+.totem-container * {
+  touch-action: manipulation;
+}
+
+/* Botones optimizados para touch en tablets */
+.totem-touch-button {
+  min-height: 60px;
+  min-width: 60px;
+  padding: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.totem-touch-button:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+}
+
+/* Cards de producto optimizadas para totem */
+.totem-product-card {
+  min-height: 280px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(247, 168, 42, 0.1);
+}
+
+.totem-product-card:active {
+  transform: scale(0.98);
+}
+
+/* Tabs de categorías para totem */
+.totem-category-tab {
+  min-height: 70px;
+  min-width: 120px;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: rgba(247, 168, 42, 0.1);
+}
+
+/* Scroll horizontal suave para tabs */
+.totem-tabs-container {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.totem-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Input numérico grande para totem */
+.totem-number-input {
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 120px;
+  height: 80px;
+}
+
+/* Modal fullscreen en totem */
+.totem-modal-overlay {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Prevenir selección de texto en totem */
+.totem-no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Optimizaciones para tablets en landscape */
+@media (min-width: 768px) and (orientation: landscape) {
+  .totem-grid-landscape {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .totem-cart-landscape {
+    min-width: 380px;
+    max-width: 500px;
+  }
+}
+
+/* Optimizaciones para tablets en portrait */
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+  .totem-grid-portrait {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .totem-cart-portrait {
+    min-width: 340px;
+    max-width: 400px;
+  }
+}
+
+/* Animación de feedback touch */
+@keyframes totem-touch-feedback {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.totem-touch-feedback:active {
+  animation: totem-touch-feedback 0.2s ease;
+}
+
+/* Fullscreen mode para kiosko */
+.totem-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Deshabilitar selección y menú contextual en totem */
+.totem-kiosk-mode * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Botón grande para checkout del totem */
+.totem-checkout-button {
+  min-height: 80px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+/* Número de pedido destacado */
+.totem-order-number {
+  font-size: 6rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Contador de inactividad */
+.totem-countdown {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #f7a82a;
+}
+
+/* Mejoras de accesibilidad para totem */
+.totem-focus-visible:focus-visible {
+  outline: 3px solid #f7a82a;
+  outline-offset: 4px;
+}
+
+/* Alto contraste para mejor legibilidad en pantallas de totem */
+.totem-high-contrast {
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border-color: #f7a82a;
+}
+
+/* Grid responsive para productos en totem */
+@media (min-width: 1024px) {
+  .totem-product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .totem-product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}

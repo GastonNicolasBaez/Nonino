@@ -83,18 +83,6 @@ export function ProductManagement() {
         callRecetaDelProductoLoading,
     } = useAdminData();
     
-    if (products && products.length > 0) {
-        products.forEach(p => {
-            if (!p.name) console.error("🚨 PRODUCTO SIN NOMBRE DETECTADO:", p);
-        });
-    }
-
-    if (inventario && inventario.length > 0) {
-        inventario.forEach(i => {
-            if (!i.nombre) console.error("🚨 INGREDIENTE SIN NOMBRE DETECTADO:", i);
-        });
-    }
-    
 
     // Opciones para CustomSelect - Usar las categorías del provider
     const categoryOptions = categories.map(category => ({
@@ -1046,7 +1034,7 @@ export function ProductManagement() {
                                             // Excluir ingredientes ya añadidos
                                             !editingIngredients.some(editIng => editIng.ingredienteId === ing.id) &&
                                             // Filtrar por término de búsqueda
-                                            (ing.nombre || "").toLowerCase().includes(ingredientSearchTerm.toLowerCase())
+                                            (ing.name || "").toLowerCase().includes(ingredientSearchTerm.toLowerCase())
                                         )
                                         .map(ingrediente => (
                                             <div
@@ -1057,7 +1045,7 @@ export function ProductManagement() {
                                                 <div className="flex items-center justify-between">
                                                     <div>
                                                         <span className="font-medium text-sm text-gray-900 dark:text-white">
-                                                            {ingrediente.nombre}
+                                                            {ingrediente.name}
                                                         </span>
                                                         <span className="text-xs text-gray-500 ml-2">
                                                             {ingrediente.categoria}
@@ -1075,7 +1063,7 @@ export function ProductManagement() {
                                 {/* Mensaje cuando no hay resultados */}
                                 {inventario?.filter(ing =>
                                     !editingIngredients.some(editIng => editIng.ingredienteId === ing.id) &&
-                                    (ing.nombre || "").toLowerCase().includes(ingredientSearchTerm.toLowerCase())
+                                    (ing.name || "").toLowerCase().includes(ingredientSearchTerm.toLowerCase())
                                 ).length === 0 && (
                                         <div className="text-center py-4 text-gray-500">
                                             <Package className="w-8 h-8 mx-auto mb-2 text-gray-300" />

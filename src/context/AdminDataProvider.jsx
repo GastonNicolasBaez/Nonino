@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useContext, createContext, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
     getAdminCatalogProductosYCategoriasQueryFunction,
     postAdminCatalogAddProductQueryFunction,
@@ -246,6 +247,7 @@ const AdminDataProvider = ({ children }) => {
             setCombosSucursal(gotCombos);
         },
         onError: (error) => {
+
             if (logErrorsToConsole) console.log(error);
             setProductosSucursal([]);
             setCombosSucursal([]);
@@ -257,7 +259,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminAsignarASucursal'],
         mutationFn: postAdminCatalogAsignarASucursalQueryFunction,
         onSuccess: () => callProductosYCategoriasSucursal(sucursalSeleccionada),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -297,6 +302,7 @@ const AdminDataProvider = ({ children }) => {
         },
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
             setProductos([]);
             setCategorias([]);
         },
@@ -309,7 +315,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminProductoNuevo'],
         mutationFn: postAdminCatalogAddProductQueryFunction,
         onSuccess: () => callProductosYCategorias(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -319,7 +328,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminBorrarProducto'],
         mutationFn: deleteAdminCatalogDeleteProductQueryFunction,
         onSuccess: () => callProductosYCategorias(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -329,7 +341,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminModificarProducto'],
         mutationFn: updateAdminCatalogUpdateProductQueryFunction,
         onSuccess: () => callProductosYCategorias(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -338,7 +353,10 @@ const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callCrearYAsignarReceta, isPending: callCrearYAsignarRecetaLoading } = useMutation({
         mutationKey: ['adminCrearYAsignarReceta'],
         mutationFn: postAdminInventoryAssignRecipeQueryFunction,
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -347,7 +365,10 @@ const AdminDataProvider = ({ children }) => {
     const { mutateAsync: callRecetaDelProducto, isPending: callRecetaDelProductoLoading } = useMutation({
         mutationKey: ['adminRecetaDelProducto'],
         mutationFn: getAdminInventoryGetProductRecipeQueryFunction,
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -360,7 +381,10 @@ const AdminDataProvider = ({ children }) => {
         onSuccess: (data) => {
             setSucursales(data);
         },
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -370,7 +394,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCrearSucursal'],
         mutationFn: postAdminStoresAddStoreQueryFunction,
         onSuccess: () => callSucursales(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -380,7 +407,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminActualizarSucursal'],
         mutationFn: putAdminStoresUpdateStoreQueryFunction,
         onSuccess: () => callSucursales(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -408,7 +438,10 @@ const AdminDataProvider = ({ children }) => {
             _storeId: sucursalSeleccionada,
             _accessToken: session.userData.accessToken,
         }),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -436,7 +469,10 @@ const AdminDataProvider = ({ children }) => {
             _storeId: sucursalSeleccionada,
             _accessToken: session.userData.accessToken
         }),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -449,7 +485,10 @@ const AdminDataProvider = ({ children }) => {
             _storeId: sucursalSeleccionada,
             _accessToken: session.userData.accessToken
         }),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -462,34 +501,39 @@ const AdminDataProvider = ({ children }) => {
             _storeId: sucursalSeleccionada,
             _accessToken: session.userData.accessToken
         }),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
 
     // basedelay get
     const { mutateAsync: callPublicStoreBaseDelay, isPending: callPublicStoreBaseDelayLoading } = useMutation({
-            mutationKey: ['publicStoreBaseDelay'],
-            mutationFn: getPublicStoreBaseDelayQueryFunction,
-            onSuccess: (data) => {
-                setSucursalSeleccionadaDelay(data.baseDelay);
-            },
-            onError: (error) => {
-                console.log(error);
-            }
-        });
+        mutationKey: ['publicStoreBaseDelay'],
+        mutationFn: getPublicStoreBaseDelayQueryFunction,
+        onSuccess: (data) => {
+            setSucursalSeleccionadaDelay(data.baseDelay);
+        },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
+    });
 
-        // basedelay set
+    // basedelay set
     const { mutateAsync: callAdminStoreBaseDelayUpdate, isPending: callAdminStoreBaseDelayUpdateLoading } = useMutation({
-            mutationKey: ['adminStoreBaseDelayUpdate'],
-            mutationFn: putAdminStoreBaseDelayUpdateQueryFunction,
-            onSuccess: () => {
-                callPublicStoreBaseDelay(sucursalSeleccionada)
-            },
-            onError: (error) => {
-                console.log(error);
-            }
-        });
+        mutationKey: ['adminStoreBaseDelayUpdate'],
+        mutationFn: putAdminStoreBaseDelayUpdateQueryFunction,
+        onSuccess: () => {
+            callPublicStoreBaseDelay(sucursalSeleccionada)
+        },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
+    });
 
     // ---------- COMBOS
     // listar
@@ -512,7 +556,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCrearCombo'],
         mutationFn: postAdminCatalogAddComboQueryFunction,
         onSuccess: () => callCombos(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -522,7 +569,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminBorrarCombo'],
         mutationFn: deleteAdminCatalogDeleteComboQueryFunction,
         onSuccess: () => callCombos(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -548,7 +598,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCrearCategoria'],
         mutationFn: postAdminCatalogAddCategoryQueryFunction,
         onSuccess: () => callCategorias(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -558,7 +611,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminActualizarCategoria'],
         mutationFn: putAdminCatalogUpdateCategoryQueryFunction,
         onSuccess: () => callCategorias(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -568,7 +624,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminEliminarCategoria'],
         mutationFn: deleteAdminCatalogDeleteCategoryQueryFunction,
         onSuccess: () => callCategorias(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -584,6 +643,7 @@ const AdminDataProvider = ({ children }) => {
         },
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
             setMateriales([]);
         },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
@@ -595,7 +655,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCrearMaterial'],
         mutationFn: postAdminInventoryAddMaterialQueryFunction,
         onSuccess: () => callMateriales(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -609,6 +672,7 @@ const AdminDataProvider = ({ children }) => {
         },
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
             setInventarioMaterialesSucursal([]);
         },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
@@ -632,6 +696,7 @@ const AdminDataProvider = ({ children }) => {
         },
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
             setInventarioProductosSucursal([]);
         },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
@@ -646,7 +711,10 @@ const AdminDataProvider = ({ children }) => {
             _storeId: sucursalSeleccionada,
             _accessToken: session.userData.accessToken
         }),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -666,7 +734,10 @@ const AdminDataProvider = ({ children }) => {
                 _accessToken: session.userData.accessToken
             });
         },
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -679,7 +750,10 @@ const AdminDataProvider = ({ children }) => {
             _storeId: sucursalSeleccionada,
             _accessToken: session.userData.accessToken
         }),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -692,7 +766,10 @@ const AdminDataProvider = ({ children }) => {
             _storeId: sucursalSeleccionada,
             _accessToken: session.userData.accessToken
         }),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -707,6 +784,7 @@ const AdminDataProvider = ({ children }) => {
         },
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
             setCompanyInfo([]);
         },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
@@ -718,7 +796,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminActualizarCompanyInfo'],
         mutationFn: putAdminStoresUpdateCompanyInfoQueryFunction,
         onSuccess: () => callCompanyInfo(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -734,6 +815,7 @@ const AdminDataProvider = ({ children }) => {
         },
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
             setOrders([]);
         },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
@@ -745,7 +827,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminCreateOrder'],
         mutationFn: postAdminOrdersCreateOrderQueryFunction,
         onSuccess: () => callOrders(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -755,7 +840,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminOrderPayCash'],
         mutationFn: postAdminOrdersPayCashQueryFunction,
         onSuccess: () => callOrders(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -765,7 +853,10 @@ const AdminDataProvider = ({ children }) => {
         mutationKey: ['adminOrderClose'],
         mutationFn: postAdminOrdersCloseQueryFunction,
         onSuccess: () => callOrders(session.userData.accessToken),
-        onError: (error) => { if (logErrorsToConsole) console.log(error); },
+        onError: (error) => {
+            if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
+        },
         retry: (failureCount, error) => { return handleErrorRelogin(failureCount, error); },
         retryDelay: retryDelayAll
     });
@@ -776,6 +867,7 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: postPublicOrdersCreatePrintJobQueryFunction,
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
         },
     });
 
@@ -784,6 +876,7 @@ const AdminDataProvider = ({ children }) => {
         mutationFn: putPublicOrdersForcePrintJobQueryFunction,
         onError: (error) => {
             if (logErrorsToConsole) console.log(error);
+            toast.error(error.message);
         },
     });
 

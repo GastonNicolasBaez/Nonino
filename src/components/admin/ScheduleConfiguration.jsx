@@ -49,28 +49,20 @@ export function ScheduleConfiguration({
             hours: { start: '12:00', end: '16:00' }
         }
 
-        setSpecialDatesData(...specialDatesData, newSpecialDay);
+        setSpecialDatesData([...specialDatesData, newSpecialDay]);
     };
 
     const updateSpecialDay = (id, field, value) => {
-    const newSchedule = {
-      ...scheduleData,
-      specialDays: scheduleData.specialDays.map(day =>
-        day.id === id ? { ...day, [field]: value } : day
-      )
+        const updatedSpecialDates = specialDatesData.map(day =>
+            day.id === id ? { ...day, [field]: value } : day
+        );
+        setSpecialDatesData(updatedSpecialDates);
     };
-    setScheduleData(newSchedule);
-    onScheduleChange?.(newSchedule);
-  };
 
-  const removeSpecialDay = (id) => {
-    const newSchedule = {
-      ...scheduleData,
-      specialDays: scheduleData.specialDays.filter(day => day.id !== id)
+    const removeSpecialDay = (id) => {
+        const updatedSpecialDates = specialDatesData.filter(day => day.id !== id);
+        setSpecialDatesData(updatedSpecialDates);
     };
-    setScheduleData(newSchedule);
-    onScheduleChange?.(newSchedule);
-  };
 
     return (
         <div className={`space-y-6 ${className}`}>

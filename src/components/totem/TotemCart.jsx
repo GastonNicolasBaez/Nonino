@@ -1,17 +1,18 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, X } from 'lucide-react';
 import { useCart } from '@/context/CartProvider';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export const TotemCart = () => {
+export const TotemCart = ({ onClose }) => {
   const { items, total, itemCount, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
 
   const handleCheckout = () => {
     if (itemCount > 0) {
+      if (onClose) onClose(); // Cerrar modal antes de navegar
       navigate('/totem/checkout');
     }
   };
@@ -25,18 +26,30 @@ export const TotemCart = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-empanada-medium border-l-2 border-empanada-golden">
+    <div className="h-full flex flex-col bg-empanada-medium">
       {/* Header del carrito */}
-      <div className="p-6 border-b border-empanada-light-gray bg-empanada-dark">
-        <div className="flex items-center justify-between mb-2">
+      <div className="p-4 border-b border-empanada-light-gray bg-empanada-dark">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <ShoppingCart className="w-6 h-6 text-empanada-golden" />
+            <ShoppingCart className="w-7 h-7 text-empanada-golden" />
             <h2 className="text-2xl font-bold text-white">Tu Pedido</h2>
+            {itemCount > 0 && (
+              <div className="bg-empanada-golden text-empanada-dark rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
+                {itemCount}
+              </div>
+            )}
           </div>
-          {itemCount > 0 && (
-            <div className="bg-empanada-golden text-empanada-dark rounded-full w-8 h-8 flex items-center justify-center font-bold">
-              {itemCount}
-            </div>
+
+          {/* Botón de cerrar (solo visible en modal) */}
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-gray-400 hover:text-white hover:bg-empanada-medium h-10 w-10 p-0 rounded-full"
+            >
+              <X className="w-6 h-6" />
+            </Button>
           )}
         </div>
       </div>

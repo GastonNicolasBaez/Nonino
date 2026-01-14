@@ -62,76 +62,74 @@ export const TotemHeader = () => {
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-20">
+        <div className="px-4 py-2">
+          {/* Primera fila: Logo, Nombre y Botones principales */}
+          <div className="flex items-center justify-between">
             {/* Logo y Nombre del Local */}
             <button
               onClick={handleGoHome}
-              className="flex items-center space-x-4 hover:opacity-80 transition-opacity"
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity flex-shrink-0"
             >
               <img
                 src={logoNonino}
                 alt="Nonino Empanadas"
-                className="w-12 h-12"
+                className="w-10 h-10"
               />
               <div className="flex flex-col">
-                <h1 className="text-2xl font-bold text-empanada-golden">
+                <h1 className="text-lg font-bold text-empanada-golden leading-tight">
                   NONINO
                 </h1>
                 {sucursalSeleccionada && (
-                  <p className="text-sm text-gray-300">
+                  <p className="text-xs text-gray-300 leading-tight">
                     {selectedStoreName}
                   </p>
                 )}
               </div>
             </button>
 
-            {/* Acciones */}
-            <div className="flex items-center space-x-6">
-              {/* Info del usuario logeado (solo si está autenticado) */}
+            {/* Botones de acción */}
+            <div className="flex items-center space-x-3">
+              {/* Info del usuario logeado - Más compacto */}
               {session.isAuthenticated && session.userData && (
-                <div className="flex items-center gap-3 px-4 py-2 bg-empanada-medium rounded-lg border border-empanada-light-gray">
-                  <User className="w-5 h-5 text-empanada-golden" />
-                  <div className="text-left">
-                    <p className="text-xs text-gray-400">Local configurado:</p>
-                    <p className="text-sm font-semibold text-white">
-                      {session.userData.email}
-                    </p>
-                  </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-empanada-medium rounded-lg border border-empanada-light-gray">
+                  <User className="w-4 h-4 text-empanada-golden" />
+                  <span className="text-xs text-white font-medium truncate max-w-[120px]">
+                    {session.userData.email}
+                  </span>
 
                   {/* Botón de logout discreto */}
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleLogout}
-                    className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 p-2"
+                    className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 p-1 h-auto"
                     title="Cerrar sesión y reconfigurar totem"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-3.5 h-3.5" />
                   </Button>
                 </div>
               )}
 
-              {/* Botón Inicio */}
+              {/* Botón Inicio - Más compacto */}
               <Button
                 variant="ghost"
-                size="lg"
+                size="sm"
                 onClick={handleGoHome}
-                className="text-white hover:text-empanada-golden hover:bg-empanada-golden/10 text-lg"
+                className="text-white hover:text-empanada-golden hover:bg-empanada-golden/10 text-sm px-3 h-9"
               >
-                <Home className="w-6 h-6 mr-2" />
-                Menú
+                <Home className="w-5 h-5 mr-1.5" />
+                <span className="hidden sm:inline">Menú</span>
               </Button>
 
-              {/* Botón Cancelar Pedido */}
+              {/* Botón Cancelar Pedido - Más compacto */}
               <Button
                 variant="destructive"
-                size="lg"
+                size="sm"
                 onClick={handleCancelOrder}
-                className="bg-red-600 hover:bg-red-700 text-white text-lg px-6 py-6"
+                className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 h-9"
               >
-                <X className="w-6 h-6 mr-2" />
-                Cancelar Pedido
+                <X className="w-5 h-5 mr-1.5" />
+                <span className="hidden sm:inline">Cancelar</span>
               </Button>
             </div>
           </div>
@@ -207,8 +205,8 @@ export const TotemHeader = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Spacer */}
-      <div className="h-20" />
+      {/* Spacer - Ajustado para header más compacto */}
+      <div className="h-14" />
     </>
   );
 };

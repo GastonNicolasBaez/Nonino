@@ -116,8 +116,9 @@ export const TotemProvider = ({ children }) => {
   }, []);
 
   const resetSession = useCallback(() => {
-    // Limpiar datos de la sesión
-    setSelectedStore(config?.storeId || null);
+    // IMPORTANTE: NO cerrar sesión del usuario (mantener login)
+    // Solo limpiar el pedido actual y volver al menú
+
     setShowInactivityWarning(false);
 
     // Log para analytics
@@ -127,11 +128,12 @@ export const TotemProvider = ({ children }) => {
       duration: Date.now() - sessionStartTime
     });
 
-    // Iniciar nueva sesión
+    // Iniciar nueva sesión de pedido (NO de login)
     startNewSession();
 
-    // Navegar al inicio
-    window.location.href = '/totem';
+    // Navegar al menú (mantiene la sesión de usuario activa)
+    // NO navegar a /totem (login), sino a /totem/menu
+    window.location.href = '/totem/menu';
   }, [sessionId, sessionStartTime, isInactive, config]);
 
   const updateStore = useCallback((storeId) => {

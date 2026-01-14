@@ -37,10 +37,14 @@ const OrderTrackingPage = lazy(() => import("@/pages/public/OrderTrackingPage").
 const StoreSelectionPage = lazy(() => import("@/pages/public/StoreSelectionPage").then(m => ({ default: m.StoreSelectionPage })));
 
 // TOTEM - CODE SPLITTING (solo cargan si accedes al totem)
+const TotemLogin = lazy(() => import("@/pages/totem/TotemLogin").then(m => ({ default: m.TotemLogin })));
 const TotemStoreSelection = lazy(() => import("@/pages/totem/TotemStoreSelection").then(m => ({ default: m.TotemStoreSelection })));
 const TotemMenuPage = lazy(() => import("@/pages/totem/TotemMenuPage").then(m => ({ default: m.TotemMenuPage })));
 const TotemCheckoutPage = lazy(() => import("@/pages/totem/TotemCheckoutPage").then(m => ({ default: m.TotemCheckoutPage })));
 const TotemOrderSuccess = lazy(() => import("@/pages/totem/TotemOrderSuccess").then(m => ({ default: m.TotemOrderSuccess })));
+
+// TOTEM GUARD - no lazy (necesario inmediatamente)
+import TotemAuthGuard from "@/components/totem/TotemAuthGuard";
 
 // DASHBOARDS & ADMIN - CODE SPLITTING (solo cargan si accedes al admin)
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin").then(m => ({ default: m.AdminLogin })));
@@ -161,25 +165,34 @@ function App() {
                                 </PublicDataProvider>
                             }
                         >
+                            {/* Login del totem (sin protección) */}
                             <Route index element={
                                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
-                                    <TotemStoreSelection />
+                                    <TotemLogin />
                                 </Suspense>
                             } />
+
+                            {/* Rutas protegidas - Solo usuarios LOCAL autenticados */}
                             <Route path="menu" element={
-                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
-                                    <TotemMenuPage />
-                                </Suspense>
+                                <TotemAuthGuard>
+                                    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                        <TotemMenuPage />
+                                    </Suspense>
+                                </TotemAuthGuard>
                             } />
                             <Route path="checkout" element={
-                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
-                                    <TotemCheckoutPage />
-                                </Suspense>
+                                <TotemAuthGuard>
+                                    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                        <TotemCheckoutPage />
+                                    </Suspense>
+                                </TotemAuthGuard>
                             } />
                             <Route path="order-success/:orderId" element={
-                                <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
-                                    <TotemOrderSuccess />
-                                </Suspense>
+                                <TotemAuthGuard>
+                                    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                        <TotemOrderSuccess />
+                                    </Suspense>
+                                </TotemAuthGuard>
                             } />
                         </Route>
 

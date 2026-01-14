@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import { usePublicData } from '@/context/PublicDataProvider';
+import { useSession } from '@/context/SessionProvider';
 import { useTotem } from '@/hooks/useTotem';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { TotemCategoryTab } from '@/components/totem/TotemCategoryTab';
@@ -13,19 +14,29 @@ import { Package } from 'lucide-react';
 
 export const TotemMenuPage = () => {
   const navigate = useNavigate();
-  const { productos, categorias, publicDataLoading, sucursalSeleccionada } = usePublicData();
+  const session = useSession();
+  const { productos, categorias, publicDataLoading, sucursalSeleccionada, setSucursalSeleccionada } = usePublicData();
   const { config } = useTotem();
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showProductModal, setShowProductModal] = useState(false);
 
-  // Redirigir si no hay sucursal seleccionada
+  // Auto-seleccionar sucursal del usuario logeado
   useEffect(() => {
-    if (!publicDataLoading && !sucursalSeleccionada) {
+    if (session.isAuthenticated && session.userData?.sucursal && !sucursalSeleccionada) {
+      console.log('[TOTEM MENU] Auto-seleccionando sucursal del usuario:', session.userData.sucursal);
+      setSucursalSeleccionada(session.userData.sucursal);
+    }
+  }, [session.isAuthenticated, session.userData, sucursalSeleccionada, setSucursalSeleccionada]);
+
+  // Redirigir si no hay sucursal seleccionada (después de intentar auto-seleccionar)
+  useEffect(() => {
+    if (!publicDataLoading && !sucursalSeleccionada && !session.loading) {
+      console.log('[TOTEM MENU] No hay sucursal seleccionada - redirigiendo al login');
       navigate('/totem');
     }
-  }, [sucursalSeleccionada, publicDataLoading, navigate]);
+  }, [sucursalSeleccionada, publicDataLoading, session.loading, navigate]);
 
   // Seleccionar primera categoría por defecto
   useEffect(() => {

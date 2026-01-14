@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { createContext, useState, useContext, useLayoutEffect } from "react";
+import { createContext, useState, useContext, useLayoutEffect, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
     getLoginQueryFunction,
@@ -9,6 +9,13 @@ import {
 } from "@/config/apiLoginQueryFunctions";
 
 const csrfLocalStorageKeyName = 'noninoSysCsrf';
+const totemPersistentKeyName = 'totem_session_persistent';
+
+// Helper para detectar si estamos en modo totem
+const isTotemMode = () => {
+    return window.location.pathname.startsWith('/totem') ||
+           localStorage.getItem(totemPersistentKeyName) === 'true';
+};
 
 // integrar dependencia con el rol
 
@@ -99,11 +106,50 @@ const SessionProvider = ({ children }) => {
     }
 
     const logout = () => {
+        // Si estamos en modo totem, NO cerrar sesión (excepto si es forzado)
+        if (isTotemMode()) {
+            console.log('[SESSION] Modo totem activo - sesión persistente mantenida');
+            return;
+        }
+
+        // Logout normal para admin/otros
         setUserData(null);
         setIsAuthenticated(false);
         localStorage.removeItem(csrfLocalStorageKeyName);
         localStorage.removeItem('noninoSysStore');
     };
+
+    const logoutForced = () => {
+        // Logout forzado (usado cuando se desea reconfigurar el totem)
+        console.log('[SESSION] Logout forzado - limpiando toda la sesión');
+        setUserData(null);
+        setIsAuthenticated(false);
+        localStorage.removeItem(csrfLocalStorageKeyName);
+        localStorage.removeItem('noninoSysStore');
+        localStorage.removeItem(totemPersistentKeyName);
+    };
+
+    // Auto-renovación de tokens (cada 45 minutos para tokens de 1 hora)
+    useEffect(() => {
+        if (!isAuthenticated || !isTotemMode()) {
+            return; // Solo en modo totem
+        }
+
+        console.log('[SESSION] Activando auto-renovación de token para modo totem');
+
+        // Renovar token cada 45 minutos (45 * 60 * 1000 = 2700000 ms)
+        const AUTO_REFRESH_INTERVAL = 45 * 60 * 1000;
+
+        const refreshInterval = setInterval(() => {
+            const csrf = localStorage.getItem(csrfLocalStorageKeyName);
+            if (csrf) {
+                console.log('[SESSION] Auto-renovando token...');
+                callRelogin(csrf);
+            }
+        }, AUTO_REFRESH_INTERVAL);
+
+        return () => clearInterval(refreshInterval);
+    }, [isAuthenticated]);
 
     const loading = componentLoading || callLoginLoading || callReloginLoading;
 
@@ -115,6 +161,8 @@ const SessionProvider = ({ children }) => {
             login,
             relogin,
             logout,
+            logoutForced,
+            isTotemMode: isTotemMode(),
         }}
         >
             {children}

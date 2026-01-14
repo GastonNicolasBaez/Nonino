@@ -239,7 +239,7 @@ function OrderViewModal({ order, onClose }) {
 }
 
 // ------------------ COMPONENTE PRINCIPAL ------------------ //
-export function AdminDashboard() {
+export function FabricaDashboard() {
     const {
         orders,
         adminDataLoading: loading,

@@ -82,6 +82,7 @@ export function ProductManagement() {
         callRecetaDelProducto,
         callRecetaDelProductoLoading,
     } = useAdminData();
+    
 
     // Opciones para CustomSelect - Usar las categorías del provider
     const categoryOptions = categories.map(category => ({
@@ -131,8 +132,13 @@ export function ProductManagement() {
     };
 
     const filteredProducts = products.filter(product => {
-        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchTerm.toLowerCase());
+        // CORRECCIÓN: Usamos || "" para evitar errores si el campo es null o undefined
+        const nameSafe = product.name || "";
+        const descSafe = product.description || "";
+        
+        const matchesSearch = nameSafe.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            descSafe.toLowerCase().includes(searchTerm.toLowerCase());
+            
         const matchesCategory = categoryFilter === '-1' || product.category == categoryFilter;
         return matchesSearch && matchesCategory;
     }).sort((a, b) => {
@@ -1028,7 +1034,7 @@ export function ProductManagement() {
                                             // Excluir ingredientes ya añadidos
                                             !editingIngredients.some(editIng => editIng.ingredienteId === ing.id) &&
                                             // Filtrar por término de búsqueda
-                                            ing.nombre.toLowerCase().includes(ingredientSearchTerm.toLowerCase())
+                                            (ing.name || "").toLowerCase().includes(ingredientSearchTerm.toLowerCase())
                                         )
                                         .map(ingrediente => (
                                             <div
@@ -1039,7 +1045,7 @@ export function ProductManagement() {
                                                 <div className="flex items-center justify-between">
                                                     <div>
                                                         <span className="font-medium text-sm text-gray-900 dark:text-white">
-                                                            {ingrediente.nombre}
+                                                            {ingrediente.name}
                                                         </span>
                                                         <span className="text-xs text-gray-500 ml-2">
                                                             {ingrediente.categoria}
@@ -1057,7 +1063,7 @@ export function ProductManagement() {
                                 {/* Mensaje cuando no hay resultados */}
                                 {inventario?.filter(ing =>
                                     !editingIngredients.some(editIng => editIng.ingredienteId === ing.id) &&
-                                    ing.nombre.toLowerCase().includes(ingredientSearchTerm.toLowerCase())
+                                    (ing.name || "").toLowerCase().includes(ingredientSearchTerm.toLowerCase())
                                 ).length === 0 && (
                                         <div className="text-center py-4 text-gray-500">
                                             <Package className="w-8 h-8 mx-auto mb-2 text-gray-300" />

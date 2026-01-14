@@ -20,18 +20,18 @@ export const TotemProductCard = ({ product, onSelect }) => {
 
   return (
     <motion.button
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       onClick={() => onSelect(product)}
       className={cn(
-        "relative group bg-empanada-dark rounded-2xl overflow-hidden",
+        "relative group bg-empanada-dark rounded-xl overflow-hidden",
         "border-2 border-empanada-light-gray hover:border-empanada-golden",
         "transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-empanada-golden/20",
-        "flex flex-col h-full min-h-[280px]"
+        "flex flex-col h-full"
       )}
     >
       {/* Imagen del producto */}
-      <div className="relative w-full h-40 bg-empanada-medium overflow-hidden">
+      <div className="relative w-full h-36 bg-empanada-medium overflow-hidden flex-shrink-0">
         {product.image && !imageError ? (
           <img
             src={product.image}
@@ -61,28 +61,28 @@ export const TotemProductCard = ({ product, onSelect }) => {
       </div>
 
       {/* Información del producto */}
-      <div className="flex-1 p-4 flex flex-col justify-between">
+      <div className="flex-1 p-3 flex flex-col justify-between">
         <div>
-          <h3 className="text-white font-bold text-xl mb-2 line-clamp-2 text-left">
+          <h3 className="text-white font-bold text-lg mb-1.5 line-clamp-2 text-left leading-tight">
             {product.name}
           </h3>
 
           {product.description && (
-            <p className="text-gray-400 text-sm line-clamp-2 text-left">
+            <p className="text-gray-400 text-xs line-clamp-2 text-left">
               {product.description}
             </p>
           )}
         </div>
 
         {/* Precio */}
-        <div className="mt-4 pt-4 border-t border-empanada-light-gray">
+        <div className="mt-3 pt-3 border-t border-empanada-light-gray">
           <div className="flex items-center justify-between">
-            <span className="text-3xl font-bold text-empanada-golden">
+            <span className="text-2xl font-bold text-empanada-golden">
               {formatPrice(product.price)}
             </span>
 
-            <div className="bg-empanada-golden rounded-full p-2 group-hover:scale-110 transition-transform">
-              <Plus className="w-6 h-6 text-empanada-dark" />
+            <div className="bg-empanada-golden rounded-full p-1.5 group-hover:scale-110 transition-transform flex-shrink-0">
+              <Plus className="w-5 h-5 text-empanada-dark" />
             </div>
           </div>
         </div>

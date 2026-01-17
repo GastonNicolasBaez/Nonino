@@ -121,14 +121,8 @@ export const TotemHeader = () => {
       >
         <div className="px-6 py-5">
           <div className="flex items-center justify-between">
-            {/* Botón Menú a la izquierda */}
-            <Button
-              onClick={() => navigate('/totem/menu')}
-              className="bg-empanada-golden hover:bg-empanada-golden/90 text-empanada-dark font-bold text-lg px-6 h-12"
-            >
-              <Menu className="w-5 h-5 mr-2" />
-              Menú
-            </Button>
+            {/* Espacio vacío a la izquierda */}
+            <div className="w-32"></div>
 
             {/* Logo y Nombre centrados */}
             <button
@@ -152,8 +146,15 @@ export const TotemHeader = () => {
               </div>
             </button>
 
-            {/* Espacio vacío para balancear */}
-            <div className="w-32"></div>
+            {/* Botón Menú a la derecha - más sutil */}
+            <Button
+              onClick={() => navigate('/totem/menu')}
+              variant="ghost"
+              className="text-gray-300 hover:text-empanada-golden hover:bg-empanada-golden/10 text-base px-4 h-10"
+            >
+              <Menu className="w-4 h-4 mr-2" />
+              Menú
+            </Button>
           </div>
         </div>
       </motion.header>

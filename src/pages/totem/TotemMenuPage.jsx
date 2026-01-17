@@ -121,121 +121,120 @@ export const TotemMenuPage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-5rem)] flex bg-empanada-dark overflow-hidden">
-      {/* Sidebar izquierdo - Categorías */}
-      <div className="w-36 bg-empanada-golden/90 border-r-4 border-red-700 flex-shrink-0 flex flex-col">
-        <div className="px-3 py-4 border-b-2 border-red-700">
-          <h2 className="text-empanada-dark font-black text-xs text-center uppercase tracking-wider">
-            Categorías
-          </h2>
+    <div className="h-[calc(100vh-5rem)] bg-empanada-dark relative">
+      <div className="h-full flex overflow-hidden pb-24">
+        {/* Sidebar izquierdo - Categorías */}
+        <div className="w-36 bg-empanada-golden/90 border-r-4 border-red-700 flex-shrink-0 flex flex-col">
+          <div className="px-3 py-4 border-b-2 border-red-700">
+            <h2 className="text-empanada-dark font-black text-xs text-center uppercase tracking-wider">
+              Categorías
+            </h2>
+          </div>
+
+          <ScrollArea className="flex-1 py-3">
+            <div className="px-3 space-y-3">
+              {sortedCategorias.map((category) => (
+                <motion.button
+                  key={category.id}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={cn(
+                    "w-full px-3 py-4 rounded-xl font-bold text-xs transition-all text-center border-2 leading-tight",
+                    selectedCategory === category.id
+                      ? "bg-red-700 text-white border-red-900 shadow-xl"
+                      : "bg-empanada-dark/20 text-empanada-dark border-empanada-dark/30 hover:bg-empanada-dark/40"
+                  )}
+                >
+                  {category.name}
+                </motion.button>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
 
-        <ScrollArea className="flex-1 py-3">
-          <div className="px-3 space-y-3">
-            {sortedCategorias.map((category) => (
-              <motion.button
-                key={category.id}
-                whileTap={{ scale: 0.96 }}
-                onClick={() => setSelectedCategory(category.id)}
-                className={cn(
-                  "w-full px-3 py-4 rounded-xl font-bold text-xs transition-all text-center border-2 leading-tight",
-                  selectedCategory === category.id
-                    ? "bg-red-700 text-white border-red-900 shadow-xl"
-                    : "bg-empanada-dark/20 text-empanada-dark border-empanada-dark/30 hover:bg-empanada-dark/40"
-                )}
-              >
-                {category.name}
-              </motion.button>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
-
-      {/* Área principal - Productos */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Grid de productos - Scrollable */}
-        <ScrollArea className="flex-1">
-          <div className="p-4 pb-32">
-            {filteredProducts.length > 0 ? (
-              <motion.div
-                layout
-                className="grid grid-cols-2 gap-4"
-              >
-                {filteredProducts.map((product, index) => (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <TotemProductCard
-                      product={product}
-                      onSelect={handleProductSelect}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center h-full py-20"
-              >
-                <Package className="w-20 h-20 text-gray-600 mb-4" />
-                <p className="text-gray-400 text-2xl">
-                  No hay productos en esta categoría
-                </p>
-              </motion.div>
-            )}
-          </div>
-        </ScrollArea>
-
-        {/* Footer fijo - Carrito */}
-        <div className="bg-empanada-dark border-t-4 border-empanada-golden px-6 py-5 flex-shrink-0 shadow-2xl">
-          <div className="flex items-center justify-between gap-6">
-            {/* Sección izquierda - Contador + Total + Limpiar pedido */}
-            <div className="flex-1 flex items-center gap-4">
-              {/* Contador de productos */}
-              <div className="bg-empanada-golden/90 text-empanada-dark px-5 py-3 rounded-xl border-2 border-empanada-golden shadow-lg flex-shrink-0">
-                <p className="text-base font-black">
-                  {cartItemCount} {cartItemCount === 1 ? 'producto' : 'productos'}
-                </p>
-              </div>
-
-              {/* Total */}
-              <div className="flex-1">
-                <p className="text-4xl font-black text-empanada-golden drop-shadow-lg">
-                  {formatPrice(cartTotal)}
-                </p>
-              </div>
-
-              {/* Botón Limpiar pedido */}
-              {cartItemCount > 0 && (
-                <Button
-                  size="sm"
-                  onClick={handleClearCart}
-                  className="bg-empanada-dark border-2 border-red-600 text-red-500 hover:bg-red-600 hover:text-white whitespace-nowrap font-bold h-12 px-4 flex-shrink-0"
+        {/* Área principal - Productos */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full">
+            <div className="p-4 pb-8">
+              {filteredProducts.length > 0 ? (
+                <motion.div
+                  layout
+                  className="grid grid-cols-2 gap-4"
                 >
-                  Limpiar pedido
-                </Button>
+                  {filteredProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <TotemProductCard
+                        product={product}
+                        onSelect={handleProductSelect}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center justify-center h-full py-20"
+                >
+                  <Package className="w-20 h-20 text-gray-600 mb-4" />
+                  <p className="text-gray-400 text-2xl">
+                    No hay productos en esta categoría
+                  </p>
+                </motion.div>
               )}
             </div>
+          </ScrollArea>
+        </div>
+      </div>
 
-            {/* Botón Ver pedido - más sutil */}
-            <Button
-              size="lg"
-              onClick={handleCheckout}
-              disabled={cartItemCount === 0}
-              className={cn(
-                "h-12 px-8 text-lg font-bold whitespace-nowrap rounded-xl shadow-md transition-all flex-shrink-0",
-                cartItemCount > 0
-                  ? "bg-empanada-golden/80 text-empanada-dark hover:bg-empanada-golden"
-                  : "bg-gray-700 text-gray-500 cursor-not-allowed"
-              )}
-            >
-              Ver pedido
-            </Button>
+      {/* Footer fijo - Carrito (ocupa todo el ancho, sobre el sidebar también) */}
+      <div className="fixed bottom-0 left-0 right-0 bg-empanada-dark border-t-4 border-empanada-golden px-6 py-5 shadow-2xl z-30">
+        <div className="flex items-center justify-between gap-4">
+          {/* Contador de productos */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="bg-empanada-golden/90 text-empanada-dark px-5 py-3 rounded-xl border-2 border-empanada-golden shadow-lg">
+              <p className="text-base font-black">
+                {cartItemCount} {cartItemCount === 1 ? 'producto' : 'productos'}
+              </p>
+            </div>
+
+            {cartItemCount > 0 && (
+              <Button
+                size="sm"
+                onClick={handleClearCart}
+                className="bg-empanada-dark border-2 border-red-600 text-red-500 hover:bg-red-600 hover:text-white whitespace-nowrap font-bold h-12"
+              >
+                Limpiar pedido
+              </Button>
+            )}
           </div>
+
+          {/* Total */}
+          <div className="flex-1 text-center">
+            <p className="text-4xl font-black text-empanada-golden drop-shadow-lg">
+              {formatPrice(cartTotal)}
+            </p>
+          </div>
+
+          {/* Botón Ver pedido */}
+          <Button
+            size="lg"
+            onClick={handleCheckout}
+            disabled={cartItemCount === 0}
+            className={cn(
+              "h-14 px-10 text-xl font-black whitespace-nowrap rounded-xl shadow-xl transition-all",
+              cartItemCount > 0
+                ? "bg-empanada-golden text-empanada-dark hover:bg-empanada-golden/90 hover:scale-105 border-2 border-white/20"
+                : "bg-gray-700 text-gray-500 cursor-not-allowed border-2 border-gray-600"
+            )}
+          >
+            Ver pedido
+          </Button>
         </div>
       </div>
 

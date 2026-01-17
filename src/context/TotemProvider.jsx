@@ -4,12 +4,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { getStorageItem, setStorageItem } from '@/lib/utils';
-import { useCart } from '@/context/CartProvider';
+import { STORAGE_KEYS } from '@/constants';
 
 export const TotemContext = createContext();
 
 export const TotemProvider = ({ children }) => {
-  const { clearCart } = useCart();
   const [config, setConfig] = useState(null);
   const [configLoading, setConfigLoading] = useState(true);
   const [sessionId, setSessionId] = useState(null);
@@ -135,7 +134,13 @@ export const TotemProvider = ({ children }) => {
     });
 
     // Limpiar el carrito antes de redirigir
-    clearCart();
+    // Limpiamos directamente el localStorage en lugar de usar useCart hook
+    setStorageItem(STORAGE_KEYS.CART, {
+      items: [],
+      selectedStore: null,
+      deliveryInfo: null,
+      promoCode: null,
+    });
 
     // Iniciar nueva sesión de pedido (NO de login)
     startNewSession();
@@ -143,7 +148,7 @@ export const TotemProvider = ({ children }) => {
     // Navegar a la página de bienvenida (mantiene la sesión de usuario activa)
     // NO navegar a /totem (login), sino a /totem/welcome
     window.location.href = '/totem/welcome';
-  }, [sessionId, sessionStartTime, isInactive, config, clearCart]);
+  }, [sessionId, sessionStartTime, isInactive, config]);
 
   const updateStore = useCallback((storeId) => {
     setSelectedStore(storeId);

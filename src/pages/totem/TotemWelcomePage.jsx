@@ -40,7 +40,7 @@ export const TotemWelcomePage = () => {
           <img
             src={logoNonino}
             alt="Nonino Logo"
-            className="w-40 h-40 mx-auto drop-shadow-2xl"
+            className="w-[360px] h-[360px] mx-auto drop-shadow-2xl"
           />
         </motion.div>
 

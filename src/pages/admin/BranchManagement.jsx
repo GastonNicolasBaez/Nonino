@@ -26,17 +26,17 @@ import { useSession } from "@/context/SessionProvider";
 
 // función de adaptación para mandar a backend
 function transformSchedule(data, timezone = "America/Argentina/Buenos_Aires") {
-    // Group by dayOfWeek
+    // Agrupar por día incluyendo isActive
     const grouped = data.reduce((acc, item) => {
-        const { dayOfWeek, slotIndex, openAt, closeAt } = item;
+        const { dayOfWeek, slotIndex, openAt, closeAt, isActive } = item;
         if (!acc[dayOfWeek]) {
             acc[dayOfWeek] = [];
         }
-        acc[dayOfWeek].push({ slotIndex, openAt, closeAt });
+        acc[dayOfWeek].push({ slotIndex, openAt, closeAt, isActive: isActive ?? true });
         return acc;
     }, {});
 
-    // Build the target structure
+    // Construir estructura para backend
     return {
         timezone,
         days: Object.entries(grouped).map(([dayOfWeek, slots]) => ({

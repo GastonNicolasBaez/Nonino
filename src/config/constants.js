@@ -205,3 +205,15 @@ export const UI_CONFIG = {
     position: 'bottom-right'
   }
 };
+
+/**
+ * Orden de productos por SKU para el menú público
+ * Tradicionales primero, luego Especiales
+ */
+export const SKU_ORDER = [
+  // Tradicionales
+  'CM', 'CS', 'CT', 'CP', 'AR', 'HCH', 'CHP', 'MO', 'PO', 'PV',
+  'CA', 'QC', 'JQ', 'RJ', 'V', 'H', 'CQ', 'ES', 'Q', 'SV',
+  // Especiales
+  'LA', 'A', 'CH', 'CI', 'PC', 'CO', 'ME', 'TR', 'C', 'QP', 'OS'
+];

@@ -26,9 +26,9 @@ export const TotemCart = ({ onClose }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-empanada-medium">
+    <div className="h-full flex flex-col bg-empanada-medium max-h-[90vh]">
       {/* Header del carrito */}
-      <div className="p-4 border-b border-empanada-light-gray bg-empanada-dark">
+      <div className="p-4 border-b border-empanada-light-gray bg-empanada-dark flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ShoppingCart className="w-7 h-7 text-empanada-golden" />
@@ -54,8 +54,8 @@ export const TotemCart = ({ onClose }) => {
         </div>
       </div>
 
-      {/* Items del carrito */}
-      <ScrollArea className="flex-1 px-4">
+      {/* Items del carrito con scroll */}
+      <div className="flex-1 overflow-y-auto px-4 min-h-0">
         <AnimatePresence mode="popLayout">
           {items.length === 0 ? (
             <motion.div
@@ -165,10 +165,10 @@ export const TotemCart = ({ onClose }) => {
             </div>
           )}
         </AnimatePresence>
-      </ScrollArea>
+      </div>
 
       {/* Footer con total y botón de pago */}
-      <div className="p-6 border-t-2 border-empanada-golden bg-empanada-dark space-y-4">
+      <div className="p-6 border-t-2 border-empanada-golden bg-empanada-dark space-y-4 flex-shrink-0">
         {/* Total */}
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-white">TOTAL</span>

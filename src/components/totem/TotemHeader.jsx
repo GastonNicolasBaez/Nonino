@@ -218,7 +218,7 @@ export const TotemHeader = () => {
               size="lg"
               onClick={handleCancelLogout}
               disabled={isValidating}
-              className="text-base px-6 py-6 border-empanada-light-gray text-gray-300 hover:bg-empanada-medium"
+              className="bg-empanada-medium text-base px-6 py-6 border-empanada-light-gray text-gray-300 hover:bg-empanada-dark"
             >
               Cancelar
             </Button>

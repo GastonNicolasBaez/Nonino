@@ -302,7 +302,7 @@ export const TotemMenuPage = () => {
               variant="outline"
               size="lg"
               onClick={() => setShowClearCartDialog(false)}
-              className="text-lg px-8 py-6 border-empanada-light-gray text-gray-300 hover:bg-empanada-medium"
+              className="bg-empanada-medium text-lg px-8 py-6 border-empanada-light-gray text-gray-300 hover:bg-empanada-dark"
             >
               Cancelar
             </Button>

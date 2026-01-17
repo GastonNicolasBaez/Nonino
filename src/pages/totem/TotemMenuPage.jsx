@@ -259,13 +259,13 @@ export const TotemMenuPage = () => {
 
       {/* Modal de confirmación para limpiar carrito */}
       <Dialog open={showClearCartDialog} onOpenChange={setShowClearCartDialog}>
-        <DialogContent className="bg-empanada-dark border-empanada-golden text-white max-w-md">
+        <DialogContent className="bg-white border-2 border-gray-200 text-gray-900 max-w-md">
           <DialogHeader>
             <DialogTitle className="text-2xl text-empanada-golden flex items-center gap-2">
               <Trash2 className="w-7 h-7" />
               Limpiar pedido
             </DialogTitle>
-            <DialogDescription className="text-gray-300 text-lg pt-2">
+            <DialogDescription className="text-gray-600 text-lg pt-2">
               ¿Estás seguro que querés eliminar todos los productos del pedido?
             </DialogDescription>
           </DialogHeader>
@@ -275,15 +275,14 @@ export const TotemMenuPage = () => {
               variant="outline"
               size="lg"
               onClick={() => setShowClearCartDialog(false)}
-              className="text-lg px-8 py-6 border-gray-500 text-gray-300 hover:bg-gray-700"
+              className="text-lg px-8 py-6 border-gray-300 text-gray-700 hover:bg-gray-100"
             >
               Cancelar
             </Button>
             <Button
-              variant="destructive"
               size="lg"
               onClick={handleConfirmClearCart}
-              className="bg-red-600 hover:bg-red-700 text-lg px-8 py-6"
+              className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-6"
             >
               Sí, limpiar pedido
             </Button>

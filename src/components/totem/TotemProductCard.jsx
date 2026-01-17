@@ -24,15 +24,15 @@ export const TotemProductCard = ({ product, onSelect }) => {
       whileTap={{ scale: 0.97 }}
       onClick={() => onSelect(product)}
       className={cn(
-        "relative group bg-empanada-dark rounded-2xl overflow-hidden",
-        "border-3 border-empanada-light-gray hover:border-empanada-golden",
+        "relative group bg-empanada-medium rounded-2xl overflow-hidden",
+        "border-2 border-empanada-golden/30 hover:border-empanada-golden",
         "transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-empanada-golden/30",
         "flex flex-col w-full"
       )}
       style={{ height: '360px' }}
     >
       {/* Imagen del producto - Altura fija con aspect ratio forzado */}
-      <div className="relative w-full bg-empanada-dark overflow-hidden flex-shrink-0" style={{ height: '200px' }}>
+      <div className="relative w-full bg-empanada-medium overflow-hidden flex-shrink-0" style={{ height: '200px' }}>
         {product.image && !imageError ? (
           <img
             src={product.image}
@@ -41,7 +41,7 @@ export const TotemProductCard = ({ product, onSelect }) => {
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-empanada-dark">
+          <div className="absolute inset-0 flex items-center justify-center bg-empanada-medium">
             <div className="text-empanada-golden text-7xl font-bold opacity-20">
               {product.name.charAt(0)}
             </div>
@@ -62,7 +62,7 @@ export const TotemProductCard = ({ product, onSelect }) => {
       </div>
 
       {/* Información del producto - Altura fija para el resto */}
-      <div className="bg-empanada-dark flex flex-col" style={{ height: '160px' }}>
+      <div className="bg-empanada-medium flex flex-col" style={{ height: '160px' }}>
         {/* Descripción - Ocupa espacio disponible */}
         <div className="flex-1 px-4 pt-4 pb-2 flex items-center justify-center min-h-0">
           {product.description ? (

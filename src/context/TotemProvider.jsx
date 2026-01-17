@@ -4,10 +4,12 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { getStorageItem, setStorageItem } from '@/lib/utils';
+import { useCart } from '@/context/CartProvider';
 
 export const TotemContext = createContext();
 
 export const TotemProvider = ({ children }) => {
+  const { clearCart } = useCart();
   const [config, setConfig] = useState(null);
   const [configLoading, setConfigLoading] = useState(true);
   const [sessionId, setSessionId] = useState(null);
@@ -82,6 +84,10 @@ export const TotemProvider = ({ children }) => {
   useEffect(() => {
     if (!config) return;
 
+    // Si estamos en /totem/welcome, no correr el timer de inactividad
+    const isOnWelcomePage = window.location.pathname === '/totem/welcome';
+    if (isOnWelcomePage) return;
+
     const checkInactivity = setInterval(() => {
       const now = Date.now();
       const timeSinceLastActivity = (now - lastActivityTime) / 1000; // segundos
@@ -128,13 +134,16 @@ export const TotemProvider = ({ children }) => {
       duration: Date.now() - sessionStartTime
     });
 
+    // Limpiar el carrito antes de redirigir
+    clearCart();
+
     // Iniciar nueva sesión de pedido (NO de login)
     startNewSession();
 
     // Navegar a la página de bienvenida (mantiene la sesión de usuario activa)
     // NO navegar a /totem (login), sino a /totem/welcome
     window.location.href = '/totem/welcome';
-  }, [sessionId, sessionStartTime, isInactive, config]);
+  }, [sessionId, sessionStartTime, isInactive, config, clearCart]);
 
   const updateStore = useCallback((storeId) => {
     setSelectedStore(storeId);

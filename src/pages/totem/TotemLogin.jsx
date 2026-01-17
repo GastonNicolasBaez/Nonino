@@ -28,6 +28,30 @@ export function TotemLogin() {
       if (session.userData.isLocal) {
         // Marcar como sesión de totem persistente
         localStorage.setItem('totem_session_persistent', 'true');
+
+        // Activar modo pantalla completa
+        const enterFullscreen = async () => {
+          try {
+            if (document.documentElement.requestFullscreen) {
+              await document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+              // Safari
+              await document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+              // Firefox
+              await document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+              // IE/Edge
+              await document.documentElement.msRequestFullscreen();
+            }
+            console.log('[TOTEM] Modo pantalla completa activado');
+          } catch (error) {
+            console.warn('[TOTEM] No se pudo activar pantalla completa:', error);
+            // Continuar de todos modos, no es crítico
+          }
+        };
+
+        enterFullscreen();
         navigate('/totem/welcome');
       } else {
         // Si es ADMIN o FABRICA, no permitir acceso

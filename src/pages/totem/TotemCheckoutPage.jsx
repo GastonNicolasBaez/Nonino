@@ -423,7 +423,6 @@ export const TotemCheckoutPage = () => {
           </Button>
         </div>
       </div>
-    </div>
   );
 };
 

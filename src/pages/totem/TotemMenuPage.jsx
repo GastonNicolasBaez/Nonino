@@ -257,7 +257,7 @@ export const TotemMenuPage = () => {
         onClose={handleCloseModal}
       />
 
-      {/* Modal del carrito - desliza desde arriba */}
+      {/* Modal del carrito - desliza desde abajo */}
       <AnimatePresence>
         {showCartModal && (
           <>
@@ -270,13 +270,13 @@ export const TotemMenuPage = () => {
               onClick={() => setShowCartModal(false)}
             />
 
-            {/* Modal que se desliza desde arriba */}
+            {/* Modal que se desliza desde abajo */}
             <motion.div
-              initial={{ y: '-100%' }}
+              initial={{ y: '100%' }}
               animate={{ y: 0 }}
-              exit={{ y: '-100%' }}
+              exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed top-0 left-0 right-0 z-50 bg-empanada-dark max-h-[90vh] overflow-hidden border-b-4 border-empanada-golden shadow-2xl"
+              className="fixed bottom-0 left-0 right-0 z-50 bg-empanada-dark max-h-[90vh] overflow-hidden border-t-4 border-empanada-golden shadow-2xl"
             >
               <TotemCart onClose={() => setShowCartModal(false)} />
             </motion.div>
@@ -286,13 +286,13 @@ export const TotemMenuPage = () => {
 
       {/* Modal de confirmación para limpiar carrito */}
       <Dialog open={showClearCartDialog} onOpenChange={setShowClearCartDialog}>
-        <DialogContent className="bg-white border-2 border-gray-200 text-gray-900 max-w-md">
+        <DialogContent className="bg-empanada-dark border-empanada-golden text-white max-w-md">
           <DialogHeader>
             <DialogTitle className="text-2xl text-empanada-golden flex items-center gap-2">
               <Trash2 className="w-7 h-7" />
               Limpiar pedido
             </DialogTitle>
-            <DialogDescription className="text-gray-600 text-lg pt-2">
+            <DialogDescription className="text-gray-300 text-lg pt-2">
               ¿Estás seguro que querés eliminar todos los productos del pedido?
             </DialogDescription>
           </DialogHeader>
@@ -302,7 +302,7 @@ export const TotemMenuPage = () => {
               variant="outline"
               size="lg"
               onClick={() => setShowClearCartDialog(false)}
-              className="text-lg px-8 py-6 border-gray-300 text-gray-700 hover:bg-gray-100"
+              className="text-lg px-8 py-6 border-empanada-light-gray text-gray-300 hover:bg-empanada-medium"
             >
               Cancelar
             </Button>

@@ -161,12 +161,12 @@ export const TotemHeader = () => {
 
       {/* Dialog de logout secreto */}
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent className="bg-white border-2 border-gray-200 text-gray-900">
+        <DialogContent className="bg-empanada-dark border-empanada-golden text-white">
           <DialogHeader>
             <DialogTitle className="text-2xl text-empanada-golden">
               🔒 Cerrar sesión del totem
             </DialogTitle>
-            <DialogDescription className="text-gray-600 text-base">
+            <DialogDescription className="text-gray-300 text-base">
               Confirmá tu identidad para cerrar sesión
             </DialogDescription>
           </DialogHeader>
@@ -174,20 +174,20 @@ export const TotemHeader = () => {
           <div className="py-4 space-y-4">
             {/* Mostrar email del usuario */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-400 mb-2">
                 Usuario
               </label>
               <Input
                 type="text"
                 value={session.userData?.email || ''}
                 disabled
-                className="bg-gray-100 text-gray-500 border-gray-300 text-base h-12 cursor-not-allowed"
+                className="bg-empanada-dark text-gray-400 border-empanada-light-gray text-base h-12 cursor-not-allowed"
               />
             </div>
 
             {/* Input de contraseña */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-400 mb-2">
                 Contraseña
               </label>
               <Input
@@ -203,11 +203,11 @@ export const TotemHeader = () => {
                   }
                 }}
                 placeholder="Ingresá tu contraseña"
-                className="bg-white text-gray-900 border-gray-300 text-base h-12"
+                className="bg-empanada-medium text-white border-empanada-light-gray text-base h-12"
                 autoFocus
               />
               {passwordError && (
-                <p className="text-red-500 text-sm mt-2">{passwordError}</p>
+                <p className="text-red-400 text-sm mt-2">{passwordError}</p>
               )}
             </div>
           </div>
@@ -218,7 +218,7 @@ export const TotemHeader = () => {
               size="lg"
               onClick={handleCancelLogout}
               disabled={isValidating}
-              className="text-base px-6 py-6 border-gray-300 text-gray-700 hover:bg-gray-100"
+              className="text-base px-6 py-6 border-empanada-light-gray text-gray-300 hover:bg-empanada-medium"
             >
               Cancelar
             </Button>

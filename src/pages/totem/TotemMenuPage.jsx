@@ -192,44 +192,45 @@ export const TotemMenuPage = () => {
 
         {/* Footer fijo - Carrito */}
         <div className="bg-empanada-dark border-t-4 border-empanada-golden px-6 py-5 flex-shrink-0 shadow-2xl">
-          <div className="flex items-center justify-between gap-4">
-            {/* Contador de productos */}
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="bg-empanada-golden/90 text-empanada-dark px-5 py-3 rounded-xl border-2 border-empanada-golden shadow-lg">
+          <div className="flex items-center justify-between gap-6">
+            {/* Sección izquierda - Contador + Total + Limpiar pedido */}
+            <div className="flex-1 flex items-center gap-4">
+              {/* Contador de productos */}
+              <div className="bg-empanada-golden/90 text-empanada-dark px-5 py-3 rounded-xl border-2 border-empanada-golden shadow-lg flex-shrink-0">
                 <p className="text-base font-black">
                   {cartItemCount} {cartItemCount === 1 ? 'producto' : 'productos'}
                 </p>
               </div>
 
+              {/* Total */}
+              <div className="flex-1">
+                <p className="text-4xl font-black text-empanada-golden drop-shadow-lg">
+                  {formatPrice(cartTotal)}
+                </p>
+              </div>
+
+              {/* Botón Limpiar pedido */}
               {cartItemCount > 0 && (
                 <Button
-                  variant="outline"
                   size="sm"
                   onClick={handleClearCart}
-                  className="border-2 border-red-600 text-red-500 hover:bg-red-600 hover:text-white whitespace-nowrap font-bold h-12"
+                  className="bg-empanada-dark border-2 border-red-600 text-red-500 hover:bg-red-600 hover:text-white whitespace-nowrap font-bold h-12 px-4 flex-shrink-0"
                 >
                   Limpiar pedido
                 </Button>
               )}
             </div>
 
-            {/* Total */}
-            <div className="flex-1 text-center">
-              <p className="text-4xl font-black text-empanada-golden drop-shadow-lg">
-                {formatPrice(cartTotal)}
-              </p>
-            </div>
-
-            {/* Botón Ver pedido */}
+            {/* Botón Ver pedido - más sutil */}
             <Button
               size="lg"
               onClick={handleCheckout}
               disabled={cartItemCount === 0}
               className={cn(
-                "h-14 px-10 text-xl font-black whitespace-nowrap rounded-xl shadow-xl transition-all",
+                "h-12 px-8 text-lg font-bold whitespace-nowrap rounded-xl shadow-md transition-all flex-shrink-0",
                 cartItemCount > 0
-                  ? "bg-empanada-golden text-empanada-dark hover:bg-empanada-golden/90 hover:scale-105 border-2 border-white/20"
-                  : "bg-gray-700 text-gray-500 cursor-not-allowed border-2 border-gray-600"
+                  ? "bg-empanada-golden/80 text-empanada-dark hover:bg-empanada-golden"
+                  : "bg-gray-700 text-gray-500 cursor-not-allowed"
               )}
             >
               Ver pedido

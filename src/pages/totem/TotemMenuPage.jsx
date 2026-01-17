@@ -13,6 +13,7 @@ import { TotemCart } from '@/components/totem/TotemCart';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Package, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export const TotemMenuPage = () => {
   const navigate = useNavigate();

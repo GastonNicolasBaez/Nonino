@@ -123,25 +123,25 @@ export const TotemMenuPage = () => {
   return (
     <div className="h-[calc(100vh-3.5rem)] flex bg-empanada-dark overflow-hidden">
       {/* Sidebar izquierdo - Categorías */}
-      <div className="w-32 bg-empanada-golden/90 border-r-4 border-red-700 flex-shrink-0 flex flex-col">
-        <div className="p-3 border-b-2 border-red-700">
-          <h2 className="text-empanada-dark font-black text-sm text-center uppercase">
+      <div className="w-36 bg-empanada-golden/90 border-r-4 border-red-700 flex-shrink-0 flex flex-col">
+        <div className="px-3 py-4 border-b-2 border-red-700">
+          <h2 className="text-empanada-dark font-black text-xs text-center uppercase tracking-wider">
             Categorías
           </h2>
         </div>
 
-        <ScrollArea className="flex-1">
-          <div className="p-2 space-y-2">
+        <ScrollArea className="flex-1 py-3">
+          <div className="px-3 space-y-3">
             {sortedCategorias.map((category) => (
               <motion.button
                 key={category.id}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setSelectedCategory(category.id)}
                 className={cn(
-                  "w-full p-3 rounded-lg font-bold text-sm transition-all text-center border-2",
+                  "w-full px-3 py-4 rounded-xl font-bold text-xs transition-all text-center border-2 leading-tight",
                   selectedCategory === category.id
-                    ? "bg-red-700 text-white border-red-900 shadow-lg"
-                    : "bg-empanada-dark/20 text-empanada-dark border-empanada-dark/30 hover:bg-empanada-dark/30"
+                    ? "bg-red-700 text-white border-red-900 shadow-xl"
+                    : "bg-empanada-dark/20 text-empanada-dark border-empanada-dark/30 hover:bg-empanada-dark/40"
                 )}
               >
                 {category.name}

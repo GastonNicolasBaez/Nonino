@@ -74,32 +74,32 @@ export const TotemHeader = () => {
     setPasswordError('');
 
     try {
-      // Validar contraseña con el backend usando el email del usuario actual
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: session.userData?.email,
-          password: password,
-        }),
+      // Intentar hacer login nuevamente para validar la contraseña
+      // Si el login es exitoso, significa que la contraseña es correcta
+      const currentEmail = session.userData?.email;
+
+      if (!currentEmail) {
+        setPasswordError('No se pudo obtener el email del usuario');
+        setIsValidating(false);
+        return;
+      }
+
+      // Usar el método de login del SessionProvider
+      await session.login({
+        email: currentEmail,
+        password: password,
       });
 
-      if (response.ok) {
-        // Contraseña correcta - cerrar sesión
-        clearCart();
-        session.logoutForced();
-        setShowLogoutDialog(false);
-        setPassword('');
-        navigate('/totem');
-      } else {
-        // Contraseña incorrecta
-        setPasswordError('Contraseña incorrecta');
-      }
+      // Si llegamos aquí, la contraseña es correcta
+      clearCart();
+      session.logoutForced();
+      localStorage.removeItem('totem_session_persistent');
+      setShowLogoutDialog(false);
+      setPassword('');
+      navigate('/totem');
     } catch (error) {
       console.error('[TOTEM] Error validating password:', error);
-      setPasswordError('Error al validar contraseña');
+      setPasswordError('Contraseña incorrecta');
     } finally {
       setIsValidating(false);
     }
@@ -152,30 +152,49 @@ export const TotemHeader = () => {
               🔒 Cerrar sesión del totem
             </DialogTitle>
             <DialogDescription className="text-gray-300 text-base">
-              Ingresá tu contraseña para cerrar sesión
+              Confirmá tu identidad para cerrar sesión
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-4">
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setPasswordError('');
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleLogoutSubmit();
-                }
-              }}
-              placeholder="Contraseña"
-              className="bg-empanada-medium text-white border-empanada-light-gray text-lg h-14"
-              autoFocus
-            />
-            {passwordError && (
-              <p className="text-red-400 text-sm mt-2">{passwordError}</p>
-            )}
+          <div className="py-4 space-y-4">
+            {/* Mostrar email del usuario */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-2">
+                Usuario
+              </label>
+              <Input
+                type="text"
+                value={session.userData?.email || ''}
+                disabled
+                className="bg-empanada-dark text-gray-400 border-empanada-light-gray text-base h-12 cursor-not-allowed"
+              />
+            </div>
+
+            {/* Input de contraseña */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-400 mb-2">
+                Contraseña
+              </label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setPasswordError('');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleLogoutSubmit();
+                  }
+                }}
+                placeholder="Ingresá tu contraseña"
+                className="bg-empanada-medium text-white border-empanada-light-gray text-base h-12"
+                autoFocus
+              />
+              {passwordError && (
+                <p className="text-red-400 text-sm mt-2">{passwordError}</p>
+              )}
+            </div>
           </div>
 
           <DialogFooter className="gap-3 mt-2">

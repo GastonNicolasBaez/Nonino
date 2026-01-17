@@ -27,20 +27,21 @@ export const TotemProductCard = ({ product, onSelect }) => {
         "relative group bg-empanada-medium rounded-2xl overflow-hidden",
         "border-3 border-empanada-light-gray hover:border-empanada-golden",
         "transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-empanada-golden/30",
-        "flex flex-col h-[340px]"
+        "flex flex-col w-full"
       )}
+      style={{ height: '360px' }}
     >
-      {/* Imagen del producto */}
-      <div className="relative w-full h-48 bg-empanada-dark overflow-hidden flex-shrink-0">
+      {/* Imagen del producto - Altura fija con aspect ratio forzado */}
+      <div className="relative w-full bg-empanada-dark overflow-hidden flex-shrink-0" style={{ height: '200px' }}>
         {product.image && !imageError ? (
           <img
             src={product.image}
             alt={product.name}
             onError={handleImageError}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-empanada-dark">
+          <div className="absolute inset-0 flex items-center justify-center bg-empanada-dark">
             <div className="text-empanada-golden text-7xl font-bold opacity-20">
               {product.name.charAt(0)}
             </div>
@@ -60,25 +61,31 @@ export const TotemProductCard = ({ product, onSelect }) => {
         </div>
       </div>
 
-      {/* Información del producto */}
-      <div className="flex-1 bg-empanada-dark p-4 flex flex-col">
-        {/* Descripción */}
-        <div className="flex-1 mb-3">
-          {product.description && (
-            <p className="text-gray-300 text-sm line-clamp-2 text-center leading-snug">
+      {/* Información del producto - Altura fija para el resto */}
+      <div className="bg-empanada-dark flex flex-col" style={{ height: '160px' }}>
+        {/* Descripción - Ocupa espacio disponible */}
+        <div className="flex-1 px-4 pt-4 pb-2 flex items-center justify-center min-h-0">
+          {product.description ? (
+            <p className="text-gray-300 text-sm line-clamp-3 text-center leading-snug">
               {product.description}
+            </p>
+          ) : (
+            <p className="text-gray-500 text-sm text-center italic">
+              Sin descripción
             </p>
           )}
         </div>
 
-        {/* Precio y botón */}
-        <div className="flex items-center justify-between gap-3 pt-3 border-t-2 border-empanada-golden/30">
-          <span className="text-2xl font-black text-empanada-golden tracking-tight">
-            {formatPrice(product.price)}
-          </span>
+        {/* Precio y botón - Altura fija al fondo */}
+        <div className="px-4 pb-4">
+          <div className="flex items-center justify-between gap-3 pt-3 border-t-2 border-empanada-golden/30">
+            <span className="text-2xl font-black text-empanada-golden tracking-tight">
+              {formatPrice(product.price)}
+            </span>
 
-          <div className="bg-empanada-golden rounded-full p-2 group-hover:scale-110 group-hover:rotate-90 transition-all duration-300 flex-shrink-0 shadow-lg">
-            <Plus className="w-6 h-6 text-empanada-dark stroke-[3]" />
+            <div className="bg-empanada-golden rounded-full p-2 group-hover:scale-110 group-hover:rotate-90 transition-all duration-300 flex-shrink-0 shadow-lg">
+              <Plus className="w-6 h-6 text-empanada-dark stroke-[3]" />
+            </div>
           </div>
         </div>
       </div>

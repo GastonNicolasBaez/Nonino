@@ -257,26 +257,30 @@ export const TotemMenuPage = () => {
         onClose={handleCloseModal}
       />
 
-      {/* Modal del carrito */}
+      {/* Modal del carrito - desliza desde arriba */}
       <AnimatePresence>
         {showCartModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6"
-            onClick={() => setShowCartModal(false)}
-          >
+          <>
+            {/* Backdrop */}
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-empanada-dark rounded-3xl max-w-2xl w-full h-[80vh] overflow-hidden border-2 border-empanada-golden shadow-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/60"
+              onClick={() => setShowCartModal(false)}
+            />
+
+            {/* Modal que se desliza desde arriba */}
+            <motion.div
+              initial={{ y: '-100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '-100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed top-0 left-0 right-0 z-50 bg-empanada-dark max-h-[90vh] overflow-hidden border-b-4 border-empanada-golden shadow-2xl"
             >
               <TotemCart onClose={() => setShowCartModal(false)} />
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
 

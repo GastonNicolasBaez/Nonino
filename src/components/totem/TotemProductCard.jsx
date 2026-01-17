@@ -25,7 +25,7 @@ export const TotemProductCard = ({ product, onSelect }) => {
       onClick={() => onSelect(product)}
       className={cn(
         "relative group bg-empanada-dark rounded-2xl overflow-hidden",
-        "border-4 border-empanada-golden/30 hover:border-empanada-golden",
+        "border-3 border-empanada-light-gray hover:border-empanada-golden",
         "transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-empanada-golden/30",
         "flex flex-col w-full"
       )}

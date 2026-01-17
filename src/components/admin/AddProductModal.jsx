@@ -198,6 +198,10 @@ export function AddProductModal({
             newErrors.price = 'El precio debe ser mayor a 0';
         }
 
+        if (!formData.sku.trim()) {
+            newErrors.sku = 'El SKU es requerido';
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -276,7 +280,7 @@ export function AddProductModal({
         }
 
         const productData = {
-            sku: formData.sku || `SKU-${Date.now()}`,
+            sku: formData.sku.trim().toUpperCase(),
             name: formData.name.trim(),
             description: formData.description.trim(),
             category: formData.category,
@@ -483,15 +487,21 @@ export function AddProductModal({
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">
-                                                    SKU/Código
+                                                    SKU/Código *
                                                 </label>
                                                 <Input
                                                     value={formData.sku}
-                                                    onChange={(e) => handleInputChange('sku', e.target.value)}
-                                                    placeholder="Se generará automáticamente"
-                                                    className="admin-input"
+                                                    onChange={(e) => handleInputChange('sku', e.target.value.toUpperCase())}
+                                                    placeholder="Ej: CM, CS, AR..."
+                                                    className={`admin-input ${errors.sku ? 'border-red-500' : ''}`}
                                                     disabled={isLoading}
                                                 />
+                                                {errors.sku && (
+                                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                        <AlertTriangle className="w-3 h-3" />
+                                                        {errors.sku}
+                                                    </p>
+                                                )}
                                             </div>
 
                                             <div>

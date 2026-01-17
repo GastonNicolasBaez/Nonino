@@ -31,9 +31,10 @@ import { useAdminData } from "@/context/AdminDataProvider";
 import { useSession } from "@/context/SessionProvider";
 
 const unitOptions = [
-        { value: "g", label: "por Peso (gramos, kilogramos)" },
-        { value: "ml", label: "por Volumen (litros, mililitros)" },
-      ];
+    { value: "g", label: "por Peso (gramos, kilogramos)" },
+    { value: "ml", label: "por Volumen (litros, mililitros)" },
+    { value: "u", label: "por Unidad" },
+];
 
 export function MaterialManagement() {
 
@@ -189,7 +190,7 @@ export function MaterialManagement() {
             variant: "outline",
             className: "h-9 px-4 text-sm font-medium",
             onClick: () => {
-                
+
             },
             icon: <RefreshCcw className="w-4 h-4 mr-2" />
         }
@@ -241,14 +242,6 @@ export function MaterialManagement() {
                                     className="pl-10"
                                 />
                             </div>
-                            {/* <div className="w-48">
-                <CustomSelect
-                  value={categoryFilter}
-                  onChange={setCategoryFilter}
-                  options={categoryFilterOptions}
-                  placeholder="Filtrar por categoría"
-                />
-              </div> */}
                         </div>
                     </div>
 
@@ -266,73 +259,63 @@ export function MaterialManagement() {
                                 <thead>
                                     <tr className="border-b">
                                         <th className="text-left p-4 font-medium">Material</th>
-                                        {/* <th className="text-left p-4 font-medium">Categoría</th>
-                    <th className="text-left p-4 font-medium">Stock Actual</th>
-                    <th className="text-left p-4 font-medium">Stock Mín.</th>
-                    <th className="text-left p-4 font-medium">Proveedor</th> */}
                                         <th className="text-left p-4 font-medium">Costo por unidad</th>
-                                        {/* <th className="text-left p-4 font-medium">Estado</th> */}
                                         <th className="text-left p-4 font-medium">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredMaterials.map((item) => (
-                                        <tr
-                                            key={item.id}
-                                            className="border-b admin-table-row"
-                                        >
-                                            <td className="p-4">
-                                                <div>
-                                                    <p className="font-medium">{item.name}</p>
-                                                </div>
-                                            </td>
-                                            {/* <td className="p-4">
-                        <Badge variant="outline">{item.category}</Badge>
-                      </td> */}
-                                            {/* <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{item.currentStock}</span>
-                          <span className="text-sm text-muted-foreground">{item.unit}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <span className="text-sm">{item.minStock} {item.unit}</span>
-                      </td>
-                      <td className="p-4">
-                        <span className="text-sm">{item.supplier}</span>
-                      </td> */}
-                                            <td className="p-4 flex items-center gap-2">
-                                                <span className="font-medium">{formatPrice(item.unitPrice*1000)}</span>
-                                                <p className="text-sm text-muted-foreground">/ {item.unit == 'g' ? 'kg' : 'litro'}</p>
-                                                {/* <span className="text-sm text-muted-foreground">/{item.unit}</span> */}
-                                            </td>
-                                            {/* <td className="p-4">
-                        <div className={getStatusClasses(item.status)}>
-                          {getStatusText(item.status)}
-                        </div>
-                      </td> */}
-                                            <td className="p-4" style={{ width: '1px' }}>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        disabled
-                                                        onClick={() => handleUpdateStock(item.id, item.currentStock)}
-                                                    >
-                                                        <Edit className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        disabled
-                                                        onClick={() => handleDeleteItem(item.id)}
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {filteredMaterials.map((item) => {
+                                        var itemUnitFullName = '';
+                                        switch (item.unit) {
+                                            case 'g':
+                                                itemUnitFullName = "kg";
+                                                break;
+                                            case 'l':
+                                                itemUnitFullName = "litro";
+                                                break;
+                                            case 'u':
+                                                itemUnitFullName = "unidad";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        return (
+                                            <tr
+                                                key={item.id}
+                                                className="border-b admin-table-row"
+                                            >
+                                                <td className="p-4">
+                                                    <div>
+                                                        <p className="font-medium">{item.name}</p>
+                                                    </div>
+                                                </td>
+                                                <td className="p-4 flex items-center gap-2">
+                                                    <span className="font-medium">{item.unit == 'u' ? item.unitPrice : formatPrice(item.unitPrice * 1000)}</span>
+                                                    <p className="text-sm text-muted-foreground">/ {itemUnitFullName}</p>
+                                                </td>
+                                                <td className="p-4" style={{ width: '1px' }}>
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            disabled
+                                                            onClick={() => handleUpdateStock(item.id, item.currentStock)}
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="destructive"
+                                                            size="sm"
+                                                            disabled
+                                                            onClick={() => handleDeleteItem(item.id)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
                                 </tbody>
                             </table>
                         </div>
@@ -346,7 +329,8 @@ export function MaterialManagement() {
                     onClose={() => setShowAddModal(false)}
                     onSave={async (newItem) => {
                         // setMaterials(prev => [...prev, newItem]);
-                        newItem.unitPrice /= 1000;
+                        if (newItem.unit != 'u')
+                            newItem.unitPrice /= 1000;
                         await callCrearMaterial({
                             _material: newItem,
                             _accessToken: session.userData.accessToken,
@@ -435,7 +419,7 @@ function AddMaterialModal({ onClose, onSave }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio por {formData.unit == 'g' ? 'kilo' : 'litro'} *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Precio por {formData.unit == 'g' ? 'kilo' : (formData.unit == 'l' ? 'litro' : 'unidad')} *</label>
                                 <Input
                                     type='number'
                                     value={formData.unitPrice}
@@ -445,110 +429,9 @@ function AddMaterialModal({ onClose, onSave }) {
                                     className="admin-input"
                                 />
                             </div>
-                            {/* <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Categoría *</label>
-                      <CustomSelect
-                        value={formData.category}
-                        onChange={(value) => setFormData({ ...formData, category: value })}
-                        options={categoryOptions}
-                        placeholder="Seleccionar categoría"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Unidad de Medida *</label>
-                      <CustomSelect
-                        value={formData.unit}
-                        onChange={(value) => setFormData({ ...formData, unit: value })}
-                        options={unitOptions}
-                        placeholder="Seleccionar unidad"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Proveedor</label>
-                      <Input
-                        value={formData.supplier}
-                        onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
-                        placeholder="Nombre del proveedor"
-                        className="admin-input"
-                      />
-                    </div> */}
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Información de Stock */}
-                {/* <Card className="">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                    <TrendingUp className="w-5 h-5" />
-                    Gestión de Stock
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Stock Actual</label>
-                      <Input
-                        type="number"
-                        value={formData.currentStock}
-                        onChange={(e) => setFormData({ ...formData, currentStock: parseInt(e.target.value) || 0 })}
-                        placeholder="0"
-                        min="0"
-                        className="admin-input"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Stock Mínimo</label>
-                      <Input
-                        type="number"
-                        value={formData.minStock}
-                        onChange={(e) => setFormData({ ...formData, minStock: parseInt(e.target.value) || 0 })}
-                        placeholder="0"
-                        min="0"
-                        className="admin-input"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Stock Máximo</label>
-                      <Input
-                        type="number"
-                        value={formData.maxStock}
-                        onChange={(e) => setFormData({ ...formData, maxStock: parseInt(e.target.value) || 0 })}
-                        placeholder="0"
-                        min="0"
-                        className="admin-input"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-white">Costo por Unidad</label>
-                    <Input
-                      type="number"
-                      value={formData.cost}
-                      onChange={(e) => setFormData({ ...formData, cost: parseFloat(e.target.value) || 0 })}
-                      placeholder="0.00"
-                      min="0"
-                      step="0.01"
-                      className="bg-white dark:bg-empanada-medium border-gray-300 dark:border-empanada-light-gray text-gray-900 dark:text-white"
-                    />
-                  </div>
-                </CardContent>
-              </Card> */}
-
-                {/* Notas */}
-                {/* <Card className="">
-                <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-white">Notas Adicionales</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <textarea
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    placeholder="Notas adicionales sobre el material..."
-                    className="w-full h-24 border-2 border-gray-300 dark:border-empanada-light-gray bg-white dark:bg-empanada-dark text-gray-800 dark:text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-empanada-golden resize-none"
-                  />
-                </CardContent>
-              </Card> */}
             </div>
         </BrandedModal>
     );

@@ -14,6 +14,7 @@ import { StoreDropdown } from "@/components/menu/StoreDropdown";
 import { FilterBottomSheet, FilterButton } from "@/components/menu/mobile/FilterBottomSheet";
 import { ComboCarousel } from "@/components/menu/mobile/ComboCardMobile";
 import { useCart } from "@/context/CartProvider";
+import { sortProductsBySku } from "@/utils/productUtils";
 
 export function MenuMobile({
     products,
@@ -24,7 +25,6 @@ export function MenuMobile({
 }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
-    const [sortBy, setSortBy] = useState("popular");
     const [showFilterSheet, setShowFilterSheet] = useState(false);
     // const [selectedProduct, setSelectedProduct] = useState(null);
     // const [showModal, setShowModal] = useState(false);
@@ -40,45 +40,29 @@ export function MenuMobile({
             .slice(0, 6); // Mostrar máximo 6
     }, [products]);
 
-    // Filtrar y ordenar productos
+    // Filtrar y ordenar productos por SKU
     const filteredProducts = useMemo(() => {
-        return products
-            .filter((product) => {
-                // Filtro de búsqueda
-                const matchesSearch = !searchTerm ||
-                    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        const filtered = products.filter((product) => {
+            // Filtro de búsqueda
+            const matchesSearch = !searchTerm ||
+                product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
-                // Filtro de categoría
-                const matchesCategory = selectedCategory === "all" ||
-                    product.category === selectedCategory;
+            // Filtro de categoría
+            const matchesCategory = selectedCategory === "all" ||
+                product.category === selectedCategory;
 
-                return matchesSearch && matchesCategory;
-            })
-            .sort((a, b) => {
-                switch (sortBy) {
-                    case "price-low":
-                        return a.price - b.price;
-                    case "price-high":
-                        return b.price - a.price;
-                    case "rating":
-                        return (b.rating || 0) - (a.rating || 0);
-                    case "newest":
-                        return (b.id || 0) - (a.id || 0);
-                    case "popular":
-                    default:
-                        return (b.reviews || 0) - (a.reviews || 0);
-                }
-            });
-    }, [products, searchTerm, selectedCategory, sortBy]);
+            return matchesSearch && matchesCategory;
+        });
+        return sortProductsBySku(filtered);
+    }, [products, searchTerm, selectedCategory]);
 
     // Contar filtros aplicados
     const appliedFiltersCount = useMemo(() => {
         let count = 0;
         if (selectedCategory !== "all") count++;
-        if (sortBy !== "popular") count++;
         return count;
-    }, [selectedCategory, sortBy]);
+    }, [selectedCategory]);
 
     // const handleProductClick = (product) => {
     //     setSelectedProduct(product);
@@ -365,8 +349,6 @@ export function MenuMobile({
                 categories={categories}
                 selectedCategory={selectedCategory}
                 onSelectCategory={setSelectedCategory}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
                 appliedFiltersCount={appliedFiltersCount}
             />
 

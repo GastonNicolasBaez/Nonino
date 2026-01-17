@@ -11,6 +11,7 @@ import { ProductCard } from "@/components/common/ProductCard";
 import { ComboModal } from "@/components/ui/ComboModal";
 import { StoreDropdown } from "@/components/menu/StoreDropdown";
 import { useCart } from "@/context/CartProvider";
+import { sortProductsBySku } from "@/utils/productUtils";
 
 export function MenuDesktop({
     products,
@@ -21,7 +22,6 @@ export function MenuDesktop({
 }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
-    const [sortBy, setSortBy] = useState("popular");
     const [selectedCombo, setSelectedCombo] = useState(null);
     const [showComboModal, setShowComboModal] = useState(false);
     const { addItem } = useCart();
@@ -44,18 +44,20 @@ export function MenuDesktop({
     };
 
     // Productos filtrados para búsqueda en tiempo real
-    const searchFilteredProducts = products.filter((product) => {
-        if (!searchTerm) return false;
-        const matchesSearch = product.name
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesSearch;
-    });
+    const searchFilteredProducts = sortProductsBySku(
+        products.filter((product) => {
+            if (!searchTerm) return false;
+            const matchesSearch = product.name
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+                product.description.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesSearch;
+        })
+    );
 
     // Productos filtrados para la sección "Todos los Productos" (solo cuando no hay búsqueda)
-    const filteredProducts = products
-        .filter((product) => {
+    const filteredProducts = sortProductsBySku(
+        products.filter((product) => {
             if (searchTerm) return false; // No mostrar cuando hay búsqueda
 
             const matchesCategory = selectedCategory === "all" ||
@@ -63,26 +65,7 @@ export function MenuDesktop({
 
             return matchesCategory;
         })
-        .sort((a, b) => {
-            switch (sortBy) {
-                case "price-low":
-                    return a.price - b.price;
-                case "price-high":
-                    return b.price - a.price;
-                case "rating":
-                    return b.rating - a.rating;
-                case "popular":
-                default:
-                    return (b.reviews || 0) - (a.reviews || 0);
-            }
-        });
-
-    const sortOptions = [
-        { value: "popular", label: "Más Popular" },
-        { value: "price-low", label: "Precio: Menor a Mayor" },
-        { value: "price-high", label: "Precio: Mayor a Menor" },
-        { value: "rating", label: "Mejor Calificación" },
-    ];
+    );
 
     // Si no hay sucursal seleccionada, mostrar pantalla de selección
     if (!selectedStore) {
@@ -204,22 +187,6 @@ export function MenuDesktop({
                                             </Button>
                                         ))}
                                     </div>
-                                </div>
-
-                                {/* Ordenar */}
-                                <div>
-                                    <h4 className="text-sm font-medium text-gray-300 mb-3">Ordenar por</h4>
-                                    <select
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value)}
-                                        className="w-full px-3 py-2 border border-empanada-light-gray bg-empanada-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-empanada-golden focus:border-empanada-golden text-sm menu-select"
-                                    >
-                                        {sortOptions.map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
                                 </div>
                             </div>
                         </div>

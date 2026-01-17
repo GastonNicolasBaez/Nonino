@@ -238,6 +238,16 @@ export function CheckoutPage() {
             // crear la orden aca
             const createdOrder = await callPublicCreateOrder(newOrder);
 
+            // Guardar info adicional para el tracking (el backend no la devuelve)
+            const orderTrackingInfo = JSON.parse(localStorage.getItem('orderTrackingInfo') || '{}');
+            orderTrackingInfo[createdOrder.id] = {
+                storeId: selectedStore.id,
+                storeName: selectedStore.name,
+                storeAddress: selectedStore.shortAddress || `${selectedStore.street} ${selectedStore.number}`,
+                fulfillment: newOrder.fulfillment,
+            };
+            localStorage.setItem('orderTrackingInfo', JSON.stringify(orderTrackingInfo));
+
             const dA = createdOrder.deliveryShort;
 
             const shortAddress = dA.street + ' ' + dA.number + ' (' + dA.neighborhood + ')';

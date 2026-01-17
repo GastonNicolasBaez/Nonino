@@ -23,18 +23,35 @@ export function OrderTrackingPage() {
     const { orderId } = useParams();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [trackingInfo, setTrackingInfo] = useState(null);
+
+    // Función para traducir estados al español
+    const getStatusLabel = (status) => {
+        const statusLabels = {
+            'CREATED': 'Creado',
+            'AWAITING_PAYMENT': 'Esperando Pago',
+            'PAID': 'Pagado',
+            'PENDING': 'Pendiente',
+            'PREPARING': 'Preparando',
+            'READY': 'Listo',
+            'IN_DELIVERY': 'En Camino',
+            'DELIVERED': 'Entregado',
+            'CANCELLED': 'Cancelado',
+            'FAILED': 'Fallido'
+        };
+        return statusLabels[status?.toUpperCase()] || statusLabels[status] || status;
+    };
 
     useEffect(() => {
         const fetchOrder = async () => {
             try {
                 const response = await callPublicOrderById(orderId);
-                console.log('🔍 [OrderTracking] Order fetched:', {
-                    orderId,
-                    status: response.status,
-                    paymentMethod: response.paymentMethod,
-                    fullResponse: response
-                });
-                
+
+                // Leer info adicional del localStorage (guardada al crear el pedido)
+                const savedTrackingInfo = JSON.parse(localStorage.getItem('orderTrackingInfo') || '{}');
+                const orderInfo = savedTrackingInfo[orderId] || null;
+                setTrackingInfo(orderInfo);
+
                 setOrder(response);
                 setLoading(false);
                 
@@ -115,7 +132,7 @@ export function OrderTrackingPage() {
                     {/* Header */}
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold mb-2 text-white/80">Estado de tu Pedido</h1>
-                        <h2 className="text-2xl font-bold mb-2 text-white">{order.status}</h2>
+                        <h2 className="text-2xl font-bold mb-2 text-white">{getStatusLabel(order.status)}</h2>
                     </div>
 
                     {/* Status Timeline */}
@@ -227,7 +244,8 @@ export function OrderTrackingPage() {
                                 <CardTitle>Información de Entrega</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {order.deliveryAddress && (
+                                {/* Información para DELIVERY */}
+                                {trackingInfo?.fulfillment === 'DELIVERY' && order.deliveryAddress && (
                                     <div className="flex items-start gap-3">
                                         <MapPin className="w-5 h-5 text-empanada-golden mt-1" />
                                         <div>
@@ -239,6 +257,18 @@ export function OrderTrackingPage() {
                                             {order.deliveryAddress.neighborhood && (
                                                 <p className="text-sm text-gray-600">{order.deliveryAddress.neighborhood}</p>
                                             )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Información para PICKUP */}
+                                {trackingInfo?.fulfillment === 'PICKUP' && (
+                                    <div className="flex items-start gap-3">
+                                        <MapPin className="w-5 h-5 text-empanada-golden mt-1" />
+                                        <div>
+                                            <h4 className="font-medium">Retiro en Sucursal</h4>
+                                            <p className="text-sm text-white">{trackingInfo.storeName}</p>
+                                            <p className="text-sm text-gray-400">{trackingInfo.storeAddress}</p>
                                         </div>
                                     </div>
                                 )}

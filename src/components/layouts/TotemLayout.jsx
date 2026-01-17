@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import { TotemHeader } from "@/components/totem/TotemHeader";
 import { TotemProvider } from "@/context/TotemProvider";
 import { CartProvider } from "@/context/CartProvider";
@@ -6,6 +6,10 @@ import { TotemInactivityMonitor } from "@/components/totem/TotemInactivityMonito
 import { useEffect } from "react";
 
 const TotemLayout = () => {
+  const location = useLocation();
+
+  // Ocultar header en la página de welcome
+  const showHeader = location.pathname !== '/totem/welcome';
 
   // Prevenir zoom con gestos (importante para tablets)
   useEffect(() => {
@@ -35,8 +39,8 @@ const TotemLayout = () => {
           {/* Monitor de inactividad */}
           <TotemInactivityMonitor />
 
-          {/* Header fijo */}
-          <TotemHeader />
+          {/* Header fijo - oculto en welcome */}
+          {showHeader && <TotemHeader />}
 
           {/* Contenido principal */}
           <main className="flex-1 overflow-hidden">

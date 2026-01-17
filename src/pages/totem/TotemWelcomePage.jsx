@@ -85,29 +85,6 @@ export const TotemWelcomePage = () => {
             Inicia tu pedido
           </Button>
         </motion.div>
-
-        {/* Pulso sutil en el botón */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="mt-8"
-        >
-          <motion.div
-            animate={{
-              scale: [1, 1.1, 1],
-              opacity: [0.5, 0.8, 0.5]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="text-white/60 text-lg"
-          >
-            👆 Tocá para comenzar
-          </motion.div>
-        </motion.div>
       </div>
     </div>
   );

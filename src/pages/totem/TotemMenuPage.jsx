@@ -33,7 +33,7 @@ export const TotemMenuPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showProductModal, setShowProductModal] = useState(false);
-  const [showCart, setShowCart] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
   const [showClearCartDialog, setShowClearCartDialog] = useState(false);
 
   // Auto-seleccionar sucursal del usuario logeado
@@ -126,9 +126,9 @@ export const TotemMenuPage = () => {
     setShowClearCartDialog(false);
   };
 
-  const handleCheckout = () => {
+  const handleViewCart = () => {
     if (cartItemCount > 0) {
-      navigate('/totem/checkout');
+      setShowCartModal(true);
     }
   };
 
@@ -236,7 +236,7 @@ export const TotemMenuPage = () => {
           {/* Botón Ver pedido */}
           <Button
             size="lg"
-            onClick={handleCheckout}
+            onClick={handleViewCart}
             disabled={cartItemCount === 0}
             className={cn(
               "h-14 px-10 text-xl font-black whitespace-nowrap rounded-xl shadow-xl transition-all",
@@ -256,6 +256,29 @@ export const TotemMenuPage = () => {
         isOpen={showProductModal}
         onClose={handleCloseModal}
       />
+
+      {/* Modal del carrito */}
+      <AnimatePresence>
+        {showCartModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6"
+            onClick={() => setShowCartModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-empanada-dark rounded-3xl max-w-2xl w-full h-[80vh] overflow-hidden border-2 border-empanada-golden shadow-2xl"
+            >
+              <TotemCart onClose={() => setShowCartModal(false)} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Modal de confirmación para limpiar carrito */}
       <Dialog open={showClearCartDialog} onOpenChange={setShowClearCartDialog}>

@@ -44,29 +44,19 @@ export const TotemWelcomePage = () => {
           />
         </motion.div>
 
-        {/* Nombre de la empresa */}
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-4"
-        >
-          <h1 className="text-7xl font-black text-white mb-3 drop-shadow-2xl tracking-tight">
-            NONINO
-          </h1>
-          <div className="h-1 w-48 mx-auto bg-empanada-golden rounded-full" />
-        </motion.div>
-
         {/* Nombre de la sucursal */}
         {selectedStore && (
-          <motion.p
-            initial={{ y: 20, opacity: 0 }}
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-2xl text-empanada-golden font-bold mb-12 drop-shadow-lg"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mb-12"
           >
-            {selectedStore.name}
-          </motion.p>
+            <h1 className="text-7xl font-black text-white mb-3 drop-shadow-2xl tracking-tight">
+              {selectedStore.name}
+            </h1>
+            <div className="h-1 w-48 mx-auto bg-empanada-golden rounded-full" />
+          </motion.div>
         )}
 
         {/* Botón de inicio */}

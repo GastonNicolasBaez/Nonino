@@ -392,7 +392,7 @@ export const TotemCheckoutPage = () => {
         </ScrollArea>
 
         {/* Footer fijo con botón confirmar */}
-        <div className="bg-empanada-dark border-t-4 border-red-700 px-4 py-3 flex-shrink-0">
+        <div className="bg-empanada-dark border-t-4 border-empanada-golden px-4 py-3 flex-shrink-0">
           <Button
             size="lg"
             onClick={handleSubmit}

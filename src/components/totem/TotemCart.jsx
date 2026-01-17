@@ -124,9 +124,8 @@ export const TotemCart = ({ onClose }) => {
                     <div className="flex items-center gap-2">
                       <Button
                         size="sm"
-                        variant="outline"
                         onClick={() => updateQuantity(item.id, item.customizations, item.quantity - 1)}
-                        className="h-10 w-10 p-0 border-empanada-golden text-empanada-golden hover:bg-empanada-golden hover:text-empanada-dark"
+                        className="h-10 w-10 p-0 bg-white hover:bg-gray-100 text-empanada-dark rounded-lg border-0"
                       >
                         <Minus className="w-4 h-4" />
                       </Button>
@@ -137,9 +136,8 @@ export const TotemCart = ({ onClose }) => {
 
                       <Button
                         size="sm"
-                        variant="outline"
                         onClick={() => updateQuantity(item.id, item.customizations, item.quantity + 1)}
-                        className="h-10 w-10 p-0 border-empanada-golden text-empanada-golden hover:bg-empanada-golden hover:text-empanada-dark"
+                        className="h-10 w-10 p-0 bg-empanada-golden hover:bg-empanada-golden/90 text-empanada-dark rounded-lg border-0"
                       >
                         <Plus className="w-4 h-4" />
                       </Button>

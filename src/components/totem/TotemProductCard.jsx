@@ -27,7 +27,7 @@ export const TotemProductCard = ({ product, onSelect }) => {
         "relative group bg-empanada-medium rounded-2xl overflow-hidden",
         "border-3 border-empanada-light-gray hover:border-empanada-golden",
         "transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-empanada-golden/30",
-        "flex flex-col h-full min-h-[280px]"
+        "flex flex-col h-[340px]"
       )}
     >
       {/* Imagen del producto */}

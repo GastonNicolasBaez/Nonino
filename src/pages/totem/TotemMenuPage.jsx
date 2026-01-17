@@ -43,12 +43,32 @@ export const TotemMenuPage = () => {
     }
   }, [sucursalSeleccionada, publicDataLoading, session.loading, navigate]);
 
+  // Ordenar categorías según orden específico para totem
+  const sortedCategorias = useMemo(() => {
+    if (!categorias || categorias.length === 0) return [];
+
+    const categoryOrder = ['Combos', 'Tradicionales', 'Especiales', 'Bebidas'];
+
+    return [...categorias].sort((a, b) => {
+      const indexA = categoryOrder.indexOf(a.name);
+      const indexB = categoryOrder.indexOf(b.name);
+
+      // Si ambas están en el orden definido
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      // Si solo una está definida, esa va primero
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      // Las no definidas van al final, ordenadas alfabéticamente
+      return a.name.localeCompare(b.name);
+    });
+  }, [categorias]);
+
   // Seleccionar primera categoría por defecto
   useEffect(() => {
-    if (categorias && categorias.length > 0 && !selectedCategory) {
-      setSelectedCategory(categorias[0].id);
+    if (sortedCategorias && sortedCategorias.length > 0 && !selectedCategory) {
+      setSelectedCategory(sortedCategorias[0].id);
     }
-  }, [categorias, selectedCategory]);
+  }, [sortedCategorias, selectedCategory]);
 
   // Filtrar productos por categoría seleccionada
   const filteredProducts = useMemo(() => {
@@ -112,7 +132,7 @@ export const TotemMenuPage = () => {
 
         <ScrollArea className="flex-1">
           <div className="p-2 space-y-2">
-            {categorias.map((category) => (
+            {sortedCategorias.map((category) => (
               <motion.button
                 key={category.id}
                 whileTap={{ scale: 0.95 }}

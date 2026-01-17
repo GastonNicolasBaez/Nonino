@@ -39,6 +39,7 @@ const StoreSelectionPage = lazy(() => import("@/pages/public/StoreSelectionPage"
 // TOTEM - CODE SPLITTING (solo cargan si accedes al totem)
 const TotemLogin = lazy(() => import("@/pages/totem/TotemLogin").then(m => ({ default: m.TotemLogin })));
 const TotemStoreSelection = lazy(() => import("@/pages/totem/TotemStoreSelection").then(m => ({ default: m.TotemStoreSelection })));
+const TotemWelcomePage = lazy(() => import("@/pages/totem/TotemWelcomePage").then(m => ({ default: m.TotemWelcomePage })));
 const TotemMenuPage = lazy(() => import("@/pages/totem/TotemMenuPage").then(m => ({ default: m.TotemMenuPage })));
 const TotemCheckoutPage = lazy(() => import("@/pages/totem/TotemCheckoutPage").then(m => ({ default: m.TotemCheckoutPage })));
 const TotemOrderSuccess = lazy(() => import("@/pages/totem/TotemOrderSuccess").then(m => ({ default: m.TotemOrderSuccess })));
@@ -173,6 +174,13 @@ function App() {
                             } />
 
                             {/* Rutas protegidas - Solo usuarios LOCAL autenticados */}
+                            <Route path="welcome" element={
+                                <TotemAuthGuard>
+                                    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>
+                                        <TotemWelcomePage />
+                                    </Suspense>
+                                </TotemAuthGuard>
+                            } />
                             <Route path="menu" element={
                                 <TotemAuthGuard>
                                     <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><LoadingSpinner size="xl" /></div>}>

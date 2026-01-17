@@ -28,7 +28,7 @@ export function TotemLogin() {
       if (session.userData.isLocal) {
         // Marcar como sesión de totem persistente
         localStorage.setItem('totem_session_persistent', 'true');
-        navigate('/totem/menu');
+        navigate('/totem/welcome');
       } else {
         // Si es ADMIN o FABRICA, no permitir acceso
         toast.error('Solo usuarios de LOCAL pueden acceder al totem');

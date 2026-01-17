@@ -19,7 +19,7 @@ export const TotemMenuPage = () => {
   const session = useSession();
   const { productos, categorias, publicDataLoading, sucursalSeleccionada, setSucursalSeleccionada } = usePublicData();
   const { config } = useTotem();
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -76,117 +76,146 @@ export const TotemMenuPage = () => {
   // Calcular cantidad total de items en el carrito
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Calcular total del carrito
+  const cartTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
+  const handleClearCart = () => {
+    if (window.confirm('¿Querés limpiar todo el pedido?')) {
+      clearCart();
+    }
+  };
+
+  const handleCheckout = () => {
+    if (cartItemCount > 0) {
+      navigate('/totem/checkout');
+    }
+  };
+
   return (
-    <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-empanada-dark overflow-hidden">
-      {/* Tabs de categorías - Fixed */}
-      <div className="bg-empanada-medium border-b-2 border-empanada-golden px-4 py-3 flex-shrink-0">
-        <ScrollArea className="w-full">
-          <div className="flex gap-3 pb-2">
+    <div className="h-[calc(100vh-3.5rem)] flex bg-empanada-dark overflow-hidden">
+      {/* Sidebar izquierdo - Categorías */}
+      <div className="w-32 bg-empanada-golden/90 border-r-4 border-red-700 flex-shrink-0 flex flex-col">
+        <div className="p-3 border-b-2 border-red-700">
+          <h2 className="text-empanada-dark font-black text-sm text-center uppercase">
+            Categorías
+          </h2>
+        </div>
+
+        <ScrollArea className="flex-1">
+          <div className="p-2 space-y-2">
             {categorias.map((category) => (
-              <TotemCategoryTab
+              <motion.button
                 key={category.id}
-                category={category}
-                isActive={selectedCategory === category.id}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedCategory(category.id)}
-              />
+                className={cn(
+                  "w-full p-3 rounded-lg font-bold text-sm transition-all text-center border-2",
+                  selectedCategory === category.id
+                    ? "bg-red-700 text-white border-red-900 shadow-lg"
+                    : "bg-empanada-dark/20 text-empanada-dark border-empanada-dark/30 hover:bg-empanada-dark/30"
+                )}
+              >
+                {category.name}
+              </motion.button>
             ))}
           </div>
         </ScrollArea>
       </div>
 
-      {/* Grid de productos - Scrollable */}
-      <ScrollArea className="flex-1">
-        <div className="p-4">
-          {filteredProducts.length > 0 ? (
-            <motion.div
-              layout
-              className="grid grid-cols-2 gap-4"
-            >
-              {filteredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
+      {/* Área principal - Productos */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Grid de productos - Scrollable */}
+        <ScrollArea className="flex-1">
+          <div className="p-4 pb-32">
+            {filteredProducts.length > 0 ? (
+              <motion.div
+                layout
+                className="grid grid-cols-2 gap-4"
+              >
+                {filteredProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <TotemProductCard
+                      product={product}
+                      onSelect={handleProductSelect}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center justify-center h-full py-20"
+              >
+                <Package className="w-20 h-20 text-gray-600 mb-4" />
+                <p className="text-gray-400 text-2xl">
+                  No hay productos en esta categoría
+                </p>
+              </motion.div>
+            )}
+          </div>
+        </ScrollArea>
+
+        {/* Footer fijo - Carrito */}
+        <div className="bg-empanada-dark border-t-4 border-red-700 px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between gap-4">
+            {/* Contador de productos */}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="bg-red-700 text-white px-4 py-2 rounded-lg border-2 border-empanada-golden">
+                <p className="text-sm font-semibold">
+                  {cartItemCount} {cartItemCount === 1 ? 'producto' : 'productos'}
+                </p>
+              </div>
+
+              {cartItemCount > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearCart}
+                  className="border-red-500 text-red-400 hover:bg-red-500/10 hover:text-red-300 whitespace-nowrap"
                 >
-                  <TotemProductCard
-                    product={product}
-                    onSelect={handleProductSelect}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center h-full py-20"
-            >
-              <Package className="w-20 h-20 text-gray-600 mb-4" />
-              <p className="text-gray-400 text-2xl">
-                No hay productos en esta categoría
-              </p>
-            </motion.div>
-          )}
-        </div>
-      </ScrollArea>
-
-      {/* Botón flotante del carrito */}
-      {cartItemCount > 0 && (
-        <motion.div
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
-          exit={{ y: 100 }}
-          className="fixed bottom-6 right-6 z-30"
-        >
-          <Button
-            size="lg"
-            onClick={() => setShowCart(true)}
-            className="h-16 px-8 bg-empanada-golden hover:bg-empanada-golden/90 text-empanada-dark rounded-full shadow-2xl shadow-empanada-golden/50 text-lg font-bold"
-          >
-            <ShoppingCart className="w-6 h-6 mr-3" />
-            <span>Ver Pedido</span>
-            <div className="ml-3 bg-empanada-dark text-empanada-golden rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-              {cartItemCount}
+                  Limpiar pedido
+                </Button>
+              )}
             </div>
-          </Button>
-        </motion.div>
-      )}
 
-      {/* Modal de carrito (Bottom Sheet) */}
-      <AnimatePresence>
-        {showCart && (
-          <>
-            {/* Overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowCart(false)}
-              className="fixed inset-0 bg-black/60 z-40"
-            />
+            {/* Total */}
+            <div className="flex-1 text-center">
+              <p className="text-3xl font-black text-empanada-golden">
+                {formatPrice(cartTotal)}
+              </p>
+            </div>
 
-            {/* Cart Sheet */}
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 z-50 bg-empanada-dark rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col"
+            {/* Botón Ver pedido */}
+            <Button
+              size="lg"
+              onClick={handleCheckout}
+              disabled={cartItemCount === 0}
+              className={cn(
+                "h-14 px-8 text-xl font-bold whitespace-nowrap",
+                cartItemCount > 0
+                  ? "bg-white text-empanada-dark hover:bg-gray-100 border-2 border-empanada-golden shadow-lg shadow-empanada-golden/30"
+                  : "bg-gray-700 text-gray-400 cursor-not-allowed"
+              )}
             >
-              {/* Handle */}
-              <div className="flex justify-center pt-3 pb-2">
-                <div className="w-12 h-1.5 bg-gray-600 rounded-full" />
-              </div>
-
-              {/* Cart Content */}
-              <div className="flex-1 overflow-hidden">
-                <TotemCart onClose={() => setShowCart(false)} />
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              Ver pedido
+            </Button>
+          </div>
+        </div>
+      </div>
 
       {/* Modal de producto */}
       <TotemProductModal

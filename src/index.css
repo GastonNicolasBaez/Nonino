@@ -1159,3 +1159,192 @@ body.homepage-background {
     gap: 1.25rem;
   }
 }
+
+/* Estilos para sidebar de categorías (nuevo diseño portrait) */
+.totem-sidebar-category-button {
+  min-height: 56px;
+  min-width: 100%;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: rgba(220, 38, 38, 0.2);
+}
+
+.totem-sidebar-category-button:active {
+  transform: scale(0.96);
+}
+
+/* Footer fijo del totem con información del carrito */
+.totem-cart-footer {
+  min-height: 88px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Mejoras de contraste para mejor legibilidad */
+.totem-text-high-contrast {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Botones con mejor feedback táctil */
+.totem-button-primary {
+  min-height: 56px;
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.totem-button-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.totem-button-secondary {
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+/* Espaciado optimizado para tablets portrait */
+@media (orientation: portrait) {
+  .totem-spacing-portrait {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .totem-gap-portrait {
+    gap: 1rem;
+  }
+}
+
+/* Animaciones más suaves para mejor experiencia táctil */
+.totem-smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mejoras para inputs en totem */
+.totem-input {
+  min-height: 52px;
+  font-size: 1.125rem;
+  padding: 0.875rem 1rem;
+  border-width: 2px;
+}
+
+.totem-input:focus {
+  border-width: 3px;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(247, 168, 42, 0.15);
+}
+
+/* Scroll suave en áreas scrolleables del totem */
+.totem-smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Evitar scroll bounce en iOS */
+.totem-no-bounce {
+  overscroll-behavior-y: none;
+}
+
+/* Estados de carga optimizados */
+.totem-loading {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Mejoras de accesibilidad táctil */
+.totem-touch-target {
+  position: relative;
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* Aumentar área táctil sin cambiar tamaño visual */
+.totem-touch-target::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+}
+
+/* Animación de pulso para elementos importantes */
+@keyframes totem-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+.totem-pulse {
+  animation: totem-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Optimizaciones de rendimiento para animaciones */
+.totem-hardware-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+/* Mejoras para modals en totem */
+.totem-modal {
+  max-width: 90vw;
+  max-height: 85vh;
+}
+
+.totem-modal-content {
+  overscroll-behavior: contain;
+}
+
+/* Grid optimizado para portrait con sidebar */
+.totem-portrait-layout {
+  display: grid;
+  grid-template-columns: 128px 1fr;
+  height: 100vh;
+}
+
+/* Typography mejorada para tablets */
+.totem-heading-xl {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.totem-heading-lg {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.totem-text-lg {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.5;
+}
+
+/* Mejoras de contraste para tema oscuro del totem */
+.totem-dark-mode {
+  --totem-bg-primary: #0a0a0a;
+  --totem-bg-secondary: #1a1a1a;
+  --totem-bg-tertiary: #2a2a2a;
+  --totem-text-primary: #ffffff;
+  --totem-text-secondary: #d1d5db;
+  --totem-accent: #f7a82a;
+  --totem-accent-hover: #e09820;
+}

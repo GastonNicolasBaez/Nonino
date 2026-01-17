@@ -187,216 +187,227 @@ export const TotemCheckoutPage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-5rem)] bg-empanada-dark flex">
-      {/* Formulario - 60% */}
-      <div className="flex-1 flex flex-col">
-        <ScrollArea className="flex-1">
-          <div className="p-8 max-w-3xl mx-auto">
+    <div className="h-[calc(100vh-3.5rem)] bg-empanada-dark flex flex-col">
+      {/* Contenedor principal con scroll */}
+      <ScrollArea className="flex-1">
+        <div className="max-w-6xl mx-auto p-6 pb-32">
             {/* Header */}
-            <div className="mb-8">
+            <div className="mb-6">
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                className="text-white hover:text-empanada-golden mb-4"
+                className="text-white hover:text-empanada-golden mb-3 text-base"
+                size="lg"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Volver al menú
               </Button>
 
-              <h1 className="text-4xl font-bold text-white mb-2">
+              <h1 className="text-3xl font-bold text-white mb-1">
                 Completá tu pedido
               </h1>
-              <p className="text-gray-400 text-lg">
+              <p className="text-gray-400 text-base">
                 Ingresá tus datos para finalizar
               </p>
             </div>
 
-            {/* Formulario */}
-            <div className="space-y-6">
-              {/* Datos del cliente */}
-              <Card className="bg-empanada-medium border-empanada-light-gray">
-                <CardContent className="p-6 space-y-4">
-                  <h2 className="text-2xl font-bold text-white flex items-center gap-2 mb-4">
-                    <User className="w-6 h-6 text-empanada-golden" />
-                    Tus datos
-                  </h2>
+            {/* Layout de 2 columnas en tablets */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Columna izquierda - Formulario */}
+              <div className="space-y-4">
+                {/* Datos del cliente */}
+                <Card className="bg-empanada-medium border-empanada-light-gray">
+                  <CardContent className="p-5 space-y-3">
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-3">
+                      <User className="w-5 h-5 text-empanada-golden" />
+                      Tus datos
+                    </h2>
 
-                  {/* Nombre */}
-                  <div>
-                    <label className="block text-white text-lg font-semibold mb-2">
-                      Nombre completo *
-                    </label>
-                    <Input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => {
-                        setFormData({ ...formData, name: e.target.value });
-                        setErrors({ ...errors, name: '' });
-                      }}
-                      placeholder="Ej: Juan Pérez"
-                      className={cn(
-                        "bg-empanada-dark text-white border-empanada-light-gray text-lg h-14",
-                        errors.name && "border-red-500"
-                      )}
-                    />
-                    {errors.name && (
-                      <p className="text-red-400 text-sm mt-1">{errors.name}</p>
-                    )}
-                  </div>
-
-                  {/* Teléfono */}
-                  <div>
-                    <label className="block text-white text-lg font-semibold mb-2">
-                      Teléfono *
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-5 h-5 text-empanada-golden" />
+                    {/* Nombre */}
+                    <div>
+                      <label className="block text-white text-base font-semibold mb-1.5">
+                        Nombre completo *
+                      </label>
                       <Input
-                        type="tel"
-                        value={formData.phone}
+                        type="text"
+                        value={formData.name}
                         onChange={(e) => {
-                          // Solo permitir números
-                          const value = e.target.value.replace(/\D/g, '');
-                          setFormData({ ...formData, phone: value });
-                          setErrors({ ...errors, phone: '' });
+                          setFormData({ ...formData, name: e.target.value });
+                          setErrors({ ...errors, name: '' });
                         }}
-                        placeholder="Ej: 2944123456"
-                        maxLength={10}
+                        placeholder="Ej: Juan Pérez"
                         className={cn(
-                          "bg-empanada-dark text-white border-empanada-light-gray text-lg h-14 flex-1",
-                          errors.phone && "border-red-500"
+                          "bg-empanada-dark text-white border-empanada-light-gray text-base h-12",
+                          errors.name && "border-red-500"
                         )}
                       />
+                      {errors.name && (
+                        <p className="text-red-400 text-sm mt-1">{errors.name}</p>
+                      )}
                     </div>
-                    {errors.phone && (
-                      <p className="text-red-400 text-sm mt-1">{errors.phone}</p>
+
+                    {/* Teléfono */}
+                    <div>
+                      <label className="block text-white text-base font-semibold mb-1.5">
+                        Teléfono *
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-5 h-5 text-empanada-golden flex-shrink-0" />
+                        <Input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => {
+                            // Solo permitir números
+                            const value = e.target.value.replace(/\D/g, '');
+                            setFormData({ ...formData, phone: value });
+                            setErrors({ ...errors, phone: '' });
+                          }}
+                          placeholder="Ej: 2944123456"
+                          maxLength={10}
+                          className={cn(
+                            "bg-empanada-dark text-white border-empanada-light-gray text-base h-12 flex-1",
+                            errors.phone && "border-red-500"
+                          )}
+                        />
+                      </div>
+                      {errors.phone && (
+                        <p className="text-red-400 text-sm mt-1">{errors.phone}</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Método de pago */}
+                <Card className="bg-empanada-medium border-empanada-light-gray">
+                  <CardContent className="p-5">
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-3">
+                      <CreditCard className="w-5 h-5 text-empanada-golden" />
+                      Método de pago
+                    </h2>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Efectivo */}
+                      <motion.button
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          setFormData({ ...formData, paymentMethod: 'cash' });
+                          setErrors({ ...errors, paymentMethod: '' });
+                        }}
+                        className={cn(
+                          "p-4 rounded-xl border-2 transition-all",
+                          formData.paymentMethod === 'cash'
+                            ? "bg-empanada-golden/20 border-empanada-golden"
+                            : "bg-empanada-dark border-empanada-light-gray hover:border-empanada-golden/50"
+                        )}
+                      >
+                        <Banknote className={cn(
+                          "w-10 h-10 mx-auto mb-2",
+                          formData.paymentMethod === 'cash' ? "text-empanada-golden" : "text-gray-400"
+                        )} />
+                        <p className={cn(
+                          "font-bold text-base",
+                          formData.paymentMethod === 'cash' ? "text-empanada-golden" : "text-gray-300"
+                        )}>
+                          Efectivo
+                        </p>
+                        <p className="text-gray-400 text-xs mt-1">
+                          Pagás al retirar
+                        </p>
+                      </motion.button>
+
+                      {/* MercadoPago */}
+                      <motion.button
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          setFormData({ ...formData, paymentMethod: 'mercadopago' });
+                          setErrors({ ...errors, paymentMethod: '' });
+                        }}
+                        className={cn(
+                          "p-4 rounded-xl border-2 transition-all",
+                          formData.paymentMethod === 'mercadopago'
+                            ? "bg-empanada-golden/20 border-empanada-golden"
+                            : "bg-empanada-dark border-empanada-light-gray hover:border-empanada-golden/50"
+                        )}
+                      >
+                        <CreditCard className={cn(
+                          "w-10 h-10 mx-auto mb-2",
+                          formData.paymentMethod === 'mercadopago' ? "text-empanada-golden" : "text-gray-400"
+                        )} />
+                        <p className={cn(
+                          "font-bold text-base",
+                          formData.paymentMethod === 'mercadopago' ? "text-empanada-golden" : "text-gray-300"
+                        )}>
+                          MercadoPago
+                        </p>
+                        <p className="text-gray-400 text-xs mt-1">
+                          Tarjeta o QR
+                        </p>
+                      </motion.button>
+                    </div>
+
+                    {errors.paymentMethod && (
+                      <p className="text-red-400 text-sm mt-2">{errors.paymentMethod}</p>
                     )}
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
 
-              {/* Método de pago */}
-              <Card className="bg-empanada-medium border-empanada-light-gray">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold text-white flex items-center gap-2 mb-4">
-                    <CreditCard className="w-6 h-6 text-empanada-golden" />
-                    Método de pago
-                  </h2>
+              {/* Columna derecha - Resumen del pedido */}
+              <div className="space-y-4">
+                <Card className="bg-empanada-medium border-empanada-light-gray">
+                  <CardContent className="p-5">
+                    <h2 className="text-xl font-bold text-white mb-3">
+                      Resumen del pedido
+                    </h2>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Efectivo */}
-                    <motion.button
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setFormData({ ...formData, paymentMethod: 'cash' });
-                        setErrors({ ...errors, paymentMethod: '' });
-                      }}
-                      className={cn(
-                        "p-6 rounded-xl border-2 transition-all",
-                        formData.paymentMethod === 'cash'
-                          ? "bg-empanada-golden/20 border-empanada-golden"
-                          : "bg-empanada-dark border-empanada-light-gray hover:border-empanada-golden/50"
-                      )}
-                    >
-                      <Banknote className={cn(
-                        "w-12 h-12 mx-auto mb-3",
-                        formData.paymentMethod === 'cash' ? "text-empanada-golden" : "text-gray-400"
-                      )} />
-                      <p className={cn(
-                        "font-bold text-xl",
-                        formData.paymentMethod === 'cash' ? "text-empanada-golden" : "text-gray-300"
-                      )}>
-                        Efectivo
-                      </p>
-                      <p className="text-gray-400 text-sm mt-1">
-                        Pagás al retirar
-                      </p>
-                    </motion.button>
+                    <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                      {items.map((item, index) => (
+                        <div
+                          key={item.isCombo ? item.id : `${item.id}-${index}`}
+                          className="bg-empanada-dark rounded-lg p-3 border border-empanada-light-gray"
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="text-white font-semibold text-sm">{item.name}</span>
+                            <span className="text-empanada-golden font-bold text-sm">
+                              x{item.quantity}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-white font-bold text-sm">
+                              {formatPrice(item.price * item.quantity)}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-                    {/* MercadoPago */}
-                    <motion.button
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setFormData({ ...formData, paymentMethod: 'mercadopago' });
-                        setErrors({ ...errors, paymentMethod: '' });
-                      }}
-                      className={cn(
-                        "p-6 rounded-xl border-2 transition-all",
-                        formData.paymentMethod === 'mercadopago'
-                          ? "bg-empanada-golden/20 border-empanada-golden"
-                          : "bg-empanada-dark border-empanada-light-gray hover:border-empanada-golden/50"
-                      )}
-                    >
-                      <CreditCard className={cn(
-                        "w-12 h-12 mx-auto mb-3",
-                        formData.paymentMethod === 'mercadopago' ? "text-empanada-golden" : "text-gray-400"
-                      )} />
-                      <p className={cn(
-                        "font-bold text-xl",
-                        formData.paymentMethod === 'mercadopago' ? "text-empanada-golden" : "text-gray-300"
-                      )}>
-                        MercadoPago
-                      </p>
-                      <p className="text-gray-400 text-sm mt-1">
-                        Tarjeta o QR
-                      </p>
-                    </motion.button>
-                  </div>
+                    {/* Total */}
+                    <div className="mt-4 pt-4 border-t-2 border-empanada-golden">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xl font-bold text-white">TOTAL</span>
+                        <span className="text-3xl font-bold text-empanada-golden">
+                          {formatPrice(total)}
+                        </span>
+                      </div>
 
-                  {errors.paymentMethod && (
-                    <p className="text-red-400 text-sm mt-2">{errors.paymentMethod}</p>
-                  )}
-                </CardContent>
-              </Card>
+                      <p className="text-center text-gray-400 text-xs mb-3">
+                        * Retiro en el local seleccionado
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </ScrollArea>
-      </div>
 
-      {/* Resumen - 40% */}
-      <div className="w-[40%] bg-empanada-medium border-l-2 border-empanada-golden flex flex-col">
-        <div className="p-6 border-b border-empanada-light-gray">
-          <h2 className="text-2xl font-bold text-white">Resumen del pedido</h2>
-        </div>
-
-        <ScrollArea className="flex-1 p-6">
-          <div className="space-y-3">
-            {items.map((item, index) => (
-              <div
-                key={item.isCombo ? item.id : `${item.id}-${index}`}
-                className="bg-empanada-dark rounded-lg p-4 border border-empanada-light-gray"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-white font-semibold">{item.name}</span>
-                  <span className="text-empanada-golden font-bold">
-                    x{item.quantity}
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className="text-white font-bold">
-                    {formatPrice(item.price * item.quantity)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-
-        <div className="p-6 border-t-2 border-empanada-golden bg-empanada-dark space-y-4">
-          {/* Total */}
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-2xl font-bold text-white">TOTAL</span>
-            <span className="text-4xl font-bold text-empanada-golden">
-              {formatPrice(total)}
-            </span>
-          </div>
-
-          {/* Botón confirmar */}
+        {/* Footer fijo con botón confirmar */}
+        <div className="bg-empanada-dark border-t-4 border-red-700 px-6 py-4 flex-shrink-0">
           <Button
             size="lg"
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-empanada-golden text-empanada-dark hover:bg-empanada-golden/90 text-2xl font-bold py-8 rounded-xl"
+            className="w-full bg-empanada-golden text-empanada-dark hover:bg-empanada-golden/90 text-xl font-bold h-16 rounded-xl"
           >
             {loading ? (
               <>
@@ -410,10 +421,6 @@ export const TotemCheckoutPage = () => {
               </>
             )}
           </Button>
-
-          <p className="text-center text-gray-400 text-sm">
-            * Retiro en el local seleccionado
-          </p>
         </div>
       </div>
     </div>

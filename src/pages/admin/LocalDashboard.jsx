@@ -239,7 +239,7 @@ function OrderViewModal({ order, onClose }) {
 }
 
 // ------------------ COMPONENTE PRINCIPAL ------------------ //
-export function AdminDashboard() {
+export function LocalDashboard() {
     const {
         orders,
         adminDataLoading: loading,

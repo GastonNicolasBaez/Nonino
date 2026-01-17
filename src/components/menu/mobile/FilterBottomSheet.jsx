@@ -5,17 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 /**
- * Bottom Sheet para filtros y ordenamiento
+ * Bottom Sheet para filtros de categoría
  * Patrón común en apps de delivery (UberEats, Rappi, Google Maps)
  */
-
-const SORT_OPTIONS = [
-  { value: "popular", label: "Más Popular", icon: "🔥" },
-  { value: "price-low", label: "Precio: Menor a Mayor", icon: "💰" },
-  { value: "price-high", label: "Precio: Mayor a Menor", icon: "💵" },
-  { value: "rating", label: "Mejor Calificación", icon: "⭐" },
-  { value: "newest", label: "Más Recientes", icon: "✨" },
-];
 
 export function FilterBottomSheet({
   isOpen,
@@ -23,8 +15,6 @@ export function FilterBottomSheet({
   categories = [],
   selectedCategory,
   onSelectCategory,
-  sortBy,
-  onSortChange,
   appliedFiltersCount = 0
 }) {
   if (!isOpen) return null;
@@ -72,7 +62,7 @@ export function FilterBottomSheet({
                   <SlidersHorizontal className="w-5 h-5 text-empanada-golden" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Filtros y Ordenamiento</h2>
+                  <h2 className="text-xl font-bold text-white">Filtros</h2>
                   {appliedFiltersCount > 0 && (
                     <p className="text-xs text-gray-400">
                       {appliedFiltersCount} filtro{appliedFiltersCount > 1 ? 's' : ''} aplicado{appliedFiltersCount > 1 ? 's' : ''}
@@ -137,52 +127,6 @@ export function FilterBottomSheet({
                   })}
                 </div>
               </div>
-
-              {/* Sección Ordenar Por */}
-              <div>
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">
-                  Ordenar Por
-                </h3>
-                <div className="space-y-2">
-                  {SORT_OPTIONS.map((option) => {
-                    const isSelected = sortBy === option.value;
-
-                    return (
-                      <motion.button
-                        key={option.value}
-                        onClick={() => onSortChange(option.value)}
-                        className={cn(
-                          "w-full flex items-center justify-between p-4 rounded-xl transition-all",
-                          "border-2",
-                          isSelected
-                            ? "bg-empanada-golden/10 border-empanada-golden"
-                            : "bg-empanada-medium border-empanada-light-gray hover:border-empanada-golden/50"
-                        )}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-xl">{option.icon}</span>
-                          <span className={cn(
-                            "text-sm font-medium",
-                            isSelected ? "text-empanada-golden" : "text-white"
-                          )}>
-                            {option.label}
-                          </span>
-                        </div>
-                        {isSelected && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-6 h-6 bg-empanada-golden rounded-full flex items-center justify-center"
-                          >
-                            <Check className="w-4 h-4 text-white" />
-                          </motion.div>
-                        )}
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </div>
             </div>
 
             {/* Footer con botones */}
@@ -193,7 +137,6 @@ export function FilterBottomSheet({
                   className="flex-1"
                   onClick={() => {
                     onSelectCategory('all');
-                    onSortChange('popular');
                   }}
                 >
                   Limpiar Filtros

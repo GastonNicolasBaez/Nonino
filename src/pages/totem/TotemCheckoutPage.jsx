@@ -187,7 +187,7 @@ export const TotemCheckoutPage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-3.5rem)] bg-empanada-dark flex flex-col">
+    <div className="h-[calc(100vh-5rem)] bg-empanada-dark flex flex-col">
       {/* Contenedor principal con scroll */}
       <ScrollArea className="flex-1">
         <div className="max-w-6xl mx-auto p-6 pb-32">

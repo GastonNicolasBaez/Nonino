@@ -111,46 +111,45 @@ export const TotemProductModal = ({ product, isOpen, onClose }) => {
 
               {/* Selector de cantidad */}
               <div className="bg-empanada-medium rounded-xl p-6 mb-6">
-                <label className="text-white text-lg font-semibold mb-4 block">
+                <label className="text-white text-lg font-semibold mb-4 block text-center">
                   Cantidad:
                 </label>
 
-                <div className="flex items-center justify-center gap-6">
-                  <Button
-                    size="lg"
-                    variant="outline"
+                <div className="flex items-center justify-center gap-4">
+                  {/* Botón Menos */}
+                  <button
                     onClick={decrementQuantity}
                     disabled={quantity <= 1}
                     className={cn(
-                      "h-16 w-16 rounded-full border-2",
+                      "h-20 w-20 rounded-full flex items-center justify-center transition-all border-4",
                       quantity <= 1
-                        ? "border-gray-600 text-gray-600 cursor-not-allowed"
-                        : "border-empanada-golden text-empanada-golden hover:bg-empanada-golden hover:text-empanada-dark"
+                        ? "bg-gray-700 border-gray-600 cursor-not-allowed"
+                        : "bg-gray-600 border-gray-500 hover:bg-gray-500 active:scale-95"
                     )}
                   >
-                    <Minus className="w-8 h-8" />
-                  </Button>
+                    <Minus className="w-10 h-10 text-white stroke-[3]" />
+                  </button>
 
-                  <div className="bg-empanada-dark rounded-xl px-8 py-4 min-w-[120px] text-center">
-                    <span className="text-5xl font-bold text-white">
+                  {/* Display de cantidad */}
+                  <div className="bg-empanada-dark rounded-2xl px-12 py-6 min-w-[160px] border-4 border-empanada-golden/30">
+                    <span className="text-6xl font-black text-white block text-center">
                       {quantity}
                     </span>
                   </div>
 
-                  <Button
-                    size="lg"
-                    variant="outline"
+                  {/* Botón Más */}
+                  <button
                     onClick={incrementQuantity}
                     disabled={quantity >= 50}
                     className={cn(
-                      "h-16 w-16 rounded-full border-2",
+                      "h-20 w-20 rounded-full flex items-center justify-center transition-all border-4",
                       quantity >= 50
-                        ? "border-gray-600 text-gray-600 cursor-not-allowed"
-                        : "border-empanada-golden text-empanada-golden hover:bg-empanada-golden hover:text-empanada-dark"
+                        ? "bg-gray-700 border-gray-600 cursor-not-allowed"
+                        : "bg-empanada-golden border-empanada-golden/80 hover:bg-empanada-golden/90 active:scale-95"
                     )}
                   >
-                    <Plus className="w-8 h-8" />
-                  </Button>
+                    <Plus className="w-10 h-10 text-empanada-dark stroke-[3]" />
+                  </button>
                 </div>
               </div>
 

@@ -8,7 +8,7 @@ import logoNonino from '@/assets/logos/nonino.png';
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Loader2, Menu } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -119,28 +119,42 @@ export const TotemHeader = () => {
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="px-4 py-3">
-          {/* Logo y Nombre centrados */}
-          <button
-            onClick={handleLogoClick}
-            className="flex items-center justify-center space-x-3 hover:opacity-80 transition-opacity w-full"
-          >
-            <img
-              src={logoNonino}
-              alt="Nonino Empanadas"
-              className="w-10 h-10"
-            />
-            <div className="flex flex-col items-center">
-              <h1 className="text-lg font-bold text-empanada-golden leading-tight">
-                NONINO
-              </h1>
-              {sucursalSeleccionada && (
-                <p className="text-xs text-gray-300 leading-tight">
-                  {selectedStoreName}
-                </p>
-              )}
-            </div>
-          </button>
+        <div className="px-6 py-5">
+          <div className="flex items-center justify-between">
+            {/* Botón Menú a la izquierda */}
+            <Button
+              onClick={() => navigate('/totem/menu')}
+              className="bg-empanada-golden hover:bg-empanada-golden/90 text-empanada-dark font-bold text-lg px-6 h-12"
+            >
+              <Menu className="w-5 h-5 mr-2" />
+              Menú
+            </Button>
+
+            {/* Logo y Nombre centrados */}
+            <button
+              onClick={handleLogoClick}
+              className="flex items-center space-x-4 hover:opacity-80 transition-opacity absolute left-1/2 transform -translate-x-1/2"
+            >
+              <img
+                src={logoNonino}
+                alt="Nonino Empanadas"
+                className="w-14 h-14"
+              />
+              <div className="flex flex-col items-center">
+                <h1 className="text-2xl font-bold text-empanada-golden leading-tight">
+                  NONINO
+                </h1>
+                {sucursalSeleccionada && (
+                  <p className="text-sm text-gray-300 leading-tight">
+                    {selectedStoreName}
+                  </p>
+                )}
+              </div>
+            </button>
+
+            {/* Espacio vacío para balancear */}
+            <div className="w-32"></div>
+          </div>
         </div>
       </motion.header>
 
@@ -227,8 +241,8 @@ export const TotemHeader = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Spacer - Header height */}
-      <div className="h-14" />
+      {/* Spacer - Header height aumentado */}
+      <div className="h-20" />
     </>
   );
 };

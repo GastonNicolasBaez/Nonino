@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { usePublicData } from '@/context/PublicDataProvider';
 import logoNonino from '@/assets/logos/nonino.png';
+import SanMartin1920 from '@/assets/images/optimized/SanMartin-1920w.webp';
 
 export const TotemWelcomePage = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const TotemWelcomePage = () => {
       {/* Imagen de fondo con overlay */}
       <div className="absolute inset-0">
         <img
-          src="/nonino.webp"
+          src={SanMartin1920}
           alt="Nonino Empanadas"
           className="w-full h-full object-cover"
         />

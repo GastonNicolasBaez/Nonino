@@ -24,8 +24,8 @@ export const TotemProductCard = ({ product, onSelect }) => {
       whileTap={{ scale: 0.97 }}
       onClick={() => onSelect(product)}
       className={cn(
-        "relative group bg-empanada-medium rounded-2xl overflow-hidden",
-        "border-3 border-empanada-light-gray hover:border-empanada-golden",
+        "relative group bg-gray-800 rounded-2xl overflow-hidden",
+        "border-3 border-gray-600 hover:border-empanada-golden",
         "transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-empanada-golden/30",
         "flex flex-col w-full"
       )}

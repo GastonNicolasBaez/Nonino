@@ -11,9 +11,17 @@ import { TotemProductCard } from '@/components/totem/TotemProductCard';
 import { TotemProductModal } from '@/components/totem/TotemProductModal';
 import { TotemCart } from '@/components/totem/TotemCart';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Package, ShoppingCart } from 'lucide-react';
+import { Package, ShoppingCart, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 export const TotemMenuPage = () => {
   const navigate = useNavigate();
@@ -26,6 +34,7 @@ export const TotemMenuPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCart, setShowCart] = useState(false);
+  const [showClearCartDialog, setShowClearCartDialog] = useState(false);
 
   // Auto-seleccionar sucursal del usuario logeado
   useEffect(() => {
@@ -109,9 +118,12 @@ export const TotemMenuPage = () => {
   };
 
   const handleClearCart = () => {
-    if (window.confirm('¿Querés limpiar todo el pedido?')) {
-      clearCart();
-    }
+    setShowClearCartDialog(true);
+  };
+
+  const handleConfirmClearCart = () => {
+    clearCart();
+    setShowClearCartDialog(false);
   };
 
   const handleCheckout = () => {
@@ -124,8 +136,8 @@ export const TotemMenuPage = () => {
     <div className="h-[calc(100vh-5rem)] bg-empanada-dark relative">
       <div className="h-full flex overflow-hidden pb-24">
         {/* Sidebar izquierdo - Categorías */}
-        <div className="w-36 bg-empanada-golden/90 border-r-4 border-red-700 flex-shrink-0 flex flex-col">
-          <div className="px-3 py-4 border-b-2 border-red-700">
+        <div className="w-36 bg-empanada-golden/90 border-r-4 border-empanada-golden flex-shrink-0 flex flex-col">
+          <div className="px-3 py-4 border-b-2 border-empanada-golden">
             <h2 className="text-empanada-dark font-black text-xs text-center uppercase tracking-wider">
               Categorías
             </h2>
@@ -141,7 +153,7 @@ export const TotemMenuPage = () => {
                   className={cn(
                     "w-full px-3 py-4 rounded-xl font-bold text-xs transition-all text-center border-2 leading-tight",
                     selectedCategory === category.id
-                      ? "bg-red-700 text-white border-red-900 shadow-xl"
+                      ? "bg-empanada-dark text-empanada-golden border-empanada-golden shadow-xl"
                       : "bg-empanada-dark/20 text-empanada-dark border-empanada-dark/30 hover:bg-empanada-dark/40"
                   )}
                 >
@@ -244,6 +256,40 @@ export const TotemMenuPage = () => {
         isOpen={showProductModal}
         onClose={handleCloseModal}
       />
+
+      {/* Modal de confirmación para limpiar carrito */}
+      <Dialog open={showClearCartDialog} onOpenChange={setShowClearCartDialog}>
+        <DialogContent className="bg-empanada-dark border-empanada-golden text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-empanada-golden flex items-center gap-2">
+              <Trash2 className="w-7 h-7" />
+              Limpiar pedido
+            </DialogTitle>
+            <DialogDescription className="text-gray-300 text-lg pt-2">
+              ¿Estás seguro que querés eliminar todos los productos del pedido?
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="gap-3 mt-4">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setShowClearCartDialog(false)}
+              className="text-lg px-8 py-6 border-gray-500 text-gray-300 hover:bg-gray-700"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              size="lg"
+              onClick={handleConfirmClearCart}
+              className="bg-red-600 hover:bg-red-700 text-lg px-8 py-6"
+            >
+              Sí, limpiar pedido
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

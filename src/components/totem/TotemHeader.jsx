@@ -148,7 +148,7 @@ export const TotemHeader = () => {
 
             {/* Botón Menú a la derecha - más sutil */}
             <Button
-              onClick={() => navigate('/totem/menu')}
+              onClick={() => navigate('/totem/welcome')}
               variant="ghost"
               className="text-gray-300 hover:text-empanada-golden hover:bg-empanada-golden/10 text-base px-4 h-10"
             >

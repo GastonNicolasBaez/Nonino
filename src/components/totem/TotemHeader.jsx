@@ -21,7 +21,7 @@ export const TotemHeader = () => {
   const { resetSession } = useTotem();
   const session = useSession();
   const { clearCart } = useCart();
-  const { sucursalSeleccionada, sucursales, setSucursalSeleccionada } = usePublicData();
+  const { sucursalSeleccionada, sucursales, setSucursalSeleccionada, clearCatalogData } = usePublicData();
   const navigate = useNavigate();
 
   // Estado para logout secreto
@@ -64,6 +64,7 @@ export const TotemHeader = () => {
   const handleLogoutSubmit = () => {
     // Primero limpiar todo
     clearCart();
+    clearCatalogData(); // Limpiar productos, categorías, combos
     localStorage.removeItem('totem_session_persistent');
     setSucursalSeleccionada(null); // Limpiar sucursal seleccionada
     setShowLogoutDialog(false);

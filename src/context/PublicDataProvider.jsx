@@ -96,13 +96,16 @@ const PublicDataProvider = ({ children }) => {
         mutationKey: ['publicCatalog'],
         mutationFn: getPublicCatalogQueryFunction,
         onSuccess: (data) => {
+            console.log('[PublicData] Catálogo recibido para sucursal:', data);
+
             const gotCategories = data.categories.map((categoria) => ({
                 id: categoria.id,
                 name: categoria.name
             }));
 
-            if (gotCategories.length > 0)
-                setCategorias(gotCategories);
+            // CRÍTICO: Siempre actualizar categorías, incluso si está vacío
+            setCategorias(gotCategories);
+            console.log('[PublicData] Categorías actualizadas:', gotCategories.length);
 
             const gotProducts = data.categories.flatMap(categoria =>
                 categoria.products.map((producto) => ({
@@ -115,8 +118,9 @@ const PublicDataProvider = ({ children }) => {
                     image: producto.imageBase64 ? `data:image/webp;base64,${producto.imageBase64}` : '',
                 })));
 
-            if (gotProducts.length > 0)
-                setProductos(gotProducts);
+            // CRÍTICO: Siempre actualizar productos, incluso si está vacío
+            setProductos(gotProducts);
+            console.log('[PublicData] Productos actualizados:', gotProducts.length);
 
             const seenCombo = new Set();
             const gotCombos = data.categories?.flatMap((categoria) =>
@@ -128,7 +132,7 @@ const PublicDataProvider = ({ children }) => {
                     }).map((combo) => {
                         // SOLUCIÓN: Usar imageBase64 si está disponible, sino intentar URL desde imageHref
                         let imageBase64 = '';
-                        
+
                         if (combo.imageBase64) {
                             // Si el backend devuelve imageBase64, usarlo con el formato correcto
                             imageBase64 = `data:image/webp;base64,${combo.imageBase64}`;
@@ -137,7 +141,7 @@ const PublicDataProvider = ({ children }) => {
                             // Por ahora, usar imagen placeholder hasta que se arregle el backend
                             // console.warn(`⚠️ Endpoint de imagen no disponible para combo ${combo.comboId}: ${combo.imageHref}`);
                            //  imageBase64 = ''; // Imagen vacía = placeholder
-                            
+
                             // TODO: Cuando el backend esté listo, descomentar esta línea:
                              imageBase64 = `${ENDPOINTS.catalog}${combo.imageHref.startsWith('/') ? '' : '/'}${combo.imageHref}`;
                         }
@@ -156,14 +160,12 @@ const PublicDataProvider = ({ children }) => {
                         };
                     })) || [];
 
-            if (gotCombos.length > 0) {
-                setCombos(gotCombos);
-            } else {
-                setCombos([]);
-            }
+            // Combos: siempre actualizar
+            setCombos(gotCombos);
+            console.log('[PublicData] Combos actualizados:', gotCombos.length);
         },
         onError: (error) => {
-            console.log(error);
+            console.error('[PublicData] Error al cargar catálogo:', error);
             setCombos([]);
             setCategorias([]);
             setProductos([]);
@@ -311,6 +313,14 @@ const PublicDataProvider = ({ children }) => {
         callPublicCreatePreferenceLoading ||
         callPublicCreatePrintJobLoading;
 
+    // Función para limpiar catálogo (útil en logout)
+    const clearCatalogData = () => {
+        console.log('[PublicData] Limpiando datos de catálogo');
+        setProductos([]);
+        setCategorias([]);
+        setCombos([]);
+    };
+
     return (
         <PublicDataContext.Provider value={{
             productos,
@@ -324,6 +334,7 @@ const PublicDataProvider = ({ children }) => {
             combosTodos,
             companyInfo,
             setSucursalSeleccionada,
+            clearCatalogData,
 
             publicDataLoading,
 

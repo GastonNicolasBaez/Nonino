@@ -2,14 +2,18 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { usePublicData } from '@/context/PublicDataProvider';
+import { useSession } from '@/context/SessionProvider';
 import logoNonino from '@/assets/logos/nonino.png';
 import SanMartin1920 from '@/assets/images/optimized/SanMartin-1920w.webp';
 
 export const TotemWelcomePage = () => {
   const navigate = useNavigate();
-  const { sucursales, sucursalSeleccionada } = usePublicData();
+  const session = useSession();
+  const { sucursales } = usePublicData();
 
-  const selectedStore = sucursales.find(s => s.id === sucursalSeleccionada);
+  // Usar la sucursal del usuario autenticado, NO sucursalSeleccionada
+  const userStoreId = session.userData?.sucursal;
+  const selectedStore = sucursales.find(s => s.id === userStoreId);
 
   const handleStartOrder = () => {
     navigate('/totem/menu');

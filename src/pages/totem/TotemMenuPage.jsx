@@ -36,11 +36,17 @@ export const TotemMenuPage = () => {
   const [showCartModal, setShowCartModal] = useState(false);
   const [showClearCartDialog, setShowClearCartDialog] = useState(false);
 
-  // Auto-seleccionar sucursal del usuario logeado
+  // CRÍTICO: Forzar sucursal del usuario logeado
   useEffect(() => {
-    if (session.isAuthenticated && session.userData?.sucursal && !sucursalSeleccionada) {
-      console.log('[TOTEM MENU] Auto-seleccionando sucursal del usuario:', session.userData.sucursal);
-      setSucursalSeleccionada(session.userData.sucursal);
+    if (session.isAuthenticated && session.userData?.sucursal) {
+      // Si la sucursal seleccionada NO coincide con la del usuario, forzar actualización
+      if (sucursalSeleccionada !== session.userData.sucursal) {
+        console.log('[TOTEM MENU] Actualizando sucursal:', {
+          anterior: sucursalSeleccionada,
+          nueva: session.userData.sucursal
+        });
+        setSucursalSeleccionada(session.userData.sucursal);
+      }
     }
   }, [session.isAuthenticated, session.userData, sucursalSeleccionada, setSucursalSeleccionada]);
 

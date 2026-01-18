@@ -10,12 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Mail, Lock, Store, AlertTriangle, Loader2 } from "lucide-react";
 import { useSession } from "@/context/SessionProvider";
+import { usePublicData } from "@/context/PublicDataProvider";
 import { validateEmail } from "@/lib/utils";
 import logoNonino from '@/assets/logos/nonino.png';
 
 export function TotemLogin() {
   const session = useSession();
   const navigate = useNavigate();
+  const { setSucursalSeleccionada } = usePublicData();
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +31,12 @@ export function TotemLogin() {
         // Marcar como sesión de totem persistente
         localStorage.setItem('totem_session_persistent', 'true');
 
+        // CRÍTICO: Establecer la sucursal del usuario logueado en PublicDataProvider
+        if (session.userData.sucursal) {
+          console.log('[TOTEM LOGIN] Estableciendo sucursal del usuario:', session.userData.sucursal);
+          setSucursalSeleccionada(session.userData.sucursal);
+        }
+
         // Activar modo pantalla completa
         const enterFullscreen = async () => {
           try {
@@ -40,7 +48,7 @@ export function TotemLogin() {
             } else if (document.documentElement.mozRequestFullScreen) {
               // Firefox
               await document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.msRequestFullscreen) {
+            } else if (document.documentElement.mozRequestFullScreen) {
               // IE/Edge
               await document.documentElement.msRequestFullscreen();
             }

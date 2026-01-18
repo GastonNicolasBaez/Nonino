@@ -8,8 +8,8 @@ import { useEffect } from "react";
 const TotemLayout = () => {
   const location = useLocation();
 
-  // Ocultar header en la página de welcome
-  const showHeader = location.pathname !== '/totem/welcome';
+  // Ocultar header en la página de login y welcome
+  const showHeader = location.pathname !== '/totem/welcome' && location.pathname !== '/totem';
 
   // Prevenir zoom con gestos (importante para tablets)
   useEffect(() => {

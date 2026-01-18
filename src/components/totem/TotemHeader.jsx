@@ -33,8 +33,9 @@ export const TotemHeader = () => {
   const [isValidating, setIsValidating] = useState(false);
   const clickTimeoutRef = useRef(null);
 
-  // Encontrar el nombre del local seleccionado
-  const selectedStoreName = sucursales.find(s => s.id === sucursalSeleccionada)?.name || 'Nonino';
+  // Obtener nombre de la sucursal del usuario autenticado
+  const userStore = session.userData?.sucursal;
+  const selectedStoreName = userStore ? sucursales.find(s => s.id === userStore)?.name || 'Nonino' : 'Nonino';
 
   // Reset contador de clics después de 2 segundos de inactividad
   useEffect(() => {
@@ -138,7 +139,7 @@ export const TotemHeader = () => {
                 <h1 className="text-2xl font-bold text-empanada-golden leading-tight">
                   NONINO
                 </h1>
-                {sucursalSeleccionada && (
+                {userStore && (
                   <p className="text-sm text-gray-300 leading-tight">
                     {selectedStoreName}
                   </p>

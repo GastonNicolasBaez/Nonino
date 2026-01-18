@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Package, ShoppingCart, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { sortProductsBySku } from '@/utils/productUtils';
 import {
   Dialog,
   DialogContent,
@@ -85,12 +86,11 @@ export const TotemMenuPage = () => {
     }
   }, [sortedCategorias, selectedCategory]);
 
-  // Filtrar y ordenar productos por categoría seleccionada
+  // Filtrar y ordenar productos por categoría seleccionada usando SKU_ORDER
   const filteredProducts = useMemo(() => {
-    if (!selectedCategory) return productos.sort((a, b) => (a.sku || '').localeCompare(b.sku || ''));
-    return productos
-      .filter(p => p.category === selectedCategory)
-      .sort((a, b) => (a.sku || '').localeCompare(b.sku || ''));
+    if (!selectedCategory) return sortProductsBySku(productos);
+    const filtered = productos.filter(p => p.category === selectedCategory);
+    return sortProductsBySku(filtered);
   }, [productos, selectedCategory]);
 
   const handleProductSelect = (product) => {

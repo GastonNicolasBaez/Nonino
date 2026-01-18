@@ -83,22 +83,31 @@ export const TotemProvider = ({ children }) => {
   useEffect(() => {
     if (!config) return;
 
-    // Si estamos en /totem/welcome, no correr el timer de inactividad
-    const isOnWelcomePage = window.location.pathname === '/totem/welcome';
-    if (isOnWelcomePage) return;
-
     const checkInactivity = setInterval(() => {
+      // CRÍTICO: Verificar pathname dinámicamente en cada iteración
+      const currentPath = window.location.pathname;
+      const shouldNotRunTimer = currentPath === '/totem/welcome' || currentPath === '/totem';
+
+      if (shouldNotRunTimer) {
+        console.log('[TOTEM] Timer pausado - ruta:', currentPath);
+        return; // No ejecutar timer en welcome o login
+      }
+
       const now = Date.now();
       const timeSinceLastActivity = (now - lastActivityTime) / 1000; // segundos
+
+      console.log('[TOTEM] Timer activo - inactividad:', Math.floor(timeSinceLastActivity), 'segundos');
 
       // Mostrar warning 30 segundos antes del reset
       if (timeSinceLastActivity >= config.inactivityTimeout - config.autoResetTimeout &&
           timeSinceLastActivity < config.inactivityTimeout) {
+        console.log('[TOTEM] Mostrando warning de inactividad');
         setShowInactivityWarning(true);
       }
 
       // Reset automático
       if (timeSinceLastActivity >= config.inactivityTimeout) {
+        console.log('[TOTEM] Timeout alcanzado - reseteando sesión');
         setIsInactive(true);
         resetSession();
       }

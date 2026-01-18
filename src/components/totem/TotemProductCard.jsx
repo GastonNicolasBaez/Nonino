@@ -63,14 +63,21 @@ export const TotemProductCard = ({ product, onSelect }) => {
 
       {/* Información del producto - Altura fija para el resto */}
       <div className="bg-empanada-medium flex flex-col" style={{ height: '160px' }}>
+        {/* Nombre del producto */}
+        <div className="px-4 pt-3 pb-1">
+          <h3 className="text-white font-bold text-base text-center line-clamp-1">
+            {product.name}
+          </h3>
+        </div>
+
         {/* Descripción - Ocupa espacio disponible */}
-        <div className="flex-1 px-4 pt-4 pb-2 flex items-center justify-center min-h-0">
+        <div className="flex-1 px-4 pb-2 flex items-center justify-center min-h-0">
           {product.description ? (
-            <p className="text-gray-300 text-sm line-clamp-3 text-center leading-snug">
+            <p className="text-gray-400 text-xs line-clamp-2 text-center leading-snug">
               {product.description}
             </p>
           ) : (
-            <p className="text-gray-500 text-sm text-center italic">
+            <p className="text-gray-500 text-xs text-center italic">
               Sin descripción
             </p>
           )}

@@ -85,10 +85,12 @@ export const TotemMenuPage = () => {
     }
   }, [sortedCategorias, selectedCategory]);
 
-  // Filtrar productos por categoría seleccionada
+  // Filtrar y ordenar productos por categoría seleccionada
   const filteredProducts = useMemo(() => {
-    if (!selectedCategory) return productos;
-    return productos.filter(p => p.category === selectedCategory);
+    if (!selectedCategory) return productos.sort((a, b) => (a.sku || '').localeCompare(b.sku || ''));
+    return productos
+      .filter(p => p.category === selectedCategory)
+      .sort((a, b) => (a.sku || '').localeCompare(b.sku || ''));
   }, [productos, selectedCategory]);
 
   const handleProductSelect = (product) => {

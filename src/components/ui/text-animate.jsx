@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "../../lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-import { memo } from "react";
+import { motion } from "framer-motion";
+import { memo, useRef, useState, useEffect } from "react";
 
 const staggerTimings = {
   text: 0.06,
@@ -138,6 +138,20 @@ const TextAnimateBase = ({
   ...props
 }) => {
   const MotionComponent = motion.create(Component);
+  const hasAnimated = useRef(false);
+  const [shouldAnimate, setShouldAnimate] = useState(true);
+
+  // Después de la primera animación, marcar como animado para evitar re-animaciones
+  useEffect(() => {
+    if (!hasAnimated.current && !startOnView) {
+      const animationDuration = (delay + duration) * 1000 + 100;
+      const timer = setTimeout(() => {
+        hasAnimated.current = true;
+        setShouldAnimate(false);
+      }, animationDuration);
+      return () => clearTimeout(timer);
+    }
+  }, [delay, duration, startOnView]);
 
   let segments = [];
   switch (by) {
@@ -202,36 +216,33 @@ const TextAnimateBase = ({
       : { container: defaultContainerVariants, item: defaultItemAnimationVariants.fadeIn.item };
 
   return (
-    <AnimatePresence mode="wait">
-      <MotionComponent
-        variants={finalVariants.container}
-        initial="hidden"
-        whileInView={startOnView ? "show" : undefined}
-        animate={startOnView ? undefined : "show"}
-        exit="exit"
-        className={cn("whitespace-pre-wrap", className)}
-        viewport={{ once: true, amount: 0.1 }}
-        aria-label={accessible ? children : undefined}
-        {...props}
-      >
-        {accessible && <span className="sr-only">{children}</span>}
-        {segments.map((segment, i) => (
-          <motion.span
-            key={`${by}-${segment}-${i}`}
-            variants={finalVariants.item}
-            custom={i * staggerTimings[by]}
-            className={cn(
-              by === "line" ? "block" : "inline-block whitespace-pre",
-              by === "character" && "",
-              segmentClassName,
-            )}
-            aria-hidden={accessible ? true : undefined}
-          >
-            {segment}
-          </motion.span>
-        ))}
-      </MotionComponent>
-    </AnimatePresence>
+    <MotionComponent
+      variants={finalVariants.container}
+      initial={shouldAnimate ? "hidden" : false}
+      whileInView={startOnView ? "show" : undefined}
+      animate={startOnView ? undefined : (shouldAnimate ? "show" : undefined)}
+      className={cn("whitespace-pre-wrap", className)}
+      viewport={{ once, amount: 0.1 }}
+      aria-label={accessible ? children : undefined}
+      {...props}
+    >
+      {accessible && <span className="sr-only">{children}</span>}
+      {segments.map((segment, i) => (
+        <motion.span
+          key={`${by}-${segment}-${i}`}
+          variants={finalVariants.item}
+          custom={i * staggerTimings[by]}
+          className={cn(
+            by === "line" ? "block" : "inline-block whitespace-pre",
+            by === "character" && "",
+            segmentClassName,
+          )}
+          aria-hidden={accessible ? true : undefined}
+        >
+          {segment}
+        </motion.span>
+      ))}
+    </MotionComponent>
   );
 };
 

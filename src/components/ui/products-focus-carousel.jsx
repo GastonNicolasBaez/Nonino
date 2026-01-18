@@ -189,14 +189,14 @@ const ProductFocusCard = React.memo(({
             }
         }}
         className={cn(
-            "relative overflow-hidden rounded-xl h-60 sm:h-48 md:h-64 group cursor-pointer bg-gray-100 transition-all duration-300 ease-out",
+            "relative overflow-hidden rounded-2xl h-60 sm:h-48 md:h-64 group cursor-pointer bg-gray-900 border border-white/10 shadow-lg transition-all duration-300 ease-out",
             hovered !== null && hovered !== globalIndex && "blur-sm scale-[0.98]"
         )}
     >
-        <OptimizedProductImage 
-            product={product} 
+        <OptimizedProductImage
+            product={product}
             context="parallax"
-            className="parallax-image absolute inset-0 w-full h-full"
+            className="parallax-image absolute inset-0 w-full h-full rounded-2xl"
         />
 
         {/* Badges - Always visible */}
@@ -216,7 +216,7 @@ const ProductFocusCard = React.memo(({
 
         {/* Focus Overlay with Product Details */}
         <div className={cn(
-            "absolute inset-0 bg-black/60 flex flex-col justify-end p-3 md:p-4 z-10 transition-opacity duration-300",
+            "absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-3 md:p-4 z-10 transition-opacity duration-300 rounded-2xl",
             hovered === globalIndex ? "opacity-100" : "opacity-0"
         )}>
             <div className="text-white">
@@ -382,17 +382,11 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
 
                 {/* Carousel Container */}
                 <div className="relative">
-                    {/* Left fade gradient */}
-                    <div className="hidden md:block absolute left-0 top-0 bottom-0 w-16 md:w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, rgb(26, 26, 26), transparent)' }}></div>
-
-                    {/* Right fade gradient */}
-                    <div className="hidden md:block absolute right-0 top-0 bottom-0 w-16 md:w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, rgb(26, 26, 26), transparent)' }}></div>
-
                     {/* Navigation Buttons */}
                     <Button
                         variant="outline"
                         size="icon"
-                        className="hidden md:flex absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+                        className="hidden md:flex absolute -left-16 lg:-left-18 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
                         onClick={onPrevButtonClick}
                     >
                         <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
@@ -401,7 +395,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                     <Button
                         variant="outline"
                         size="icon"
-                        className="hidden md:flex absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+                        className="hidden md:flex absolute -right-16 lg:-right-18 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
                         onClick={onNextButtonClick}
                     >
                         <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />

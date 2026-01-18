@@ -57,8 +57,11 @@ export const OptimizedImage = memo(({
     // Calcular object-position adaptativo
     const adaptiveObjectPosition = getAdaptiveObjectPosition(context, focalPoint, product);
 
+    // Extraer clases de redondeo del className para aplicar al contenedor
+    const roundedClasses = className.match(/rounded-\S+/g)?.join(' ') || '';
+
     return (
-        <div className="w-full h-full relative overflow-hidden bg-gray-100">
+        <div className={cn("w-full h-full relative overflow-hidden bg-gray-100", roundedClasses)}>
             <img
                 className={cn(
                     "w-full h-full transition-all duration-300",

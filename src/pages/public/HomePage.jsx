@@ -328,7 +328,7 @@ export function HomePage() {
             <section className="relative min-h-screen flex items-center justify-center">
                 {/* Background Image with Parallax Effect - OPTIMIZADO CON WEBP */}
                 <motion.div
-                    key={`hero-${initKey}-${imagesReady ? 'ready' : 'loading'}`}
+                    key="hero-background"
                     className="absolute inset-0 w-full h-[180%] -top-[20%] md:-top-[25%] lg:-top-[35%] xl:-top-[45%] z-[-1]"
                     aria-label="Vista panorámica de San Martín de los Andes, Patagonia Argentina - Cordillera de los Andes"
                     role="img"
@@ -355,19 +355,14 @@ export function HomePage() {
                 </div>
 
                 <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-empanada-golden">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="mt-20 sm:mt-48 md:mt-56 lg:mt-64"
-                    >
+                    <div className="mt-20 sm:mt-48 md:mt-56 lg:mt-64">
 
                         <TextAnimate
                             animation="slideUp"
                             by="word"
                             delay={0.3}
                             duration={0.8}
-                            once={true}
+                            startOnView={false}
                             className="text-5xl xs:text-6xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl 2xl:text-12xl font-bold mb-6 sm:mb-8 px-4 sm:px-2"
                             style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}
                         >
@@ -403,7 +398,7 @@ export function HomePage() {
                                 </Button>
                             </Link>
                         </motion.div>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 

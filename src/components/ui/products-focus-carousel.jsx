@@ -386,7 +386,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                     <Button
                         variant="outline"
                         size="icon"
-                        className="hidden md:flex absolute -left-16 lg:-left-18 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+                        className="hidden md:flex absolute -left-16 lg:-left-18 top-[47%] -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
                         onClick={onPrevButtonClick}
                     >
                         <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
@@ -395,7 +395,7 @@ export function ProductsFocusCarousel({ products = [], className = '', title = '
                     <Button
                         variant="outline"
                         size="icon"
-                        className="hidden md:flex absolute -right-16 lg:-right-18 top-1/2 -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
+                        className="hidden md:flex absolute -right-16 lg:-right-18 top-[47%] -translate-y-1/2 z-[15] bg-white hover:bg-gray-50 shadow-lg border-gray-200 rounded-full w-10 h-10 md:w-12 md:h-12"
                         onClick={onNextButtonClick}
                     >
                         <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />

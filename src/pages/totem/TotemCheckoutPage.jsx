@@ -159,6 +159,8 @@ export const TotemCheckoutPage = () => {
 
       await callPublicCreatePrintJob(printJob);
 
+      // ACA - SI ES POSNET, EL PAYMENT METHOD SERA posnet PARA ENVIAR A BACKEND
+
       // Si es MercadoPago, crear preferencia y redirigir
       if (formData.paymentMethod === 'mercadopago') {
         const preference = await callPublicCreatePreference({

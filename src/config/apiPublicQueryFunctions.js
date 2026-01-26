@@ -114,3 +114,6 @@ export const putPublicOrdersForcePrintJobQueryFunction = async (_printJobId) => 
     return await response.data;
 }
 
+// /payments/pos/devices/$storeid
+
+// /payments/post/$deviceid/charge
